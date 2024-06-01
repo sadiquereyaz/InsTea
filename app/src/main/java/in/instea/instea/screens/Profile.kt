@@ -8,6 +8,6 @@ import androidx.navigation.NavController
 
 @Composable
 fun Profile(navController: NavController) {
-    Text(text = "HOME")
+    Text(text = "Profile")
 
 }

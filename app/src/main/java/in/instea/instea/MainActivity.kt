@@ -1,6 +1,7 @@
 package `in`.instea.instea
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -34,8 +35,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.screens.Feed
 import `in`.instea.instea.screens.Notificaiton
@@ -74,9 +77,10 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun BottomNavigation(){
         val navController= rememberNavController()
+        val navBackStackEntry = navController.currentBackStackEntryAsState()
         val items = listOf(
             BottomNavItem(
-                title= "feed",
+                title= "Feed",
                 selectedIcon = Icons.Filled.Home,
                 unselectedItem = Icons.Outlined.Home,
                 hasNotification = false,
@@ -85,7 +89,7 @@ class MainActivity : ComponentActivity() {
 
             ),
             BottomNavItem(
-                title= "profile",
+                title= "Profile",
                 selectedIcon = Icons.Filled.Person,
                 unselectedItem = Icons.Outlined.Person,
                 hasNotification = true,
@@ -94,7 +98,7 @@ class MainActivity : ComponentActivity() {
 
             ),
             BottomNavItem(
-                title= "Notification",
+                title= "Notifications",
                 selectedIcon = Icons.Filled.Notifications,
                 unselectedItem = Icons.Outlined.Notifications,
                 hasNotification = true,
@@ -112,11 +116,19 @@ class MainActivity : ComponentActivity() {
             bottomBar = {
                 NavigationBar {
                     items.forEachIndexed{ index, item->
+                        val isSelected = item.ROUTE == navBackStackEntry.value?.destination?.route
                         NavigationBarItem(
-                            selected = selectedItemIndex.value == index,
+                            selected = isSelected,
                             onClick = {
                                 selectedItemIndex.value = index
-                                navController.navigate(item.ROUTE)
+                                navController.navigate(item.ROUTE){
+                                    popUpTo(navController.graph.findStartDestination().id){
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+
 
                             },
                             label = {
@@ -141,7 +153,7 @@ class MainActivity : ComponentActivity() {
                                 ) {
                                     Icon(
                                         imageVector =
-                                        if (index == selectedItemIndex.value) {
+                                        if (isSelected) {
                                             item.selectedIcon
                                         }else item.unselectedItem
                                         , contentDescription = item.title
