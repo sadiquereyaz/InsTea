@@ -1,9 +1,6 @@
 package `in`.instea.instea.screens
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 
 
 object  SCREENS {
@@ -11,4 +8,7 @@ object  SCREENS {
     const val PROFILE: String = "PROFILE"
     const val NOTIFICATIONS: String = "NOTIFICATIONS"
 
+}
+enum class InsteaScreens(){
+    Feed, Profile, Notifications
 }
