@@ -2,6 +2,7 @@ package `in`.instea.instea.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,13 +37,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 
 @Composable
 fun Profile(
-    navController: NavController,
-    modifier: Modifier = Modifier
+    userName: String,
+    onEditIconClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    department: String,
+    semester: String,
+    hostel: String,
+    instagram: String,
+    linkedin: String
 ) {
     Column(
         modifier = modifier
@@ -55,13 +60,14 @@ fun Profile(
         ) {
             Text(
                 modifier = Modifier.padding(end = 8.dp),
-                text = "Sadique Reyaz",
+                text = userName,
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
             Icon(
-                modifier = Modifier,
+                modifier = Modifier
+                    .clickable{ onEditIconClicked() },
                 imageVector = Icons.Sharp.Edit,
                 contentDescription = null
             )
@@ -94,15 +100,18 @@ fun Profile(
                 .background(MaterialTheme.colorScheme.tertiaryContainer)
                 .padding(top = 16.dp, end = 16.dp)
         ) {
-            UserDetails(icon = Icons.Outlined.Home, title = "AMK", subtitle = "Room no. 209")
+            UserDetails(
+                icon = Icons.Outlined.Home,
+                title = hostel,
+                subtitle = "Room no. 209")
             UserDetails(
                 icon = Icons.Outlined.AccountBox,
-                title = "Sadique Reyaz",
-                subtitle = "sadique_reyaz"
+                title = instagram,
+                subtitle = "Instagram"
             )
             UserDetails(
                 icon = Icons.Outlined.AccountCircle,
-                title = "Sadique Reyaz",
+                title = linkedin,
                 subtitle = "LinkedIn"
             )
         }
@@ -119,7 +128,11 @@ fun Profile(
         }
         when (selectedTabIndex) {
             0 -> {
-                Text( text = "All Posts",fontSize = 32.sp, modifier = Modifier.padding(top = 120.dp))
+                Text(
+                    text = "All Posts",
+                    fontSize = 32.sp,
+                    modifier = Modifier.padding(top = 120.dp)
+                )
             }
 
             1 -> {
@@ -203,5 +216,5 @@ private fun IconBox(
 @Preview(showSystemUi = true)
 @Composable
 fun ProfilePreview() {
-    Profile(navController = rememberNavController())
+//    Profile(navController = rememberNavController())
 }
