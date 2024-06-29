@@ -18,7 +18,7 @@ import `in`.instea.instea.composable.InsteaTopAppBar
 import `in`.instea.instea.data.InsteaViewModel
 import `in`.instea.instea.model.InsteaScreens
 import `in`.instea.instea.screens.EditProfile
-import `in`.instea.instea.screens.Feed.FEED
+
 
 //import `in`.instea.instea.screens.Feed
 import `in`.instea.instea.screens.Notificaiton
@@ -109,6 +109,8 @@ fun InsteaApp(
                     linkedin = uiState.linkedin
                 )
             }
+
+
         }
     }
 }
