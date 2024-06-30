@@ -14,6 +14,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import `in`.instea.instea.data.BottomNavItemData
 
@@ -29,7 +30,13 @@ fun BottomNavigationBar(
                 selected = selectedItemIndex.value == index,
                 onClick = {
                     selectedItemIndex.value = index
-                    navController.navigate(item.route)
+                    navController.navigate(item.route){
+                        popUpTo(navController.graph.findStartDestination().id){
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 },
                 label = {
                     Text(text = item.title)

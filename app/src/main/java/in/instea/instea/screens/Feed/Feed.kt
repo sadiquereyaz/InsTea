@@ -27,8 +27,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,21 +48,28 @@ import `in`.instea.instea.screens.EditText
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FEED(navController: NavController) {
-    FeedContent()
+    Column {
+        FeedContent()
+        PostList()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 private fun FeedContent() {
-    val state = remember { mutableStateOf("") }
+    var textState by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
 
 
-            .border(1.dp,MaterialTheme.colorScheme.onSecondaryContainer,shape = RoundedCornerShape(8.dp))
+            .border(
+                1.dp,
+                MaterialTheme.colorScheme.onSecondaryContainer,
+                shape = RoundedCornerShape(8.dp)
+            )
     ) {
         Column(verticalArrangement = Arrangement.SpaceBetween) {
             Row(
@@ -78,8 +87,9 @@ private fun FeedContent() {
                     contentDescription = "Profile"
                 )
                 TextField(
-                    value = state.value,
-                    onValueChange = { state.value = it },
+                    value = textState,
+                    onValueChange = { textState = it },
+                    label = {Text(text = "What do you want ask")},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 8.dp)
