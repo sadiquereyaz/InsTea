@@ -2,6 +2,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,6 +16,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.BottomNavigationBar
 import `in`.instea.instea.composable.InsteaTopAppBar
+import `in`.instea.instea.data.BottomNavItemData
 import `in`.instea.instea.data.InsteaViewModel
 import `in`.instea.instea.model.InsteaScreens
 import `in`.instea.instea.screens.EditProfile
@@ -41,6 +43,9 @@ fun InsteaApp(
     val currentScreen = InsteaScreens.valueOf(
         backStackEntry?.destination?.route ?: InsteaScreens.Feed.name
     )
+    LaunchedEffect(currentScreen) {
+        selectedItemIndex.value = BottomNavItemData.bottomNavItems.indexOfFirst { it.route == currentScreen.name }
+    }
     val bottomBarItems = listOf(
         InsteaScreens.Feed,
         InsteaScreens.Schedule,
