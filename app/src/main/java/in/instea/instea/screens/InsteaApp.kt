@@ -54,7 +54,8 @@ fun InsteaApp(
                     currentScreen
                 ),
                 navigateBack = { navController.navigateUp() },
-                moveToProfile = { navController.navigate(InsteaScreens.Profile.name) }
+                moveToProfile = { navController.navigate(InsteaScreens.Profile.name) },
+                navController = navController
             )
         },
         bottomBar = {

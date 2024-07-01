@@ -65,12 +65,6 @@ fun Profile(
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
             )
-            Icon(
-                modifier = Modifier
-                    .clickable{ onEditIconClicked() },
-                imageVector = Icons.Sharp.Edit,
-                contentDescription = null
-            )
         }
 
         Row {
