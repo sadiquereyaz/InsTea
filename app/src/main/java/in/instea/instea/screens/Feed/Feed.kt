@@ -63,11 +63,12 @@ private fun FeedContent() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(8.dp)
 
 
             .border(
                 1.dp,
-                MaterialTheme.colorScheme.onSecondaryContainer,
+                MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(8.dp)
             )
     ) {
