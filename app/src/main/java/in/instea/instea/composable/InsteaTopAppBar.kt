@@ -2,6 +2,7 @@ package `in`.instea.instea.composable
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavHostController
 import `in`.instea.instea.model.InsteaScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -19,8 +21,9 @@ fun InsteaTopAppBar(
     modifier: Modifier = Modifier,
     currentScreen: InsteaScreens,
     canNavigateBack: Boolean,
-    navigateBack: ()->Unit,
-    moveToProfile: ()->Unit
+    navigateBack: () -> Unit,
+    moveToProfile: () -> Unit,
+    navController: NavHostController
 ) {
     CenterAlignedTopAppBar(
         modifier = modifier,
@@ -33,15 +36,19 @@ fun InsteaTopAppBar(
 
         navigationIcon = {
             if (canNavigateBack) {
-                IconButton(onClick = navigateBack ) {
+                IconButton(onClick = navigateBack) {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "back")
                 }
             }
         },
         actions = {
-            IconButton(onClick = moveToProfile) {
-                if (currentScreen != InsteaScreens.Profile) {
+            if (currentScreen != InsteaScreens.Profile) {
+                IconButton(onClick = moveToProfile) {
                     Icon(imageVector = Icons.Default.Person, contentDescription = "Profile")
+                }
+            } else {
+                IconButton(onClick = { navController.navigate(InsteaScreens.EditProfile.name) }) {
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Profile")
                 }
             }
         }
