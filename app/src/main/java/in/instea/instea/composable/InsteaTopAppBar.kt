@@ -2,6 +2,7 @@ package `in`.instea.instea.composable
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -42,13 +43,17 @@ fun InsteaTopAppBar(
             }
         },
         actions = {
-            if (currentScreen != InsteaScreens.Profile) {
+            if (currentScreen == InsteaScreens.Feed) {
                 IconButton(onClick = moveToProfile) {
                     Icon(imageVector = Icons.Default.Person, contentDescription = "Profile")
                 }
-            } else {
+            } else if (currentScreen == InsteaScreens.Schedule){
+                IconButton(onClick = { navController.navigate(InsteaScreens.Attendance.name) }) {
+                    Icon(imageVector = Icons.Default.DateRange, contentDescription = "Attendance")
+                }
+            }else if (currentScreen == InsteaScreens.Profile){
                 IconButton(onClick = { navController.navigate(InsteaScreens.EditProfile.name) }) {
-                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Profile")
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit Profile")
                 }
             }
         }
