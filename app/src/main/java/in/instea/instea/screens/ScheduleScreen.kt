@@ -263,9 +263,9 @@ fun ScheduleLayout(
                     Icon(
                         imageVector = Icons.Default.List,
                         contentDescription = "task",
-                        modifier = Modifier,
+                        modifier = Modifier.size(16.dp),
                     )
-                    Text(text = "Add Task", modifier = Modifier.padding(start = 4.dp))
+                    Text(text = "Add Task", fontSize = 12.sp, modifier = Modifier.padding(start = 4.dp))
                 }
                 //attendance
                 Row(
@@ -276,21 +276,22 @@ fun ScheduleLayout(
                         .clickable { }
 //                        .padding(top = 12.dp)
                         .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(50))
-                        .padding(horizontal = 16.dp)
+                        .padding( start = 4.dp, end =  4.dp)
                 ) {
                     Icon(imageVector = Icons.Default.CheckCircle, contentDescription = "attendance",
-                         modifier = Modifier.size(18.dp))
-                    Text(text = "Mark" /*modifier = Modifier.padding(start = 4.dp)*/)
+                         modifier = Modifier.size(16.dp))
+                    Text(text = "Attendance" , fontSize = 12.sp/*modifier = Modifier.padding(start = 4.dp)*/)
                     Box(
                         modifier = Modifier
-                            .padding(horizontal = 4.dp)
+                            .padding(start = 4.dp)
                             .height(32.dp)
                             .width(1.dp)
                             .background(MaterialTheme.colorScheme.onBackground)
                     )
                     Icon(
                         imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = "attendance"
+                        contentDescription = "attendance",
+//                        modifier = Modifier.size(16.dp)
                     )
 
                 }
