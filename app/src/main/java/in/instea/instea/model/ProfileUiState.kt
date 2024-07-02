@@ -1,6 +1,6 @@
 package `in`.instea.instea.model
 
-data class InsteaUiState(
+data class ProfileUiState(
     val userName: String = "No Name",
     val selectedDepartment: String = "Computer Science",
     val selectedSemester: String = "V",
