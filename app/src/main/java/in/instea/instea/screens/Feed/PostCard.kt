@@ -6,9 +6,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.*
@@ -66,7 +69,7 @@ fun PostCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id =if(profilePic!=null) profilePic else R.drawable.ic_launcher_foreground),
+                        painter = painterResource(id = if (profilePic != null) profilePic else R.drawable.ic_launcher_foreground),
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
@@ -100,7 +103,7 @@ fun PostCard(
                         )
                     }
                 }
-                if(postImage!=null){
+                if (postImage != null) {
                     Image(
                         painter = painterResource(id = postImage),
                         contentDescription = "Post Image"
@@ -164,19 +167,16 @@ fun PostCard(
 
 @Composable
 fun BottomButtons() {
-    val isLiked =rememberSaveable {
+    val isLiked = rememberSaveable {
         mutableStateOf(false)
     }
-    Button(
+    IconButton(
         onClick = { isLiked.value = !isLiked.value },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent
-        ),
-        elevation = null,
+
         modifier = Modifier.padding(8.dp)
     ) {
         Image(
-            imageVector = if (isLiked.value) Icons.Filled.Favorite else Icons.Outlined.Favorite,
+            imageVector = if (isLiked.value) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
             contentDescription = "vote"
         )
     }
