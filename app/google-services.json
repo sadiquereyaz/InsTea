@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "677962216839",
+    "project_id": "insteacompose",
+    "storage_bucket": "insteacompose.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:677962216839:android:a9bd24cdbf6fd46e24cf22",
+        "android_client_info": {
+          "package_name": "in.instea.instea"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAX7IkqJK0blDbpeV9nYHfk27u0xe3rPWw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
