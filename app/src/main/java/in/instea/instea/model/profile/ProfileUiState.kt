@@ -1,4 +1,4 @@
-package `in`.instea.instea.model
+package `in`.instea.instea.model.profile
 
 data class ProfileUiState(
     val userName: String = "No Name",
