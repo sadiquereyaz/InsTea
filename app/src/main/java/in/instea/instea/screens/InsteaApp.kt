@@ -2,11 +2,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -15,22 +18,28 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.BottomNavigationBar
 import `in`.instea.instea.composable.InsteaTopAppBar
-import `in`.instea.instea.data.InsteaViewModel
+import `in`.instea.instea.data.BottomNavItemData
+import `in`.instea.instea.data.ProfileViewModel
 import `in`.instea.instea.model.InsteaScreens
+import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
-import `in`.instea.instea.screens.Feed
+
+
+//import `in`.instea.instea.screens.Feed
 import `in`.instea.instea.screens.Notificaiton
 import `in`.instea.instea.screens.Profile
+import `in`.instea.instea.screens.ScheduleScreen
+import org.jetbrains.annotations.Async.Schedule
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InsteaApp(
-    viewModel: InsteaViewModel = viewModel(),
+    viewModel: ProfileViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedItemIndex = rememberSaveable {
-        mutableStateOf(0);
+        mutableIntStateOf(0);
     }
 
     // Get current back stack entry
@@ -39,6 +48,9 @@ fun InsteaApp(
     val currentScreen = InsteaScreens.valueOf(
         backStackEntry?.destination?.route ?: InsteaScreens.Feed.name
     )
+    LaunchedEffect(currentScreen) {
+        selectedItemIndex.value = BottomNavItemData.bottomNavItems.indexOfFirst { it.route == currentScreen.name }
+    }
     val bottomBarItems = listOf(
         InsteaScreens.Feed,
         InsteaScreens.Schedule,
@@ -54,7 +66,8 @@ fun InsteaApp(
                     currentScreen
                 ),
                 navigateBack = { navController.navigateUp() },
-                moveToProfile = { navController.navigate(InsteaScreens.Profile.name) }
+                moveToProfile = { navController.navigate(InsteaScreens.Profile.name) },
+                navController = navController
             )
         },
         bottomBar = {
@@ -70,14 +83,16 @@ fun InsteaApp(
                 .padding(contentPadding)
         ) {
             composable(route = InsteaScreens.Feed.name) {
-                Feed(navController = navController)
+               FEED(navController = navController)
             }
-
             composable(route = InsteaScreens.Notification.name) {
                 Notificaiton(navController = navController)
             }
             composable(route = InsteaScreens.Schedule.name) {
-                Notificaiton(navController = navController)
+                ScheduleScreen(navController = navController)
+            }
+            composable(route = InsteaScreens.Attendance.name) {
+                AttendanceScreen(navController = navController)
             }
             composable(route = InsteaScreens.Profile.name) {
                 Profile(
@@ -107,7 +122,14 @@ fun InsteaApp(
                     linkedin = uiState.linkedin
                 )
             }
+
+
         }
     }
 }
 
+@Preview
+@Composable
+fun InsteaAppPreview() {
+    InsteaApp()
+}

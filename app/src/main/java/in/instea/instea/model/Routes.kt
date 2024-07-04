@@ -7,7 +7,5 @@ enum class InsteaScreens(
     EditProfile("Sadique Reyaz"),
     Feed("What's Going"),
     Schedule("Schedule"),
-    Notification("Notification"),
-    Login("Login"),
-    Signup("Signup")
+    Notification("Notification")
 }
