@@ -406,7 +406,7 @@ fun Signup(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(28.dp)
+            .padding(top = 20.dp,start=28.dp,end=28.dp,bottom=10.dp)
             .background(color = Color.White)
     ) {
 
@@ -423,7 +423,7 @@ fun Signup(modifier: Modifier = Modifier) {
 
         WelcomeText(Modifier, "Hey There")
         HeadingText(Modifier, "Create an Account")
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
         MyTextField(labelValue = "Name",
             icon = Icons.Default.Person,
             textState = name,
