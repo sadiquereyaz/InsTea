@@ -80,7 +80,7 @@ fun InsteaApp(
     ) { contentPadding ->
         NavHost(
             navController = navController,
-            startDestination = InsteaScreens.Feed.name,
+            startDestination = InsteaScreens.Schedule.name,
             modifier = Modifier
                 .padding(contentPadding)
         ) {
