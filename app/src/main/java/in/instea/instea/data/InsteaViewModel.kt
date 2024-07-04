@@ -1,6 +1,7 @@
 package `in`.instea.instea.data
 
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.FirebaseAuth
 import `in`.instea.instea.model.InsteaUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
