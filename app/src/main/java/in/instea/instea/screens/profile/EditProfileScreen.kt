@@ -1,4 +1,4 @@
-package `in`.instea.instea.screens
+package `in`.instea.instea.screens.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +26,7 @@ import `in`.instea.instea.data.DataSource.semesters
 import `in`.instea.instea.data.DataSource.universities
 
 @Composable
-fun EditProfile(
+fun EditProfileScreen(
     modifier: Modifier = Modifier
         .fillMaxSize()
         .padding(16.dp),
@@ -165,7 +165,7 @@ fun DropDown() {
 @Preview(showSystemUi = true)
 @Composable
 fun EditProfilePreview() {
-    EditProfile(
+    EditProfileScreen(
         userName = "John Doe",
         onUserNameChanged = {},
         onSaveButtonClicked = {},

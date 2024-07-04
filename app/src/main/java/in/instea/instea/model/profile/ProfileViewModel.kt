@@ -1,7 +1,6 @@
-package `in`.instea.instea.data
+package `in`.instea.instea.model.profile
 
 import androidx.lifecycle.ViewModel
-import `in`.instea.instea.model.ProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
