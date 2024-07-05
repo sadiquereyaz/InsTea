@@ -84,12 +84,16 @@ class ScheduleViewModel : ViewModel() {
             }
 
         }
-
     }
 
-    fun updateAttendanceType(attendanceType: AttendanceType) {
+    fun updateAttendanceType(subject: SubjectModel, attendanceType: AttendanceType) {
+        val updatedSubjectList = _scheduleUiState.value.subjectList.toMutableList()
+        val subjectIndex = updatedSubjectList.indexOf(subject)
+        if (subjectIndex != -1) {
+            updatedSubjectList[subjectIndex] = subject.copy(attendanceType = attendanceType)
+            _scheduleUiState.value = _scheduleUiState.value.copy(subjectList = updatedSubjectList)
+        }
         _scheduleUiState.value = _scheduleUiState.value.copy(
-
         )
     }
 }

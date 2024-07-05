@@ -1,5 +1,8 @@
 package `in`.instea.instea.data
 
+import `in`.instea.instea.model.schedule.AttendanceType
+import `in`.instea.instea.model.schedule.SubjectModel
+
 object DataSource {
 
     val departments = listOf(

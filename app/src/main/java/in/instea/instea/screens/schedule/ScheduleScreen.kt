@@ -109,9 +109,9 @@ fun ScheduleScreen(
                     onEditClick = {
                         navController.navigate(route  = "InsteaScreens.EditSchedule")
                     },
-//                    onSubjectClick = {
-//                        subject.attendanceType = AttendanceType.Present
-//                    }
+                    onAttendanceClick = {
+                       scheduleViewModel.updateAttendanceType(subject, AttendanceType.Present)
+                    }
                 )
             }
         }

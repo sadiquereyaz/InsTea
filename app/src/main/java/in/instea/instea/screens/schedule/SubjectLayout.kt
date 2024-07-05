@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import `in`.instea.instea.composable.BottomSheet
 import `in`.instea.instea.model.schedule.AttendanceType
 import `in`.instea.instea.model.schedule.SubjectModel
 
@@ -47,12 +49,12 @@ fun SubjectLayout(
     subject: SubjectModel,
     onReminderClick: () -> Unit = {},
     onEditClick: () -> Unit,
-//    onSubjectClick: () -> Unit
+    onAttendanceClick: () -> Unit
 ) {
 //    val attendanceModifier = Modifier.clickable {
 //        subject.attendanceType = AttendanceType.Present
 //    }
-
+    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     Row(
         modifier = modifier
     ) {
@@ -125,7 +127,7 @@ fun SubjectLayout(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 //reminder
-                IconButton(onClick = {  }) {
+                IconButton(onClick = { }) {
                     Icon(
                         imageVector = Icons.Default.Notifications,
                         contentDescription = "reminder",
@@ -168,8 +170,13 @@ fun SubjectLayout(
                     Icon(
                         imageVector = Icons.Default.List,
                         contentDescription = "task",
-                        modifier = Modifier.size(16.dp),
+                        modifier = Modifier
+                            .size(16.dp)
+                            .clickable {
+                                openBottomSheet = true
+                            },
                     )
+BottomSheet(openBottomSheet)
                     Text(
                         text = subject.task,
                         fontSize = 12.sp,
@@ -196,11 +203,12 @@ fun SubjectLayout(
                         Icon(
                             imageVector = subject.attendanceType.icon,
                             contentDescription = "attendance",
-                            modifier = Modifier.clickable { subject.attendanceType = AttendanceType.Present }
+                            modifier = Modifier
+                                .clickable { onAttendanceClick() }
                                 .size(16.dp)
                         )
                         Text(
-                            modifier = Modifier.clickable { subject.attendanceType = AttendanceType.Present },
+                            modifier = Modifier.clickable { onAttendanceClick() },
                             text = subject.attendanceType.name,
                             fontSize = 12.sp/*modifier = Modifier.padding(start = 4.dp)*/
                         )
