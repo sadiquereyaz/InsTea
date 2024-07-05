@@ -62,7 +62,13 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
     implementation(libs.firebase.database)
+
+
+
+
+
     implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -74,5 +80,6 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)  // ViewModel KTX
     implementation(libs.androidx.lifecycle.viewmodel.compose.v261)  // ViewModel Compose
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
 
 }
