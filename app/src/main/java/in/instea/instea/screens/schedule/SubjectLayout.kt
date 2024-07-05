@@ -14,20 +14,29 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,10 +47,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import `in`.instea.instea.composable.BottomSheet
 import `in`.instea.instea.model.schedule.AttendanceType
 import `in`.instea.instea.model.schedule.SubjectModel
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubjectLayout(
     modifier: Modifier = Modifier.fillMaxWidth(),
@@ -54,7 +64,15 @@ fun SubjectLayout(
 //    val attendanceModifier = Modifier.clickable {
 //        subject.attendanceType = AttendanceType.Present
 //    }
+
+//    var at by rememberSaveable{ mutableStateOf(subject.attendanceType) }
+
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+    var skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
+    val bottomSheetState =
+        rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
+
     Row(
         modifier = modifier
     ) {
@@ -85,9 +103,7 @@ fun SubjectLayout(
                         .size(12.dp)
                         .clip(RoundedCornerShape(50))
                         .border(
-                            2.dp,
-                            MaterialTheme.colorScheme.error,
-                            RoundedCornerShape(50)
+                            2.dp, MaterialTheme.colorScheme.error, RoundedCornerShape(50)
                         )
                         .background(
                             MaterialTheme.colorScheme.error
@@ -97,9 +113,7 @@ fun SubjectLayout(
                         .size(10.dp)
                         .clip(RoundedCornerShape(50))
                         .border(
-                            2.dp,
-                            MaterialTheme.colorScheme.primary,
-                            RoundedCornerShape(50)
+                            2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(50)
                         )
                         .background(
 
@@ -121,8 +135,7 @@ fun SubjectLayout(
         ) {
             // subject headline row
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -144,7 +157,8 @@ fun SubjectLayout(
                 )
                 IconButton(onClick = onEditClick) {
                     Icon(
-                        imageVector = Icons.Default.Edit, contentDescription = "edit",
+                        imageVector = Icons.Default.Edit,
+                        contentDescription = "edit",
                         modifier = Modifier.size(20.dp)
                     )
 
@@ -164,19 +178,17 @@ fun SubjectLayout(
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 16.dp)
-                        .clickable { },
-                    verticalAlignment = Alignment.CenterVertically
+                        .clickable {
+//                            showBottomSheet = true
+                            openBottomSheet = true
+                        }, verticalAlignment = Alignment.CenterVertically
+
                 ) {
                     Icon(
                         imageVector = Icons.Default.List,
                         contentDescription = "task",
-                        modifier = Modifier
-                            .size(16.dp)
-                            .clickable {
-                                openBottomSheet = true
-                            },
+                        modifier = Modifier.size(16.dp),
                     )
-BottomSheet(openBottomSheet)
                     Text(
                         text = subject.task,
                         fontSize = 12.sp,
@@ -185,6 +197,103 @@ BottomSheet(openBottomSheet)
                         modifier = Modifier.padding(start = 4.dp),
 
                         )
+                    //bottom sheet
+                    if (openBottomSheet) {
+                        ModalBottomSheet(
+                            onDismissRequest = { openBottomSheet = false },
+                            sheetState = bottomSheetState,
+                        ) {
+                            var isReminderOn by rememberSaveable { mutableStateOf(false) }
+                            var remindBefore12Hours by rememberSaveable { mutableStateOf(true) }
+                            var remindBefore24Hours by rememberSaveable { mutableStateOf(false) }
+
+                            var task by remember { mutableStateOf(subject.task) }
+
+                            // Reminder Switch
+                            Column {
+                                Switch(
+                                    modifier = Modifier
+                                        .align(Alignment.Start)
+                                        .padding(start = 16.dp),
+                                    checked = isReminderOn,
+                                    onCheckedChange = { isReminderOn = it },
+                                    thumbContent = {
+                                        Icon(
+                                            imageVector = Icons.Default.Notifications,
+                                            contentDescription = null,
+                                            modifier = Modifier.size(12.dp)
+                                        )
+                                    }
+                                )
+
+                                // Checkboxes (visible only if reminder is on)
+                                if (isReminderOn) {
+                                    Column(
+                                        modifier = Modifier
+                                    ) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Checkbox(
+                                                checked = remindBefore12Hours,
+                                                onCheckedChange = { remindBefore12Hours = it }
+                                            )
+                                            Text(
+                                                "Remind before 12 hours",
+                                            )
+                                        }
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Checkbox(
+                                                checked = remindBefore24Hours,
+                                                onCheckedChange = { remindBefore24Hours = it }
+                                            )
+                                            Text(
+                                                "Remind before 24 hours",
+                                            )
+                                        }
+                                    }
+                                }
+                                Row(
+                                    verticalAlignment = Alignment.Top,
+                                    modifier = Modifier.padding(bottom = 32.dp)
+                                ) {
+
+                                    OutlinedTextField(
+                                        value = task,
+                                        onValueChange = {
+                                            task = it
+                                            subject.task = it
+                                        },
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .padding(
+                                                top = 16.dp,
+                                                start = 16.dp,
+                                                bottom = 16.dp
+                                            ),
+                                        label = { Text("Task") }
+                                    )
+                                    Button(
+                                        modifier = Modifier
+                                            .padding(start = 8.dp, end = 16.dp, top = 24.dp),
+                                        shape = RoundedCornerShape(8),
+                                        onClick = {
+                                            scope.launch { bottomSheetState.hide() }
+                                                .invokeOnCompletion {
+                                                    if (!bottomSheetState.isVisible) {
+                                                        openBottomSheet = false
+                                                    }
+                                                }
+                                        }) {
+                                        Icon(
+                                            modifier = Modifier
+                                                .size(height = 36.dp, width = 28.dp),
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = "check",
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 //attendance
                 Box() {
@@ -200,15 +309,21 @@ BottomSheet(openBottomSheet)
                             .padding(start = 4.dp, end = 4.dp)
                     ) {
 
-                        Icon(
-                            imageVector = subject.attendanceType.icon,
-                            contentDescription = "attendance",
-                            modifier = Modifier
-                                .clickable { onAttendanceClick() }
-                                .size(16.dp)
-                        )
+                        Icon(imageVector = subject.attendanceType.icon,
+                             contentDescription = "attendance",
+                             modifier = Modifier
+                                 .clickable {
+                                     onAttendanceClick()
+//                                attendanceType = AttendanceType.Present
+                                 }
+
+                                 .size(16.dp))
                         Text(
-                            modifier = Modifier.clickable { onAttendanceClick() },
+                            modifier = Modifier.clickable {
+                                onAttendanceClick()
+//                                at = AttendanceType.Present
+//                                subject.attendanceType = AttendanceType.Present
+                            },
                             text = subject.attendanceType.name,
                             fontSize = 12.sp/*modifier = Modifier.padding(start = 4.dp)*/
                         )
@@ -229,13 +344,10 @@ BottomSheet(openBottomSheet)
                     }
                     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                         AttendanceType.values().forEach { option ->
-                            DropdownMenuItem(
-                                text = { Text(text = option.name) },
-                                onClick = {
-                                    subject.attendanceType = option
-                                    expanded = false
-                                }
-                            )
+                            DropdownMenuItem(text = { Text(text = option.name) }, onClick = {
+                                subject.attendanceType = option
+                                expanded = false
+                            })
                         }
                     }
                 }
