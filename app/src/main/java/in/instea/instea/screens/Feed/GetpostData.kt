@@ -2,8 +2,8 @@ import androidx.compose.runtime.Composable
 import `in`.instea.instea.R
 import `in`.instea.instea.data.PostData
 
-@Composable
-fun GetPostData():MutableList<PostData> {
+
+fun GetPostData():List<PostData> {
     var list = mutableListOf<PostData>()
     list.add(
         PostData(

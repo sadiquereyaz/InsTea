@@ -33,8 +33,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -62,7 +65,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.auth.AuthState
 import `in`.instea.instea.composable.DropdownMenuBox
+import `in`.instea.instea.data.AuthViewModel
+import `in`.instea.instea.data.ChatViewModel
+
+import `in`.instea.instea.model.InsteaScreens
+
 import java.util.regex.Pattern
 
 @Composable
@@ -106,7 +117,7 @@ fun MyTextField(
     textState: MutableState<String>,
     keyboardType: KeyboardType = KeyboardType.Text,
 
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
 ) {
     Column(modifier = Modifier.padding(8.dp)) {
         OutlinedTextField(
@@ -132,8 +143,8 @@ fun MyTextField(
             ),
             singleLine = true,
             shape = RoundedCornerShape(8.dp),
-            
-        )
+
+            )
     }
 }
 
@@ -144,10 +155,10 @@ fun PasswordTextField(
     onPasswordChange: (TextFieldValue) -> Unit,
     errorColor: Color = MaterialTheme.colorScheme.error,
     textFieldLabel: String = "Enter your password",
-    errorText: String = "Password not valid"
+    errorText: String = "Password not valid",
 ) {
     // State variables to manage password visibility and validity
-    val localFocusmanager= LocalFocusManager.current
+    val localFocusmanager = LocalFocusManager.current
     var showPassword by remember { mutableStateOf(false) }
     var isPasswordError by remember { mutableStateOf(true) }
 
@@ -163,7 +174,7 @@ fun PasswordTextField(
             keyboardType = KeyboardType.Password,
             imeAction = ImeAction.Done,
 
-        ),
+            ),
         keyboardActions = KeyboardActions {
             localFocusmanager.clearFocus()
         },
@@ -198,7 +209,7 @@ fun PasswordTextField(
 @Composable
 fun PasswordVisibilityToggleIcon(
     showPassword: Boolean,
-    onTogglePasswordVisibility: () -> Unit
+    onTogglePasswordVisibility: () -> Unit,
 ) {
     // Determine the icon based on password visibility
     val image = if (showPassword) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
@@ -228,7 +239,7 @@ fun DropDownMenu(
     label: String,
     options: List<String>,
     selectedOption: String,
-    onOptionSelected: (String) -> Unit
+    onOptionSelected: (String) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -312,31 +323,40 @@ fun CheckboxComp() {
 
 @Composable
 fun DividerTextComp(modifier: Modifier = Modifier) {
-    Row(modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically) {
-        Divider(modifier= Modifier
-            .fillMaxWidth()
-            .weight(1f),
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
             color = Color.DarkGray,
-            thickness = 1.dp)
-        Text(modifier = Modifier.padding(8.dp),
+            thickness = 1.dp
+        )
+        Text(
+            modifier = Modifier.padding(8.dp),
             text = "or",
             fontSize = 18.sp,
-            )
-        Divider(modifier= Modifier
-            .fillMaxWidth()
-            .weight(1f),
+        )
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
             color = Color.DarkGray,
-            thickness = 1.dp)
+            thickness = 1.dp
+        )
     }
 }
+
 @Composable
-fun ScreenChangeText(tryingLogin:Boolean =true,
+fun ScreenChangeText(
+    tryingLogin: Boolean = true,
     modifier: Modifier = Modifier
-        .fillMaxWidth()
+        .fillMaxWidth(),
 ) {
-    val initialtxt = if(tryingLogin)"Already have an account ? " else "Don't have an account yet?"
-    val logintxt = if(tryingLogin)"Login" else " Register"
+    val initialtxt = if (tryingLogin) "Already have an account ? " else "Don't have an account yet?"
+    val logintxt = if (tryingLogin) "Login" else " Register"
     val annotatedString = buildAnnotatedString {
         append(initialtxt)
         withStyle(style = SpanStyle(color = Color.Blue)) {
@@ -354,6 +374,7 @@ fun ScreenChangeText(tryingLogin:Boolean =true,
                 .firstOrNull()?.also { span ->
                     if (span.item == logintxt) {
                         //Code to shift from signup to login
+
 
                     }
 
@@ -401,12 +422,29 @@ fun ButtonComp(value: String, onButtonClicked: () -> Unit, isEnabled: Boolean = 
 
 
 @Composable
-fun Signup(modifier: Modifier = Modifier) {
+fun Signup(viewModel: AuthViewModel, chatViewmodel: ChatViewModel, navController: NavController) {
+    val authState = viewModel.authState.collectAsState()
+    LaunchedEffect(authState.value) {
+        when (authState.value) {
+            is `in`.instea.instea.data.AuthState.authenticated -> navController.navigate(
+                InsteaScreens.Feed.name
+            )
+
+            is `in`.instea.instea.data.AuthState.authenticated -> navController.navigate(
+                InsteaScreens.Signup.name
+            )
+
+            else -> Unit
+        }
+
+
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 20.dp,start=28.dp,end=28.dp,bottom=10.dp)
+            .padding(top = 20.dp, start = 28.dp, end = 28.dp, bottom = 10.dp)
             .background(color = Color.White)
     ) {
 
@@ -420,7 +458,9 @@ fun Signup(modifier: Modifier = Modifier) {
         val name = rememberSaveable { mutableStateOf<String>("") }
         val username = rememberSaveable { mutableStateOf<String>("") }
         var password by remember { mutableStateOf(TextFieldValue("")) }
-
+        val department = rememberSaveable { mutableStateOf<String>("") }
+        val semester = rememberSaveable { mutableStateOf<String>("") }
+        val university = rememberSaveable { mutableStateOf<String>("") }
         WelcomeText(Modifier, "Hey There")
         HeadingText(Modifier, "Create an Account")
         Spacer(modifier = Modifier.height(10.dp))
@@ -434,7 +474,7 @@ fun Signup(modifier: Modifier = Modifier) {
             icon = Icons.Default.Email,
             textState = emailState,
             keyboardType = KeyboardType.Email,
-            onValueChange = {})
+            onValueChange = { emailState.value = it })
         MyTextField(
             labelValue = "Username",
             icon = Icons.Default.Person,
@@ -449,8 +489,8 @@ fun Signup(modifier: Modifier = Modifier) {
         DropdownMenuBox(
             label = "University",
             options = optionsUniversity,
-            selectedOption = " ",
-            onOptionSelected = { },
+            selectedOption = university.value,
+            onOptionSelected = { university.value = it },
             modifier = Modifier
                 .padding(horizontal = 8.dp)
                 .height(60.dp)
@@ -459,9 +499,9 @@ fun Signup(modifier: Modifier = Modifier) {
         DropdownMenuBox(
             label = "Department",
             options = optionsDept,
-            selectedOption = " ",
+            selectedOption = department.value,
             onOptionSelected = {
-
+                department.value = it
             },
             modifier = Modifier
                 .padding(horizontal = 8.dp)
@@ -471,9 +511,9 @@ fun Signup(modifier: Modifier = Modifier) {
         DropdownMenuBox(
             label = "Semester",
             options = optionsSemester,
-            selectedOption = " ",
+            selectedOption = semester.value,
             onOptionSelected = {
-
+                semester.value = it
             },
             modifier = Modifier
                 .padding(horizontal = 8.dp)
@@ -491,19 +531,35 @@ fun Signup(modifier: Modifier = Modifier) {
         CheckboxComp()
         ButtonComp(
             value = "Signup",
-            onButtonClicked = { },
-            isEnabled = false
+            onButtonClicked = {
+                viewModel
+                    .SignUpWithEmailAndPassword(
+                        emailState.value!!,
+                        password.toString()
+                    ) { success ->
+                        if (success) {
+                            ChatViewModel().writeNewUser(
+                                emailState.value,
+                                username.value,
+                                university.value,
+                                department.value,
+                                semester.value)
+                        }
+                    }
+
+            },
+            isEnabled = true
         )
         DividerTextComp()
-        ScreenChangeText(tryingLogin = true,modifier = Modifier)
+        ScreenChangeText(tryingLogin = true, modifier = Modifier)
 
 
     }
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun SignupPreview(modifier: Modifier = Modifier) {
-    Signup(Modifier)
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SignupPreview(modifier: Modifier = Modifier) {
+//    Signup(Modifier)
+//}

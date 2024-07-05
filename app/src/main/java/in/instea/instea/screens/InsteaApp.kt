@@ -18,17 +18,21 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.BottomNavigationBar
 import `in`.instea.instea.composable.InsteaTopAppBar
+import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.data.BottomNavItemData
+import `in`.instea.instea.data.ChatViewModel
 import `in`.instea.instea.data.ProfileViewModel
 import `in`.instea.instea.model.InsteaScreens
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
+import `in`.instea.instea.screens.Login
 
 
 //import `in`.instea.instea.screens.Feed
 import `in`.instea.instea.screens.Notificaiton
 import `in`.instea.instea.screens.Profile
 import `in`.instea.instea.screens.ScheduleScreen
+import `in`.instea.instea.screens.Signup
 import org.jetbrains.annotations.Async.Schedule
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,7 +53,8 @@ fun InsteaApp(
         backStackEntry?.destination?.route ?: InsteaScreens.Feed.name
     )
     LaunchedEffect(currentScreen) {
-        selectedItemIndex.value = BottomNavItemData.bottomNavItems.indexOfFirst { it.route == currentScreen.name }
+        selectedItemIndex.value =
+            BottomNavItemData.bottomNavItems.indexOfFirst { it.route == currentScreen.name }
     }
     val bottomBarItems = listOf(
         InsteaScreens.Feed,
@@ -78,12 +83,22 @@ fun InsteaApp(
     ) { contentPadding ->
         NavHost(
             navController = navController,
-            startDestination = InsteaScreens.Feed.name,
+            startDestination = InsteaScreens.Signup.name,
             modifier = Modifier
                 .padding(contentPadding)
         ) {
+            composable(route = InsteaScreens.Signup.name) {
+                Signup(
+                    viewModel = AuthViewModel(),
+                    chatViewmodel = ChatViewModel(),
+                    navController
+                )
+            }
+            composable(route = InsteaScreens.Login.name) {
+                Login(viewModel = AuthViewModel())
+            }
             composable(route = InsteaScreens.Feed.name) {
-               FEED(navController = navController)
+                FEED(navController = navController)
             }
             composable(route = InsteaScreens.Notification.name) {
                 Notificaiton(navController = navController)

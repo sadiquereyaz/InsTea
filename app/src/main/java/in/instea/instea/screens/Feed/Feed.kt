@@ -136,7 +136,7 @@ private fun FeedContent() {
                         fontSize = 16.sp
                     )
                 }
-                TextButton(onClick = { /* Handle Post button click */ }) {
+                TextButton(onClick = {  }) {
                     Icon(
                         imageVector = Icons.Outlined.Create,
                         contentDescription = "Post logo",

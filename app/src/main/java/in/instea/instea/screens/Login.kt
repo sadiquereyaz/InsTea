@@ -1,5 +1,6 @@
 package `in`.instea.instea.screens
 
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +33,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import `in`.instea.instea.data.AuthViewModel
 
 @Composable
 fun UnderlinedTextComp(value:String,modifier: Modifier = Modifier) {
@@ -49,7 +53,8 @@ fun UnderlinedTextComp(value:String,modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun Login() {
+fun Login(viewModel: AuthViewModel) {
+    val AuthState by viewModel.authState.collectAsState()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -66,13 +71,13 @@ fun Login() {
             modifier = Modifier
                 .height(50.dp)
         )
-        val username = rememberSaveable { mutableStateOf<String>("") }
+        val email = rememberSaveable { mutableStateOf("") }
         MyTextField(
             labelValue = "Username",
             icon = Icons.Default.Person,
-            textState = username,
+            textState = email,
             keyboardType = KeyboardType.Text,
-            onValueChange = {})
+            onValueChange = {email.value = it})
         var password by remember { mutableStateOf(TextFieldValue("")) }
 
         PasswordTextField(
@@ -84,7 +89,9 @@ fun Login() {
         )
         Spacer(modifier = Modifier.height(14.dp))
         UnderlinedTextComp(value = "Forgot Password?")
-        ButtonComp(value = "Login", onButtonClicked = {})
+        ButtonComp(value = "Login", onButtonClicked = {
+            viewModel.login(email.value,password.toString())
+        })
         DividerTextComp()
         ScreenChangeText(tryingLogin = false, modifier = Modifier
         )
@@ -92,8 +99,3 @@ fun Login() {
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewLogin() {
-    Login()
-}
