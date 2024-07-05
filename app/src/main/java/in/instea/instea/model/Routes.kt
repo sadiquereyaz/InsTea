@@ -8,5 +8,7 @@ enum class InsteaScreens(
     Feed("What's Going"),
     Schedule("Schedule"),
     Notification("Notification"),
-    Attendance("Attendance")
+    Attendance("Attendance"),
+    Login("Login"),
+    Signup("Signup")
 }
