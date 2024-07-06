@@ -1,6 +1,8 @@
 package `in`.instea.instea.model.schedule
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import `in`.instea.instea.data.DataSource
 import `in`.instea.instea.data.DataSource.classSubjectData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,13 +17,16 @@ class ScheduleViewModel : ViewModel() {
     val scheduleUiState: StateFlow<ScheduleUiState> = _scheduleUiState.asStateFlow()
 
     val dayDateList: List<DayDateModel>
+    val reminderRepeatSubjectList = mutableSetOf<String>()
+    private val _subjectList = mutableStateListOf<SubjectModel>()
+
 
     init {
         dayDateList = generateDayDateList()
         selectDateIndex(15)
     }
 
-    fun generateDayDateList(): List<DayDateModel> {
+    private fun generateDayDateList(): List<DayDateModel> {
         val calendar = Calendar.getInstance()
         val dayDateList = mutableListOf<DayDateModel>()
         // Start from 15 days before the current day
@@ -43,7 +48,7 @@ class ScheduleViewModel : ViewModel() {
         when (dayDateList[index].day) {
             "Mon" -> {
                 _scheduleUiState.value = _scheduleUiState.value.copy(
-                    subjectList = classSubjectData[dayDateList[index].day] ?: emptyList()
+                    subjectList = DataSource.classSubjectData[dayDateList[index].day] ?: emptyList()
                 )
             }
 
@@ -95,5 +100,14 @@ class ScheduleViewModel : ViewModel() {
         }
         _scheduleUiState.value = _scheduleUiState.value.copy(
         )
+    }
+
+    fun modifySubjectInRepeatReminderList(subjectName:String, repeat: Boolean, subject: SubjectModel){
+        if (repeat) {
+            reminderRepeatSubjectList.add(subjectName)
+            _scheduleUiState.value = _scheduleUiState.value.copy(subjectList[index].)
+        }else{
+            reminderRepeatSubjectList.remove(subjectName)
+        }
     }
 }

@@ -9,23 +9,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material3.DatePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import `in`.instea.instea.model.InsteaScreens
 import `in`.instea.instea.model.schedule.AttendanceType
 import `in`.instea.instea.model.schedule.ScheduleViewModel
 
@@ -48,11 +42,13 @@ fun ScheduleScreen(
 ) {
     val scheduleUiState by scheduleViewModel.scheduleUiState.collectAsState()
     val listState = rememberLazyListState()
+
     //scroll to the initial index
     LaunchedEffect(key1 = true) {
         val initialIndex = 13
         listState.scrollToItem(initialIndex - 1)
     }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -78,6 +74,7 @@ fun ScheduleScreen(
             )
 
         }
+        //day date
         LazyRow(
             state = listState,
             modifier = Modifier
@@ -94,16 +91,18 @@ fun ScheduleScreen(
                     day = list[index].day,
                     date = list[index].date,
                     currentDate = index == 15,
-                    isSelected = index == scheduleUiState.selectedDateIndex,
+                    isSelected = index == scheduleUiState.selectedDateIndex
                 )
             }
         }
+
+        // subject list
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 32.dp)
         ) {
-            items(scheduleUiState.subjectList) { subject ->
+            itemsIndexed(scheduleUiState.subjectList) {index, subject->
                 SubjectLayout(
                     subject = subject,
                     onEditClick = {
@@ -111,7 +110,11 @@ fun ScheduleScreen(
                     },
                     onAttendanceClick = {
                        scheduleViewModel.updateAttendanceType(subject, AttendanceType.Present)
-                    }
+                    },
+                    repeatReminderSwitchAction = { subName, repeat->
+                        scheduleViewModel.modifySubjectInRepeatReminderList(subName, repeat, subject)
+                    },
+                    reminderOn = scheduleViewModel.reminderRepeatSubjectList.contains(subject.subjectName)
                 )
             }
         }

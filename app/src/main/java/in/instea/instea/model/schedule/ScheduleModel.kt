@@ -24,8 +24,9 @@ data class DayDateModel(
 )
 
 data class ReminderModel(
-    val remindBefore: String = "24:00",
     val repeat: Boolean = false,
+    val remindBefore12: Boolean =false,
+    val remindBefore24: Boolean =false,
 )
 data class TaskModel(
     val reminderBefore: String = "24:00",
@@ -38,5 +39,5 @@ data class SubjectModel(
     var attendanceType: AttendanceType = AttendanceType.Absent,
     var startTime: String,
     var endTime: String,
-    var reminder: Boolean = false
+    var reminder: ReminderModel = ReminderModel()
 )

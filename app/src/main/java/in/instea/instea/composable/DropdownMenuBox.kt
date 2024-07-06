@@ -53,6 +53,10 @@ fun DropdownMenuBox(
                     }
                 )
             }
+            DropdownMenuItem(
+                text = { Text("Add New") },
+                onClick = { /*TODO*/ }
+            )
         }
     }
 }
