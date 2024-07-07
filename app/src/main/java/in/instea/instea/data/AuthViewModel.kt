@@ -102,4 +102,5 @@ class AuthViewModel : ViewModel() {
 sealed class AuthState {
     object authenticated : AuthState()
     object unauthenticated : AuthState()
+    object loading :AuthState()
 }

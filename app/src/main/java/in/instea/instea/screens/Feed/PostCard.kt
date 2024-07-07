@@ -1,4 +1,3 @@
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -25,7 +21,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -57,7 +52,7 @@ import `in`.instea.instea.R
 fun PostCard(
     profilePic: Int?,
     name: String?,
-    location: String?,
+    department: String?,
     content: String?,
     postImage: Int?,
 ) {
@@ -90,7 +85,7 @@ fun PostCard(
                     )
                     Column(modifier = Modifier.padding(start = 8.dp)) {
                         Text(text = name!!, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                        Text(text = location!!, fontSize = 12.sp, fontWeight = FontWeight.Light)
+                        Text(text = department!!, fontSize = 12.sp, fontWeight = FontWeight.Light)
                     }
                 }
 

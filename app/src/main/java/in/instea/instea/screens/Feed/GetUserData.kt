@@ -27,7 +27,7 @@ import kotlinx.coroutines.tasks.await
 
 
 @Composable
-fun GetUserData():DataSnapshot? {
+fun GetUserData():MutableList<User> {
     val mAuth = Firebase.auth
     val db = Firebase.database.reference
     val coroutineScope = rememberCoroutineScope()
@@ -46,7 +46,21 @@ fun GetUserData():DataSnapshot? {
             println("Error fetching user data: ${e.message}")
         }
     }
-    return userData
+    val userlist = mutableListOf(User())
+    try {
+
+        for (i in userData!!.children){
+            val user = i.getValue(User::class.java)
+            userlist.add(user!!)
+
+        }
+        Log.d("userData", "GetUserData: ${userlist}")
+    } catch (e: Exception) {
+
+        Log.e("TAG", "GetUserData: ${e}", )
+    }
+
+    return userlist
     // Display Snackbar if data is available
 //    if (showSnackbar && userData != null) {
 //        Snackbar(

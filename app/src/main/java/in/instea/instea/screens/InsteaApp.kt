@@ -6,7 +6,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,7 +19,7 @@ import `in`.instea.instea.composable.BottomNavigationBar
 import `in`.instea.instea.composable.InsteaTopAppBar
 import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.data.BottomNavItemData
-import `in`.instea.instea.data.ChatViewModel
+import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.data.ProfileViewModel
 import `in`.instea.instea.model.InsteaScreens
 import `in`.instea.instea.screens.AttendanceScreen
@@ -33,7 +32,6 @@ import `in`.instea.instea.screens.Notificaiton
 import `in`.instea.instea.screens.Profile
 import `in`.instea.instea.screens.ScheduleScreen
 import `in`.instea.instea.screens.Signup
-import org.jetbrains.annotations.Async.Schedule
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -90,7 +88,7 @@ fun InsteaApp(
             composable(route = InsteaScreens.Signup.name) {
                 Signup(
                     viewModel = AuthViewModel(),
-                    chatViewmodel = ChatViewModel(),
+                    feedViewmodel = FeedViewModel(),
                     navController
                 )
             }
@@ -98,7 +96,7 @@ fun InsteaApp(
                 Login(viewModel = AuthViewModel())
             }
             composable(route = InsteaScreens.Feed.name) {
-                FEED(navController = navController)
+                FEED(navController = navController, feedViewModel = FeedViewModel())
             }
             composable(route = InsteaScreens.Notification.name) {
                 Notificaiton(navController = navController)

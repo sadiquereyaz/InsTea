@@ -37,7 +37,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -48,7 +47,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -62,15 +60,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.auth.AuthState
 import `in`.instea.instea.composable.DropdownMenuBox
 import `in`.instea.instea.data.AuthViewModel
-import `in`.instea.instea.data.ChatViewModel
+import `in`.instea.instea.data.FeedViewModel
 
 import `in`.instea.instea.model.InsteaScreens
 
@@ -422,7 +417,7 @@ fun ButtonComp(value: String, onButtonClicked: () -> Unit, isEnabled: Boolean = 
 
 
 @Composable
-fun Signup(viewModel: AuthViewModel, chatViewmodel: ChatViewModel, navController: NavController) {
+fun Signup(viewModel: AuthViewModel, feedViewmodel: FeedViewModel, navController: NavController) {
     val authState = viewModel.authState.collectAsState()
     LaunchedEffect(authState.value) {
         when (authState.value) {
@@ -538,7 +533,8 @@ fun Signup(viewModel: AuthViewModel, chatViewmodel: ChatViewModel, navController
                         password.toString()
                     ) { success ->
                         if (success) {
-                            ChatViewModel().writeNewUser(
+                            FeedViewModel().writeNewUser(
+                                name.value,
                                 emailState.value,
                                 username.value,
                                 university.value,
