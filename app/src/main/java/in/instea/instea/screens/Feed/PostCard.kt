@@ -177,9 +177,20 @@ fun UpAndDownVoteButtons(post: PostData) {
 
             if (isUpVoted.value) {
                 isDownVoted.value = false
+            }
+            coroutineScope.launch {
                 val likeBy = post.upVote.userLikedCurrentPost
-                likeBy.add(mAuth.currentUser?.uid)
-                coroutineScope.launch {
+                var likes = post.upVote.like
+                if(userlikeCurrentPost){
+                    likeBy.remove(feedViewModel.currentuser)
+                    feedViewModel.updateUpVote(
+                        post,
+                        upVotes(--likes, likeBy)
+                    )
+
+                }
+                else{
+                    likeBy.add(feedViewModel.currentuser)
                     feedViewModel.updateUpVote(
                         post,
                         upVotes(post.upVote.like + 1, likeBy)
@@ -188,10 +199,10 @@ fun UpAndDownVoteButtons(post: PostData) {
             }
         },
         modifier = Modifier.padding(8.dp),
-        enabled = userlikeCurrentPost == false
+        enabled = true
     ) {
         Image(
-            painter = painterResource(id = if (userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
+            painter = painterResource(id = if (isUpVoted.value || userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
             contentDescription = "Upvote",
             modifier = Modifier.size(20.dp)
         )
@@ -207,21 +218,34 @@ fun UpAndDownVoteButtons(post: PostData) {
             isDownVoted.value = !isDownVoted.value
             if (isDownVoted.value) {
                 isUpVoted.value = false
+
+
+            } // Reset upvote if downvoting
+            coroutineScope.launch {
                 val dislikeBy = post.downVote.userDislikedCurrentPost
-                dislikeBy.add(mAuth.currentUser?.uid)
-                coroutineScope.launch {
+                var dislikes = post.downVote.dislike
+                if(userDislikeCurrentPost){
+                    dislikeBy.remove(feedViewModel.currentuser)
                     feedViewModel.updateDownVote(
                         post,
-                        downVotes(post.downVote.dislike + 1, dislikeBy)
+                        downVotes(--dislikes, dislikeBy)
                     )
                 }
-            } // Reset upvote if downvoting
+                else{
+                    dislikeBy.add(feedViewModel.currentuser)
+                    feedViewModel.updateDownVote(
+                        post,
+                        downVotes(++dislikes, dislikeBy)
+                    )
+                }
+
+            }
         },
         modifier = Modifier.padding(8.dp),
-        enabled = userDislikeCurrentPost == false
+        enabled = true
     ) {
         Image(
-            painter = painterResource(id = if (userDislikeCurrentPost) R.drawable.arrowdownfilled else R.drawable.arrowdownoutline),
+            painter = painterResource(id = if (isDownVoted.value || userDislikeCurrentPost) R.drawable.arrowdownfilled else R.drawable.arrowdownoutline),
             contentDescription = "Downvote",
             modifier = Modifier.size(20.dp)
         )
