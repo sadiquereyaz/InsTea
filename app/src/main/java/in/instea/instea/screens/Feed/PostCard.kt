@@ -102,12 +102,12 @@ fun PostCard(
 
                 Column {
                     val displayText =
-                        if (isExpanded) post.postDescription!! else post.postDescription?.take(50)
+                        if (isExpanded) post.postDescription!! else post.postDescription?.take(100)
                     Text(
                         text = displayText!!,
                         modifier = Modifier.padding(2.dp)
                     )
-                    if (post.postDescription?.length!! > 50) {
+                    if (post.postDescription?.length!! > 100) {
 
                         TextButton(
                             onClick = {

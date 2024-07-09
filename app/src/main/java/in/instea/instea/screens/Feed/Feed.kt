@@ -95,10 +95,14 @@ private fun FeedContent(feedViewModel: FeedViewModel) {
                 TextField(value = textState,
                     onValueChange = { textState = it },
                     label = { Text(text = "What do you want ask") },
-                    modifier = Modifier.scrollable(state = ScrollableState { 0f },orientation = Orientation.Vertical)
+                    modifier = Modifier
+                        .scrollable(
+                            state = ScrollableState { 0f },
+                            orientation = Orientation.Vertical
+                        )
                         .fillMaxWidth()
                         .padding(3.dp)
-                        .heightIn(min=50.dp, max=100.dp),
+                        .heightIn(min = 50.dp, max = 100.dp),
                     shape = RoundedCornerShape(16.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         focusedIndicatorColor = Color.Transparent,
@@ -117,10 +121,10 @@ private fun FeedContent(feedViewModel: FeedViewModel) {
                                         textState,
                                         null,
                                         postType
-
-
                                     )
-                                })
+                                    textState = ""
+                                }
+                            )
                         }
                     })
 
