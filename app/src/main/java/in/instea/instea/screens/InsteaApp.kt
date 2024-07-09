@@ -27,6 +27,7 @@ import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.profile.EditProfileScreen
 import `in`.instea.instea.screens.Notificaiton
 import `in`.instea.instea.screens.profile.ProfileScreen
+import `in`.instea.instea.screens.schedule.EditScheduleScreen
 import `in`.instea.instea.screens.schedule.ScheduleScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -94,7 +95,7 @@ fun InsteaApp(
                 ScheduleScreen(navController = navController, scheduleViewModel = scheduleViewModel)
             }
             composable(route = InsteaScreens.EditSchedule.name) {
-                ScheduleScreen(navController = navController, scheduleViewModel = scheduleViewModel)
+                EditScheduleScreen(navController = navController, scheduleViewModel = scheduleViewModel)
             }
             composable(route = InsteaScreens.Attendance.name) {
                 AttendanceScreen(navController = navController)

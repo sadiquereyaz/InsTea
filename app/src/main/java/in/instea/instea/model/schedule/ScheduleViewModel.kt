@@ -1,5 +1,6 @@
 package `in`.instea.instea.model.schedule
 
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import `in`.instea.instea.data.DataSource
@@ -7,6 +8,7 @@ import `in`.instea.instea.data.DataSource.classSubjectData
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -18,12 +20,15 @@ class ScheduleViewModel : ViewModel() {
 
     val dayDateList: List<DayDateModel>
     val reminderRepeatSubjectList = mutableSetOf<String>()
+
     private val _subjectList = mutableStateListOf<SubjectModel>()
 
 
     init {
         dayDateList = generateDayDateList()
         selectDateIndex(15)
+        _subjectList.addAll(DataSource.classSubjectData["Fri"] ?: emptyList())
+        _scheduleUiState.value = ScheduleUiState(subjectList = _subjectList)
     }
 
     private fun generateDayDateList(): List<DayDateModel> {
@@ -44,8 +49,11 @@ class ScheduleViewModel : ViewModel() {
     }
 
     fun selectDateIndex(index: Int) {
-        _scheduleUiState.value = _scheduleUiState.value.copy(selectedDateIndex = index)
-        when (dayDateList[index].day) {
+        _scheduleUiState.value = _scheduleUiState.value.copy(
+            selectedDateIndex = index,
+            subjectList = DataSource.classSubjectData[dayDateList[index].day] ?: emptyList()
+        )
+        /*when (dayDateList[index].day) {
             "Mon" -> {
                 _scheduleUiState.value = _scheduleUiState.value.copy(
                     subjectList = DataSource.classSubjectData[dayDateList[index].day] ?: emptyList()
@@ -88,7 +96,7 @@ class ScheduleViewModel : ViewModel() {
                 )
             }
 
-        }
+        }*/
     }
 
     fun updateAttendanceType(subject: SubjectModel, attendanceType: AttendanceType) {
@@ -105,9 +113,17 @@ class ScheduleViewModel : ViewModel() {
     fun modifySubjectInRepeatReminderList(subjectName:String, repeat: Boolean, subject: SubjectModel){
         if (repeat) {
             reminderRepeatSubjectList.add(subjectName)
-            _scheduleUiState.value = _scheduleUiState.value.copy(subjectList[index].)
+//            _scheduleUiState.value = _scheduleUiState.value.copy(subjectList[index].)
         }else{
             reminderRepeatSubjectList.remove(subjectName)
+        }
+    }
+
+    fun updateAttendance(index: Int) {
+        _scheduleUiState.update { currentState ->
+            val updatedSubjectList = currentState.subjectList.toMutableList()
+            updatedSubjectList[index] = updatedSubjectList[index].copy(attendanceType = AttendanceType.Present)
+            currentState.copy(subjectList = updatedSubjectList)
         }
     }
 }

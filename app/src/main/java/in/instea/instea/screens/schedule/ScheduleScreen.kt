@@ -1,5 +1,6 @@
 package `in`.instea.instea.screens.schedule
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,10 +13,12 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import `in`.instea.instea.model.InsteaScreens
 import `in`.instea.instea.model.schedule.AttendanceType
 import `in`.instea.instea.model.schedule.ScheduleViewModel
 
@@ -96,23 +100,57 @@ fun ScheduleScreen(
             }
         }
 
+        //add class
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 32.dp)
+                .clickable {
+                    navController.navigate(route = InsteaScreens.EditSchedule.name)
+                },
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "add class",
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Text(
+                text = "Add Class",
+                color = MaterialTheme.colorScheme.primary,
+//                 fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        }
+
         // subject list
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 32.dp)
+                .padding(top = 16.dp)
         ) {
-            itemsIndexed(scheduleUiState.subjectList) {index, subject->
+            itemsIndexed(scheduleUiState.subjectList) { index, subject ->
+                /*Text(text = subject.subjectName)
+                TextButton(onClick = {
+                    scheduleViewModel.updateAttendance(index)
+                }) {
+                    Text(text = subject.attendanceType.name)
+                }*/
                 SubjectLayout(
                     subject = subject,
                     onEditClick = {
-                        navController.navigate(route  = "InsteaScreens.EditSchedule")
+                        navController.navigate(route = InsteaScreens.EditSchedule.name)
                     },
                     onAttendanceClick = {
-                       scheduleViewModel.updateAttendanceType(subject, AttendanceType.Present)
+                        scheduleViewModel.updateAttendanceType(subject, AttendanceType.Present)
                     },
-                    repeatReminderSwitchAction = { subName, repeat->
-                        scheduleViewModel.modifySubjectInRepeatReminderList(subName, repeat, subject)
+                    repeatReminderSwitchAction = { subName, repeat ->
+                        scheduleViewModel.modifySubjectInRepeatReminderList(
+                            subName,
+                            repeat,
+                            subject
+                        )
                     },
                     reminderOn = scheduleViewModel.reminderRepeatSubjectList.contains(subject.subjectName)
                 )
