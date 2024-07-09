@@ -14,11 +14,7 @@ fun PostList(feedViewModel: FeedViewModel) {
     LazyColumn {
       items(postDataList){index->
           PostCard(
-              profilePic = index.profileImage,
-              name = index.name,
-              department = index.department,
-              content = index.postDescription,
-              postImage = index.postImage)
+              index)
 
       }
     }
