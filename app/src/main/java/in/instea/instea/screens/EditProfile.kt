@@ -24,6 +24,7 @@ import `in`.instea.instea.data.DataSource.departments
 import `in`.instea.instea.data.DataSource.graduatingYears
 import `in`.instea.instea.data.DataSource.semesters
 import `in`.instea.instea.data.DataSource.universities
+import java.time.Year
 
 @Composable
 fun EditProfile(
@@ -38,11 +39,16 @@ fun EditProfile(
     onCancelButtonClicked: () -> Unit,
     selectedDepartment: String,
     selectedSemester: String,
+    selectedUniversity:String,
+    selectedYear:String,
+    onUniversityChanged: (String) -> Unit,
+    onYearChanged: (String) -> Unit,
     selectedHostel: String,
     instagram: String,
     linkedin: String,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier,
+        ) {
         EditText(
             modifier = modifier,
             value = userName,
@@ -54,7 +60,12 @@ fun EditProfile(
             selectedDepartment,
             onDepartmentChanged,
             selectedSemester,
-            onSemesterChanged
+            onSemesterChanged,
+            selectedUniversity,
+            onUniversityChanged ,
+            selectedYear ,
+            onYearChanged
+
         )
         Spacer(modifier = Modifier.weight(1f))
         Buttons(onCancelButtonClicked, onSaveButtonClicked)
@@ -88,7 +99,11 @@ private fun DropdownComposables(
     selectedDepartment: String,
     onDepartmentChanged: (String) -> Unit,
     selectedSemester: String,
-    onSemesterChanged: (String) -> Unit
+    onSemesterChanged: (String) -> Unit,
+    selectedUniversity:String,
+    onUniversityChanged: (String) -> Unit,
+    selectedYear: String,
+    onYearChanged: (String) -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -97,16 +112,16 @@ private fun DropdownComposables(
         DropdownMenuBox(
             label = "University/College",
             options = universities,
-            selectedOption = selectedDepartment,
-            onOptionSelected = onDepartmentChanged,
+            selectedOption = selectedUniversity,
+            onOptionSelected = onUniversityChanged,
             modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(8.dp))
         DropdownMenuBox(
             label = "Graduating Year",
             options = graduatingYears,
-            selectedOption = selectedSemester,
-            onOptionSelected = onSemesterChanged,
+            selectedOption = selectedYear,
+            onOptionSelected = onYearChanged,
             modifier = Modifier.weight(0.5f)
         )
     }
@@ -177,5 +192,9 @@ fun EditProfilePreview() {
         linkedin = "johndoe_linkedin",
         onDepartmentChanged = {},
         onSemesterChanged = {},
+        onUniversityChanged = {},
+        onYearChanged = {},
+        selectedUniversity = "Jamia",
+        selectedYear = "2026"
     )
 }

@@ -10,5 +10,6 @@ enum class InsteaScreens(
     Notification("Notification"),
     Attendance("Attendance"),
     Login("Login"),
-    Signup("Signup")
+    Signup("Signup"),
+    Forget("Forget")
 }

@@ -24,6 +24,7 @@ import `in`.instea.instea.data.ProfileViewModel
 import `in`.instea.instea.model.InsteaScreens
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
+import `in`.instea.instea.screens.ForgetPass
 import `in`.instea.instea.screens.Login
 
 
@@ -93,7 +94,8 @@ fun InsteaApp(
                 )
             }
             composable(route = InsteaScreens.Login.name) {
-                Login(viewModel = AuthViewModel())
+                Login(viewModel = AuthViewModel(),
+                    navController)
             }
             composable(route = InsteaScreens.Feed.name) {
                 FEED(navController = navController, feedViewModel = FeedViewModel())
@@ -106,6 +108,9 @@ fun InsteaApp(
             }
             composable(route = InsteaScreens.Attendance.name) {
                 AttendanceScreen(navController = navController)
+            }
+            composable(route=InsteaScreens.Forget.name){
+                ForgetPass()
             }
             composable(route = InsteaScreens.Profile.name) {
                 Profile(
@@ -131,6 +136,10 @@ fun InsteaApp(
                     selectedDepartment = uiState.selectedDepartment,
                     selectedSemester = uiState.selectedSemester,
                     selectedHostel = uiState.selectedHostel,
+                    selectedUniversity = uiState.selectedUniversity,
+                    selectedYear = uiState.selectedYear,
+                    onYearChanged = {},
+                    onUniversityChanged = {},
                     instagram = uiState.instagram,
                     linkedin = uiState.linkedin
                 )
