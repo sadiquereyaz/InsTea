@@ -93,9 +93,9 @@ fun Login(viewModel: AuthViewModel) {
             viewModel.login(email.value,password.toString())
         })
         DividerTextComp()
-        ScreenChangeText(tryingLogin = false, modifier = Modifier
-        )
+
     }
 }
+
 
 

@@ -1,6 +1,7 @@
 package `in`.instea.instea.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,10 +12,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Email
@@ -60,6 +63,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -68,6 +72,7 @@ import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.data.FeedViewModel
 
 import `in`.instea.instea.model.InsteaScreens
+import `in`.instea.instea.ui.theme.DarkColors
 
 import java.util.regex.Pattern
 
@@ -278,12 +283,14 @@ fun CheckboxComp() {
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val isDarkMode = isSystemInDarkTheme()
+        val textColor = if (isDarkMode) Color.White else Color.Black
         val checkedState = remember {
             mutableStateOf(false)
         }
         Checkbox(checked = checkedState.value,
             onCheckedChange = {
-                checkedState.value != checkedState.value
+                checkedState.value = it
             })
         val initialText = "By continuing you accept our"
         val policytext = "Privacy Policy"
@@ -291,7 +298,7 @@ fun CheckboxComp() {
 
         val annotatedString = buildAnnotatedString {
             append(initialText)
-            withStyle(style = SpanStyle(color = Color.Blue)) {
+            withStyle(style = SpanStyle(color = DarkColors.primary)) {
                 pushStringAnnotation(
                     tag = policytext,
                     annotation = policytext
@@ -299,7 +306,7 @@ fun CheckboxComp() {
                 append(policytext)
             }
             append(" and ")
-            withStyle(style = SpanStyle(color = Color.Blue)) {
+            withStyle(style = SpanStyle(color = DarkColors.primary)) {
                 pushStringAnnotation(
                     tag = TandC,
                     annotation = TandC
@@ -307,7 +314,11 @@ fun CheckboxComp() {
                 append(TandC)
             }
         }
-        ClickableText(text = annotatedString, onClick = { offset ->
+        ClickableText(text = annotatedString,
+            style = TextStyle(
+                color = textColor
+            ),
+            onClick = { offset ->
             annotatedString.getStringAnnotations(offset, offset)
                 .firstOrNull()?.also {
                     // to open TandC page or policy Page
@@ -318,6 +329,9 @@ fun CheckboxComp() {
 
 @Composable
 fun DividerTextComp(modifier: Modifier = Modifier) {
+    val isDarkMode = isSystemInDarkTheme()
+    val textColor = if (isDarkMode) Color.White else Color.Black
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -333,6 +347,7 @@ fun DividerTextComp(modifier: Modifier = Modifier) {
             modifier = Modifier.padding(8.dp),
             text = "or",
             fontSize = 18.sp,
+            color = textColor
         )
         Divider(
             modifier = Modifier
@@ -346,15 +361,16 @@ fun DividerTextComp(modifier: Modifier = Modifier) {
 
 @Composable
 fun ScreenChangeText(
-    tryingLogin: Boolean = true,
     modifier: Modifier = Modifier
         .fillMaxWidth(),
 ) {
-    val initialtxt = if (tryingLogin) "Already have an account ? " else "Don't have an account yet?"
-    val logintxt = if (tryingLogin) "Login" else " Register"
+    val isDarkMode = isSystemInDarkTheme()
+    val textColor = if (isDarkMode) Color.White else Color.Black
+    val initialtxt = "Already have an account ? "
+    val logintxt = "Login"
     val annotatedString = buildAnnotatedString {
         append(initialtxt)
-        withStyle(style = SpanStyle(color = Color.Blue)) {
+        withStyle(style = SpanStyle(color = DarkColors.primary)) {
             pushStringAnnotation(
                 tag = logintxt,
                 annotation = logintxt
@@ -363,12 +379,15 @@ fun ScreenChangeText(
         }
     }
     ClickableText(text = annotatedString,
+        style = TextStyle(
+            color = textColor
+        ),
         modifier = Modifier.padding(16.dp),
         onClick = { offset ->
             annotatedString.getStringAnnotations(offset, offset)
                 .firstOrNull()?.also { span ->
                     if (span.item == logintxt) {
-                        //Code to shift from signup to login
+
 
 
                     }
@@ -378,7 +397,9 @@ fun ScreenChangeText(
 }
 
 @Composable
-fun ButtonComp(value: String, onButtonClicked: () -> Unit, isEnabled: Boolean = false) {
+fun ButtonComp(value: String, onButtonClicked: () -> Unit, isEnabled: Boolean = true) {
+    val isDarkMode = isSystemInDarkTheme()
+    val textColor = if (isDarkMode) Color.White else Color.Black
     Button(
         onClick = {
             onButtonClicked()
@@ -402,14 +423,15 @@ fun ButtonComp(value: String, onButtonClicked: () -> Unit, isEnabled: Boolean = 
                     shape = RoundedCornerShape(50.dp)
                 )
                 .background(
-                    brush = Brush.horizontalGradient(listOf(Color.Gray, Color.DarkGray)),
+                    color = Color.DarkGray,
                     shape = RoundedCornerShape(50.dp)
                 )
         ) {
             Text(
                 text = value,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = textColor
             )
         }
     }
@@ -434,13 +456,14 @@ fun Signup(viewModel: AuthViewModel, feedViewmodel: FeedViewModel, navController
 
 
     }
+    val scrollState = rememberScrollState(0)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 20.dp, start = 28.dp, end = 28.dp, bottom = 10.dp)
-            .background(color = Color.White)
+            .verticalScroll(scrollState)
     ) {
 
         val optionsUniversity = listOf("Jamia Millia Islamia ", "JNU", "AMU")
@@ -547,15 +570,11 @@ fun Signup(viewModel: AuthViewModel, feedViewmodel: FeedViewModel, navController
             isEnabled = true
         )
         DividerTextComp()
-        ScreenChangeText(tryingLogin = true, modifier = Modifier)
+        ScreenChangeText( modifier = Modifier)
 
 
     }
 }
 
 
-//@Preview(showBackground = true)
-//@Composable
-//fun SignupPreview(modifier: Modifier = Modifier) {
-//    Signup(Modifier)
-//}
+//
