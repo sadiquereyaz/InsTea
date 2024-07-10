@@ -35,34 +35,47 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-    fun SignUpWithEmailAndPassword(email: String, password: String,onResul:(Boolean)->Unit) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    _AuthState.value = AuthState.authenticated
+    fun SignUpWithEmailAndPassword(email: String, password: String, onResul: (Boolean) -> Unit) {
+        try {
 
-                    Log.d("signup", "SignUpWithEmailAndPassword: user Creaeted")
-                    onResul(true)
+            mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        _AuthState.value = AuthState.authenticated
 
-                } else {
-                    _AuthState.value = AuthState.unauthenticated
-                    Log.e("error", "SignUpWithEmailAndPassword: failed")
-                    onResul(false)
+                        Log.d("signup", "SignUpWithEmailAndPassword: user Creaeted")
+                        onResul(true)
+
+                    } else {
+                        _AuthState.value = AuthState.unauthenticated
+                        Log.e("error", "SignUpWithEmailAndPassword: failed")
+                        onResul(false)
+                    }
                 }
-            }
+        } catch (e: Exception) {
+            _AuthState.value = AuthState.unauthenticated
+            Log.e("error", "SignUpWithEmailAndPassword: exception occurred", e)
+            onResul(false)
+        }
     }
 
     fun login(email: String, password: String) {
-        mAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("login", "login: user logged in")
+        try {
+            mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Log.d("login", "login: user logged in")
 
-                } else {
-                    Log.e("error", "login: failed")
+                    } else {
+                        Log.e("error", "login: failed")
+                    }
+
                 }
+        }
+        catch (e:Exception){
 
-            }
+        }
+
     }
 
     fun signOut() {
@@ -70,37 +83,37 @@ class AuthViewModel : ViewModel() {
         _AuthState.value = AuthState.unauthenticated
     }
 
-    fun writeNewUser(
-        email: String,
-        username: String,
-        university: String,
-        department: String,
-        semester: String,
-    ) {
-        // Basic data validation (you can add more checks as needed)
-        if (email.isBlank() || username.isBlank()) {
-            // Handle invalid input, e.g., show an error message
-            return
-        }
-
-        val user = User(email, username, university, department, semester)
-        val currentUser = mAuth.currentUser ?: return // Handle case where user is not logged in
-
-        // Use try-catch for error handling
-        try {
-            db.child("user").child(currentUser.uid).push().setValue(user)
-            // Data written successfully
-            Log.d("writtenUser", "writeNewUser: User Written")
-        } catch (e: Exception) {
-            // Handle database write error, e.g., logthe error or show an error message
-            println("Error writing user data: ${e.message}")
-        }
-    }
+//    fun writeNewUser(
+//        email: String,
+//        username: String,
+//        university: String,
+//        department: String,
+//        semester: String,
+//    ) {
+//        // Basic data validation (you can add more checks as needed)
+//        if (email.isBlank() || username.isBlank()) {
+//            // Handle invalid input, e.g., show an error message
+//            return
+//        }
+//
+//        val user = User(email, username, university, department, semester)
+//        val currentUser = mAuth.currentUser ?: return // Handle case where user is not logged in
+//
+//        // Use try-catch for error handling
+//        try {
+//            db.child("user").child(currentUser.uid).push().setValue(user)
+//            // Data written successfully
+//            Log.d("writtenUser", "writeNewUser: User Written")
+//        } catch (e: Exception) {
+//            // Handle database write error, e.g., logthe error or show an error message
+//            println("Error writing user data: ${e.message}")
+//        }
+//    }
 
 }
 
 sealed class AuthState {
     object authenticated : AuthState()
     object unauthenticated : AuthState()
-    object loading :AuthState()
+    object loading : AuthState()
 }

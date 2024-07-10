@@ -363,6 +363,8 @@ fun DividerTextComp(modifier: Modifier = Modifier) {
 fun ScreenChangeText(
     modifier: Modifier = Modifier
         .fillMaxWidth(),
+    viewModel: AuthViewModel,
+    navController: NavController
 ) {
     val isDarkMode = isSystemInDarkTheme()
     val textColor = if (isDarkMode) Color.White else Color.Black
@@ -387,7 +389,7 @@ fun ScreenChangeText(
             annotatedString.getStringAnnotations(offset, offset)
                 .firstOrNull()?.also { span ->
                     if (span.item == logintxt) {
-
+                        navController.navigate("Login")
 
 
                     }
@@ -570,11 +572,11 @@ fun Signup(viewModel: AuthViewModel, feedViewmodel: FeedViewModel, navController
             isEnabled = true
         )
         DividerTextComp()
-        ScreenChangeText( modifier = Modifier)
+        ScreenChangeText( modifier = Modifier,viewModel = AuthViewModel(),navController=navController)
 
 
     }
 }
 
 
-//
+

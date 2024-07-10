@@ -46,7 +46,7 @@ fun UnderlinedTextComp(value:String,modifier: Modifier = Modifier) {
             fontSize = 18.sp,
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal
-        ), color = Color.DarkGray,
+        ),
         textAlign = TextAlign.Center,
         textDecoration = TextDecoration.Underline
     )
@@ -92,7 +92,7 @@ fun Login(viewModel: AuthViewModel) {
         ButtonComp(value = "Login", onButtonClicked = {
             viewModel.login(email.value,password.toString())
         })
-        DividerTextComp()
+
 
     }
 }
