@@ -1,5 +1,7 @@
 package `in`.instea.instea.ui.theme
 
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF336940)
@@ -73,3 +75,27 @@ val surfaceContainerLowDark = Color(0xFF181D18)
 val surfaceContainerDark = Color(0xFF1C211C)
 val surfaceContainerHighDark = Color(0xFF262B26)
 val surfaceContainerHighestDark = Color(0xFF313631)
+val LightColors = lightColorScheme(
+    primary = Color(0xFF6200EE),
+    onPrimary = Color.White,
+    secondary = Color(0xFF03DAC6),
+    onSecondary = Color.Black,
+    background = Color(0xFFFFFFFF),
+    onBackground = Color(0xFF000000),
+    surface = Color(0xFFFFFFFF),
+    onSurface = Color(0xFF000000),
+    error = Color(0xFFB00020),
+    onError = Color.White
+)
+val DarkColors = darkColorScheme(
+    primary = Color(0xFFBB86FC),
+    onPrimary = Color.Black,
+    secondary = Color(0xFF03DAC6),
+    onSecondary = Color.Black,
+    background = Color(0xFF121212),
+    onBackground = Color(0xFFFFFFFF),
+    surface = Color(0xFF121212),
+    onSurface = Color(0xFFFFFFFF),
+    error = Color(0xFFCF6679),
+    onError = Color.Black
+)

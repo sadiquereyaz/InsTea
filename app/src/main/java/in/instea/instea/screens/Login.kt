@@ -1,5 +1,7 @@
 package `in`.instea.instea.screens
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,12 +9,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,9 +28,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -47,12 +56,52 @@ fun UnderlinedTextComp(value:String,modifier: Modifier = Modifier) {
         textDecoration = TextDecoration.Underline
     )
 }
+@Composable
+fun NewTextField(
+    labelValue: String,
+    icon: ImageVector,
+    textState: MutableState<String>,
+    keyboardType: KeyboardType = KeyboardType.Text,
 
+    onValueChange: (String) -> Unit
+) {
+    Column(modifier = Modifier.padding(8.dp)) {
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            value = textState.value,
+            onValueChange = {
+                textState.value = it
+                onValueChange(it)
+            },
+            label = { Text(text = labelValue) },
+            leadingIcon = {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "Icon"
+                )
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType,
+                imeAction = ImeAction.Next,
+                autoCorrect = false
+            ),
+            singleLine = true,
+            shape = RoundedCornerShape(8.dp),
+
+            )
+    }
+}
 @Composable
 fun Login() {
+    val isDarkMode = isSystemInDarkTheme()
+    val backgroundColor = if (isDarkMode) Color.Black else Color.White
+    val textColor = if (isDarkMode) Color.White else Color.Black
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(color = backgroundColor)
             .padding(
                 horizontal = 28.dp,
                 vertical = 100.dp
@@ -67,12 +116,13 @@ fun Login() {
                 .height(50.dp)
         )
         val username = rememberSaveable { mutableStateOf<String>("") }
-        MyTextField(
+        NewTextField(
             labelValue = "Username",
             icon = Icons.Default.Person,
             textState = username,
             keyboardType = KeyboardType.Text,
-            onValueChange = {})
+            onValueChange ={}
+        )
         var password by remember { mutableStateOf(TextFieldValue("")) }
 
         PasswordTextField(

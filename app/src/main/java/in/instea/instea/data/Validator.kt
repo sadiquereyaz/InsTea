@@ -1,14 +1,19 @@
 package `in`.instea.instea.data
 
+data class ValidationResult (
+    val isValid:Boolean=false
+)
 object Validator {
     fun validateName(name:String):ValidationResult{
         return ValidationResult(
             (name.isNotEmpty())
         )
     }
-    fun validateEmail(email:String):ValidationResult{
+    fun validateEmail(email: String): ValidationResult {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$".toRegex()
+
         return ValidationResult(
-            (email.isNotEmpty())
+            email.isNotEmpty() && email.matches(emailRegex)
         )
     }
     fun validateUsername(username:String):ValidationResult{
@@ -33,6 +38,3 @@ object Validator {
     }
 }
 
-data class ValidationResult (
-    val status:Boolean=false
-)

@@ -22,8 +22,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.data.BottomNavItemData
+import `in`.instea.instea.model.InsteaScreens
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
