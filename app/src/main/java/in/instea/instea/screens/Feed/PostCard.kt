@@ -205,7 +205,7 @@ fun UpAndDownVoteButtons(post: PostData) {
         enabled = true
     ) {
         Image(
-            painter = painterResource(id = if (isUpVoted.value || userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
+            painter = painterResource(id = if ( userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
             contentDescription = "Upvote",
             modifier = Modifier.size(20.dp)
         )
@@ -248,7 +248,7 @@ fun UpAndDownVoteButtons(post: PostData) {
         enabled = true
     ) {
         Image(
-            painter = painterResource(id = if (isDownVoted.value || userDislikeCurrentPost) R.drawable.arrowdownfilled else R.drawable.arrowdownoutline),
+            painter = painterResource(id = if ( userDislikeCurrentPost) R.drawable.arrowdownfilled else R.drawable.arrowdownoutline),
             contentDescription = "Downvote",
             modifier = Modifier.size(20.dp)
         )
