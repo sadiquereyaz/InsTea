@@ -1,4 +1,5 @@
 import android.content.res.Resources.Theme
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -45,6 +46,8 @@ import `in`.instea.instea.data.PostData
 import `in`.instea.instea.data.downVotes
 import `in`.instea.instea.data.upVotes
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 import kotlin.math.abs
 
 //@Preview
@@ -63,8 +66,7 @@ fun PostCard(
     var isExpanded by remember {
         mutableStateOf(false)
     }
-
-
+ 
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
         modifier = Modifier.padding(8.dp)
@@ -87,6 +89,7 @@ fun PostCard(
                             .background(Color.Black),
                         contentDescription = "Profile"
                     )
+
                     Column(modifier = Modifier.padding(start = 8.dp)) {
                         Text(text = post.name!!, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         Text(
