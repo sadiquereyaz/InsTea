@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleGmsGoogleServices)
-    id("com.google.devtools.ksp")
+    id("com.google.devtools.ksp")   //room
 }
 
 android {
@@ -44,7 +44,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.11"
+        kotlinCompilerExtensionVersion = "1.5.1"
     }
     packaging {
         resources {
@@ -54,8 +54,6 @@ android {
 }
 
 dependencies {
-
-    implementation(libs.androidx.room.common)
     implementation (libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -77,11 +75,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)  // ViewModel KTX
     implementation(libs.androidx.lifecycle.viewmodel.compose)  // ViewModel Compose
 
-    implementation(libs.androidx.room.runtime)
-//    annotationProcessor(libs.androidx.room.compiler)
-    // optional - Kotlin Extensions and Coroutines support for Room
-    implementation(libs.androidx.room.ktx)
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
     // To use Kotlin Symbol Processing (KSP)
-    ksp(libs.androidx.room.compiler)
+    ksp("androidx.room:room-compiler:$room_version")
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$room_version")
 
 }

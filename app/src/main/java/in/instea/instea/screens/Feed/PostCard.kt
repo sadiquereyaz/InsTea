@@ -55,11 +55,11 @@ import `in`.instea.instea.R
 
 @Composable
 fun PostCard(
-    profilePic: Int?,
-    name: String?,
-    location: String?,
-    content: String?,
-    postImage: Int?,
+    profilePic: Int?=1,
+    name: String?=" ",
+    location: String?=" ",
+    content: String?="sd",
+    postImage: Int?=4,
 ) {
     var isExpanded by remember {
         mutableStateOf(false)

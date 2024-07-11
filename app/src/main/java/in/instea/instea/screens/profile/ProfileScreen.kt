@@ -141,11 +141,11 @@ fun ProfileScreen(
                     LazyColumn {
                         items(savedPosts) { post ->
                             PostCard(
-                                profilePic = post.profileImage,
-                                name = post.name,
-                                location = post.location,
-                                content = post.postDescription,
-                                postImage = post.postImage
+//                                profilePic = post.profileImage,
+//                                name = post.name,
+//                                location = post.location,
+//                                content = post.postDescription,
+//                                postImage = post.postImage
                             )
                         }
                     }
