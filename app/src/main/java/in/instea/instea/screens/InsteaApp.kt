@@ -34,11 +34,11 @@ import `in`.instea.instea.screens.schedule.ScheduleScreen
 @Composable
 fun InsteaApp(
     scheduleViewModel: ScheduleViewModel = viewModel(),
-    profileViewModel: ProfileViewModel = viewModel(),
+//    profileViewModel: ProfileViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-    val profileUiState by profileViewModel.uiState.collectAsState()
+//    val profileUiState by profileViewModel.uiState.collectAsState()
     val selectedItemIndex = rememberSaveable {
         mutableIntStateOf(0);
     }
@@ -79,9 +79,10 @@ fun InsteaApp(
             }
         }
     ) { contentPadding ->
+
         NavHost(
             navController = navController,
-            startDestination = InsteaScreens.Schedule.name,
+            startDestination = InsteaScreens.Feed.name,
             modifier = Modifier
                 .padding(contentPadding)
         ) {
@@ -102,30 +103,30 @@ fun InsteaApp(
             }
             composable(route = InsteaScreens.Profile.name) {
                 ProfileScreen(
-                    userName = profileUiState.userName,
-                    onEditIconClicked = {
-                        navController.navigate(InsteaScreens.EditProfile.name)
-                    },
-                    department = profileUiState.selectedDepartment,
-                    semester = profileUiState.selectedSemester,
-                    hostel = profileUiState.selectedHostel,
-                    instagram = profileUiState.instagram,
-                    linkedin = profileUiState.linkedin
+//                    userName = profileUiState.userName,
+//                    onEditIconClicked = {
+//                        navController.navigate(InsteaScreens.EditProfile.name)
+//                    },
+//                    department = profileUiState.selectedDepartment,
+//                    semester = profileUiState.selectedSemester,
+//                    hostel = profileUiState.selectedHostel,
+//                    instagram = profileUiState.instagram,
+//                    linkedin = profileUiState.linkedin
                 )
             }
             composable(route = InsteaScreens.EditProfile.name) {
                 EditProfileScreen(
-                    userName = profileUiState.userName,
-                    onUserNameChanged = { profileViewModel.onUserNameChanged(it) },
-                    onDepartmentChanged = { profileViewModel.onDepartmentChange(it) },
-                    onSemesterChanged = { profileViewModel.onSemesterChange(it) },
-                    onSaveButtonClicked = {},
-                    onCancelButtonClicked = {},
-                    selectedDepartment = profileUiState.selectedDepartment,
-                    selectedSemester = profileUiState.selectedSemester,
-                    selectedHostel = profileUiState.selectedHostel,
-                    instagram = profileUiState.instagram,
-                    linkedin = profileUiState.linkedin
+//                    userName = profileUiState.userName,
+//                    onUserNameChanged = { profileViewModel.onUserNameChanged(it) },
+//                    onDepartmentChanged = { profileViewModel.onDepartmentChange(it) },
+//                    onSemesterChanged = { profileViewModel.onSemesterChange(it) },
+//                    onSaveButtonClicked = {},
+//                    onCancelButtonClicked = {},
+//                    selectedDepartment = profileUiState.selectedDepartment,
+//                    selectedSemester = profileUiState.selectedSemester,
+//                    selectedHostel = profileUiState.selectedHostel,
+//                    instagram = profileUiState.instagram,
+//                    linkedin = profileUiState.linkedin
                 )
             }
         }

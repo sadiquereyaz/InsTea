@@ -30,17 +30,14 @@ fun EditProfileScreen(
     modifier: Modifier = Modifier
         .fillMaxSize()
         .padding(16.dp),
-    userName: String,
-    onUserNameChanged: (String) -> Unit,
-    onDepartmentChanged: (String) -> Unit,
-    onSemesterChanged: (String) -> Unit,
-    onSaveButtonClicked: () -> Unit,
-    onCancelButtonClicked: () -> Unit,
-    selectedDepartment: String,
-    selectedSemester: String,
-    selectedHostel: String,
-    instagram: String,
-    linkedin: String,
+    userName: String="sad",
+    onUserNameChanged: (String) -> Unit = {},
+    onDepartmentChanged: (String) -> Unit = {},
+    onSemesterChanged: (String) -> Unit={},
+    onSaveButtonClicked: () -> Unit={},
+    onCancelButtonClicked: () -> Unit={},
+    selectedDepartment: String = "v",
+    selectedSemester: String="v",
 ) {
     Column(modifier = modifier) {
         EditText(
@@ -172,9 +169,6 @@ fun EditProfilePreview() {
         onCancelButtonClicked = {},
         selectedDepartment = "Computer Science",
         selectedSemester = "5",
-        selectedHostel = "A Block",
-        instagram = "johndoe_insta",
-        linkedin = "johndoe_linkedin",
         onDepartmentChanged = {},
         onSemesterChanged = {},
     )

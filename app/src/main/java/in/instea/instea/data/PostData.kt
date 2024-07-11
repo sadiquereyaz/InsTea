@@ -1,11 +1,16 @@
 package `in`.instea.instea.data
 
-import android.location.Location
+import androidx.room.Entity
+import androidx.room.Ignore
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "posts")
 data class PostData(
+    @PrimaryKey
+    val postId: Int,        //timestamp
     val name: String?,
     val location: String?,
     val profileImage: Int?,
     val postDescription: String?,
-    val postImage: Int?,
+    @Ignore val postImage: Int?,
 )

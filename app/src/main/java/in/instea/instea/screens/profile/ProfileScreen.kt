@@ -1,5 +1,6 @@
 package `in`.instea.instea.screens.profile
 
+import PostCard
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -23,6 +26,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,18 +39,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import `in`.instea.instea.model.profile.ProfileViewModel
+import `in`.instea.instea.ui.AppViewModelProvider
 
 @Composable
 fun ProfileScreen(
-    userName: String,
-    onEditIconClicked: () -> Unit,
+//    userName: String,
+//    onEditIconClicked: () -> Unit,
     modifier: Modifier = Modifier,
-    department: String,
-    semester: String,
-    hostel: String,
-    instagram: String,
-    linkedin: String
+//    department: String,
+//    semester: String,
+//    hostel: String,
+//    instagram: String,
+//    linkedin: String,
+    viewModel: ProfileViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val profileUiState by viewModel.profileUiState.collectAsState()
     Column(
         modifier = modifier
             .fillMaxWidth(),
@@ -58,7 +67,7 @@ fun ProfileScreen(
         ) {
             Text(
                 modifier = Modifier.padding(end = 8.dp),
-                text = userName,
+                text = "userName",
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
@@ -94,16 +103,17 @@ fun ProfileScreen(
         ) {
             UserDetails(
                 icon = Icons.Outlined.Home,
-                title = hostel,
-                subtitle = "Room no. 209")
+                title = "hostel",
+                subtitle = "Room no. 209"
+            )
             UserDetails(
                 icon = Icons.Outlined.AccountBox,
-                title = instagram,
+                title = "instagram",
                 subtitle = "Instagram"
             )
             UserDetails(
                 icon = Icons.Outlined.AccountCircle,
-                title = linkedin,
+                title = "linkedin",
                 subtitle = "LinkedIn"
             )
         }
@@ -120,11 +130,26 @@ fun ProfileScreen(
         }
         when (selectedTabIndex) {
             0 -> {
-                Text(
-                    text = "All Posts",
-                    fontSize = 32.sp,
-                    modifier = Modifier.padding(top = 120.dp)
-                )
+                val savedPosts = profileUiState.savedPosts
+                if (savedPosts.isEmpty()) {
+                    Text(
+                        text = "No Saved Post",
+                        fontSize = 32.sp,
+                        modifier = Modifier.padding(top = 120.dp)
+                    )
+                }else {
+                    LazyColumn {
+                        items(savedPosts) { post ->
+                            PostCard(
+                                profilePic = post.profileImage,
+                                name = post.name,
+                                location = post.location,
+                                content = post.postDescription,
+                                postImage = post.postImage
+                            )
+                        }
+                    }
+                }
             }
 
             1 -> {

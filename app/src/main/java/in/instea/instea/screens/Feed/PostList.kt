@@ -5,17 +5,17 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun PostList() {
-    var list =  GetPostData()
+//    var list =  GetPostData()
     LazyColumn {
-      items(list){index->
-          PostCard(
-              profilePic = index.profileImage,
-              name = index.name,
-              location = index.location,
-              content = index.postDescription,
-              postImage = index.postImage)
-
-      }
+//      items(list){index->
+//          PostCard(
+//              profilePic = index.profileImage,
+//              name = index.name,
+//              location = index.location,
+//              content = index.postDescription,
+//              postImage = index.postImage)
+//
+//      }
     }
 
 }
