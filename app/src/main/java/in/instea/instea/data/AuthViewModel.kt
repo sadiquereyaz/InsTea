@@ -70,32 +70,32 @@ class AuthViewModel : ViewModel() {
         _AuthState.value = AuthState.unauthenticated
     }
 
-    fun writeNewUser(
-        email: String,
-        username: String,
-        university: String,
-        department: String,
-        semester: String,
-    ) {
-        // Basic data validation (you can add more checks as needed)
-        if (email.isBlank() || username.isBlank()) {
-            // Handle invalid input, e.g., show an error message
-            return
-        }
-
-        val user = User(email, username, university, department, semester)
-        val currentUser = mAuth.currentUser ?: return // Handle case where user is not logged in
-
-        // Use try-catch for error handling
-        try {
-            db.child("user").child(currentUser.uid).push().setValue(user)
-            // Data written successfully
-            Log.d("writtenUser", "writeNewUser: User Written")
-        } catch (e: Exception) {
-            // Handle database write error, e.g., logthe error or show an error message
-            println("Error writing user data: ${e.message}")
-        }
-    }
+//    fun writeNewUser(
+//        email: String,
+//        username: String,
+//        university: String,
+//        department: String,
+//        semester: String,
+//    ) {
+//        // Basic data validation (you can add more checks as needed)
+//        if (email.isBlank() || username.isBlank()) {
+//            // Handle invalid input, e.g., show an error message
+//            return
+//        }
+//
+//        val user = User(email, username, university, department, semester)
+//        val currentUser = mAuth.currentUser ?: return // Handle case where user is not logged in
+//
+//        // Use try-catch for error handling
+//        try {
+//            db.child("user").child(currentUser.uid).push().setValue(user)
+//            // Data written successfully
+//            Log.d("writtenUser", "writeNewUser: User Written")
+//        } catch (e: Exception) {
+//            // Handle database write error, e.g., logthe error or show an error message
+//            println("Error writing user data: ${e.message}")
+//        }
+//    }
 
 }
 
