@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleGmsGoogleServices)
+    id("com.google.devtools.ksp")   //room
 }
 
 android {
@@ -72,6 +73,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)  // ViewModel KTX
-    implementation(libs.androidx.lifecycle.viewmodel.compose.v261)  // ViewModel Compose
+    implementation(libs.androidx.lifecycle.viewmodel.compose)  // ViewModel Compose
+
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    // To use Kotlin Symbol Processing (KSP)
+    ksp("androidx.room:room-compiler:$room_version")
 
 }
