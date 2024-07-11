@@ -40,19 +40,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.rememberNavController
+import `in`.instea.instea.data.PostData
 import `in`.instea.instea.model.profile.ProfileViewModel
 import `in`.instea.instea.ui.AppViewModelProvider
 
 @Composable
 fun ProfileScreen(
-//    userName: String,
-//    onEditIconClicked: () -> Unit,
     modifier: Modifier = Modifier,
-//    department: String,
-//    semester: String,
-//    hostel: String,
-//    instagram: String,
-//    linkedin: String,
     viewModel: ProfileViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val profileUiState by viewModel.profileUiState.collectAsState()
@@ -61,13 +56,15 @@ fun ProfileScreen(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        //user detail
+        val userData = profileUiState.userData
         Row(
             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 modifier = Modifier.padding(end = 8.dp),
-                text = "userName",
+                text = userData?.username ?: "Default User",
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold
@@ -130,7 +127,7 @@ fun ProfileScreen(
         }
         when (selectedTabIndex) {
             0 -> {
-                val savedPosts = profileUiState.savedPosts
+                val savedPosts = profileUiState.savedPosts ?: emptyList()
                 if (savedPosts.isEmpty()) {
                     Text(
                         text = "No Saved Post",
@@ -142,9 +139,9 @@ fun ProfileScreen(
                         items(savedPosts) { post ->
                             PostCard(
 //                                profilePic = post.profileImage,
-//                                name = post.name,
-//                                location = post.location,
-//                                content = post.postDescription
+                                name = post.name,
+                                location = post.location,
+                                content = post.postDescription
                             )
                         }
                     }
@@ -232,5 +229,5 @@ private fun IconBox(
 @Preview(showSystemUi = true)
 @Composable
 fun ProfilePreview() {
-//    Profile(navController = rememberNavController())
+    ProfileScreen()
 }

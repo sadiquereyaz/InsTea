@@ -44,15 +44,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.R
 
-//@Preview
-//@Composable
-//private fun p() {
-//    PostCard(
-//        profilePic = R.drawable.ic_launcher_foreground,
-//        name = "Hammad", location = "Delhi", content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-//    )
-//}
-
 @Composable
 fun PostCard(
     profilePic: Int?=4,
@@ -63,7 +54,6 @@ fun PostCard(
     var isExpanded by remember {
         mutableStateOf(false)
     }
-
 
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),

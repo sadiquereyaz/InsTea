@@ -44,4 +44,5 @@ interface PostDao {
 
     @Query("SELECT * FROM user WHERE userId = :userId")
     fun getUserById(userId: Int): Flow<UserModel>
+    //insert into user values (12345, 'sadiquereyaz', 'If you omit the WHERE clause, all rows in the table will be updated with the new value in the SET clause. This should be used with caution to avoid unintended data modifications.');
 }

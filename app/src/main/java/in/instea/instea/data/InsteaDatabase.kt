@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import `in`.instea.instea.model.UserModel
 
-@Database(entities = [PostData::class, UserModel::class], version = 1, exportSchema = false)
+@Database(entities = [PostData::class, UserModel::class], version = 4, exportSchema = false)
 abstract class InsteaDatabase : RoomDatabase() {
 
     abstract fun postDao(): PostDao

@@ -20,6 +20,6 @@ import kotlinx.coroutines.flow.flow
 //    object Loading : ProfileUiState
 //}
 data class ProfileUiState(
-    var savedPosts: List<PostData> = listOf(),
-    var userData: UserModel = UserModel(),
+    var savedPosts: List<PostData>? = listOf(), //savedPost can be null
+    var userData: UserModel? = UserModel()      //userDate can be null
 )

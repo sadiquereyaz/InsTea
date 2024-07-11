@@ -28,6 +28,6 @@ class LocalUserRepository(private val postDao: PostDao) : UserRepository {
 class NetworkUserRepository(private val firebaseDatabase: FirebaseDatabase) : UserRepository {
     override fun getUserById(userId: Int): Flow<UserModel> {
         // Implement your logic to fetch user by ID from Firebase
-        return flowOf(UserModel(userId, "Firebase User"))
+        return flowOf(UserModel(userId, "Firebase User", "network repository"))
     }
 }
