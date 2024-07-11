@@ -8,9 +8,9 @@ import androidx.room.PrimaryKey
 data class PostData(
     @PrimaryKey(autoGenerate  = true)
     val postId: Int=1,        //timestamp
-    val name: String,
-    val location: String,
-    val profileImage: Int,
-    val postDescription: String
+    val name: String="no name",
+    val location: String="no location",
+    val profileImage: Int=1,
+    val postDescription: String="no description"
 )
 

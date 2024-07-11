@@ -144,8 +144,7 @@ fun ProfileScreen(
 //                                profilePic = post.profileImage,
 //                                name = post.name,
 //                                location = post.location,
-//                                content = post.postDescription,
-//                                postImage = post.postImage
+//                                content = post.postDescription
                             )
                         }
                     }

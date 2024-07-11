@@ -55,11 +55,10 @@ import `in`.instea.instea.R
 
 @Composable
 fun PostCard(
-    profilePic: Int?=1,
-    name: String?=" ",
-    location: String?=" ",
+    profilePic: Int?=4,
+    name: String?=" no naame ",
+    location: String?=" jmi",
     content: String?="sd",
-    postImage: Int?=4,
 ) {
     var isExpanded by remember {
         mutableStateOf(false)
@@ -81,7 +80,7 @@ fun PostCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = if (profilePic != null) profilePic else R.drawable.ic_launcher_foreground),
+                        painter = painterResource(id =  R.drawable.ic_launcher_foreground),
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
@@ -115,13 +114,7 @@ fun PostCard(
                         )
                     }
                 }
-                if (postImage != null) {
-                    Image(
-                        painter = painterResource(id = postImage),
-                        contentDescription = "Post Image"
 
-                    )
-                }
                 Box(contentAlignment = Alignment.BottomStart) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
