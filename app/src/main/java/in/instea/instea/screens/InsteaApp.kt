@@ -82,7 +82,7 @@ fun InsteaApp(
 
         NavHost(
             navController = navController,
-            startDestination = InsteaScreens.Feed.name,
+            startDestination = InsteaScreens.SelfProfile.name,
             modifier = Modifier
                 .padding(contentPadding)
         ) {
