@@ -52,13 +52,13 @@ import `in`.instea.instea.R
 import `in`.instea.instea.data.PostData
 import `in`.instea.instea.model.UserModel
 import `in`.instea.instea.model.profile.ProfileUiState
-import `in`.instea.instea.model.profile.ProfileViewModel
+import `in`.instea.instea.model.profile.SelfProfileViewModel
 import `in`.instea.instea.ui.AppViewModelProvider
 
 @Composable
 fun SelfProfileScreen(
     modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    viewModel: SelfProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val profileUiState by viewModel.profileUiState.collectAsState()
     Box(

@@ -5,19 +5,13 @@ import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.PostRepository
 import `in`.instea.instea.data.UserRepository
 import `in`.instea.instea.model.UserModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 
 
-class ProfileViewModel(
+class SelfProfileViewModel(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository,
 ) : ViewModel() {
@@ -47,8 +41,4 @@ companion object{
             started = SharingStarted.WhileSubscribed(),
             initialValue = ProfileUiState()
         )
-
-    fun onSubUserNameClick(selfUser: Boolean){
-
-    }
 }
