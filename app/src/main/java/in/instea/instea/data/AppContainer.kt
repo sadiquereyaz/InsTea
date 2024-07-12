@@ -19,7 +19,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
         CombinedPostRepository(localPostRepository, networkPostRepository)
     }
     override val userRepository: UserRepository by lazy {
-        val localUserRepository = LocalUserRepository(InsteaDatabase.getDatabase(context).postDao())
+        val localUserRepository = LocalUserRepository(InsteaDatabase.getDatabase(context).userDao())
         val networkUserRepository = NetworkUserRepository(FirebaseDatabase.getInstance())
         CombinedUserRepository(
             localUserRepository = localUserRepository,

@@ -10,6 +10,7 @@ import `in`.instea.instea.model.UserModel
 abstract class InsteaDatabase : RoomDatabase() {
 
     abstract fun postDao(): PostDao
+    abstract fun userDao(): UserDao
 
     companion object {
         @Volatile

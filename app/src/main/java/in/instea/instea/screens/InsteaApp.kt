@@ -4,7 +4,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -20,13 +19,13 @@ import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.BottomNavigationBar
 import `in`.instea.instea.composable.InsteaTopAppBar
 import `in`.instea.instea.data.BottomNavItemData
-import `in`.instea.instea.model.profile.ProfileViewModel
 import `in`.instea.instea.model.InsteaScreens
 import `in`.instea.instea.model.schedule.ScheduleViewModel
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.profile.EditProfileScreen
-import `in`.instea.instea.screens.Notificaiton
-import `in`.instea.instea.screens.profile.ProfileScreen
+import `in`.instea.instea.screens.InboxScreen
+import `in`.instea.instea.screens.profile.OtherProfileScreen
+import `in`.instea.instea.screens.profile.SelfProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleScreen
 import `in`.instea.instea.screens.schedule.ScheduleScreen
 
@@ -55,8 +54,8 @@ fun InsteaApp(
     val bottomBarItems = listOf(
         InsteaScreens.Feed,
         InsteaScreens.Schedule,
-        InsteaScreens.Notification,
-        InsteaScreens.Schedule
+        InsteaScreens.Inbox, //inbox
+        InsteaScreens.SelfProfile
     )
 
     Scaffold(
@@ -69,7 +68,8 @@ fun InsteaApp(
                     currentScreen
                 ),
                 navigateBack = { navController.navigateUp() },
-                moveToProfile = { navController.navigate(InsteaScreens.Profile.name) },
+                moveToSelfProfile = { navController.navigate(InsteaScreens.SelfProfile.name) },
+                moveToOtherProfile = { navController.navigate(InsteaScreens.OtherProfile.name) },
                 navController = navController
             )
         },
@@ -82,15 +82,15 @@ fun InsteaApp(
 
         NavHost(
             navController = navController,
-            startDestination = InsteaScreens.Profile.name,
+            startDestination = InsteaScreens.Feed.name,
             modifier = Modifier
                 .padding(contentPadding)
         ) {
             composable(route = InsteaScreens.Feed.name) {
                FEED(navController = navController)
             }
-            composable(route = InsteaScreens.Notification.name) {
-                Notificaiton(navController = navController)
+            composable(route = InsteaScreens.Inbox.name) {
+                InboxScreen(navController = navController)
             }
             composable(route = InsteaScreens.Schedule.name) {
                 ScheduleScreen(navController = navController, scheduleViewModel = scheduleViewModel)
@@ -101,33 +101,14 @@ fun InsteaApp(
             composable(route = InsteaScreens.Attendance.name) {
                 AttendanceScreen(navController = navController)
             }
-            composable(route = InsteaScreens.Profile.name) {
-                ProfileScreen(
-//                    userName = profileUiState.userName,
-//                    onEditIconClicked = {
-//                        navController.navigate(InsteaScreens.EditProfile.name)
-//                    },
-//                    department = profileUiState.selectedDepartment,
-//                    semester = profileUiState.selectedSemester,
-//                    hostel = profileUiState.selectedHostel,
-//                    instagram = profileUiState.instagram,
-//                    linkedin = profileUiState.linkedin
-                )
+            composable(route = InsteaScreens.SelfProfile.name) {
+                SelfProfileScreen()
+            }
+            composable(route = InsteaScreens.OtherProfile.name) {
+               OtherProfileScreen()
             }
             composable(route = InsteaScreens.EditProfile.name) {
-                EditProfileScreen(
-//                    userName = profileUiState.userName,
-//                    onUserNameChanged = { profileViewModel.onUserNameChanged(it) },
-//                    onDepartmentChanged = { profileViewModel.onDepartmentChange(it) },
-//                    onSemesterChanged = { profileViewModel.onSemesterChange(it) },
-//                    onSaveButtonClicked = {},
-//                    onCancelButtonClicked = {},
-//                    selectedDepartment = profileUiState.selectedDepartment,
-//                    selectedSemester = profileUiState.selectedSemester,
-//                    selectedHostel = profileUiState.selectedHostel,
-//                    instagram = profileUiState.instagram,
-//                    linkedin = profileUiState.linkedin
-                )
+                EditProfileScreen()
             }
         }
     }

@@ -23,40 +23,10 @@ class ProfileViewModel(
 ) : ViewModel() {
 
     private val userId: Int = 12345
-//    private val _uiState = MutableStateFlow(ProfileUiState())
-//    val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
-    /** The mutable State that stores the status of the most recent request */
-//    var profileUiState: ProfileUiState by mutableStateOf(ProfileUiState.Loading)
-//        private set
-
-
-//    init {
-//        getSavedPosts()
-//    }
-
-//    private fun getSavedPosts() {
-//        viewModelScope.launch {
-//            profileUiState = ProfileUiState.Loading
-//            try {
-//                profileUiState = ProfileUiState.Success(postRepository.getAllSavedPostsStream())
-//            } catch (e: IOException) {
-//                profileUiState = ProfileUiState.Error
-//            }
-//        }
-//    }
 companion object{
     private const val TIMEOUT_MILLIS = 5_000L
 }
-
-//    val profileUiState: StateFlow<ProfileUiState> =
-//        postRepository.getAllSavedPostsStream().map { ProfileUiState(savedPosts = it) }
-//            .stateIn(
-//                scope = viewModelScope,
-//                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-//                initialValue = ProfileUiState()
-//            )
-
     val profileUiState: StateFlow<ProfileUiState> = combine(
         userRepository.getUserById(userId).stateIn(
             scope = viewModelScope,
@@ -77,20 +47,8 @@ companion object{
             started = SharingStarted.WhileSubscribed(),
             initialValue = ProfileUiState()
         )
-    // ... other functions (onUserNameChanged, etc.) can remain here
 
-//    fun onUserNameChanged(newName: String) {
-////        Log.d("user change", "new name is $newName")
-//        _uiState.update { currentState ->
-//            currentState.copy(userName = newName)
-//        }
-//    }
-//
-//    fun onDepartmentChange(newDepartment: String) {
-//        _uiState.value = _uiState.value.copy(selectedDepartment = newDepartment)
-//    }
-//
-//    fun onSemesterChange(newSemester: String) {
-//        _uiState.value = _uiState.value.copy(selectedSemester = newSemester)
-//    }
+    fun onSubUserNameClick(selfUser: Boolean){
+
+    }
 }

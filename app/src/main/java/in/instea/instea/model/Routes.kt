@@ -3,11 +3,12 @@ package `in`.instea.instea.model
 enum class InsteaScreens(
     val title: String
 ){
-    Profile("Your Account"),
+    SelfProfile("Your Account"),
+    OtherProfile("InsTea User"),
     EditProfile("Sadique Reyaz"),
     Feed("What's Going"),
     Schedule("Schedule"),
     EditSchedule("Edit Schedule"),
-    Notification("Notification"),
+    Inbox("Conversation"),
     Attendance("Attendance")
 }
