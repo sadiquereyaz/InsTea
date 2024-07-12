@@ -47,7 +47,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalFocusManager
@@ -63,7 +62,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -275,7 +273,7 @@ fun DropDownMenu(
 }
 
 @Composable
-fun CheckboxComp() {
+fun CheckboxComp(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -291,6 +289,9 @@ fun CheckboxComp() {
         Checkbox(checked = checkedState.value,
             onCheckedChange = {
                 checkedState.value = it
+                if (checkedState.value){
+                    navController.navigate("Guidelines")
+                }
             })
         val initialText = "By continuing you accept our"
         val policytext = "Privacy Policy"
@@ -321,7 +322,7 @@ fun CheckboxComp() {
             onClick = { offset ->
             annotatedString.getStringAnnotations(offset, offset)
                 .firstOrNull()?.also {
-                    // to open TandC page or policy Page
+                    navController.navigate("Guidelines")
                 }
         })
     }
@@ -363,7 +364,6 @@ fun DividerTextComp(modifier: Modifier = Modifier) {
 fun ScreenChangeText(
     modifier: Modifier = Modifier
         .fillMaxWidth(),
-    viewModel: AuthViewModel,
     navController: NavController
 ) {
     val isDarkMode = isSystemInDarkTheme()
@@ -548,7 +548,7 @@ fun Signup(viewModel: AuthViewModel, feedViewmodel: FeedViewModel, navController
             errorText = "Password not valid"
         )
 
-        CheckboxComp()
+        CheckboxComp(navController=navController)
         ButtonComp(
             value = "Signup",
             onButtonClicked = {
@@ -572,7 +572,7 @@ fun Signup(viewModel: AuthViewModel, feedViewmodel: FeedViewModel, navController
             isEnabled = true
         )
         DividerTextComp()
-        ScreenChangeText( modifier = Modifier,viewModel = AuthViewModel(),navController=navController)
+        ScreenChangeText(modifier = Modifier, navController=navController)
 
 
     }

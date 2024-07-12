@@ -11,5 +11,5 @@ object DataSource {
     )
     val semesters = listOf("I", "II", "III", "IV", "V", "VI", "VII", "VIII")
     val universities = listOf("Jamia Millia Islamia", "Aligarh Muslim University", "Jawaharlal University", "Delhi University")
-    val graduatingYears = listOf("2023", "2024", "2025", "2026", "2027", "2028", "2029", "2030")
+    val platforms= listOf("LinkedIn","Instagram")
 }

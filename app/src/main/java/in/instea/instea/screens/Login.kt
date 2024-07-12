@@ -95,7 +95,8 @@ fun Login(viewModel: AuthViewModel, navController: NavHostController) {
         UnderlinedTextComp(value = "Forgot Password?",viewModel, navController)
         ButtonComp(value = "Login", onButtonClicked = {
             viewModel.login(email.value,password.toString())
-        })
+        },
+            isEnabled = true)
 
 
     }

@@ -80,6 +80,10 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)  // ViewModel KTX
     implementation(libs.androidx.lifecycle.viewmodel.compose.v261)  // ViewModel Compose
-    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+    implementation(libs.androidx.material.icons.extended)
+    val room_version = "2.6.1"
+    implementation(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
 
 }

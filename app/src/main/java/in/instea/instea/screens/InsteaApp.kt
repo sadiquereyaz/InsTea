@@ -1,3 +1,4 @@
+//import `in`.instea.instea.screens.Feed
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -25,10 +26,8 @@ import `in`.instea.instea.model.InsteaScreens
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
 import `in`.instea.instea.screens.ForgetPass
+import `in`.instea.instea.screens.GuidelinesDialog
 import `in`.instea.instea.screens.Login
-
-
-//import `in`.instea.instea.screens.Feed
 import `in`.instea.instea.screens.Notificaiton
 import `in`.instea.instea.screens.Profile
 import `in`.instea.instea.screens.ScheduleScreen
@@ -110,7 +109,11 @@ fun InsteaApp(
                 AttendanceScreen(navController = navController)
             }
             composable(route=InsteaScreens.Forget.name){
-                ForgetPass()
+                ForgetPass(viewModel = AuthViewModel(),
+                    navController)
+            }
+            composable(route=InsteaScreens.Guidelines.name){
+                GuidelinesDialog()
             }
             composable(route = InsteaScreens.Profile.name) {
                 Profile(
@@ -135,11 +138,8 @@ fun InsteaApp(
                     onCancelButtonClicked = {},
                     selectedDepartment = uiState.selectedDepartment,
                     selectedSemester = uiState.selectedSemester,
-                    selectedHostel = uiState.selectedHostel,
                     selectedUniversity = uiState.selectedUniversity,
-                    selectedYear = uiState.selectedYear,
-                    onYearChanged = {},
-                    onUniversityChanged = {},
+                    onUniversityChanged = {viewModel.onUniversityChange(it)},
                     instagram = uiState.instagram,
                     linkedin = uiState.linkedin
                 )
