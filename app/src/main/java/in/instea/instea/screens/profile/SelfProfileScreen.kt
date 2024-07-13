@@ -156,11 +156,11 @@ private fun PersonalizedFeed(profileUiState: ProfileUiState) {
     }
     when (selectedTabIndex) {
         0 -> {
-            TabItem(postList = savedPosts, noPostText = "No Saved Post")
+//            TabItem(postList = savedPosts, noPostText = "No Saved Post")
         }
 
         1 -> {
-            TabItem(postList = myPosts)
+//            TabItem(postList = myPosts)
         }
     }
 }
@@ -168,7 +168,7 @@ private fun PersonalizedFeed(profileUiState: ProfileUiState) {
 @Composable
 fun TabItem(
     modifier: Modifier = Modifier,
-    postList: List<RoomPostModel>,
+    postList: List<PostData>,
     noPostText: String = "No Post Made"
 ) {
     if (postList.isEmpty()) {
@@ -181,6 +181,9 @@ fun TabItem(
         LazyColumn {
             items(postList) { post ->
                 PostCard(
+//                    name = post.name,
+//                    location = post.location,
+//                    content = post.postDescription
                 )
             }
         }
