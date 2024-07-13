@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleGmsGoogleServices)
-    id("com.google.devtools.ksp") version "1.8.10-1.0.9"
+    id("com.google.devtools.ksp")   //room
 }
 
 android {
@@ -52,9 +52,7 @@ android {
 }
 
 dependencies {
-
-
-    implementation(libs.androidx.navigation.compose)
+    implementation (libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -80,13 +78,14 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.androidx.lifecycle.viewmodel.ktx)  // ViewModel KTX
-    implementation(libs.androidx.lifecycle.viewmodel.compose.v261)  // ViewModel Compose
+    implementation(libs.androidx.lifecycle.viewmodel.compose)  // ViewModel Compose
     implementation(libs.androidx.material.icons.extended)
 
-
-
-    implementation(libs.androidx.room.runtime)
-    annotationProcessor(libs.androidx.room.compiler)
-
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    // To use Kotlin Symbol Processing (KSP)
+    ksp("androidx.room:room-compiler:$room_version")
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$room_version")
 
 }

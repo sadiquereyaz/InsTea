@@ -40,7 +40,6 @@ fun BottomNavigationBar(
             NavigationBarItem(
                 selected = selectedItemIndex.value == index,
                 onClick = {
-
                     Log.d("backstack", "BottomNavigationBar: ${backStackEntry?.destination?.route}")
                     selectedItemIndex.value = index
                     navController.navigate(item.route) {

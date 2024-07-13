@@ -1,11 +1,11 @@
 package `in`.instea.instea
 
-
 import InsteaApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import `in`.instea.instea.screens.Feed.GetUserData
+import androidx.lifecycle.viewmodel.compose.viewModel
+import `in`.instea.instea.model.schedule.ScheduleViewModel
 import `in`.instea.instea.ui.theme.InsTeaTheme
 
 
@@ -15,8 +15,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             InsTeaTheme {
-                GetUserData()
-                InsteaApp()
+//                val scheduleViewModel: ScheduleViewModel = viewModel()
+                InsteaApp(/*scheduleViewModel = scheduleViewModel*/)
             }
         }
     }

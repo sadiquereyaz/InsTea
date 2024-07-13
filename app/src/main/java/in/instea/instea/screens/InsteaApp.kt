@@ -1,14 +1,14 @@
-//import `in`.instea.instea.screens.Feed
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -18,28 +18,26 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.BottomNavigationBar
 import `in`.instea.instea.composable.InsteaTopAppBar
-import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.data.BottomNavItemData
-import `in`.instea.instea.data.FeedViewModel
-import `in`.instea.instea.data.ProfileViewModel
 import `in`.instea.instea.model.InsteaScreens
+import `in`.instea.instea.model.schedule.ScheduleViewModel
 import `in`.instea.instea.screens.AttendanceScreen
-import `in`.instea.instea.screens.EditProfile
-import `in`.instea.instea.screens.ForgetPass
-import `in`.instea.instea.screens.GuidelinesDialog
-import `in`.instea.instea.screens.Login
-import `in`.instea.instea.screens.Notificaiton
-import `in`.instea.instea.screens.Profile
-import `in`.instea.instea.screens.ScheduleScreen
-import `in`.instea.instea.screens.Signup
+import `in`.instea.instea.screens.InboxScreen
+import `in`.instea.instea.screens.profile.EditProfileScreen
+import `in`.instea.instea.screens.profile.OtherProfileScreen
+import `in`.instea.instea.screens.profile.SelfProfileScreen
+import `in`.instea.instea.screens.schedule.EditScheduleScreen
+import `in`.instea.instea.screens.schedule.ScheduleScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InsteaApp(
-    viewModel: ProfileViewModel = viewModel(),
+    scheduleViewModel: ScheduleViewModel = viewModel(),
+//    profileViewModel: ProfileViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+//    val profileUiState by profileViewModel.uiState.collectAsState()
     val selectedItemIndex = rememberSaveable {
         mutableIntStateOf(0);
     }
@@ -57,19 +55,22 @@ fun InsteaApp(
     val bottomBarItems = listOf(
         InsteaScreens.Feed,
         InsteaScreens.Schedule,
-        InsteaScreens.Notification,
-        InsteaScreens.Schedule
+        InsteaScreens.Inbox, //inbox
+        InsteaScreens.SelfProfile
     )
 
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             InsteaTopAppBar(
+                scrollBehavior = scrollBehavior,
                 currentScreen = currentScreen,
                 canNavigateBack = navController.previousBackStackEntry != null && !bottomBarItems.contains(
                     currentScreen
                 ),
                 navigateBack = { navController.navigateUp() },
-                moveToProfile = { navController.navigate(InsteaScreens.Profile.name) },
+                moveToSelfProfile = { navController.navigate(InsteaScreens.SelfProfile.name) },
+                moveToOtherProfile = { navController.navigate(InsteaScreens.OtherProfile.name) },
                 navController = navController
             )
         },
@@ -79,73 +80,43 @@ fun InsteaApp(
             }
         }
     ) { contentPadding ->
+
         NavHost(
             navController = navController,
-            startDestination = InsteaScreens.Signup.name,
+            startDestination = InsteaScreens.SelfProfile.name,
             modifier = Modifier
                 .padding(contentPadding)
         ) {
-            composable(route = InsteaScreens.Signup.name) {
-                Signup(
-                    viewModel = AuthViewModel(),
-                    feedViewmodel = FeedViewModel(),
-                    navController
+            composable(route = InsteaScreens.Feed.name) {
+                FEED(
+                    navController = navController
+//                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
                 )
             }
-            composable(route = InsteaScreens.Login.name) {
-                Login(viewModel = AuthViewModel(),
-                    navController)
-            }
-            composable(route = InsteaScreens.Feed.name) {
-                FEED(navController = navController, feedViewModel = FeedViewModel())
-            }
-            composable(route = InsteaScreens.Notification.name) {
-                Notificaiton(navController = navController)
+            composable(route = InsteaScreens.Inbox.name) {
+                InboxScreen(navController = navController)
             }
             composable(route = InsteaScreens.Schedule.name) {
-                ScheduleScreen(navController = navController)
+                ScheduleScreen(navController = navController, scheduleViewModel = scheduleViewModel)
+            }
+            composable(route = InsteaScreens.EditSchedule.name) {
+                EditScheduleScreen(
+                    navController = navController,
+                    scheduleViewModel = scheduleViewModel
+                )
             }
             composable(route = InsteaScreens.Attendance.name) {
                 AttendanceScreen(navController = navController)
             }
-            composable(route=InsteaScreens.Forget.name){
-                ForgetPass(viewModel = AuthViewModel(),
-                    navController)
+            composable(route = InsteaScreens.SelfProfile.name) {
+                SelfProfileScreen()
             }
-            composable(route=InsteaScreens.Guidelines.name){
-                GuidelinesDialog()
-            }
-            composable(route = InsteaScreens.Profile.name) {
-                Profile(
-                    userName = uiState.userName,
-                    onEditIconClicked = {
-                        navController.navigate(InsteaScreens.EditProfile.name)
-                    },
-                    department = uiState.selectedDepartment,
-                    semester = uiState.selectedSemester,
-                    hostel = uiState.selectedHostel,
-                    instagram = uiState.instagram,
-                    linkedin = uiState.linkedin
-                )
+            composable(route = InsteaScreens.OtherProfile.name) {
+                OtherProfileScreen()
             }
             composable(route = InsteaScreens.EditProfile.name) {
-                EditProfile(
-                    userName = uiState.userName,
-                    onUserNameChanged = { viewModel.onUserNameChanged(it) },
-                    onDepartmentChanged = { viewModel.onDepartmentChange(it) },
-                    onSemesterChanged = { viewModel.onSemesterChange(it) },
-                    onSaveButtonClicked = {},
-                    onCancelButtonClicked = {},
-                    selectedDepartment = uiState.selectedDepartment,
-                    selectedSemester = uiState.selectedSemester,
-                    selectedUniversity = uiState.selectedUniversity,
-                    onUniversityChanged = {viewModel.onUniversityChange(it)},
-                    instagram = uiState.instagram,
-                    linkedin = uiState.linkedin
-                )
+                EditProfileScreen()
             }
-
-
         }
     }
 }
