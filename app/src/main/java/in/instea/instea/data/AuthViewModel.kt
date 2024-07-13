@@ -55,16 +55,16 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-    fun login(email: String, password: String, login: (Boolean) -> Unit) {
+    fun login(email: String, password: String) {
         try {
             mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Log.d("login", "login: user logged in")
-                        login(true)
+
                     } else {
                         Log.e("error", "login: failed")
-                        login(false)
+
                     }
 
                 }
