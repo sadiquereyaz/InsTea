@@ -41,7 +41,10 @@ import `in`.instea.instea.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FEED(navController: NavController) {
+fun FEED(
+    navController: NavController,
+//    navigateToOtherProfile: (Int) -> Unit
+) {
     Column {
         FeedContent()
         PostList()

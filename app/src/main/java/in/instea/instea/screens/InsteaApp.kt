@@ -22,8 +22,8 @@ import `in`.instea.instea.data.BottomNavItemData
 import `in`.instea.instea.model.InsteaScreens
 import `in`.instea.instea.model.schedule.ScheduleViewModel
 import `in`.instea.instea.screens.AttendanceScreen
-import `in`.instea.instea.screens.profile.EditProfileScreen
 import `in`.instea.instea.screens.InboxScreen
+import `in`.instea.instea.screens.profile.EditProfileScreen
 import `in`.instea.instea.screens.profile.OtherProfileScreen
 import `in`.instea.instea.screens.profile.SelfProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleScreen
@@ -49,7 +49,8 @@ fun InsteaApp(
         backStackEntry?.destination?.route ?: InsteaScreens.Feed.name
     )
     LaunchedEffect(currentScreen) {
-        selectedItemIndex.value = BottomNavItemData.bottomNavItems.indexOfFirst { it.route == currentScreen.name }
+        selectedItemIndex.value =
+            BottomNavItemData.bottomNavItems.indexOfFirst { it.route == currentScreen.name }
     }
     val bottomBarItems = listOf(
         InsteaScreens.Feed,
@@ -59,7 +60,7 @@ fun InsteaApp(
     )
 
     Scaffold(
-        modifier  = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             InsteaTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -87,7 +88,10 @@ fun InsteaApp(
                 .padding(contentPadding)
         ) {
             composable(route = InsteaScreens.Feed.name) {
-               FEED(navController = navController)
+                FEED(
+                    navController = navController
+//                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
+                )
             }
             composable(route = InsteaScreens.Inbox.name) {
                 InboxScreen(navController = navController)
@@ -96,7 +100,10 @@ fun InsteaApp(
                 ScheduleScreen(navController = navController, scheduleViewModel = scheduleViewModel)
             }
             composable(route = InsteaScreens.EditSchedule.name) {
-                EditScheduleScreen(navController = navController, scheduleViewModel = scheduleViewModel)
+                EditScheduleScreen(
+                    navController = navController,
+                    scheduleViewModel = scheduleViewModel
+                )
             }
             composable(route = InsteaScreens.Attendance.name) {
                 AttendanceScreen(navController = navController)
@@ -105,7 +112,7 @@ fun InsteaApp(
                 SelfProfileScreen()
             }
             composable(route = InsteaScreens.OtherProfile.name) {
-               OtherProfileScreen()
+                OtherProfileScreen()
             }
             composable(route = InsteaScreens.EditProfile.name) {
                 EditProfileScreen()
