@@ -48,8 +48,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import `in`.instea.instea.model.schedule.AttendanceType
-import `in`.instea.instea.model.schedule.SubjectModel
+import `in`.instea.instea.data.datamodel.AttendanceType
+import `in`.instea.instea.data.datamodel.SubjectModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

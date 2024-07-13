@@ -1,4 +1,4 @@
-package `in`.instea.instea.data
+package `in`.instea.instea.data.datamodel
 
  data class User(
 

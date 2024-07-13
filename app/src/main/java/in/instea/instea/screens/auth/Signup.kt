@@ -1,4 +1,4 @@
-package `in`.instea.instea.screens
+package `in`.instea.instea.screens.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -69,7 +69,7 @@ import `in`.instea.instea.composable.DropdownMenuBox
 import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.data.FeedViewModel
 
-import `in`.instea.instea.model.InsteaScreens
+import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.ui.theme.DarkColors
 
 import java.util.regex.Pattern

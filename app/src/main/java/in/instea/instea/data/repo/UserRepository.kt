@@ -1,6 +1,7 @@
-package `in`.instea.instea.data
+package `in`.instea.instea.data.repo
 
 import com.google.firebase.database.FirebaseDatabase
+import `in`.instea.instea.data.dao.UserDao
 import `in`.instea.instea.model.UserModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull

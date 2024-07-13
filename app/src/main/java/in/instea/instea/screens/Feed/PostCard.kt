@@ -1,5 +1,3 @@
-import android.content.res.Resources.Theme
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,13 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -37,17 +33,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import `in`.instea.instea.R
 import `in`.instea.instea.data.FeedViewModel
-import `in`.instea.instea.data.PostData
-import `in`.instea.instea.data.downVotes
-import `in`.instea.instea.data.upVotes
+import `in`.instea.instea.data.datamodel.PostData
+import `in`.instea.instea.data.datamodel.downVotes
+import `in`.instea.instea.data.datamodel.upVotes
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
 import kotlin.math.abs
 
 //@Preview
@@ -61,7 +54,7 @@ import kotlin.math.abs
 
 @Composable
 fun PostCard(
-    post: PostData,
+    post: PostData= PostData()
 ) {
     var isExpanded by remember {
         mutableStateOf(false)

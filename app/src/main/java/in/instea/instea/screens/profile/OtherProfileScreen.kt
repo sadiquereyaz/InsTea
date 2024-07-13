@@ -10,21 +10,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import `in`.instea.instea.data.PostData
 import `in`.instea.instea.model.UserModel
-import `in`.instea.instea.model.profile.OtherProfileUiState
-import `in`.instea.instea.model.profile.OtherProfileViewModel
-import `in`.instea.instea.ui.AppViewModelProvider
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
+import `in`.instea.instea.data.viewmodel.OtherProfileUiState
+import `in`.instea.instea.data.viewmodel.OtherProfileViewModel
+import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 
 @Composable
 fun OtherProfileScreen(

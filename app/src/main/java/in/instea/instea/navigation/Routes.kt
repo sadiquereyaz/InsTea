@@ -1,15 +1,17 @@
-package `in`.instea.instea.model
+package `in`.instea.instea.navigation
 
 enum class InsteaScreens(
     val title: String
 ){
-    Profile("Your Account"),
+   SelfProfile("Your Account"),
+    OtherProfile("InsTea User"),
     EditProfile("Sadique Reyaz"),
     Feed("What's Going"),
     Schedule("Schedule"),
-    Notification("Notification"),
+    EditSchedule("Edit Schedule"),
+    Inbox("Conversation"),
     Attendance("Attendance"),
-    Login("Login"),
+      Login("Login"),
     Signup("Signup"),
     Forget("Forget"),
     Guidelines("Guidelines")

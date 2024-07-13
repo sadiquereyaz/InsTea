@@ -1,7 +1,3 @@
-import androidx.compose.runtime.Composable
-import `in`.instea.instea.R
-import `in`.instea.instea.data.PostData
-
 //@Composable
 //fun GetPostData():MutableList<PostData> {
 //    var list = mutableListOf<PostData>()

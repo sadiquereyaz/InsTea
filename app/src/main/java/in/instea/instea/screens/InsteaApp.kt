@@ -1,4 +1,3 @@
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
@@ -12,22 +11,14 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.BottomNavigationBar
 import `in`.instea.instea.composable.InsteaTopAppBar
 import `in`.instea.instea.data.BottomNavItemData
-import `in`.instea.instea.model.InsteaScreens
-import `in`.instea.instea.model.schedule.ScheduleViewModel
-import `in`.instea.instea.screens.AttendanceScreen
-import `in`.instea.instea.screens.InboxScreen
-import `in`.instea.instea.screens.profile.EditProfileScreen
-import `in`.instea.instea.screens.profile.OtherProfileScreen
-import `in`.instea.instea.screens.profile.SelfProfileScreen
-import `in`.instea.instea.screens.schedule.EditScheduleScreen
-import `in`.instea.instea.screens.schedule.ScheduleScreen
+import `in`.instea.instea.navigation.InsteaScreens
+import `in`.instea.instea.data.viewmodel.ScheduleViewModel
+import `in`.instea.instea.navigation.InsteaNavHost
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,44 +71,7 @@ fun InsteaApp(
             }
         }
     ) { contentPadding ->
-
-        NavHost(
-            navController = navController,
-            startDestination = InsteaScreens.SelfProfile.name,
-            modifier = Modifier
-                .padding(contentPadding)
-        ) {
-            composable(route = InsteaScreens.Feed.name) {
-                FEED(
-                    navController = navController
-//                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
-                )
-            }
-            composable(route = InsteaScreens.Inbox.name) {
-                InboxScreen(navController = navController)
-            }
-            composable(route = InsteaScreens.Schedule.name) {
-                ScheduleScreen(navController = navController, scheduleViewModel = scheduleViewModel)
-            }
-            composable(route = InsteaScreens.EditSchedule.name) {
-                EditScheduleScreen(
-                    navController = navController,
-                    scheduleViewModel = scheduleViewModel
-                )
-            }
-            composable(route = InsteaScreens.Attendance.name) {
-                AttendanceScreen(navController = navController)
-            }
-            composable(route = InsteaScreens.SelfProfile.name) {
-                SelfProfileScreen()
-            }
-            composable(route = InsteaScreens.OtherProfile.name) {
-                OtherProfileScreen()
-            }
-            composable(route = InsteaScreens.EditProfile.name) {
-                EditProfileScreen()
-            }
-        }
+        InsteaNavHost(navController, contentPadding, scheduleViewModel)
     }
 }
 

@@ -1,12 +1,10 @@
-package `in`.instea.instea.ui
+package `in`.instea.instea.data.viewmodel
 
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import `in`.instea.instea.InsteaApplication
-import `in`.instea.instea.model.profile.OtherProfileViewModel
-import `in`.instea.instea.model.profile.SelfProfileViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {

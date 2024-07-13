@@ -2,6 +2,14 @@ package `in`.instea.instea.data
 
 import android.content.Context
 import com.google.firebase.database.FirebaseDatabase
+import `in`.instea.instea.data.repo.CombinedPostRepository
+import `in`.instea.instea.data.repo.CombinedUserRepository
+import `in`.instea.instea.data.repo.LocalPostRepository
+import `in`.instea.instea.data.repo.LocalUserRepository
+import `in`.instea.instea.data.repo.NetworkPostRepository
+import `in`.instea.instea.data.repo.NetworkUserRepository
+import `in`.instea.instea.data.repo.PostRepository
+import `in`.instea.instea.data.repo.UserRepository
 
 /**
  * App container for Dependency injection.

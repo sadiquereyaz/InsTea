@@ -49,11 +49,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
-import `in`.instea.instea.data.PostData
+import `in`.instea.instea.data.datamodel.PostData
+import `in`.instea.instea.data.datamodel.RoomPostModel
 import `in`.instea.instea.model.UserModel
-import `in`.instea.instea.model.profile.ProfileUiState
-import `in`.instea.instea.model.profile.SelfProfileViewModel
-import `in`.instea.instea.ui.AppViewModelProvider
+import `in`.instea.instea.data.viewmodel.SelfProfileViewModel
+import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 
 @Composable
 fun SelfProfileScreen(
@@ -168,7 +168,7 @@ private fun PersonalizedFeed(profileUiState: ProfileUiState) {
 @Composable
 fun TabItem(
     modifier: Modifier = Modifier,
-    postList: List<PostData>,
+    postList: List<RoomPostModel>,
     noPostText: String = "No Post Made"
 ) {
     if (postList.isEmpty()) {
@@ -181,9 +181,6 @@ fun TabItem(
         LazyColumn {
             items(postList) { post ->
                 PostCard(
-                    name = post.name,
-                    location = post.location,
-                    content = post.postDescription
                 )
             }
         }

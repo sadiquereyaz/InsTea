@@ -1,13 +1,9 @@
-package `in`.instea.instea.model.profile
+package `in`.instea.instea.data.viewmodel
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import `in`.instea.instea.data.PostData
-import `in`.instea.instea.data.PostRepository
-import `in`.instea.instea.data.UserRepository
+import `in`.instea.instea.data.repo.PostRepository
+import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.model.UserModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,7 +40,10 @@ class OtherProfileViewModel(
         viewModelScope.launch {
             _otherProfileUiState.value = OtherProfileUiState.Loading
             _otherProfileUiState.value = try {
-                OtherProfileUiState.Success(userData = userRepository.getUserById(userId), profilePosts = null)
+                OtherProfileUiState.Success(
+                    userData = userRepository.getUserById(userId),
+                    profilePosts = null
+                )
             } catch (e: IOException) {
                 OtherProfileUiState.Error
             }

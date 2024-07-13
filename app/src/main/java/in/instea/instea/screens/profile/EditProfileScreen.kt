@@ -33,18 +33,18 @@ fun EditProfile(
     modifier: Modifier = Modifier
         .fillMaxSize()
         .padding(16.dp),
-    userName: String,
-    onUserNameChanged: (String) -> Unit,
-    onDepartmentChanged: (String) -> Unit,
-    onSemesterChanged: (String) -> Unit,
-    onSaveButtonClicked: () -> Unit,
-    onCancelButtonClicked: () -> Unit,
-    selectedDepartment: String,
-    selectedSemester: String,
-    selectedUniversity: String,
-    onUniversityChanged: (String) -> Unit,
-    instagram: String,
-    linkedin: String,
+    userName: String = "John Doe",  // Dummy name
+    onUserNameChanged: (String) -> Unit = {},  // Empty lambda
+    onDepartmentChanged: (String) -> Unit = {},  // Empty lambda
+    onSemesterChanged: (String) -> Unit = {},  // Empty lambda
+    onSaveButtonClicked: () -> Unit = {},  // Empty lambda
+    onCancelButtonClicked: () -> Unit = {},  // Empty lambda
+    selectedDepartment: String = "Computer Science",  // Dummy department
+    selectedSemester: String = "Fall 2024",  // Dummy semester
+    selectedUniversity: String = "University of Example",  // Dummy university
+    onUniversityChanged: (String) -> Unit = {},  // Empty lambda
+    instagram: String = "johndoe_dev",  // Dummy username
+    linkedin: String = "johndoe/linkedin",  // Dummy profile link
 ) {
     Column(
         modifier = modifier,

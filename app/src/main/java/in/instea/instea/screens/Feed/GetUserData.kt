@@ -1,12 +1,6 @@
 package `in`.instea.instea.screens.Feed
 
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -14,16 +8,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import com.google.android.gms.tasks.Tasks.await
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.database
-import `in`.instea.instea.data.User
+import `in`.instea.instea.data.datamodel.User
 import kotlinx.coroutines.tasks.await
 
 

@@ -33,9 +33,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import `in`.instea.instea.model.InsteaScreens
-import `in`.instea.instea.model.schedule.AttendanceType
-import `in`.instea.instea.model.schedule.ScheduleViewModel
+import `in`.instea.instea.navigation.InsteaScreens
+import `in`.instea.instea.data.datamodel.AttendanceType
+import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

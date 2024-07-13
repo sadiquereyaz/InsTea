@@ -10,7 +10,7 @@ import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
-import `in`.instea.instea.model.InsteaScreens
+import `in`.instea.instea.navigation.InsteaScreens
 
 data class BottomNavItem(
     val title: String,

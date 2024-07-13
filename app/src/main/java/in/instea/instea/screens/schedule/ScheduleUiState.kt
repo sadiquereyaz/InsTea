@@ -1,4 +1,6 @@
-package `in`.instea.instea.model.schedule
+package `in`.instea.instea.screens.schedule
+
+import `in`.instea.instea.data.datamodel.SubjectModel
 
 
 data class ScheduleUiState(

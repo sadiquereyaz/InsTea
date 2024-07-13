@@ -1,8 +1,8 @@
 package `in`.instea.instea.data
 
-import `in`.instea.instea.model.schedule.AttendanceType
-import `in`.instea.instea.model.schedule.ReminderModel
-import `in`.instea.instea.model.schedule.SubjectModel
+import `in`.instea.instea.data.datamodel.AttendanceType
+import `in`.instea.instea.data.datamodel.ReminderModel
+import `in`.instea.instea.data.datamodel.SubjectModel
 
 object DataSource {
 

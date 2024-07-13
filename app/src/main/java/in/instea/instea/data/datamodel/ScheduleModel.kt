@@ -1,7 +1,6 @@
-package `in`.instea.instea.model.schedule
+package `in`.instea.instea.data.datamodel
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Warning

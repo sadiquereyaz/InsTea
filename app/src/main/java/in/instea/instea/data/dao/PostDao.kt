@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package `in`.instea.instea.data
+package `in`.instea.instea.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -22,19 +22,25 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import androidx.room.Upsert
-import `in`.instea.instea.model.UserModel
+import `in`.instea.instea.data.datamodel.PostData
+import `in`.instea.instea.data.datamodel.RoomPostModel
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface UserDao {
-    @Upsert
-    suspend fun insertUser(user: UserModel)
+interface PostDao {
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPost(post: RoomPostModel)
+
+    @Update
+    suspend fun updatePost(post: RoomPostModel)
 
     @Delete
-    suspend fun deletePost(post: PostData)
+    suspend fun deletePost(post: RoomPostModel)
 
-    @Query("SELECT * FROM user WHERE userId = :userId")
-    fun getUserById(userId: Int): Flow<UserModel>
-    //insert into user values (12345, 'sadiquereyaz', 'If you omit the WHERE clause, all rows in the table will be updated with the new value in the SET clause. This should be used with caution to avoid unintended data modifications.');
+    @Query("SELECT * from posts WHERE postId = :postId")
+    fun getPostByPostIdPostById(postId: Int): Flow<RoomPostModel>
+
+    @Query("SELECT * from posts ORDER BY name ASC")
+    fun getAllSavedPosts(): Flow<List<RoomPostModel>>
+
 }

@@ -1,10 +1,12 @@
-package `in`.instea.instea.model.schedule
+package `in`.instea.instea.data.viewmodel
 
-import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import `in`.instea.instea.data.DataSource
-import `in`.instea.instea.data.DataSource.classSubjectData
+import `in`.instea.instea.data.datamodel.AttendanceType
+import `in`.instea.instea.data.datamodel.DayDateModel
+import `in`.instea.instea.data.datamodel.SubjectModel
+import `in`.instea.instea.screens.schedule.ScheduleUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

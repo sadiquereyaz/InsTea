@@ -1,10 +1,11 @@
-package `in`.instea.instea.model.profile
+package `in`.instea.instea.data.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import `in`.instea.instea.data.PostRepository
-import `in`.instea.instea.data.UserRepository
+import `in`.instea.instea.data.repo.PostRepository
+import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.model.UserModel
+import `in`.instea.instea.screens.profile.ProfileUiState
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.SharingStarted

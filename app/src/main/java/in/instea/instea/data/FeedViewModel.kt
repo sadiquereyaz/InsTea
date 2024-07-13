@@ -12,7 +12,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.database
-import `in`.instea.instea.R
+import `in`.instea.instea.data.datamodel.FeedUiState
+import `in`.instea.instea.data.datamodel.PostData
+import `in`.instea.instea.data.datamodel.User
+import `in`.instea.instea.data.datamodel.downVotes
+import `in`.instea.instea.data.datamodel.upVotes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -81,7 +85,7 @@ class FeedViewModel : ViewModel() {
             return
         }
 
-        val user = `in`.instea.instea.data.User(
+        val user = User(
             name, email, username, null, university, department, semester
         )
         val currentUser = mAuth.currentUser ?: return // Handle case where user is not logged in
@@ -110,15 +114,15 @@ class FeedViewModel : ViewModel() {
 
         newPostRef.setValue(
             PostData(
-                if (postType.equals("visible")) currentuser.name else "Anonymous",
-                if (postType.equals("visible")) currentuser.dept else " ",
-                profileImage,
-                postId,
-                postDescription,
-                postImage,
-                mAuth.currentUser!!.uid,
-                upVotes(0, mutableListOf("")),
-                downVotes(0, mutableListOf(""))
+//                if (postType.equals("visible")) currentuser.name else "Anonymous",
+//                if (postType.equals("visible")) currentuser.dept else " ",
+//                profileImage,
+//                postId,
+//                postDescription,
+//                postImage,
+//                mAuth.currentUser!!.uid,
+//                upVotes(0, mutableListOf("")),
+//                downVotes(0, mutableListOf(""))
             )
         )
     }
@@ -184,7 +188,7 @@ class FeedViewModel : ViewModel() {
                         .child("userPosts")
                         .child(post.postid!!)
                         .child("upVote")
-                        .setValue(upVotes(--likes,post.upVote.userLikedCurrentPost))
+                        .setValue(upVotes(--likes, post.upVote.userLikedCurrentPost))
 
                 }
 //                if(post.downVote.userDislikedCurrentPost.contains(currentuser)){
