@@ -12,7 +12,8 @@ object AppViewModelProvider {
         initializer {
                 SelfProfileViewModel(
                     postRepository = insteaApplication().container.postRepository,
-                    userRepository =insteaApplication().container.userRepository
+                    userRepository =insteaApplication().container.userRepository,
+                    userPreferenceRepository = insteaApplication().container.userPreferenceRepository
                 )
         }
         initializer {

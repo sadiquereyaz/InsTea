@@ -15,7 +15,8 @@ interface UserRepository {
 
 class CombinedUserRepository(
     private val localUserRepository: LocalUserRepository,
-    private val networkUserRepository: NetworkUserRepository
+    private val networkUserRepository: NetworkUserRepository,
+    private val currentUserPreferenceRepository: CurrentUserRepository
 ) : UserRepository {
     override fun getUserById(userId: Int): Flow<UserModel> = flow {
         // Try fetching user from local database first
