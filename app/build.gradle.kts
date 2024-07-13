@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleGmsGoogleServices)
+    id("com.google.devtools.ksp") version "1.8.10-1.0.9"
 }
 
 android {
@@ -53,7 +54,7 @@ android {
 dependencies {
 
 
-    implementation (libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -81,9 +82,11 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)  // ViewModel KTX
     implementation(libs.androidx.lifecycle.viewmodel.compose.v261)  // ViewModel Compose
     implementation(libs.androidx.material.icons.extended)
-    val room_version = "2.6.1"
+
+
+
     implementation(libs.androidx.room.runtime)
     annotationProcessor(libs.androidx.room.compiler)
-    ksp(libs.androidx.room.compiler)
+
 
 }
