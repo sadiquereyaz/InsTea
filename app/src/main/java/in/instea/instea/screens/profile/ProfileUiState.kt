@@ -1,8 +1,7 @@
 package `in`.instea.instea.screens.profile
 
-import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.RoomPostModel
-import `in`.instea.instea.model.UserModel
+import `in`.instea.instea.data.datamodel.UserModel
 
 //data class ProfileUiState(
 //    val userName: String = "No Name",

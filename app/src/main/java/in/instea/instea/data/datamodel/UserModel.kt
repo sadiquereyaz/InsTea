@@ -1,4 +1,4 @@
-package `in`.instea.instea.model
+package `in`.instea.instea.data.datamodel
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

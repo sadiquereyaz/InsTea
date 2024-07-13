@@ -10,8 +10,6 @@ import `in`.instea.instea.data.repo.LocalUserRepository
 import `in`.instea.instea.data.repo.NetworkPostRepository
 import `in`.instea.instea.data.repo.NetworkUserRepository
 import `in`.instea.instea.data.repo.PostRepository
-import `in`.instea.instea.data.repo.CurrentUserRepository
-import `in`.instea.instea.data.repo.UserPreferenceRepository
 import `in`.instea.instea.data.repo.UserRepository
 
 /**
@@ -20,7 +18,7 @@ import `in`.instea.instea.data.repo.UserRepository
 interface AppContainer {
     val postRepository: PostRepository
     val userRepository: UserRepository
-    val userPreferenceRepository: UserPreferenceRepository
+//    val userPreferenceRepository: UserPreferenceRepository
 }
 
 private const val USER_PREFERENCES_NAME = "user_preferences"
@@ -35,16 +33,14 @@ class AppDataContainer(private val context: Context) : AppContainer {
         CombinedPostRepository(localPostRepository, networkPostRepository)
     }
     override val userRepository: UserRepository by lazy {
-        val localUserRepository = LocalUserRepository(InsteaDatabase.getDatabase(context).userDao())
+        val localUserRepository = LocalUserRepository(context.dataStore)
         val networkUserRepository = NetworkUserRepository(FirebaseDatabase.getInstance())
-        val currentUserPreferenceRepository =  CurrentUserRepository(context.dataStore)
         CombinedUserRepository(
             localUserRepository = localUserRepository,
-            networkUserRepository = networkUserRepository,
-            currentUserPreferenceRepository = currentUserPreferenceRepository
+            networkUserRepository = networkUserRepository
         )
     }
-    val currentUserPreferenceRepository: UserPreferenceRepository by lazy {
-        CurrentUserRepository(context.dataStore)
-    }
+//    override val userPreferenceRepository: UserPreferenceRepository by lazy {
+//        CurrentUserRepository(context.dataStore)
+//    }
 }

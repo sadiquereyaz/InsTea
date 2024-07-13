@@ -20,9 +20,8 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.RoomPostModel
-import `in`.instea.instea.model.UserModel
+import `in`.instea.instea.data.datamodel.UserModel
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import `in`.instea.instea.data.dao.PostDao
 import `in`.instea.instea.data.dao.UserDao
 import `in`.instea.instea.data.datamodel.RoomPostModel
-import `in`.instea.instea.model.UserModel
+import `in`.instea.instea.data.datamodel.UserModel
 
 @Database(entities = [RoomPostModel::class, UserModel::class], version = 5, exportSchema = false)
 abstract class InsteaDatabase : RoomDatabase() {

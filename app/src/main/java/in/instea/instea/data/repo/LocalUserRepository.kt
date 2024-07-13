@@ -7,21 +7,15 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import `in`.instea.instea.model.UserModel
+import `in`.instea.instea.data.datamodel.UserModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-interface UserPreferenceRepository{
-    val userDetails: Flow<UserModel>
-    suspend fun saveUserDetails(user: UserModel)
-    suspend fun clearUserDetails()
-}
-
-class CurrentUserRepository(
+class LocalUserRepository(
     private val dataStore: DataStore<Preferences>
-):UserRepository {
+): UserRepository {
     // Define keys for storing user data
     private companion object {
         val USER_ID = intPreferencesKey("user_id")
@@ -35,7 +29,7 @@ class CurrentUserRepository(
     }
 
     // Function to get the user details
-     val userDetails: Flow<UserModel> = dataStore.data
+    override fun getUserById(int: Int): Flow<UserModel> = dataStore.data
         .catch {
             if (it is IOException) {
                 Log.e("SHARED_STORE", "Error reading preferences.", it)
@@ -45,16 +39,13 @@ class CurrentUserRepository(
         }
         .map { preferences ->
             UserModel(
-                userId = preferences[USER_ID] ?: 11,
-                username = preferences[USER_NAME] ?: "",
-                about = preferences[USER_ABOUT] ?: "",
+                userId = preferences[USER_ID] ?: 12345,
+                username = preferences[USER_NAME] ?: "data Store",
+                about = preferences[USER_ABOUT]
+                    ?: "this is default value of user detail in data store",
 //                isLoggedIn = preferences[IS_LOGGED_IN] ?: false
             )
         }
-
-    override fun getUserById(int: Int): Flow<UserModel> {
-        TODO("Not yet implemented")
-    }
 
     // Function to save the user details
     override suspend fun insertUser(user: UserModel) {
