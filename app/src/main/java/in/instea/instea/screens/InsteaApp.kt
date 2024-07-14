@@ -50,7 +50,8 @@ fun InsteaApp(
     )
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier,
         topBar = {
             InsteaTopAppBar(
                 scrollBehavior = scrollBehavior,

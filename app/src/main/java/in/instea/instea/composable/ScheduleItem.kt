@@ -1,8 +1,7 @@
-package `in`.instea.instea.screens.schedule
+package `in`.instea.instea.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,20 +15,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -48,13 +42,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SubjectLayout(
+fun ScheduleItem(
     subject: ScheduleModel,
     modifier: Modifier = Modifier.fillMaxWidth(),
     isBubbleFilled: Boolean = false,
@@ -176,103 +169,7 @@ fun SubjectLayout(
             }
 
             //task and attendance
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // task button
-                Row(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp)
-                        .clickable {
-//                            showBottomSheet = true
-                            openBottomSheet = true
-                        }, verticalAlignment = Alignment.CenterVertically
-
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.List,
-                        contentDescription = "task",
-                        modifier = Modifier.size(16.dp),
-                    )
-                    Text(
-                        text = subject.task,
-                        fontSize = 12.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
-                        modifier = Modifier.padding(start = 4.dp),
-
-                        )
-
-                }
-                //attendance
-                Box() {
-                    var expanded by remember { mutableStateOf(false) }
-//                    var attendance by remember { mutableStateOf(attendanceType) }
-//                    val attendanceModifier = Modifier.clickable { attendanceType = AttendanceType.Present }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .padding(end = 16.dp)
-                            .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(50))
-                            .padding(start = 4.dp, end = 4.dp)
-                    ) {
-
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                             contentDescription = "attendance",
-                             modifier = Modifier
-                                 .clickable {
-                                     onAttendanceClick()
-//                                attendanceType = AttendanceType.Present
-                                 }
-
-                                 .size(16.dp))
-                        Text(
-                            modifier = Modifier.clickable {
-                                onAttendanceClick()
-//                                at = AttendanceType.Present
-//                                attendanceType = AttendanceType.Present
-                            },
-                            text = subject.attendance,
-                            fontSize = 12.sp/*modifier = Modifier.padding(start = 4.dp)*/
-                        )
-                        Box(
-                            modifier = Modifier
-                                .padding(start = 4.dp)
-                                .height(32.dp)
-                                .width(1.dp)
-                                .background(MaterialTheme.colorScheme.onBackground)
-                        )
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = "attendance",
-                            modifier = Modifier.clickable {
-                                expanded = !expanded
-                            },
-                        )
-                    }
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        AttendanceType.values().forEach { option ->
-                            DropdownMenuItem(
-                                text = { Text(text = option.name) },
-                                onClick = {
-//                                    attendanceType = option
-                                    expanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
+            TaskAttendance(openBottomSheet, subject, onAttendanceClick)
         }
     }
     // Reminder Dialog
@@ -416,3 +313,4 @@ fun SubjectLayout(
         }
     }
 }
+

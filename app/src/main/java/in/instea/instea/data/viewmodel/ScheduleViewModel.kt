@@ -7,9 +7,9 @@ import `in`.instea.instea.data.datamodel.DayDateModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.schedule.ScheduleUiState
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.text.SimpleDateFormat
@@ -23,16 +23,10 @@ class ScheduleViewModel(
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
-
-    val scheduleUiState: StateFlow<ScheduleUiState> =
-        scheduleRepository.getClassList().map { ScheduleUiState(classList = it) }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = ScheduleUiState()
-            )
-
-    val dayDateList = emptyList<DayDateModel>()
+    private val _dayDateList: List<DayDateModel> = generateDayDateList()
+    private val _currentMonth: String = Calendar.getInstance().getDisplayName(
+        Calendar.MONTH, Calendar.LONG, Locale.getDefault()
+    ) ?: ""
 
     private fun generateDayDateList(): List<DayDateModel> {
         val calendar = Calendar.getInstance()
@@ -42,14 +36,35 @@ class ScheduleViewModel(
 
         repeat(45) {
             val day =
-                calendar.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault())
+                calendar.getDisplayName(
+                    Calendar.DAY_OF_WEEK,
+                    Calendar.SHORT,
+                    Locale.getDefault()
+                )
                     ?: ""
             val date = SimpleDateFormat("dd", Locale.getDefault()).format(calendar.time)
             dayDateList.add(DayDateModel(day = day, date = date))
-            calendar.add(Calendar.DAY_OF_WEEK, 1)
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
         return dayDateList
     }
+
+    private val scheduleListFlow: Flow<List<ScheduleModel>> = scheduleRepository.getClassList()
+
+    val scheduleUiState: StateFlow<ScheduleUiState> = scheduleListFlow
+        .map { scheduleList ->
+            ScheduleUiState(
+                dayDateList = _dayDateList,
+                classList = scheduleList,
+                month = _currentMonth
+            )
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = ScheduleUiState(dayDateList = _dayDateList, month = _currentMonth)
+        )
+
 
     fun selectDateIndex(index: Int) {
 //        _scheduleUiState.value = _scheduleUiState.value.copy(

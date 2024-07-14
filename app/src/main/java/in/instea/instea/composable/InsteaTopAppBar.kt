@@ -30,10 +30,10 @@ fun InsteaTopAppBar(
     navigateBack: () -> Unit,
     moveToSelfProfile: () -> Unit,
     moveToOtherProfile: () -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
     CenterAlignedTopAppBar(
-        scrollBehavior = scrollBehavior,
+//        scrollBehavior = scrollBehavior,
         modifier = modifier,
         title = {
             Text(
