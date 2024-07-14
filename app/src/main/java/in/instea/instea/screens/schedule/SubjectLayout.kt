@@ -49,15 +49,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.AttendanceType
-import `in`.instea.instea.data.datamodel.SubjectModel
+import `in`.instea.instea.data.datamodel.ScheduleModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubjectLayout(
+    subject: ScheduleModel,
     modifier: Modifier = Modifier.fillMaxWidth(),
     isBubbleFilled: Boolean = false,
-    subject: SubjectModel,
     onReminderClick: () -> Unit = {},
     onEditClick: () -> Unit,
     onAttendanceClick: () -> Unit,
@@ -65,10 +65,10 @@ fun SubjectLayout(
     reminderOn: Boolean
 ) {
 //    val attendanceModifier = Modifier.clickable {
-//        subject.attendanceType = AttendanceType.Present
+//        attendanceType = AttendanceType.Present
 //    }
 
-//    var at by rememberSaveable{ mutableStateOf(subject.attendanceType) }
+//    var at by rememberSaveable{ mutableStateOf(attendanceType) }
 
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     var skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
@@ -87,8 +87,8 @@ fun SubjectLayout(
         Column(
             horizontalAlignment = Alignment.End
         ) {
-            Text(text = subject.startTime, fontSize = 20.sp)
-            Text(text = subject.endTime, fontSize = 12.sp)
+            Text(text = "8", fontSize = 20.sp)
+            Text(text = "6", fontSize = 12.sp)
         }
         //bubble and vertical line
         Box(
@@ -160,7 +160,7 @@ fun SubjectLayout(
                 Text(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
-                    text = subject.subjectName,
+                    text = subject.subject,
                     fontWeight = FontWeight.Bold, fontSize = 20.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -212,8 +212,8 @@ fun SubjectLayout(
                 //attendance
                 Box() {
                     var expanded by remember { mutableStateOf(false) }
-//                    var attendance by remember { mutableStateOf(subject.attendanceType) }
-//                    val attendanceModifier = Modifier.clickable { subject.attendanceType = AttendanceType.Present }
+//                    var attendance by remember { mutableStateOf(attendanceType) }
+//                    val attendanceModifier = Modifier.clickable { attendanceType = AttendanceType.Present }
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -223,7 +223,8 @@ fun SubjectLayout(
                             .padding(start = 4.dp, end = 4.dp)
                     ) {
 
-                        Icon(imageVector = subject.attendanceType.icon,
+                        Icon(
+                            imageVector = Icons.Default.Check,
                              contentDescription = "attendance",
                              modifier = Modifier
                                  .clickable {
@@ -236,9 +237,9 @@ fun SubjectLayout(
                             modifier = Modifier.clickable {
                                 onAttendanceClick()
 //                                at = AttendanceType.Present
-//                                subject.attendanceType = AttendanceType.Present
+//                                attendanceType = AttendanceType.Present
                             },
-                            text = subject.attendanceType.name,
+                            text = subject.attendance,
                             fontSize = 12.sp/*modifier = Modifier.padding(start = 4.dp)*/
                         )
                         Box(
@@ -264,7 +265,7 @@ fun SubjectLayout(
                             DropdownMenuItem(
                                 text = { Text(text = option.name) },
                                 onClick = {
-                                    subject.attendanceType = option
+//                                    attendanceType = option
                                     expanded = false
                                 }
                             )
@@ -292,7 +293,7 @@ fun SubjectLayout(
                             checked = repeatSwitchOn,
                             onCheckedChange = {
                                 repeatSwitchOn = it
-                                repeatReminderSwitchAction(subject.subjectName, it)
+//                                repeatReminderSwitchAction( it)
                             }
                         )
                     }
@@ -329,7 +330,7 @@ fun SubjectLayout(
             var remindBefore12Hours by rememberSaveable { mutableStateOf(true) }
             var remindBefore24Hours by rememberSaveable { mutableStateOf(false) }
 
-            var task by remember { mutableStateOf(subject.task) }
+            var task by remember { mutableStateOf(false) }
 
             // Reminder Switch
             Column {
@@ -378,21 +379,19 @@ fun SubjectLayout(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
 
-                    OutlinedTextField(
-                        value = task,
-                        onValueChange = {
-                            task = it
-                            subject.task = it
-                        },
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(
-                                top = 16.dp,
-                                start = 16.dp,
-                                bottom = 16.dp
-                            ),
-                        label = { Text("Task") }
-                    )
+//                    OutlinedTextField(
+//                        value = task,
+//                        onValueChange = {
+//                            task = it
+//                            task = it
+//                        },
+//                        modifier = Modifier
+//                            .weight(1f)
+//                            .padding(
+//                                top = 16.dp,
+//                                start = 16.dp,
+//                                bottom = 16.dp
+//                    )
                     Button(
                         modifier = Modifier
                             .padding(start = 8.dp, end = 16.dp, top = 24.dp),

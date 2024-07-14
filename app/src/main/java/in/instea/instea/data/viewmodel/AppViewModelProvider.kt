@@ -21,6 +21,11 @@ object AppViewModelProvider {
                     userRepository =insteaApplication().container.userRepository
                 )
         }
+        initializer {
+                ScheduleViewModel(
+                    scheduleRepository = insteaApplication().container.scheduleRepository
+                )
+        }
     }
 }
 

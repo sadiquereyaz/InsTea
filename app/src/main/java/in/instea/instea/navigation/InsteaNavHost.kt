@@ -26,11 +26,11 @@ import `in`.instea.instea.screens.schedule.ScheduleScreen
 fun InsteaNavHost(
     navController: NavHostController,
     contentPadding: PaddingValues,
-    scheduleViewModel: ScheduleViewModel
+//    scheduleViewModel: ScheduleViewModel
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.SelfProfile.name,
+        startDestination = InsteaScreens.Schedule.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -54,12 +54,11 @@ fun InsteaNavHost(
             InboxScreen(navController = navController)
         }
         composable(route = InsteaScreens.Schedule.name) {
-            ScheduleScreen(navController = navController, scheduleViewModel = scheduleViewModel)
+            ScheduleScreen(navController = navController)
         }
         composable(route = InsteaScreens.EditSchedule.name) {
             EditScheduleScreen(
-                navController = navController,
-                scheduleViewModel = scheduleViewModel
+                navController = navController
             )
         }
         composable(route = InsteaScreens.Attendance.name) {

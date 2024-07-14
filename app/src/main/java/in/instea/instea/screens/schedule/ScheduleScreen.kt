@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,25 +34,26 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.data.datamodel.AttendanceType
+import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
+import `in`.instea.instea.navigation.InsteaScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    scheduleViewModel: ScheduleViewModel = viewModel()
-) {
-    val scheduleUiState by scheduleViewModel.scheduleUiState.collectAsState()
-    val listState = rememberLazyListState()
+    viewModel: ScheduleViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    ) {
+    val scheduleUiState by viewModel.scheduleUiState.collectAsState()
+//    val listState = rememberLazyListState()
 
     //scroll to the initial index
-    LaunchedEffect(key1 = true) {
-        val initialIndex = 13
-        listState.scrollToItem(initialIndex - 1)
-    }
+//    LaunchedEffect(key1 = true) {
+//        val initialIndex = 13
+//        listState.scrollToItem(initialIndex - 1)
+//    }
 
     Column(
         modifier = modifier
@@ -80,24 +82,24 @@ fun ScheduleScreen(
         }
         //day date
         LazyRow(
-            state = listState,
+//            state = listState,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(32.dp)
         ) {
-            val list = scheduleViewModel.dayDateList
-            items(list.size) { index ->
-                DayDateLayout(
-                    onDateClick = {
-                        scheduleViewModel.selectDateIndex(index)
-                    },
-                    day = list[index].day,
-                    date = list[index].date,
-                    currentDate = index == 15,
-                    isSelected = index == scheduleUiState.selectedDateIndex
-                )
-            }
+//            val list = scheduleViewModel.dayDateList
+//            items(list.size) { index ->
+//                DayDateLayout(
+//                    onDateClick = {
+//                        scheduleViewModel.selectDateIndex(index)
+//                    },
+//                    day = list[index].day,
+//                    date = list[index].date,
+//                    currentDate = index == 15,
+//                    isSelected = index == scheduleUiState.selectedDateIndex
+//                )
+//            }
         }
 
         //add class
@@ -130,29 +132,28 @@ fun ScheduleScreen(
                 .fillMaxSize()
                 .padding(top = 16.dp)
         ) {
-            itemsIndexed(scheduleUiState.subjectList) { index, subject ->
-                /*Text(text = subject.subjectName)
+            itemsIndexed(scheduleUiState.classList) { index, subject ->
+                Text(text = "subject.subject")
                 TextButton(onClick = {
-                    scheduleViewModel.updateAttendance(index)
+//                    scheduleViewModel.updateAttendance(index)
                 }) {
-                    Text(text = subject.attendanceType.name)
-                }*/
+                    Text(text = subject.attendance)
+                }
                 SubjectLayout(
                     subject = subject,
                     onEditClick = {
-                        navController.navigate(route = InsteaScreens.EditSchedule.name)
+//                        navController.navigate(route = InsteaScreens.EditSchedule.name)
                     },
                     onAttendanceClick = {
-                        scheduleViewModel.updateAttendanceType(subject, AttendanceType.Present)
+//                        viewModel.updateAttendanceType(AttendanceType.Present)
                     },
                     repeatReminderSwitchAction = { subName, repeat ->
-                        scheduleViewModel.modifySubjectInRepeatReminderList(
-                            subName,
-                            repeat,
-                            subject
-                        )
+//                        viewModel.modifySubjectInRepeatReminderList(
+//                            subName,
+//                            repeat,
+//                        )
                     },
-                    reminderOn = scheduleViewModel.reminderRepeatSubjectList.contains(subject.subjectName)
+                    reminderOn = true
                 )
             }
         }

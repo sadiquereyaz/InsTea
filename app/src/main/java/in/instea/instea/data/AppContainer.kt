@@ -3,8 +3,10 @@ package `in`.instea.instea.data
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.database.FirebaseDatabase
+import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.data.repo.CombinedPostRepository
 import `in`.instea.instea.data.repo.CombinedUserRepository
+import `in`.instea.instea.data.repo.LocalScheduleRepository
 import `in`.instea.instea.data.repo.LocalPostRepository
 import `in`.instea.instea.data.repo.LocalUserRepository
 import `in`.instea.instea.data.repo.NetworkPostRepository
@@ -18,6 +20,7 @@ import `in`.instea.instea.data.repo.UserRepository
 interface AppContainer {
     val postRepository: PostRepository
     val userRepository: UserRepository
+    val scheduleRepository: ScheduleRepository
 //    val userPreferenceRepository: UserPreferenceRepository
 }
 
@@ -26,7 +29,7 @@ private const val USER_PREFERENCES_NAME = "user_preferences"
 val Context.dataStore by preferencesDataStore(name = USER_PREFERENCES_NAME)
 
 
-class AppDataContainer(private val context: Context) : AppContainer {
+class AppDataContainer(private val context: Context, ) : AppContainer {
     override val postRepository: PostRepository by lazy {
         val localPostRepository = LocalPostRepository(InsteaDatabase.getDatabase(context).postDao())
         val networkPostRepository = NetworkPostRepository(FirebaseDatabase.getInstance())
@@ -40,7 +43,8 @@ class AppDataContainer(private val context: Context) : AppContainer {
             networkUserRepository = networkUserRepository
         )
     }
-//    override val userPreferenceRepository: UserPreferenceRepository by lazy {
-//        CurrentUserRepository(context.dataStore)
-//    }
+    override val scheduleRepository: ScheduleRepository by lazy {
+        LocalScheduleRepository(InsteaDatabase.getDatabase(context).classDao())
+    }
+
 }
