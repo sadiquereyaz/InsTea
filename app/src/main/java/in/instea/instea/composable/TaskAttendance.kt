@@ -13,9 +13,11 @@ import `in`.instea.instea.data.datamodel.ScheduleModel
 @Composable
 fun TaskAttendance(
     openBottomSheet: Boolean,
-    subject: ScheduleModel,
-    onAttendanceClick: () -> Unit
-) {
+    scheduleObj: ScheduleModel,
+    onAttendanceClick: () -> Unit,
+    updateTask: (String) -> Unit,
+
+    ) {
     var openBottomSheet1 = openBottomSheet
     Row(
         modifier = Modifier
@@ -25,12 +27,13 @@ fun TaskAttendance(
         verticalAlignment = Alignment.CenterVertically
     ) {
         // task button
-        Task(
-            modifier = Modifier
-                .weight(1f), openBottomSheet1, subject
+        TaskComposable(
+            modifier = Modifier.weight(1f),
+            scheduleObj=scheduleObj,
+            updateTask = {updateTask(it)}
         )
         //attendance
-        Attendance(onAttendanceClick, subject)
+        Attendance(onAttendanceClick, scheduleObj)
     }
 }
 

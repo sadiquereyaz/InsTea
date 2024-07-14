@@ -8,17 +8,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import `in`.instea.instea.data.viewmodel.AppViewModelProvider
-import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import `in`.instea.instea.composable.AddClassButton
 import `in`.instea.instea.composable.Calendar
 import `in`.instea.instea.composable.ScheduleList
+import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.data.viewmodel.ScheduleViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun ScheduleScreen(
@@ -28,6 +30,7 @@ fun ScheduleScreen(
 ) {
     val scheduleUiState by viewModel.scheduleUiState.collectAsState()
     val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
 
     //scroll to the initial index
     LaunchedEffect(key1 = true) {
@@ -47,7 +50,19 @@ fun ScheduleScreen(
         AddClassButton(navController)
 
         // schedule list
-        ScheduleList(scheduleUiState)
+        ScheduleList(
+            scheduleUiState = scheduleUiState,
+            updateAttendance = { id ->
+                coroutineScope.launch {
+                    viewModel.updateAttendance(scheduleId = id)
+                }
+            },
+            updateTask = { id: Int, task: String ->
+                coroutineScope.launch {
+                    viewModel.updateTask(scheduleId = id, task = task)
+                }
+            }
+        )
     }
 }
 

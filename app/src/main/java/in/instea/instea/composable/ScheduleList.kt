@@ -10,20 +10,28 @@ import androidx.compose.ui.unit.dp
 import `in`.instea.instea.screens.schedule.ScheduleUiState
 
 @Composable
-fun ScheduleList(scheduleUiState: ScheduleUiState) {
+fun ScheduleList(
+    scheduleUiState: ScheduleUiState,
+    updateAttendance: (Int) -> Unit,
+    updateTask: (Int, String) -> Unit,
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 16.dp)
     ) {
-        itemsIndexed(scheduleUiState.classList) { index, subject ->
+        itemsIndexed(scheduleUiState.classList) { index, scheduleObj ->
             ScheduleItem(
-                subject = subject,
+                subject = scheduleObj,
                 onEditClick = {
 //                        navController.navigate(route = InsteaScreens.EditSchedule.name)
                 },
-                onAttendanceClick = {
+                updateAttendance = {
 //                        viewModel.updateAttendanceType(AttendanceType.Present)
+                    updateAttendance(scheduleObj.scheduleId)
+                },
+                updateTask = {
+                    updateTask(scheduleObj.scheduleId, scheduleObj.task)
                 },
                 repeatReminderSwitchAction = { subName, repeat ->
 //                        viewModel.modifySubjectInRepeatReminderList(

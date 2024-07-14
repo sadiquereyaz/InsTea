@@ -53,9 +53,10 @@ fun ScheduleItem(
     isBubbleFilled: Boolean = false,
     onReminderClick: () -> Unit = {},
     onEditClick: () -> Unit,
-    onAttendanceClick: () -> Unit,
+    updateAttendance: () -> Unit,
     repeatReminderSwitchAction: (subject: String, repeat: Boolean) -> Unit,
-    reminderOn: Boolean
+    reminderOn: Boolean,
+    updateTask: (String)->Unit
 ) {
 //    val attendanceModifier = Modifier.clickable {
 //        attendanceType = AttendanceType.Present
@@ -169,7 +170,7 @@ fun ScheduleItem(
             }
 
             //task and attendance
-            TaskAttendance(openBottomSheet, subject, onAttendanceClick)
+            TaskAttendance(openBottomSheet, subject, updateAttendance, updateTask = { updateTask(it) })
         }
     }
     // Reminder Dialog

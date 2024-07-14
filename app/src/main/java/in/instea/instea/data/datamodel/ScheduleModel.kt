@@ -44,10 +44,10 @@ data class TaskModel(
 //    var reminder: ReminderModel = ReminderModel()
 //)
 
-@Entity(tableName = "class")
+@Entity(tableName = "schedule")
 data class ScheduleModel(
     @PrimaryKey(autoGenerate = true)
-    val classId: Int=0,
+    val scheduleId: Int=0,
     val subject: String=" ",
     var task: String = "Add Task",
     var attendance: String = "Absent"
