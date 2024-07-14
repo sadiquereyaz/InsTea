@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.repo.PostRepository
 import `in`.instea.instea.data.repo.UserRepository
-import `in`.instea.instea.model.UserModel
+import `in`.instea.instea.data.datamodel.UserModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -23,7 +23,6 @@ import `in`.instea.instea.navigation.InsteaNavHost
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InsteaApp(
-    scheduleViewModel: ScheduleViewModel = viewModel(),
 //    profileViewModel: ProfileViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
@@ -51,7 +50,8 @@ fun InsteaApp(
     )
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+//        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier,
         topBar = {
             InsteaTopAppBar(
                 scrollBehavior = scrollBehavior,
@@ -71,7 +71,7 @@ fun InsteaApp(
             }
         }
     ) { contentPadding ->
-        InsteaNavHost(navController, contentPadding, scheduleViewModel)
+        InsteaNavHost(navController, contentPadding)
     }
 }
 

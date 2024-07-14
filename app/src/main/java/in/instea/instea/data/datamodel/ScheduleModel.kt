@@ -5,6 +5,8 @@ import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 enum class AttendanceType (val icon: ImageVector){
     Present(
@@ -32,11 +34,21 @@ data class TaskModel(
     val task: String = "Assignment submit on monday"
 )
 
-data class SubjectModel(
-    var subjectName: String,
+//@Entity(tableName = "schedule")
+//data class SubjectModel(
+//    var subjectName: String,
+//    var task: String = "Add Task",
+//    var attendanceType: AttendanceType = AttendanceType.Absent,
+//    var startTime: String,
+//    var endTime: String,
+//    var reminder: ReminderModel = ReminderModel()
+//)
+
+@Entity(tableName = "class")
+data class ScheduleModel(
+    @PrimaryKey(autoGenerate = true)
+    val classId: Int=0,
+    val subject: String=" ",
     var task: String = "Add Task",
-    var attendanceType: AttendanceType = AttendanceType.Absent,
-    var startTime: String,
-    var endTime: String,
-    var reminder: ReminderModel = ReminderModel()
+    var attendance: String = "Absent"
 )

@@ -7,8 +7,7 @@ import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 
 @Composable
 fun EditScheduleScreen(
-    navController: NavController,
-    scheduleViewModel: ScheduleViewModel
+    navController: NavController
 ) {
     Text(text = "Schedule Edit Screen")
 

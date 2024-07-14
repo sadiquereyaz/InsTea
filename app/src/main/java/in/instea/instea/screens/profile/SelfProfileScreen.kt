@@ -49,9 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
-import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.RoomPostModel
-import `in`.instea.instea.model.UserModel
+import `in`.instea.instea.data.datamodel.UserModel
 import `in`.instea.instea.data.viewmodel.SelfProfileViewModel
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 
