@@ -1,7 +1,5 @@
 package `in`.instea.instea.data.datamodel
 
-import androidx.compose.ui.text.input.TextFieldValue
-
 data class SignupUiState(
     var name:String="",
     var emailid:String="",
