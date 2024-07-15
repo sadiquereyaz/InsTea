@@ -15,20 +15,14 @@ class signupViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(SignupUiState())
     val uiState: StateFlow<SignupUiState> = _uiState.asStateFlow()
 
-    var emailState by mutableStateOf("")
-        private set
-    var name by mutableStateOf("")
-        private set
-    var usernameState by mutableStateOf("")
-        private set
-    var passwordState by mutableStateOf("")
-        private set
-    var departmentState by mutableStateOf("")
-        private set
-    var universityState by mutableStateOf("")
-        private set
-    var semesterState by mutableStateOf("")
-        private set
+    private var emailState by mutableStateOf("")
+    private var name by mutableStateOf("")
+    private var usernameState by mutableStateOf("")
+    private var passwordState by mutableStateOf("")
+    private var departmentState by mutableStateOf("")
+    private var universityState by mutableStateOf("")
+    private var semesterState by mutableStateOf("")
+
 
     fun updateName(nameInput: String) {
         name = nameInput
@@ -68,7 +62,7 @@ class signupViewModel : ViewModel() {
 
     fun updatePassword(password: String) {
         passwordState = password
-        val valid=passValid(password.toString())
+        val valid=passValid(password)
         _uiState.update { it.copy(password = password,
             passError = !valid) }
     }
