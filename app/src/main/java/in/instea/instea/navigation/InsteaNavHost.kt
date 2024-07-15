@@ -35,11 +35,11 @@ fun InsteaNavHost(
             .padding(contentPadding)
     ) {
         composable(route = InsteaScreens.Signup.name) {
-            Signup(
-                viewModel = AuthViewModel(),
-                feedViewmodel = FeedViewModel(),
-                navController
-            )
+//            Signup(
+//                viewModel = AuthViewModel(),
+//                feedViewmodel = FeedViewModel(),
+//                navController
+//            )
         }
         composable(route = InsteaScreens.Login.name) {
             Login(navController = navController,viewModel = AuthViewModel())

@@ -31,20 +31,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.ui.theme.DarkColors
 
 @Composable
-fun UnderlinedTextComp(value:String, viewModel: AuthViewModel, navController: NavController, modifier: Modifier = Modifier) {
+fun UnderlinedTextComp(value: String, OnTextClicked: Unit, modifier: Modifier = Modifier) {
     Text(text = value,
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(40.dp)
             .clickable {
-                navController.navigate("Forget")
+                OnTextClicked
             },
         style = TextStyle(
             fontSize = 18.sp,
@@ -77,23 +76,26 @@ fun Login(viewModel: AuthViewModel, navController: NavHostController) {
                 .height(50.dp)
         )
         val email = rememberSaveable { mutableStateOf("") }
-        MyTextField(
-            labelValue = "Username",
-            icon = Icons.Default.Person,
-            textState = email,
-            keyboardType = KeyboardType.Text,
-            onValueChange = {email.value = it})
+        
+        CustomTextField(textField = email.value,
+            OnTextFieldChange = {
+            email.value=it },
+            icon =  Icons.Default.Person,
+            keyboardType = KeyboardType.Email,
+            textFieldLabel = "Enter Username",
+            errorText = "Invalid Username")
         var password by remember { mutableStateOf(TextFieldValue("")) }
 
         PasswordTextField(
-            password = password,
-            onPasswordChange = { password = it },
+            password = password.toString(),
+            onPasswordChange = { password = TextFieldValue(it) },
             errorColor = MaterialTheme.colorScheme.error,
             textFieldLabel = "Enter your password",
             errorText = "Password not valid"
         )
         Spacer(modifier = Modifier.height(14.dp))
-        UnderlinedTextComp(value = "Forgot Password?",viewModel, navController)
+        UnderlinedTextComp(value = "Forgot Password?",
+            navController.navigate(InsteaScreens.Forget.name))
         ButtonComp(value = "Login", onButtonClicked = {
             viewModel.login(email.value,password.toString())
                navController.navigate(InsteaScreens.Feed.name)

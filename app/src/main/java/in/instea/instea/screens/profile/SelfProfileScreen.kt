@@ -163,11 +163,11 @@ private fun PersonalizedFeed(profileUiState: ProfileUiState) {
         }
     }
 }
-
+/*
 @Composable
 fun TabItem(
     modifier: Modifier = Modifier,
-    postList: List<PostData>,
+   postList: List<PostData>,
     noPostText: String = "No Post Made"
 ) {
     if (postList.isEmpty()) {
@@ -178,7 +178,7 @@ fun TabItem(
         )
     } else {
         LazyColumn {
-            items(postList) { post ->
+//            items(postList) { post ->
                 PostCard(
 //                    name = post.name,
 //                    location = post.location,
@@ -188,7 +188,7 @@ fun TabItem(
         }
     }
 }
-
+*/
 @Composable
 fun SocialLink(modifier: Modifier, currentUser: Boolean = true) {
     LazyRow(
