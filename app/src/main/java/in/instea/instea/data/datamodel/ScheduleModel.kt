@@ -48,7 +48,10 @@ data class TaskModel(
 data class ScheduleModel(
     @PrimaryKey(autoGenerate = true)
     val scheduleId: Int=0,
-    val subject: String=" ",
+    var subject: String=" ",
     var task: String = "Add Task",
-    var attendance: String = "Absent"
+    var attendance: String = "Absent",
+    var startTime: String = "09:00",
+    var endTime: String = "10:00",
+    var day: String = "Tue"
 )

@@ -15,6 +15,9 @@ interface ScheduleDao {
     @Query("SELECT * FROM schedule")
     fun getAllClasses(): Flow<List<ScheduleModel>>
 
+    @Query("SELECT * FROM schedule where day = :selectedDay")
+    fun getClassByDay(selectedDay: String = "Tue"): Flow<List<ScheduleModel>>
+
     @Query("UPDATE schedule SET attendance = 'present' WHERE scheduleId = :scheduleId")
     suspend fun updateAttendance(scheduleId: Int)
 

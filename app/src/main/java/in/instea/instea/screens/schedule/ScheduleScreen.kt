@@ -16,7 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.AddClassButton
-import `in`.instea.instea.composable.Calendar
+import `in`.instea.instea.composable.CalendarComposable
 import `in`.instea.instea.composable.ScheduleList
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
@@ -45,7 +45,15 @@ fun ScheduleScreen(
 //        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
-        Calendar(scheduleUiState, listState)
+        CalendarComposable(
+            scheduleUiState,
+            listState,
+            onDateClick = {
+                coroutineScope.launch {
+                    viewModel.onDateClick(selectedIndex = it)
+                }
+            }
+        )
         //add class
         AddClassButton(navController)
 

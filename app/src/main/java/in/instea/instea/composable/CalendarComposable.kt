@@ -20,9 +20,10 @@ import androidx.compose.ui.unit.sp
 import `in`.instea.instea.screens.schedule.ScheduleUiState
 
 @Composable
-fun Calendar(
+fun CalendarComposable(
     scheduleUiState: ScheduleUiState,
-    listState: LazyListState
+    listState: LazyListState,
+    onDateClick: (Int) -> Unit
 ) {
     // month
     Row(
@@ -33,20 +34,24 @@ fun Calendar(
             modifier = Modifier.size(24.dp)
         )
         Text(
-            text = scheduleUiState.month,
+            text = "${scheduleUiState.selectedMonth}, ${scheduleUiState.selectedYear}",
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
             modifier = Modifier.padding(start = 2.dp)
         )
     }
     //day date
-    DayDate(listState, scheduleUiState)
+    DayDate(
+        listState,
+        scheduleUiState,
+        onDateSelect = { onDateClick(it) })
 }
 
 @Composable
 private fun DayDate(
     listState: LazyListState,
-    scheduleUiState: ScheduleUiState
+    scheduleUiState: ScheduleUiState,
+    onDateSelect: (Int) -> Unit
 ) {
     LazyRow(
         state = listState,
@@ -58,9 +63,8 @@ private fun DayDate(
         val list = scheduleUiState.dayDateList
         items(list.size) { index ->
             DayDateLayout(
-                onDateClick = {
+                onDateClick = { onDateSelect(index) },
 //                        scheduleViewModel.selectDateIndex(index)
-                },
                 day = list[index].day,
                 date = list[index].date,
                 currentDate = index == 15,
