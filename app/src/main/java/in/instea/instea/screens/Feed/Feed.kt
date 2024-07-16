@@ -16,6 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.Create
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import `in`.instea.instea.R
 import `in`.instea.instea.data.FeedViewModel
+import `in`.instea.instea.data.datamodel.AttendanceType
 
 //import `in`.instea.instea.data.UserViewModel
 
@@ -84,6 +88,25 @@ fun FeedContent(feedViewModel: FeedViewModel) {
                     contentDescription ="profile",
                     modifier = Modifier.size(30.dp)
                 )
+                val postType = listOf("visible", "Anonymous")
+                var selectedPostType by remember { mutableStateOf(postType[0]) } // Initial selection
+                var expanded by remember { mutableStateOf(false) }
+
+
+
+                DropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }) {
+                    postType.forEach { type ->
+                        DropdownMenuItem(
+                            text = { Text(type.toString()) },
+                            onClick = {
+                                selectedPostType = type // Update the selected post type
+                                expanded = false // Close the dropdown menu
+                            }
+                        )
+                    }
+                }
             }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -188,3 +211,4 @@ fun FeedContent(feedViewModel: FeedViewModel) {
         }
     }
 }
+
