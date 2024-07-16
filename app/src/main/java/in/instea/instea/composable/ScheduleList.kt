@@ -7,13 +7,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.screens.schedule.ScheduleUiState
 
 @Composable
 fun ScheduleList(
     scheduleUiState: ScheduleUiState,
-    updateAttendance: (Int) -> Unit,
-    updateTask: (Int, String) -> Unit,
+    onAttendanceClick: (Int, Int, AttendanceType) -> Unit,
+    upsertTask: (Int, Int, String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -22,16 +23,15 @@ fun ScheduleList(
     ) {
         itemsIndexed(scheduleUiState.classList) { index, scheduleObj ->
             ScheduleItem(
-                subject = scheduleObj,
+                scheduleObj = scheduleObj,
                 onEditClick = {
 //                        navController.navigate(route = InsteaScreens.EditSchedule.name)
                 },
-                updateAttendance = {
-//                        viewModel.updateAttendanceType(AttendanceType.Present)
-                    updateAttendance(scheduleObj.taskId)
-                },
-                updateTask = {
-                    updateTask(scheduleObj.scheduleId, scheduleObj.task ?: "Add Task")
+                onAttendanceClick = { attendanceType->
+                    onAttendanceClick(scheduleObj.taskId, scheduleObj.scheduleId, attendanceType) },
+                upsertTask = {
+//                    Log.d("ATT", scheduleObj.taskId.toString())
+                    upsertTask(scheduleObj.taskId, scheduleObj.scheduleId, scheduleObj.task ?:"")
                 },
                 repeatReminderSwitchAction = { subName, repeat ->
 //                        viewModel.modifySubjectInRepeatReminderList(

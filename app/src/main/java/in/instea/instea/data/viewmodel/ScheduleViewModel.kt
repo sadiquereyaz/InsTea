@@ -2,6 +2,7 @@ package `in`.instea.instea.data.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.DayDateModel
 import `in`.instea.instea.data.repo.ScheduleRepository
@@ -88,11 +89,8 @@ class ScheduleViewModel(
             selectedDateIndex = _selectedDateIndex.value,
         )
     )
-
+    private var timestamp: Int = 0      // TODO: check its value on different date click
     fun onDateClick(selectedIndex: Int) {
-//        Log.d("SELECTED INDEX", selectedIndex.toString())     //correct
-//        Log.d("DAYY SELECT", _dayDateList[selectedIndex].day)
-
         // getting the timestamp according to selected index
         val selectedDateCalendar = Calendar.getInstance()
         selectedDateCalendar.set(Calendar.DAY_OF_MONTH, _calendar.get(Calendar.DAY_OF_MONTH))
@@ -110,17 +108,18 @@ class ScheduleViewModel(
             val selectedDay = selectedDateCalendar.getDisplayName(
                 Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()
             ) ?: ""
-            val timestamp = getTimestampForSelectedDay(selectedDateCalendar.time)
+            timestamp = getTimestampForSelectedDay(selectedDateCalendar.time)
             fetchSchedulesForDay(selectedDay, timestamp)
         }
     }
-    private fun getTimestampForSelectedDay(selectedDate: Date): Long {
+
+    private fun getTimestampForSelectedDay(selectedDate: Date): Int {
         val formatter = SimpleDateFormat("yyMMdd", Locale.getDefault()) // format for YYMMDD
         val formattedDate = formatter.format(selectedDate)
-        return formattedDate.toLong() // convert formatted string to Long
+        return formattedDate.toInt() // convert formatted string to Long
     }
 
-    private fun fetchSchedulesForDay(day: String, timeStamp: Long) {
+    private fun fetchSchedulesForDay(day: String, timeStamp: Int) {
         viewModelScope.launch {
             scheduleRepository.getClassListByDayAndTaskByDate(day, timeStamp).collect { schedules ->
                 _scheduleList.value = schedules
@@ -144,11 +143,32 @@ class ScheduleViewModel(
         return dayDateList
     }
 
-    suspend fun updateAttendance(taskId: Int) {
-        scheduleRepository.upsertAttendance(taskId)
+    suspend fun upsertSchedule(
+        subject: String,
+        scheduleId: Int,
+        startTime: String,
+        endTime: String,
+        day: String
+    ) {
+        scheduleRepository.upsertSchedule(
+            subject = subject,
+            scheduleId = scheduleId,
+            startTime = startTime,
+            endTime = endTime,
+            day = day
+        )
     }
 
-    suspend fun updateTask(scheduleId: Int, task: String) {
-        scheduleRepository.updateTask(scheduleId = scheduleId, task = task)
+    suspend fun upsertAttendance(taskId: Int, scheduleId: Int, attendance: AttendanceType) {
+        scheduleRepository.upsertAttendance(taskId = taskId, attendance = attendance, scheduleId = scheduleId, timeStamp = timestamp)
+    }
+
+    suspend fun upsertTask(scheduleId: Int, taskId: Int, task: String) {
+        scheduleRepository.upsertTask(
+            taskId = taskId,
+            task = task,
+            scheduleId = scheduleId,
+            timeStamp = timestamp
+        )
     }
 }

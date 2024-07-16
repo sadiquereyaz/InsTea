@@ -32,7 +32,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
-import `in`.instea.instea.data.datamodel.ScheduleModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,7 +39,7 @@ import kotlinx.coroutines.launch
 fun TaskComposable(
     modifier: Modifier = Modifier,
     scheduleObj: CombinedScheduleTaskModel,
-    updateTask:(String)->Unit
+    upsertTask:(String)->Unit
 ) {
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     var skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
@@ -53,7 +52,6 @@ fun TaskComposable(
             .clickable {
                 openBottomSheet = true
             }, verticalAlignment = Alignment.CenterVertically
-
     ) {
         Icon(
             imageVector = Icons.Default.List,
@@ -78,7 +76,7 @@ fun TaskComposable(
             var remindBefore12Hours by rememberSaveable { mutableStateOf(true) }
             var remindBefore24Hours by rememberSaveable { mutableStateOf(false) }
 
-            var task by remember { mutableStateOf(scheduleObj.task) }
+            var task by remember { mutableStateOf(scheduleObj.task ?:"") }
 
             // Reminder Switch
             Column {
@@ -147,7 +145,7 @@ fun TaskComposable(
                             .padding(start = 8.dp, end = 16.dp, top = 24.dp),
                         shape = RoundedCornerShape(8),
                         onClick = {
-                            updateTask(task ?: "")
+                            upsertTask(task)
                             scope.launch { bottomSheetState.hide() }
                                 .invokeOnCompletion {
                                     if (!bottomSheetState.isVisible) {

@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import `in`.instea.instea.data.datamodel.AttendanceTypeConverter
 import `in`.instea.instea.data.datamodel.RoomPostModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
@@ -11,9 +13,10 @@ import `in`.instea.instea.data.datamodel.UserModel
 
 @Database(
     entities = [RoomPostModel::class, UserModel::class, ScheduleModel::class, TaskAttendanceModel::class],
-    version = 17,
+    version = 18,
     exportSchema = false
 )
+//@TypeConverters(AttendanceTypeConverter::class)
 abstract class InsteaDatabase : RoomDatabase() {
 
     abstract fun postDao(): PostDao

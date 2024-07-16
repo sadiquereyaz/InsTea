@@ -1,23 +1,34 @@
 package `in`.instea.instea.data.datamodel
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AcUnit
+import androidx.compose.material.icons.filled.AddTask
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 
-enum class AttendanceType (val icon: ImageVector){
+enum class AttendanceType (val icon: ImageVector, title: String){
     Present(
-        icon = Icons.Default.CheckCircle
+        title = "Present",
+        icon = Icons.Default.AddTask
     ),
     Absent(
+        title = "Absent",
         icon = Icons.Default.Clear
     ),
     Cancelled(
+        title = "Cancelled",
         icon = Icons.Default.Warning
-    )
+    ),
+    MarkAttendance(
+        title = "Attendance",
+        icon = Icons.Default.AcUnit
+    ),
 }
 
 data class DayDateModel(
@@ -60,10 +71,11 @@ data class TaskAttendanceModel(
     @PrimaryKey(autoGenerate = true)
     val taskId: Int = 0,
     val scheduleId: Int, // Foreign key referencing ScheduleModel
-    val timestamp: Long, // Timestamp to track the date
-    var attendance: String = "Mark Attendance",  // Task or note for the class on the specific date
-    var task: String = "Add Task",  // Task or note for the class on the specific date
-    val taskReminder: Boolean = false
+    val timestamp: Int, // Timestamp to track the date
+    @TypeConverters(AttendanceTypeConverter::class)
+    var attendance: AttendanceType? = null,  // Task or note for the class on the specific date
+    var task: String? = null,  // Task or note for the class on the specific date
+    val taskReminder: Boolean? = null
 )
 
 data class CombinedScheduleTaskModel(
@@ -75,7 +87,22 @@ data class CombinedScheduleTaskModel(
     val taskId: Int,
     val timestamp: Long?,
     val subject: String?,
-    val attendance: String?,
+    val attendance: AttendanceType?,
     var task: String?,
     val taskReminder: Boolean?
 )
+
+
+class AttendanceTypeConverter {
+
+    @TypeConverter
+    fun fromAttendanceType(value: AttendanceType): Int {
+        return value.ordinal // Store the ordinal (position) of the enum value
+    }
+
+    @TypeConverter
+    fun toAttendanceType(value: Int): AttendanceType {
+        return AttendanceType.values()[value] // Convert the ordinal back to the enum value
+    }
+}
+

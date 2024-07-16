@@ -1,36 +1,39 @@
 package `in`.instea.instea.data.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
+import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 import kotlinx.coroutines.flow.Flow
+import java.sql.Time
 
 @Dao
 interface ScheduleDao {
+    @Insert
+    suspend fun insertSchedule(scheduleModel: ScheduleModel): Long
+    @Query("UPDATE schedule SET subject = :subject, startTime = :startTime, endTime = :endTime, day= :day WHERE scheduleId = :scheduleId")
+    suspend fun updateSchedule(subject: String, scheduleId: Int, startTime: String, endTime: String, day: String)
 
-    @Upsert
-    suspend fun upsert(scheduleModel: ScheduleModel)
+    // Method to insert a new task
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTask(taskAttendanceModel: TaskAttendanceModel): Long
 
-    @Query("SELECT * FROM schedule")
-    fun getAllClasses(): Flow<List<ScheduleModel>>
+    // Method to update an existing task
+    @Query("UPDATE taskAttendance SET task = :task WHERE taskId = :taskId")
+    suspend fun updateTask(task: String, taskId: Int)
 
-    @Query("SELECT * FROM schedule where day = :selectedDay")
-    fun getClassByDay(selectedDay: String = "Tue"): Flow<List<ScheduleModel>>
-
-    @Query("SELECT * FROM taskAttendance WHERE timestamp = :timestamp")
-    fun getTaskAttendanceByTimestamp(timestamp: Long): Flow<List<TaskAttendanceModel>>
-
-    @Query("Update taskAttendance SET task = :task WHERE taskId = :taskId")
-    suspend fun addOrUpdateTask(task: String, taskId: Int)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAttendance(taskAttendanceModel: TaskAttendanceModel): Long
+    @Query("UPDATE taskAttendance SET attendance = :attendance WHERE taskId = :taskId")
+    suspend fun updateAttendance(attendance: AttendanceType, taskId: Int)
 
     @Query("Update taskAttendance SET attendance = :attendance WHERE taskId = :taskId")
     suspend fun upsertAttendance(attendance: String, taskId: Int)
-
-    @Query("UPDATE taskAttendance SET attendance = 'present' WHERE taskId = :taskId")
-    suspend fun upsertAttendance(taskId: Int)
 
 //    @Query("SELECT * FROM tasks WHERE scheduleId IN (SELECT id FROM schedules WHERE day = :selectedDay) AND date = :selectedDate")
 //    fun getTasksByDayAndDate(selectedDay: String, selectedDate: Long): Flow<List<TaskModel>>
@@ -46,12 +49,12 @@ interface ScheduleDao {
     )
     fun getClassesWithTasksByDayAndDate(
         selectedDay: String,
-        selectedDate: Long
+        selectedDate: Int
     ): Flow<List<CombinedScheduleTaskModel>>
 }
 
 /*
-* INSERT INTO schedule (subject, startTime, endTime, day, dailyReminder)
+INSERT INTO schedule (subject, startTime, endTime, day, dailyReminder)
 VALUES ('Urdu', '4', '5', 'Wed', 0),
 ('Math', '8', '9', 'Mon', 1),
 ('Science', '9', '10', 'Tue', 0),
@@ -65,7 +68,7 @@ VALUES ('Urdu', '4', '5', 'Wed', 0),
 ('Elective', '19', '20', 'Fri', 1);
 *
 *
-* INSERT INTO taskAttendance (scheduleId, timestamp, attendance, task, taskReminder)
+INSERT INTO taskAttendance (scheduleId, timestamp, attendance, task, taskReminder)
 VALUES
 (1, 240716, 'Absent', 'Project Meeting Preparation', 1),
 (2, 240717, 'Present', 'Quiz Review', 0),

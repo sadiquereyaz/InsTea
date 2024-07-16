@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.AddClassButton
 import `in`.instea.instea.composable.CalendarComposable
 import `in`.instea.instea.composable.ScheduleList
+import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import kotlinx.coroutines.launch
@@ -60,14 +61,14 @@ fun ScheduleScreen(
         // schedule list
         ScheduleList(
             scheduleUiState = scheduleUiState,
-            updateAttendance = { id ->
+            onAttendanceClick = { taskId: Int, scheduleId:Int, attendance->
                 coroutineScope.launch {
-                    viewModel.updateAttendance(taskId = id)
+                    viewModel.upsertAttendance(taskId = taskId, attendance = attendance, scheduleId = scheduleId)
                 }
             },
-            updateTask = { id: Int, task: String ->
+            upsertTask = { taskId: Int, scheduleId:Int, task: String ->
                 coroutineScope.launch {
-                    viewModel.updateTask(scheduleId = id, task = task)
+                    viewModel.upsertTask(taskId = taskId, scheduleId = scheduleId, task = task )
                 }
             }
         )

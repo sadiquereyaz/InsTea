@@ -8,14 +8,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 
 @Composable
 fun TaskAttendance(
     openBottomSheet: Boolean,
     scheduleObj: CombinedScheduleTaskModel,
-    onAttendanceClick: () -> Unit,
-    updateTask: (String) -> Unit,
+    onAttendanceClick: (AttendanceType) -> Unit,
+    upsertTask: (String) -> Unit,
 
     ) {
     var openBottomSheet1 = openBottomSheet
@@ -30,7 +31,7 @@ fun TaskAttendance(
         TaskComposable(
             modifier = Modifier.weight(1f),
             scheduleObj=scheduleObj,
-            updateTask = {updateTask(it)}
+            upsertTask = {upsertTask(it)}
         )
         //attendance
         AttendanceComposable(onAttendanceClick, scheduleObj)

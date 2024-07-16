@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -32,9 +32,9 @@ import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 
 @Composable
- fun AttendanceComposable(
-    onAttendanceClick: () -> Unit,
-    subject: CombinedScheduleTaskModel
+fun AttendanceComposable(
+    onAttendanceClick: (AttendanceType) -> Unit,
+    scheduleObj: CombinedScheduleTaskModel
 ) {
     Box() {
         var expanded by remember { mutableStateOf(false) }
@@ -48,26 +48,27 @@ import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
                 .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(50))
                 .padding(start = 4.dp, end = 4.dp)
         ) {
-
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "attendance",
+            Row(
                 modifier = Modifier
-                    .clickable {
-                        onAttendanceClick()
-//                                attendanceType = AttendanceType.Present
-                    }
+                    .clickable { onAttendanceClick(AttendanceType.Present) },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = scheduleObj.attendance?.icon ?: Icons.Default.CheckCircle,
+                    contentDescription = "attendance",
+                    modifier = Modifier
+                        .clickable {
 
-                    .size(16.dp))
-            Text(
-                modifier = Modifier.clickable {
-                    onAttendanceClick()
-//                                at = AttendanceType.Present
-//                                attendanceType = AttendanceType.Present
-                },
-                text = subject.attendance ?: "Add Attendance",
-                fontSize = 12.sp/*modifier = Modifier.padding(start = 4.dp)*/
-            )
+                        }
+
+                        .size(16.dp))
+                Text(
+                    modifier = Modifier,
+                    text = scheduleObj.attendance?.name ?: AttendanceType.MarkAttendance.name,
+                    fontSize = 12.sp/*modifier = Modifier.padding(start = 4.dp)*/
+                )
+            }
+
             Box(
                 modifier = Modifier
                     .padding(start = 4.dp)
@@ -91,7 +92,7 @@ import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
                 DropdownMenuItem(
                     text = { Text(text = option.name) },
                     onClick = {
-//                                    attendanceType = option
+                        onAttendanceClick(option)
                         expanded = false
                     }
                 )

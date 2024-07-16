@@ -42,22 +42,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
-import `in`.instea.instea.data.datamodel.ScheduleModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleItem(
-    subject: CombinedScheduleTaskModel,
-    modifier: Modifier = Modifier.fillMaxWidth(),
+    scheduleObj: CombinedScheduleTaskModel,
+    modifier: Modifier = Modifier,
     isBubbleFilled: Boolean = false,
     onReminderClick: () -> Unit = {},
     onEditClick: () -> Unit,
-    updateAttendance: () -> Unit,
+    onAttendanceClick: (AttendanceType) -> Unit,
     repeatReminderSwitchAction: (subject: String, repeat: Boolean) -> Unit,
     reminderOn: Boolean,
-    updateTask: (String)->Unit
+    upsertTask: (String)->Unit
 ) {
 //    val attendanceModifier = Modifier.clickable {
 //        attendanceType = AttendanceType.Present
@@ -76,7 +76,7 @@ fun ScheduleItem(
     }
 
     Row(
-        modifier = modifier
+        modifier = modifier.fillMaxWidth()
     ) {
         //time
         Column(
@@ -155,7 +155,7 @@ fun ScheduleItem(
                 Text(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
-                    text = subject.subject?:"",
+                    text = scheduleObj.subject?:"",
                     fontWeight = FontWeight.Bold, fontSize = 20.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -171,7 +171,7 @@ fun ScheduleItem(
             }
 
             //task and attendance
-            TaskAttendance(openBottomSheet, subject, updateAttendance, updateTask = { updateTask(it) })
+            TaskAttendance(openBottomSheet, scheduleObj, onAttendanceClick, upsertTask = { upsertTask(it) })
         }
     }
     // Reminder Dialog
