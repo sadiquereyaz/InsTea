@@ -7,7 +7,6 @@ import `in`.instea.instea.data.datamodel.DayDateModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.schedule.ScheduleUiState
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -45,7 +44,8 @@ class ScheduleViewModel(
             Locale.getDefault()
         ) ?: ""
     )
-    private val _selectedYear = MutableStateFlow(_calendar.get(Calendar.YEAR) % 100)        //by default current year
+    private val _selectedYear =
+        MutableStateFlow(_calendar.get(Calendar.YEAR) % 100)        //by default current year
     private val _selectedDateIndex = MutableStateFlow(15) // Initial selected index (16th position)
 
     // Expose state variables as StateFlow for observation
@@ -53,16 +53,18 @@ class ScheduleViewModel(
     val currentYear: StateFlow<Int> = _selectedYear
     val selectedDateIndex: StateFlow<Int> = _selectedDateIndex
 
-//    private var scheduleListFlow: Flow<List<ScheduleModel>> = scheduleRepository.getClassListByDay(_dayDateList[selectedDateIndex.value].day)
-    private val _scheduleListFlow = MutableStateFlow<List<ScheduleModel>>(emptyList())
-    val scheduleListFlow: StateFlow<List<ScheduleModel>> = _scheduleListFlow
+    // Use a MutableStateFlow for the current list of schedules
+    private val _scheduleList = MutableStateFlow<List<ScheduleModel>>(emptyList())
+    val scheduleList: StateFlow<List<ScheduleModel>> = _scheduleList
+
     init {
-        viewModelScope.launch {
-            scheduleListFlow.value = scheduleRepository.getClassListByDay(_dayDateList[_selectedDateIndex.value].day)
-        }
+        // Initial load of schedules for the default selected date
+//        fetchSchedulesForDay(_dayDateList[_selectedDateIndex.value].day)
+        onDateClick(15)
     }
+
     val scheduleUiState: StateFlow<ScheduleUiState> = combine(
-        scheduleListFlow,
+        scheduleList,
         currentMonth,
         currentYear,
         selectedDateIndex
@@ -79,47 +81,49 @@ class ScheduleViewModel(
         started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
         initialValue = ScheduleUiState(
             dayDateList = _dayDateList,
+            classList = emptyList(),
             selectedMonth = _selectedMonth.value,
             selectedYear = _selectedYear.value,
-            selectedDateIndex = _selectedDateIndex.value
+            selectedDateIndex = _selectedDateIndex.value,
         )
     )
 
-    suspend fun updateAttendance(scheduleId: Int) {
-        scheduleRepository.updateAttendance(scheduleId)
-    }
+    fun onDateClick(selectedIndex: Int) {
+        val currentDateIndex = 15
+//        Log.d("SELECTED INDEX", selectedIndex.toString())     //correct
+        Log.d("DAYY SELECT", _dayDateList[selectedIndex].day)
 
-    suspend fun updateTask(scheduleId: Int, task: String) {
-        scheduleRepository.updateTask(scheduleId = scheduleId, task = task)
-    }
-
-    fun onDateClick(selectedIndex: Int, currentDateIndex: Int = 15) {
         val selectedDateCalendar = Calendar.getInstance()
         selectedDateCalendar.set(Calendar.DAY_OF_MONTH, _calendar.get(Calendar.DAY_OF_MONTH))
         selectedDateCalendar.set(Calendar.YEAR, _calendar.get(Calendar.YEAR))
         selectedDateCalendar.add(Calendar.DAY_OF_YEAR, selectedIndex - currentDateIndex)
 
-        viewModelScope.launch { // Launch a coroutine to update state in background
+        // Launch a coroutine to update state in background
+        viewModelScope.launch {
             _selectedMonth.value = selectedDateCalendar.getDisplayName(
                 Calendar.MONTH, Calendar.LONG, Locale.getDefault()
             ) ?: ""
             _selectedYear.value = selectedDateCalendar.get(Calendar.YEAR) % 100
             _selectedDateIndex.value = selectedIndex
-            //scheduleListFlow = scheduleRepository.getClassListByDay("Tue")
-    val selectedDay = selectedDateCalendar.getDisplayName(
-            Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()
-        ) ?: ""
 
-        // Update the scheduleListFlow with the new day
-        _scheduleListFlow.value = scheduleRepository.getClassListByDay(selectedDay)
+            val selectedDay = selectedDateCalendar.getDisplayName(
+                Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()
+            ) ?: ""
 
-//            Log.d("DATE_CLICK", scheduleListFlow.collect(scheduleListFlow).toString())
-            // Optional: Re-generate dayDateList if needed
-//             if (needsRegeneration(selectedIndex, currentDateIndex)) {
-//               _dayDateList = generateDayDateList(selectedDateCalendar)
-//             }
+            fetchSchedulesForDay(selectedDay)
         }
     }
+
+    private fun fetchSchedulesForDay(day: String) {
+        viewModelScope.launch {
+            scheduleRepository.getClassListByDay(day).collect { schedules ->
+                _scheduleList.value = schedules
+            }
+
+        }
+        Log.d("DAYY FETCH", _dayDateList[_selectedDateIndex.value].day)
+    }
+
     private fun generateDayDateList(): List<DayDateModel> {
         val calendar = Calendar.getInstance()
         val dayDateList = mutableListOf<DayDateModel>()
@@ -134,5 +138,11 @@ class ScheduleViewModel(
             calendar.add(Calendar.DAY_OF_YEAR, 1)
         }
         return dayDateList
+    }
+    suspend fun updateAttendance(scheduleId: Int) {
+        scheduleRepository.updateAttendance(scheduleId)
+    }
+    suspend fun updateTask(scheduleId: Int, task: String) {
+        scheduleRepository.updateTask(scheduleId = scheduleId, task = task)
     }
 }
