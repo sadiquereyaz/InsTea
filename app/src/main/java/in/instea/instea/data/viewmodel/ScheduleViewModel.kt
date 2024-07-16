@@ -1,6 +1,5 @@
 package `in`.instea.instea.data.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.DayDateModel
@@ -25,6 +24,8 @@ class ScheduleViewModel(
         private const val TIMEOUT_MILLIS = 5_000L
     }
 
+    private val todayDateIndex: Int = 15
+
     // Generate dayDateList initially
     private val _dayDateList: List<DayDateModel> = generateDayDateList()
 
@@ -46,21 +47,20 @@ class ScheduleViewModel(
     )
     private val _selectedYear =
         MutableStateFlow(_calendar.get(Calendar.YEAR) % 100)        //by default current year
-    private val _selectedDateIndex = MutableStateFlow(15) // Initial selected index (16th position)
+    private val _selectedDateIndex =
+        MutableStateFlow(todayDateIndex) // Initial selected index (16th position)
 
     // Expose state variables as StateFlow for observation
-    val currentMonth: StateFlow<String> = _selectedMonth
-    val currentYear: StateFlow<Int> = _selectedYear
-    val selectedDateIndex: StateFlow<Int> = _selectedDateIndex
+    private val currentMonth: StateFlow<String> = _selectedMonth
+    private val currentYear: StateFlow<Int> = _selectedYear
+    private val selectedDateIndex: StateFlow<Int> = _selectedDateIndex
 
     // Use a MutableStateFlow for the current list of schedules
     private val _scheduleList = MutableStateFlow<List<ScheduleModel>>(emptyList())
-    val scheduleList: StateFlow<List<ScheduleModel>> = _scheduleList
+    private val scheduleList: StateFlow<List<ScheduleModel>> = _scheduleList
 
     init {
-        // Initial load of schedules for the default selected date
-//        fetchSchedulesForDay(_dayDateList[_selectedDateIndex.value].day)
-        onDateClick(15)
+        onDateClick(todayDateIndex)
     }
 
     val scheduleUiState: StateFlow<ScheduleUiState> = combine(
@@ -89,27 +89,26 @@ class ScheduleViewModel(
     )
 
     fun onDateClick(selectedIndex: Int) {
-        val currentDateIndex = 15
 //        Log.d("SELECTED INDEX", selectedIndex.toString())     //correct
-        Log.d("DAYY SELECT", _dayDateList[selectedIndex].day)
+//        Log.d("DAYY SELECT", _dayDateList[selectedIndex].day)
 
+        // getting the timestamp according to selected index
         val selectedDateCalendar = Calendar.getInstance()
         selectedDateCalendar.set(Calendar.DAY_OF_MONTH, _calendar.get(Calendar.DAY_OF_MONTH))
         selectedDateCalendar.set(Calendar.YEAR, _calendar.get(Calendar.YEAR))
-        selectedDateCalendar.add(Calendar.DAY_OF_YEAR, selectedIndex - currentDateIndex)
+        selectedDateCalendar.add(Calendar.DAY_OF_YEAR, selectedIndex - todayDateIndex)
 
         // Launch a coroutine to update state in background
         viewModelScope.launch {
+            //updating month on the basis of selected date
             _selectedMonth.value = selectedDateCalendar.getDisplayName(
-                Calendar.MONTH, Calendar.LONG, Locale.getDefault()
+                Calendar.MONTH, Calendar.SHORT, Locale.getDefault()
             ) ?: ""
             _selectedYear.value = selectedDateCalendar.get(Calendar.YEAR) % 100
             _selectedDateIndex.value = selectedIndex
-
             val selectedDay = selectedDateCalendar.getDisplayName(
                 Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()
             ) ?: ""
-
             fetchSchedulesForDay(selectedDay)
         }
     }
@@ -119,15 +118,13 @@ class ScheduleViewModel(
             scheduleRepository.getClassListByDay(day).collect { schedules ->
                 _scheduleList.value = schedules
             }
-
         }
-        Log.d("DAYY FETCH", _dayDateList[_selectedDateIndex.value].day)
     }
 
     private fun generateDayDateList(): List<DayDateModel> {
         val calendar = Calendar.getInstance()
         val dayDateList = mutableListOf<DayDateModel>()
-        calendar.add(Calendar.DAY_OF_YEAR, -15) // Start 15 days before current day
+        calendar.add(Calendar.DAY_OF_YEAR, -todayDateIndex) // Start 15 days before current day
 
         repeat(60) {
             val day =
@@ -139,9 +136,11 @@ class ScheduleViewModel(
         }
         return dayDateList
     }
+
     suspend fun updateAttendance(scheduleId: Int) {
         scheduleRepository.updateAttendance(scheduleId)
     }
+
     suspend fun updateTask(scheduleId: Int, task: String) {
         scheduleRepository.updateTask(scheduleId = scheduleId, task = task)
     }
