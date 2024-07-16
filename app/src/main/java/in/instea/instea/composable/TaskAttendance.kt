@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
-import `in`.instea.instea.data.datamodel.ScheduleModel
 
 @Composable
 fun TaskAttendance(
@@ -34,7 +33,7 @@ fun TaskAttendance(
             updateTask = {updateTask(it)}
         )
         //attendance
-        Attendance(onAttendanceClick, scheduleObj)
+        AttendanceComposable(onAttendanceClick, scheduleObj)
     }
 }
 

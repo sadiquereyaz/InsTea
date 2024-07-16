@@ -11,7 +11,7 @@ import `in`.instea.instea.data.datamodel.UserModel
 
 @Database(
     entities = [RoomPostModel::class, UserModel::class, ScheduleModel::class, TaskAttendanceModel::class],
-    version = 16,
+    version = 17,
     exportSchema = false
 )
 abstract class InsteaDatabase : RoomDatabase() {

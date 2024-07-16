@@ -62,7 +62,7 @@ fun ScheduleScreen(
             scheduleUiState = scheduleUiState,
             updateAttendance = { id ->
                 coroutineScope.launch {
-                    viewModel.updateAttendance(scheduleId = id)
+                    viewModel.updateAttendance(taskId = id)
                 }
             },
             updateTask = { id: Int, task: String ->

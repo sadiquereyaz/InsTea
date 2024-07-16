@@ -72,7 +72,7 @@ data class CombinedScheduleTaskModel(
     val endTime: String,
     val day: String,
     val dailyReminder: Boolean,
-    val taskId: Int?,
+    val taskId: Int,
     val timestamp: Long?,
     val subject: String?,
     val attendance: String?,

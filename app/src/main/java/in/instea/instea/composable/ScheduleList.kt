@@ -28,7 +28,7 @@ fun ScheduleList(
                 },
                 updateAttendance = {
 //                        viewModel.updateAttendanceType(AttendanceType.Present)
-                    updateAttendance(scheduleObj.scheduleId)
+                    updateAttendance(scheduleObj.taskId)
                 },
                 updateTask = {
                     updateTask(scheduleObj.scheduleId, scheduleObj.task ?: "Add Task")

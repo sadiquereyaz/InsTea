@@ -30,10 +30,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
-import `in`.instea.instea.data.datamodel.ScheduleModel
 
 @Composable
- fun Attendance(
+ fun AttendanceComposable(
     onAttendanceClick: () -> Unit,
     subject: CombinedScheduleTaskModel
 ) {

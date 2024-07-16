@@ -144,8 +144,8 @@ class ScheduleViewModel(
         return dayDateList
     }
 
-    suspend fun updateAttendance(scheduleId: Int) {
-        scheduleRepository.updateAttendance(scheduleId)
+    suspend fun updateAttendance(taskId: Int) {
+        scheduleRepository.upsertAttendance(taskId)
     }
 
     suspend fun updateTask(scheduleId: Int, task: String) {
