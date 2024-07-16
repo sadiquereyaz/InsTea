@@ -31,7 +31,7 @@ fun ScheduleList(
                     updateAttendance(scheduleObj.scheduleId)
                 },
                 updateTask = {
-                    updateTask(scheduleObj.scheduleId, scheduleObj.task)
+                    updateTask(scheduleObj.scheduleId, scheduleObj.task ?: "Add Task")
                 },
                 repeatReminderSwitchAction = { subName, repeat ->
 //                        viewModel.modifySubjectInRepeatReminderList(

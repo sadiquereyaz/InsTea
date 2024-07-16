@@ -2,8 +2,8 @@ package `in`.instea.instea.data.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.DayDateModel
-import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.schedule.ScheduleUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class ScheduleViewModel(
@@ -56,8 +57,8 @@ class ScheduleViewModel(
     private val selectedDateIndex: StateFlow<Int> = _selectedDateIndex
 
     // Use a MutableStateFlow for the current list of schedules
-    private val _scheduleList = MutableStateFlow<List<ScheduleModel>>(emptyList())
-    private val scheduleList: StateFlow<List<ScheduleModel>> = _scheduleList
+    private val _scheduleList = MutableStateFlow<List<CombinedScheduleTaskModel>>(emptyList())
+    private val scheduleList: StateFlow<List<CombinedScheduleTaskModel>> = _scheduleList
 
     init {
         onDateClick(todayDateIndex)
@@ -109,13 +110,19 @@ class ScheduleViewModel(
             val selectedDay = selectedDateCalendar.getDisplayName(
                 Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()
             ) ?: ""
-            fetchSchedulesForDay(selectedDay)
+            val timestamp = getTimestampForSelectedDay(selectedDateCalendar.time)
+            fetchSchedulesForDay(selectedDay, timestamp)
         }
     }
+    private fun getTimestampForSelectedDay(selectedDate: Date): Long {
+        val formatter = SimpleDateFormat("yyMMdd", Locale.getDefault()) // format for YYMMDD
+        val formattedDate = formatter.format(selectedDate)
+        return formattedDate.toLong() // convert formatted string to Long
+    }
 
-    private fun fetchSchedulesForDay(day: String) {
+    private fun fetchSchedulesForDay(day: String, timeStamp: Long) {
         viewModelScope.launch {
-            scheduleRepository.getClassListByDay(day).collect { schedules ->
+            scheduleRepository.getClassListByDayAndTaskByDate(day, timeStamp).collect { schedules ->
                 _scheduleList.value = schedules
             }
         }

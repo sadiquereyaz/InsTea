@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import kotlinx.coroutines.launch
 
@@ -38,7 +39,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun TaskComposable(
     modifier: Modifier = Modifier,
-    scheduleObj: ScheduleModel,
+    scheduleObj: CombinedScheduleTaskModel,
     updateTask:(String)->Unit
 ) {
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -60,7 +61,7 @@ fun TaskComposable(
             modifier = Modifier.size(16.dp),
         )
         Text(
-            text = scheduleObj.task,
+            text = scheduleObj.task ?: "Add Task",
             fontSize = 12.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
@@ -127,7 +128,7 @@ fun TaskComposable(
                 ) {
 
                     OutlinedTextField(
-                        value = task,
+                        value = task ?: "",
                         onValueChange = {
                             task = it
                             scheduleObj.task = it
@@ -146,7 +147,7 @@ fun TaskComposable(
                             .padding(start = 8.dp, end = 16.dp, top = 24.dp),
                         shape = RoundedCornerShape(8),
                         onClick = {
-                            updateTask(task)
+                            updateTask(task ?: "")
                             scope.launch { bottomSheetState.hide() }
                                 .invokeOnCompletion {
                                     if (!bottomSheetState.isVisible) {

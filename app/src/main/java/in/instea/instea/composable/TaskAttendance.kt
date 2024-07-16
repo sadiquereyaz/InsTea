@@ -8,12 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 
 @Composable
 fun TaskAttendance(
     openBottomSheet: Boolean,
-    scheduleObj: ScheduleModel,
+    scheduleObj: CombinedScheduleTaskModel,
     onAttendanceClick: () -> Unit,
     updateTask: (String) -> Unit,
 

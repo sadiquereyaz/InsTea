@@ -42,13 +42,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleItem(
-    subject: ScheduleModel,
+    subject: CombinedScheduleTaskModel,
     modifier: Modifier = Modifier.fillMaxWidth(),
     isBubbleFilled: Boolean = false,
     onReminderClick: () -> Unit = {},
@@ -154,7 +155,7 @@ fun ScheduleItem(
                 Text(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
-                    text = subject.subject,
+                    text = subject.subject?:"",
                     fontWeight = FontWeight.Bold, fontSize = 20.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

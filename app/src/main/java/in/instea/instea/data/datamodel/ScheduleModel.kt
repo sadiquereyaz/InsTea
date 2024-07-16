@@ -48,10 +48,34 @@ data class TaskModel(
 data class ScheduleModel(
     @PrimaryKey(autoGenerate = true)
     val scheduleId: Int=0,
-    var subject: String=" ",
-    var task: String = "Add Task",
-    var attendance: String = "Absent",
+    var subject: String,
     var startTime: String = "09:00",
     var endTime: String = "10:00",
-    var day: String = "Tue"
+    var day: String = "Tue",
+    val dailyReminder: Boolean = false
+)
+
+@Entity(tableName = "taskAttendance")
+data class TaskAttendanceModel(
+    @PrimaryKey(autoGenerate = true)
+    val taskId: Int = 0,
+    val scheduleId: Int, // Foreign key referencing ScheduleModel
+    val timestamp: Long, // Timestamp to track the date
+    var attendance: String = "Mark Attendance",  // Task or note for the class on the specific date
+    var task: String = "Add Task",  // Task or note for the class on the specific date
+    val taskReminder: Boolean = false
+)
+
+data class CombinedScheduleTaskModel(
+    val scheduleId: Int,
+    val startTime: String,
+    val endTime: String,
+    val day: String,
+    val dailyReminder: Boolean,
+    val taskId: Int?,
+    val timestamp: Long?,
+    val subject: String?,
+    val attendance: String?,
+    var task: String?,
+    val taskReminder: Boolean?
 )

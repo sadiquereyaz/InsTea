@@ -29,12 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.AttendanceType
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 
 @Composable
  fun Attendance(
     onAttendanceClick: () -> Unit,
-    subject: ScheduleModel
+    subject: CombinedScheduleTaskModel
 ) {
     Box() {
         var expanded by remember { mutableStateOf(false) }
@@ -65,7 +66,7 @@ import `in`.instea.instea.data.datamodel.ScheduleModel
 //                                at = AttendanceType.Present
 //                                attendanceType = AttendanceType.Present
                 },
-                text = subject.attendance,
+                text = subject.attendance ?: "Add Attendance",
                 fontSize = 12.sp/*modifier = Modifier.padding(start = 4.dp)*/
             )
             Box(
