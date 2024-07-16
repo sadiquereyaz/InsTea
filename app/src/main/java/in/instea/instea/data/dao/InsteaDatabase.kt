@@ -8,7 +8,7 @@ import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.RoomPostModel
 import `in`.instea.instea.data.datamodel.UserModel
 
-@Database(entities = [RoomPostModel::class, UserModel::class, ScheduleModel::class], version = 8, exportSchema = false)
+@Database(entities = [RoomPostModel::class, UserModel::class, ScheduleModel::class], version = 9, exportSchema = false)
 abstract class InsteaDatabase : RoomDatabase() {
 
     abstract fun postDao(): PostDao

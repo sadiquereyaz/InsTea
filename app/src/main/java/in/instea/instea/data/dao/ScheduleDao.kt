@@ -27,4 +27,11 @@ interface ScheduleDao {
 }
 
 //@Query("UPDATE schedule SET attendance = 'present', column2 = value2 WHERE id = target_id")
-//INSERT INTO class (subject, task, attendance) VALUES ('Mathematics', 'Complete Chapter 1 Homework', 'absent'),('Science', 'Prepare for Lab Experiment', 'Absent'), ('History', 'Read Chapter 3', 'absent'),('Geography', 'Complete Map Assignment', 'absent'),('English', 'Submit Essay', 'absent');
+/*
+INSERT INTO schedule (subject, task, attendance, startTime, endTime, day)
+VALUES ('Math', 'Solve practice problems', 'Absent', '09:00', '10:00', 'Mon'),
+('Science', 'Review for experiment', 'Absent', '10:00', '11:00', 'Tue'),
+('English', 'Read assigned chapters', 'Absent', '11:00', '12:00', 'Wed'),
+('History', 'Complete research paper', 'Absent', '12:00', '01:00', 'Thu'),
+('Art', 'Work on creative project', 'Absent', '01:00', '02:00', 'Fri');
+*/
