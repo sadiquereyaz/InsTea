@@ -1,6 +1,7 @@
 package `in`.instea.instea.navigation
 
 import FEED
+import FeedContent
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -30,7 +31,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Schedule.name,
+        startDestination = InsteaScreens.Signup.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -74,6 +75,9 @@ fun InsteaNavHost(
             EditProfile(
 
             )
+        }
+        composable(route = InsteaScreens.Addpost.name) {
+            FeedContent(feedViewModel = FeedViewModel())
         }
     }
 }

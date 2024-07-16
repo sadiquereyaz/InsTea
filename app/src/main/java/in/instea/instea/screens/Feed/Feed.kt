@@ -1,3 +1,4 @@
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -18,6 +19,7 @@ import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -31,11 +33,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import `in`.instea.instea.R
 import `in`.instea.instea.data.FeedViewModel
 
 //import `in`.instea.instea.data.UserViewModel
@@ -46,15 +50,15 @@ fun FEED(navController: NavController, feedViewModel: FeedViewModel) {
     val user by feedViewModel.user.collectAsState()
 
     Column {
-        FeedContent(feedViewModel)
-//        PostList(feedViewModel)
+//        FeedContent(feedViewModel)
+        PostList(feedViewModel)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 
 @Composable
-private fun FeedContent(feedViewModel: FeedViewModel) {
+fun FeedContent(feedViewModel: FeedViewModel) {
     var textState by remember { mutableStateOf("") }
     val user by feedViewModel.user.collectAsState()
     var postType by remember { mutableStateOf("visible") }
@@ -72,13 +76,24 @@ private fun FeedContent(feedViewModel: FeedViewModel) {
         Column(verticalArrangement = Arrangement.SpaceBetween) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)){
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                    contentDescription ="profile",
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp)
             ) {
 
-                TextField(value = textState,
+                OutlinedTextField(value = textState,
                     onValueChange = { textState = it },
                     label = { Text(text = "What do you want ask") },
                     modifier = Modifier

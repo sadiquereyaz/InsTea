@@ -1,7 +1,6 @@
-package `in`.instea.instea.composable
-
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.ExitToApp
@@ -14,10 +13,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,7 +33,8 @@ fun InsteaTopAppBar(
     navigateBack: () -> Unit,
     moveToSelfProfile: () -> Unit,
     moveToOtherProfile: () -> Unit,
-    navController: NavHostController
+    navController: NavHostController,
+    onAddButtonClicked:  ()->Unit
 ) {
     CenterAlignedTopAppBar(
         scrollBehavior = scrollBehavior,
@@ -41,30 +45,47 @@ fun InsteaTopAppBar(
                 fontWeight = FontWeight.Bold
             )
         },
-
         navigationIcon = {
             if (canNavigateBack) {
                 IconButton(onClick = navigateBack) {
-                    Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = "back",
-                         modifier = Modifier.size(36.dp)
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowLeft,
+                        contentDescription = "back",
+                        modifier = Modifier.size(36.dp)
+                    )
+                }
+            } else if (currentScreen == InsteaScreens.Feed) {
+
+                IconButton(onClick = {
+
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search"
                     )
                 }
             }
         },
         actions = {
             if (currentScreen == InsteaScreens.Feed) {
-                IconButton(onClick = moveToOtherProfile) {
-                    Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                // Add button on the right for Feed screen
+                IconButton(onClick = {
+                    onAddButtonClicked()
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.AddCircleOutline,
+                        contentDescription = "Add"
+                    )
                 }
-            } else if (currentScreen == InsteaScreens.Schedule){
+            } else if (currentScreen == InsteaScreens.Schedule) {
                 IconButton(onClick = { navController.navigate(InsteaScreens.Attendance.name) }) {
                     Icon(imageVector = Icons.Default.DateRange, contentDescription = "Attendance")
                 }
-            }else if (currentScreen == InsteaScreens.SelfProfile){
+            } else if (currentScreen == InsteaScreens.SelfProfile) {
                 IconButton(onClick = { navController.navigate(InsteaScreens.EditProfile.name) }) {
                     Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Edit Profile")
                 }
-            }else if (currentScreen == InsteaScreens.EditProfile){
+            } else if (currentScreen == InsteaScreens.EditProfile) {
                 IconButton(onClick = { navController.navigate(InsteaScreens.EditProfile.name) }) {
                     Icon(imageVector = Icons.Default.Check, contentDescription = "Edit Profile")
                 }
@@ -72,3 +93,6 @@ fun InsteaTopAppBar(
         }
     )
 }
+
+
+

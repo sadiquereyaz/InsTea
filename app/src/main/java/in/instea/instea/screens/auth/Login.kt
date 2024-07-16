@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import `in`.instea.instea.data.AuthViewModel
+import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.ui.theme.DarkColors
 
 @Composable
@@ -94,7 +95,11 @@ fun Login(viewModel: AuthViewModel, navController: NavHostController) {
         Spacer(modifier = Modifier.height(14.dp))
         UnderlinedTextComp(value = "Forgot Password?",viewModel, navController)
         ButtonComp(value = "Login", onButtonClicked = {
-            viewModel.login(email.value,password.toString())
+            viewModel.login(email.value,password.toString()){
+                loggedIn-> if(loggedIn){
+                    navController.navigate(InsteaScreens.Feed.name)
+            }
+            }
         },
             isEnabled = true)
 

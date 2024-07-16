@@ -1,3 +1,4 @@
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,7 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -31,8 +35,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.android.play.integrity.internal.o
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import `in`.instea.instea.R
@@ -42,24 +48,16 @@ import `in`.instea.instea.data.datamodel.downVotes
 import `in`.instea.instea.data.datamodel.upVotes
 import kotlinx.coroutines.launch
 import kotlin.math.abs
-
-//@Preview
-//@Composable
-//private fun p() {
-//    PostCard(
-//        profilePic = R.drawable.ic_launcher_foreground,
-//        name = "Hammad", location = "Delhi", content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-//    )
-//}
+import kotlin.math.log
 
 @Composable
 fun PostCard(
-    post: PostData= PostData()
+    post: PostData = PostData(),
 ) {
     var isExpanded by remember {
         mutableStateOf(false)
     }
- 
+
     Card(
         elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
         modifier = Modifier.padding(8.dp)
@@ -125,13 +123,15 @@ fun PostCard(
 
                     )
                 }
-                Box(contentAlignment = Alignment.BottomStart) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(0.6f),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(1.dp)
-                    ) {
-                        UpAndDownVoteButtons(post)
+
+
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Box(contentAlignment = Alignment.BottomStart) {
                         Button(
                             onClick = { },
                             colors = ButtonDefaults.buttonColors(
@@ -141,16 +141,17 @@ fun PostCard(
                             modifier = Modifier.padding(0.dp)
                         ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.chatbubble),
+                                imageVector = Icons.Default.Bookmark,
                                 contentDescription = "",
                                 modifier = Modifier.size(20.dp)
                             )
 
                         }
 
-
                     }
+                    UpAndDownVoteButtons(post)
                 }
+
 
             }
         }
@@ -167,85 +168,111 @@ fun UpAndDownVoteButtons(post: PostData) {
     val userDislikeCurrentPost =
         post.downVote.userDislikedCurrentPost.contains(feedViewModel.currentuser)
     val userlikeCurrentPost = post.upVote.userLikedCurrentPost.contains(feedViewModel.currentuser)
-    IconButton(
-        onClick = {
-            isUpVoted.value = !isUpVoted.value
+    Box(contentAlignment = Alignment.BottomEnd) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
 
-            if (isUpVoted.value) {
-                isDownVoted.value = false
-            }
-            coroutineScope.launch {
-                val likeBy = post.upVote.userLikedCurrentPost
-                var likes = post.upVote.like
-                if(userlikeCurrentPost){
-                    likeBy.remove(feedViewModel.currentuser)
-                    feedViewModel.updateUpVote(
-                        post,
-                        upVotes(--likes, likeBy)
-                    )
-
-                }
-                else{
-                    likeBy.add(feedViewModel.currentuser)
-                    feedViewModel.updateUpVote(
-                        post,
-                        upVotes(post.upVote.like + 1, likeBy)
-                    )
-                }
-            }
-        },
-        modifier = Modifier.padding(8.dp),
-        enabled = true
-    ) {
-        Image(
-            painter = painterResource(id = if ( userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
-            contentDescription = "Upvote",
-            modifier = Modifier.size(20.dp)
-        )
-    }
-    Text(
-        text = if (post.upVote.like - post.downVote.dislike > 0)
-            abs(post.upVote.like - post.downVote.dislike).toString()
-        else
-            post.upVote.like.toString()
-    )
-    IconButton(
-        onClick = {
-            isDownVoted.value = !isDownVoted.value
-            if (isDownVoted.value) {
-                isUpVoted.value = false
-
-
-            } // Reset upvote if downvoting
-            coroutineScope.launch {
-                val dislikeBy = post.downVote.userDislikedCurrentPost
-                var dislikes = post.downVote.dislike
-                if(userDislikeCurrentPost){
-                    dislikeBy.remove(feedViewModel.currentuser)
-                    feedViewModel.updateDownVote(
-                        post,
-                        downVotes(--dislikes, dislikeBy)
-                    )
-                }
-                else{
-                    dislikeBy.add(feedViewModel.currentuser)
-                    feedViewModel.updateDownVote(
-                        post,
-                        downVotes(++dislikes, dislikeBy)
-                    )
-                }
+            Button(
+                onClick = { },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color.Unspecified
+                ),
+                modifier = Modifier
+                    .padding(0.dp)
+                    .align(Alignment.CenterVertically)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.chatbubble),
+                    contentDescription = "",
+                    modifier = Modifier.size(20.dp)
+                )
 
             }
-        },
-        modifier = Modifier.padding(8.dp),
-        enabled = true
-    ) {
-        Image(
-            painter = painterResource(id = if ( userDislikeCurrentPost) R.drawable.arrowdownfilled else R.drawable.arrowdownoutline),
-            contentDescription = "Downvote",
-            modifier = Modifier.size(20.dp)
-        )
+
+
+            IconButton(
+                onClick = {
+                    isUpVoted.value = !isUpVoted.value
+
+                    if (isUpVoted.value) {
+                        isDownVoted.value = false
+                    }
+                    coroutineScope.launch {
+                        val likeBy = post.upVote.userLikedCurrentPost
+                        var likes = post.upVote.like
+                        if (userlikeCurrentPost) {
+                            likeBy.remove(feedViewModel.currentuser)
+                            feedViewModel.updateUpVote(
+                                post,
+                                upVotes(--likes, likeBy)
+                            )
+
+                        } else {
+                            likeBy.add(feedViewModel.currentuser)
+                            feedViewModel.updateUpVote(
+                                post,
+                                upVotes(post.upVote.like + 1, likeBy)
+                            )
+                        }
+                    }
+                },
+                modifier = Modifier.padding(8.dp),
+                enabled = true
+            ) {
+                Image(
+                    painter = painterResource(id = if (userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
+                    contentDescription = "Upvote",
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+            Text(text = "U")
+            Spacer(
+                modifier = Modifier
+                    .height(16.dp)
+                    .width(1.dp)
+                    .background(Color.Black)
+                    .align(Alignment.CenterVertically)
+            )
+            Text(text = "D")
+            IconButton(
+                onClick = {
+                    isDownVoted.value = !isDownVoted.value
+                    if (isDownVoted.value) {
+                        isUpVoted.value = false
+
+
+                    } // Reset upvote if downvoting
+                    coroutineScope.launch {
+                        val dislikeBy = post.downVote.userDislikedCurrentPost
+                        var dislikes = post.downVote.dislike
+                        if (userDislikeCurrentPost) {
+                            dislikeBy.remove(feedViewModel.currentuser)
+                            feedViewModel.updateDownVote(
+                                post,
+                                downVotes(--dislikes, dislikeBy)
+                            )
+                        } else {
+                            dislikeBy.add(feedViewModel.currentuser)
+                            feedViewModel.updateDownVote(
+                                post,
+                                downVotes(++dislikes, dislikeBy)
+                            )
+                        }
+
+                    }
+                },
+                modifier = Modifier.padding(8.dp),
+                enabled = true
+            ) {
+                Image(
+                    painter = painterResource(id = if (userDislikeCurrentPost) R.drawable.arrowdownfilled else R.drawable.arrowdownoutline),
+                    contentDescription = "Downvote",
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
     }
 
 
 }
+

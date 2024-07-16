@@ -14,8 +14,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.BottomNavigationBar
-import `in`.instea.instea.composable.InsteaTopAppBar
+//import `in`.instea.instea.composable.InsteaTopAppBar
 import `in`.instea.instea.data.BottomNavItemData
+import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import `in`.instea.instea.navigation.InsteaNavHost
@@ -61,7 +62,10 @@ fun InsteaApp(
                 navigateBack = { navController.navigateUp() },
                 moveToSelfProfile = { navController.navigate(InsteaScreens.SelfProfile.name) },
                 moveToOtherProfile = { navController.navigate(InsteaScreens.OtherProfile.name) },
-                navController = navController
+                navController = navController,
+                onAddButtonClicked = {
+                 navController.navigate(InsteaScreens.Addpost.name)
+                }
             )
         },
         bottomBar = {
