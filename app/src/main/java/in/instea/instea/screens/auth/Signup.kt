@@ -64,10 +64,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import `in`.instea.instea.composable.DropdownMenuBox
 import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.data.FeedViewModel
+import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.ui.theme.DarkColors
@@ -441,7 +443,7 @@ fun ButtonComp(value: String, onButtonClicked: () -> Unit, isEnabled: Boolean = 
 
 
 @Composable
-fun Signup(viewModel: AuthViewModel, feedViewmodel: FeedViewModel, navController: NavController) {
+fun Signup(viewModel: AuthViewModel, navController: NavController) {
     val authState = viewModel.authState.collectAsState()
     LaunchedEffect(authState.value) {
         when (authState.value) {
@@ -467,7 +469,7 @@ fun Signup(viewModel: AuthViewModel, feedViewmodel: FeedViewModel, navController
             .padding(top = 20.dp, start = 28.dp, end = 28.dp, bottom = 10.dp)
             .verticalScroll(scrollState)
     ) {
-
+        val feedViewModel:FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
         val optionsUniversity = listOf("Jamia Millia Islamia ", "JNU", "AMU")
         val optionsSemester =
             listOf("SEM I", "SEM II", "SEM III", "SEM IV", "SEM V", "SEM VI", "SEM VII", "SEM VIII")
@@ -558,7 +560,7 @@ fun Signup(viewModel: AuthViewModel, feedViewmodel: FeedViewModel, navController
                         password.toString()
                     ) { success ->
                         if (success) {
-                            FeedViewModel().writeNewUser(
+                            feedViewModel.writeNewUser(
                                 name.value,
                                 emailState.value,
                                 username.value,

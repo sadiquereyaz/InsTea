@@ -49,7 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
-import `in`.instea.instea.data.datamodel.RoomPostModel
+import `in`.instea.instea.data.datamodel.PostData
+
 import `in`.instea.instea.data.datamodel.UserModel
 import `in`.instea.instea.data.viewmodel.SelfProfileViewModel
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
@@ -167,7 +168,7 @@ private fun PersonalizedFeed(profileUiState: ProfileUiState) {
 @Composable
 fun TabItem(
     modifier: Modifier = Modifier,
-    postList: List<RoomPostModel>,
+    postList: List<PostData>,
     noPostText: String = "No Post Made"
 ) {
     if (postList.isEmpty()) {
@@ -179,7 +180,7 @@ fun TabItem(
     } else {
         LazyColumn {
             items(postList) { post ->
-                PostCard(
+                PostCard(post
                 )
             }
         }

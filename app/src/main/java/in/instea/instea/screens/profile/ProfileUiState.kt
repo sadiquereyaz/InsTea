@@ -1,6 +1,7 @@
 package `in`.instea.instea.screens.profile
 
-import `in`.instea.instea.data.datamodel.RoomPostModel
+import `in`.instea.instea.data.datamodel.PostData
+//import `in`.instea.instea.data.datamodel.RoomPostModel
 import `in`.instea.instea.data.datamodel.UserModel
 
 //data class ProfileUiState(
@@ -19,6 +20,6 @@ import `in`.instea.instea.data.datamodel.UserModel
 //    object Loading : ProfileUiState
 //}
 data class ProfileUiState(
-    var savedPosts: List<RoomPostModel>? = listOf(), //savedPost can be null
+    var savedPosts: List<PostData>? = listOf(), //savedPost can be null
     var userData: UserModel? = UserModel()      //userDate can be null
 )

@@ -38,21 +38,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.play.integrity.internal.o
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import `in`.instea.instea.R
 import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
-import `in`.instea.instea.data.datamodel.downVotes
-import `in`.instea.instea.data.datamodel.upVotes
+import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 import kotlin.math.log
 
 @Composable
 fun PostCard(
-    post: PostData = PostData(),
+    post: PostData,
 ) {
     var isExpanded by remember {
         mutableStateOf(false)
@@ -82,7 +84,7 @@ fun PostCard(
                     )
 
                     Column(modifier = Modifier.padding(start = 8.dp)) {
-                        Text(text = post.name!!, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(text = post.postedByUser!!, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         Text(
                             text = post.department!!,
                             fontSize = 12.sp,
@@ -162,12 +164,12 @@ fun PostCard(
 fun UpAndDownVoteButtons(post: PostData) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }
     val isDownVoted = rememberSaveable { mutableStateOf(false) }
-    val feedViewModel = FeedViewModel()
+    val feedViewModel : FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val mAuth = Firebase.auth
     val coroutineScope = rememberCoroutineScope()
     val userDislikeCurrentPost =
-        post.downVote.userDislikedCurrentPost.contains(feedViewModel.currentuser)
-    val userlikeCurrentPost = post.upVote.userLikedCurrentPost.contains(feedViewModel.currentuser)
+        post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
+    val userlikeCurrentPost = post.userLikedCurrentPost.contains(feedViewModel.currentuser)
     Box(contentAlignment = Alignment.BottomEnd) {
         Row(verticalAlignment = Alignment.CenterVertically) {
 
@@ -198,21 +200,21 @@ fun UpAndDownVoteButtons(post: PostData) {
                         isDownVoted.value = false
                     }
                     coroutineScope.launch {
-                        val likeBy = post.upVote.userLikedCurrentPost
-                        var likes = post.upVote.like
+                        val likeBy = post.userLikedCurrentPost
+                        var likes = post.userLikedCurrentPost.size
                         if (userlikeCurrentPost) {
                             likeBy.remove(feedViewModel.currentuser)
-                            feedViewModel.updateUpVote(
-                                post,
-                                upVotes(--likes, likeBy)
-                            )
+//                            feedViewModel.updateUpVote(
+//                                post,
+//                                upVotes(--likes, likeBy)
+//                            )
 
                         } else {
                             likeBy.add(feedViewModel.currentuser)
-                            feedViewModel.updateUpVote(
-                                post,
-                                upVotes(post.upVote.like + 1, likeBy)
-                            )
+//                            feedViewModel.updateUpVote(
+//                                post,
+//                                upVotes(post.upVote.like + 1, likeBy)
+//                            )
                         }
                     }
                 },
@@ -243,20 +245,20 @@ fun UpAndDownVoteButtons(post: PostData) {
 
                     } // Reset upvote if downvoting
                     coroutineScope.launch {
-                        val dislikeBy = post.downVote.userDislikedCurrentPost
-                        var dislikes = post.downVote.dislike
+                        val dislikeBy = post.userDislikedCurrentPost
+                        var dislikes = dislikeBy.size
                         if (userDislikeCurrentPost) {
                             dislikeBy.remove(feedViewModel.currentuser)
-                            feedViewModel.updateDownVote(
-                                post,
-                                downVotes(--dislikes, dislikeBy)
-                            )
+//                            feedViewModel.updateDownVote(
+//                                post,
+//                                downVotes(--dislikes, dislikeBy)
+//                            )
                         } else {
                             dislikeBy.add(feedViewModel.currentuser)
-                            feedViewModel.updateDownVote(
-                                post,
-                                downVotes(++dislikes, dislikeBy)
-                            )
+//                            feedViewModel.updateDownVote(
+//                                post,
+//                                downVotes(++dislikes, dislikeBy)
+//                            )
                         }
 
                     }

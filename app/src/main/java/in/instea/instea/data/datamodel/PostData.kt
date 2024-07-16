@@ -3,42 +3,37 @@ package `in`.instea.instea.data.datamodel
 import androidx.compose.runtime.Immutable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
+
+class StringListConverter {
+    @TypeConverter
+    fun fromString(value: String?): MutableList<String?> {
+        return value?.split(",")?.map { it.trim() }?.toMutableList() ?: mutableListOf()
+    }
+
+    @TypeConverter
+    fun toString(list: MutableList<String?>): String {
+        return list.filterNotNull().joinToString(",")
+    }
+}
 
 @Entity(tableName = "posts")
-data class RoomPostModel(
-    @PrimaryKey
-    val postId: Int,
-    val name: String,
-    val content: String,
-)
-
+@TypeConverters(StringListConverter::class)
 data class PostData(
-    val name: String? = null,
+    @PrimaryKey
+    var postid: String ,
     val department: String? = null,
     val profileImage: Int? = null,
-    var postid: String? = null,
     val postDescription: String? = null,
     val postImage: Int? = null,
     val postedByUser: String? = null,
-    val upVote: upVotes = upVotes(),
-    val downVote: downVotes = downVotes(),
-    val hasReports:Int=0
+    val userLikedCurrentPost: MutableList<String?> = mutableListOf(),
+    val userDislikedCurrentPost: MutableList<String?> = mutableListOf(),
+    val hasReports: Int = 0
 )
 
 @Immutable
 data class FeedUiState(
     val posts: List<PostData> = emptyList()
-)
-
-
-@Immutable
-data class upVotes(
-    val like: Int = 0,
-    val userLikedCurrentPost: MutableList<String?> = mutableListOf("")
-)
-
-@Immutable
-data class downVotes(
-    val dislike: Int = 0,
-    val userDislikedCurrentPost: MutableList<String?> = mutableListOf("")
 )

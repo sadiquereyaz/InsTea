@@ -23,24 +23,24 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import `in`.instea.instea.data.datamodel.PostData
-import `in`.instea.instea.data.datamodel.RoomPostModel
+
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PostDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertPost(post: RoomPostModel)
+    suspend fun insertPost(post: PostData)
 
     @Update
-    suspend fun updatePost(post: RoomPostModel)
+    suspend fun updatePost(post: PostData)
 
     @Delete
-    suspend fun deletePost(post: RoomPostModel)
+    suspend fun deletePost(post: PostData)
 
     @Query("SELECT * from posts WHERE postId = :postId")
-    fun getPostByPostIdPostById(postId: Int): Flow<RoomPostModel>
+    fun getPostByPostIdPostById(postId: Int): Flow<PostData>
 
-    @Query("SELECT * from posts ORDER BY name ASC")
-    fun getAllSavedPosts(): Flow<List<RoomPostModel>>
+    @Query("SELECT * from posts ORDER BY postedByUser ASC")
+    fun getAllSavedPosts(): Flow<List<PostData>>
 
 }

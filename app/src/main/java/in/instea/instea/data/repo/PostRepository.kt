@@ -6,7 +6,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import `in`.instea.instea.data.dao.PostDao
 import `in`.instea.instea.data.datamodel.PostData
-import `in`.instea.instea.data.datamodel.RoomPostModel
+//import `in`.instea.instea.data.datamodel.RoomPostModel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -15,15 +15,16 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
 interface PostRepository {
-    fun getAllSavedPostsStream(): Flow<List<RoomPostModel>>
-    suspend fun insertItem(post: RoomPostModel)
+    fun getAllSavedPostsStream(): Flow<List<PostData>>
+    suspend fun insertItem(post: PostData)
+
 }
 
 class CombinedPostRepository(
     private val localPostRepository: LocalPostRepository,
     private val networkPostRepository: NetworkPostRepository
 ): PostRepository {
-    override fun getAllSavedPostsStream(): Flow<List<RoomPostModel>> = flow {
+    override fun getAllSavedPostsStream(): Flow<List<PostData>> = flow {
         // Emit local data immediately
         emitAll(localPostRepository.getAllSavedPostsStream())
         // Then emit network data and update local database
@@ -33,7 +34,7 @@ class CombinedPostRepository(
         }
     }
 
-    override suspend fun insertItem(post: RoomPostModel) {
+    override suspend fun insertItem(post: PostData) {
         localPostRepository.insertItem(post)
         try {
             networkPostRepository.insertItem(post)
@@ -46,21 +47,21 @@ class CombinedPostRepository(
 class LocalPostRepository(
     private val postDao: PostDao
 ) : PostRepository {
-    override fun getAllSavedPostsStream(): Flow<List<RoomPostModel>> = postDao.getAllSavedPosts()
-    override suspend fun insertItem(post: RoomPostModel) = postDao.insertPost(post)
+    override fun getAllSavedPostsStream(): Flow<List<PostData>> = postDao.getAllSavedPosts()
+    override suspend fun insertItem(post: PostData) = postDao.insertPost(post)
 }
 
 class NetworkPostRepository(
-    private val firebaseDatabase: FirebaseDatabase
+    firebaseDatabase: FirebaseDatabase
 ) : PostRepository {
-    private val databaseReference = firebaseDatabase.getReference("posts")
+    private val databaseReference = firebaseDatabase.reference.child("posts")
 
-    override fun getAllSavedPostsStream(): Flow<List<RoomPostModel>> = callbackFlow {
+    override fun getAllSavedPostsStream(): Flow<List<PostData>> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val postList = mutableListOf<RoomPostModel>()
+                val postList = mutableListOf<PostData>()
                 dataSnapshot.children.forEach { snapshot ->
-                    val post = snapshot.getValue(RoomPostModel::class.java)
+                    val post = snapshot.getValue(PostData::class.java)
                     post?.let { postList.add(it) }
                 }
                 trySend(postList)
@@ -77,8 +78,9 @@ class NetworkPostRepository(
         }
     }
 
-    override suspend fun insertItem(post: RoomPostModel) {
+    override suspend fun insertItem(post: PostData) {
         val newPostRef = databaseReference.push()
+        post.postid = newPostRef.key.toString()
         newPostRef.setValue(post).await()
     }
 }

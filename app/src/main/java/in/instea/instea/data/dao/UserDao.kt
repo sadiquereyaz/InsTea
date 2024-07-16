@@ -20,7 +20,8 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
-import `in`.instea.instea.data.datamodel.RoomPostModel
+import `in`.instea.instea.data.datamodel.PostData
+
 import `in`.instea.instea.data.datamodel.UserModel
 import kotlinx.coroutines.flow.Flow
 
@@ -30,7 +31,7 @@ interface UserDao {
     suspend fun insertUser(user: UserModel)
 
     @Delete
-    suspend fun deletePost(post: RoomPostModel)
+    suspend fun deletePost(post: PostData)
 
     @Query("SELECT * FROM user WHERE userId = :userId")
     fun getUserById(userId: Int): Flow<UserModel>

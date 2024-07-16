@@ -1,5 +1,6 @@
 package `in`.instea.instea.navigation
 
+
 import FEED
 import FeedContent
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,8 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.google.firebase.database.FirebaseDatabase
 import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.data.FeedViewModel
+import `in`.instea.instea.data.dao.PostDao
+import `in`.instea.instea.data.repo.CombinedPostRepository
+import `in`.instea.instea.data.repo.LocalPostRepository
+import `in`.instea.instea.data.repo.NetworkPostRepository
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
@@ -29,6 +35,7 @@ fun InsteaNavHost(
     contentPadding: PaddingValues,
 //    scheduleViewModel: ScheduleViewModel
 ) {
+
     NavHost(
         navController = navController,
         startDestination = InsteaScreens.Signup.name,
@@ -38,7 +45,7 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Signup.name) {
             Signup(
                 viewModel = AuthViewModel(),
-                feedViewmodel = FeedViewModel(),
+
                 navController
             )
         }
@@ -47,7 +54,7 @@ fun InsteaNavHost(
         }
         composable(route = InsteaScreens.Feed.name) {
             FEED(
-                navController = navController, feedViewModel = FeedViewModel()
+                navController = navController
 //                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
             )
         }
@@ -77,7 +84,7 @@ fun InsteaNavHost(
             )
         }
         composable(route = InsteaScreens.Addpost.name) {
-            FeedContent(feedViewModel = FeedViewModel())
+            FeedContent()
         }
     }
 }

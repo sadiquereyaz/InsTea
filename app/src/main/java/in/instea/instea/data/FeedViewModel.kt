@@ -1,22 +1,20 @@
 package `in`.instea.instea.data
 
-//import GetPostData
-import android.system.Os.remove
+
 import android.util.Log
 //import androidx.compose.ui.tooling.data.EmptyGroup.location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
+
 import com.google.firebase.database.database
 import `in`.instea.instea.data.datamodel.FeedUiState
 import `in`.instea.instea.data.datamodel.PostData
+
 import `in`.instea.instea.data.datamodel.User
-import `in`.instea.instea.data.datamodel.downVotes
-import `in`.instea.instea.data.datamodel.upVotes
+import `in`.instea.instea.data.repo.CombinedPostRepository
+
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,7 +22,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class FeedViewModel : ViewModel() {
+class FeedViewModel(
+    private  val postRepository: CombinedPostRepository
+) : ViewModel() {
     private val mAuth = Firebase.auth
     val db = Firebase.database.reference
     val currentuser = mAuth.currentUser?.uid
@@ -62,6 +62,12 @@ class FeedViewModel : ViewModel() {
 
         }
 
+    }
+
+    fun insertPostsInDatabase(post:PostData){
+      viewModelScope.launch {
+          postRepository.insertItem(post);
+      }
     }
 //
 //    init {
@@ -101,117 +107,117 @@ class FeedViewModel : ViewModel() {
         }
     }
 
-    fun writingPostDataInDB(
-        currentuser: User,
-
-        profileImage: Int?,
-        postDescription: String,
-        postImage: Int?,
-        postType: String,
-    ) {
-        val newPostRef = db.child("posts").child("userPosts").push()
-        val postId = newPostRef.key!!
-
-        newPostRef.setValue(
-            PostData(
-//                if (postType.equals("visible")) currentuser.name else "Anonymous",
-//                if (postType.equals("visible")) currentuser.dept else " ",
-//                profileImage,
-//                postId,
-//                postDescription,
-//                postImage,
-//                mAuth.currentUser!!.uid,
-//                upVotes(0, mutableListOf("")),
-//                downVotes(0, mutableListOf(""))
-            )
-        )
-    }
-
-    suspend fun updateUpVote(
-        post: PostData,
-        upVotes: upVotes,
-
-        ) {
-        val dataSnapshot = db.child("posts").child("userPosts").get();
-        for (postSnapshot in dataSnapshot.await().children) {
-            val currentPost = postSnapshot.getValue(PostData::class.java)
-            if (post.postid.equals(currentPost?.postid)) {
-                if (post.downVote.userDislikedCurrentPost.contains(currentuser)) {
-                    post.downVote.userDislikedCurrentPost.remove(currentuser)
-
-                    var dislikes = post.downVote.dislike
-                    db
-                        .child("posts")
-                        .child("userPosts")
-                        .child(post.postid!!)
-                        .child("downVote")
-                        .setValue(downVotes(--dislikes, post.downVote.userDislikedCurrentPost))
-
-                }
-//                if(post.upVote.userLikedCurrentPost.contains(currentuser)){
-//                    var likes = post.upVote.like
-//                    post.upVote.userLikedCurrentPost.remove(currentuser)
-//                    db.child("posts")
-//                        .child("userPosts")
-//                        .child(post.postid!!)
-//                        .child("downVote")
-//                        .setValue(downVotes(--likes,post.upVote.userLikedCurrentPost))
-//                }
-
-                    db
-                        .child("posts")
-                        .child("userPosts")
-                        .child(post.postid!!)
-                        .child("upVote")
-                        .setValue(upVotes)
-
-            }
-
-        }
-    }
-
-    suspend fun updateDownVote(
-        post: PostData,
-        downVotes: downVotes,
-
-        ) {
-        val dataSnapshot = db.child("posts").child("userPosts").get();
-        for (postSnapshot in dataSnapshot.await().children) {
-            val currentPost = postSnapshot.getValue(PostData::class.java)
-            if (post.postid.equals(currentPost?.postid)) {
-                if (post.upVote.userLikedCurrentPost.contains(currentuser)) {
-                    post.upVote.userLikedCurrentPost.remove(currentuser)
-
-                    var likes = post.upVote.like
-                    db
-                        .child("posts")
-                        .child("userPosts")
-                        .child(post.postid!!)
-                        .child("upVote")
-                        .setValue(upVotes(--likes, post.upVote.userLikedCurrentPost))
-
-                }
-//                if(post.downVote.userDislikedCurrentPost.contains(currentuser)){
-//                    var dislikes = post.downVote.dislike
+//    fun writingPostDataInDB(
+//        currentuser: User,
+//
+//        profileImage: Int?,
+//        postDescription: String,
+//        postImage: Int?,
+//        postType: String,
+//    ) {
+//        val newPostRef = db.child("posts").child("userPosts").push()
+//        val postId = newPostRef.key!!
+//
+//        newPostRef.setValue(
+//            PostData(
+////                if (postType.equals("visible")) currentuser.name else "Anonymous",
+////                if (postType.equals("visible")) currentuser.dept else " ",
+////                profileImage,
+////                postId,
+////                postDescription,
+////                postImage,
+////                mAuth.currentUser!!.uid,
+////                upVotes(0, mutableListOf("")),
+////                downVotes(0, mutableListOf(""))
+//            )
+//        )
+//    }
+//
+//    suspend fun updateUpVote(
+//        post: PostData,
+//        upVotes: upVotes,
+//
+//        ) {
+//        val dataSnapshot = db.child("posts").child("userPosts").get();
+//        for (postSnapshot in dataSnapshot.await().children) {
+//            val currentPost = postSnapshot.getValue(PostData::class.java)
+//            if (post.postid.equals(currentPost?.postid)) {
+//                if (post.downVote.userDislikedCurrentPost.contains(currentuser)) {
 //                    post.downVote.userDislikedCurrentPost.remove(currentuser)
-//                    db.child("posts")
+//
+//                    var dislikes = post.downVote.dislike
+//                    db
+//                        .child("posts")
 //                        .child("userPosts")
 //                        .child(post.postid!!)
 //                        .child("downVote")
-//                        .setValue(downVotes(--dislikes,post.downVote.userDislikedCurrentPost))
+//                        .setValue(downVotes(--dislikes, post.downVote.userDislikedCurrentPost))
+//
 //                }
-
-                    db
-                        .child("posts")
-                        .child("userPosts")
-                        .child(post.postid!!)
-                        .child("downVote")
-                        .setValue(downVotes)
-
-            }
-
-        }
-    }
+////                if(post.upVote.userLikedCurrentPost.contains(currentuser)){
+////                    var likes = post.upVote.like
+////                    post.upVote.userLikedCurrentPost.remove(currentuser)
+////                    db.child("posts")
+////                        .child("userPosts")
+////                        .child(post.postid!!)
+////                        .child("downVote")
+////                        .setValue(downVotes(--likes,post.upVote.userLikedCurrentPost))
+////                }
+//
+//                    db
+//                        .child("posts")
+//                        .child("userPosts")
+//                        .child(post.postid!!)
+//                        .child("upVote")
+//                        .setValue(upVotes)
+//
+//            }
+//
+//        }
+//    }
+//
+//    suspend fun updateDownVote(
+//        post: PostData,
+//        downVotes: downVotes,
+//
+//        ) {
+//        val dataSnapshot = db.child("posts").child("userPosts").get();
+//        for (postSnapshot in dataSnapshot.await().children) {
+//            val currentPost = postSnapshot.getValue(PostData::class.java)
+//            if (post.postid.equals(currentPost?.postid)) {
+//                if (post.upVote.userLikedCurrentPost.contains(currentuser)) {
+//                    post.upVote.userLikedCurrentPost.remove(currentuser)
+//
+//                    var likes = post.upVote.like
+//                    db
+//                        .child("posts")
+//                        .child("userPosts")
+//                        .child(post.postid!!)
+//                        .child("upVote")
+//                        .setValue(upVotes(--likes, post.upVote.userLikedCurrentPost))
+//
+//                }
+////                if(post.downVote.userDislikedCurrentPost.contains(currentuser)){
+////                    var dislikes = post.downVote.dislike
+////                    post.downVote.userDislikedCurrentPost.remove(currentuser)
+////                    db.child("posts")
+////                        .child("userPosts")
+////                        .child(post.postid!!)
+////                        .child("downVote")
+////                        .setValue(downVotes(--dislikes,post.downVote.userDislikedCurrentPost))
+////                }
+//
+//                    db
+//                        .child("posts")
+//                        .child("userPosts")
+//                        .child(post.postid!!)
+//                        .child("downVote")
+//                        .setValue(downVotes)
+//
+//            }
+//
+//        }
+//    }
 
     private suspend fun fetchUserData(): List<User> {
         val userList = mutableListOf<User>()
@@ -237,27 +243,27 @@ class FeedViewModel : ViewModel() {
     }
 
 
-    private val postListener = object : ValueEventListener {
-        override fun onDataChange(snapshot: DataSnapshot) {
-            viewModelScope.launch {
-                val updatedPostList = mutableListOf<PostData>()
-                for (childSnapshot in snapshot.children) {
-                    val post = childSnapshot.getValue(PostData::class.java)
-                    if (post != null) {
-                        updatedPostList.add(post)
-                    }
-                }
-                _feedUiState.update { currentState -> currentState.copy(posts = updatedPostList) }
-            }
-        }
-
-        override fun onCancelled(error: DatabaseError) {
-            Log.e("error", "onCancelled: ${error}")
-        }
-    }
-
-    init {
-        db.child("posts").child("userPosts").addValueEventListener(postListener)
-    }
+//    private val postListener = object : ValueEventListener {
+//        override fun onDataChange(snapshot: DataSnapshot) {
+//            viewModelScope.launch {
+//                val updatedPostList = mutableListOf<PostData>()
+//                for (childSnapshot in snapshot.children) {
+//                    val post = childSnapshot.getValue(PostData::class.java)
+//                    if (post != null) {
+//                        updatedPostList.add(post)
+//                    }
+//                }
+//                _feedUiState.update { currentState -> currentState.copy(posts = updatedPostList) }
+//            }
+//        }
+//
+//        override fun onCancelled(error: DatabaseError) {
+//            Log.e("error", "onCancelled: ${error}")
+//        }
+//    }
+//
+//    init {
+//        db.child("posts").child("userPosts").addValueEventListener(postListener)
+//    }
 }
 
