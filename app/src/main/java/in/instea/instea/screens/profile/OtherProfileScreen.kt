@@ -25,7 +25,7 @@ import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 fun OtherProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: OtherProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    userId:String
+
 ) {
     when (val otherProfileUiState = viewModel.otherProfileUiState.collectAsState().value) {
         is OtherProfileUiState.Success -> {

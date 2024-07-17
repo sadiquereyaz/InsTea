@@ -5,6 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 class StringListConverter {
     @TypeConverter
@@ -35,5 +37,5 @@ data class PostData(
 
 @Immutable
 data class FeedUiState(
-    val posts: List<PostData> = emptyList()
+    val posts: Flow<List<PostData>> = emptyFlow()
 )

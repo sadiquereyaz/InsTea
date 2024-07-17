@@ -2,10 +2,14 @@ package `in`.instea.instea.data
 
 
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 //import androidx.compose.ui.tooling.data.EmptyGroup.location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Firebase
+import com.google.firebase.auth.FederatedAuthProvider
 import com.google.firebase.auth.auth
 
 import com.google.firebase.database.database
@@ -13,29 +17,44 @@ import `in`.instea.instea.data.datamodel.FeedUiState
 import `in`.instea.instea.data.datamodel.PostData
 
 import `in`.instea.instea.data.datamodel.User
-import `in`.instea.instea.data.repo.CombinedPostRepository
 import `in`.instea.instea.data.repo.PostRepository
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class FeedViewModel(
-    private  val postRepository: PostRepository
+    private val postRepository: PostRepository,
 ) : ViewModel() {
     private val mAuth = Firebase.auth
     val db = Firebase.database.reference
     val currentuser = mAuth.currentUser?.uid
 
+    companion object {
+        private const val TIMEOUT_MILLIS = 5_000L
+    }
+
     // private val chatUiState = MutableStateFlow(PostData())
 //    val _uistate: StateFlow<PostData> = chatUiState.asStateFlow()
-    private val _feedUiState = MutableStateFlow(FeedUiState())
-    val feedUiState: StateFlow<FeedUiState> = _feedUiState.asStateFlow()
+//    private val _feedUiState = MutableStateFlow(FeedUiState())
     private val _user = MutableStateFlow(User())
     val user: StateFlow<User> = _user.asStateFlow()
+     var feedUiState:StateFlow<FeedUiState> = postRepository.getAllSavedPostsStream().map { posts ->
+
+        FeedUiState(posts = flowOf(posts))
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+        initialValue = FeedUiState()
+    )
 
 
     init {
@@ -61,22 +80,22 @@ class FeedViewModel(
                 Log.d("1234", "margaye")
             }
 
+
+
+
+
         }
 
+
     }
 
-    fun insertPostsInDatabase(post:PostData){
-      viewModelScope.launch {
-          postRepository.insertItem(post);
-      }
+    fun insertPostsInDatabase(post: PostData) {
+        viewModelScope.launch {
+            postRepository.insertItem(post);
+        }
+//        _feedUiState.update { currentState -> currentState.copy(posts = postRepository.getAllSavedPostsStream()) }
     }
-//
-//    init {
-//        viewModelScope.launch {
-//
-//        }
-//
-//    }
+
 
     fun writeNewUser(
         name: String,

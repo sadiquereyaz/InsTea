@@ -1,9 +1,12 @@
 package `in`.instea.instea.data.repo
 
+import android.util.Log
+import com.google.firebase.Firebase
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.database
 import `in`.instea.instea.data.dao.PostDao
 import `in`.instea.instea.data.datamodel.PostData
 //import `in`.instea.instea.data.datamodel.RoomPostModel
@@ -13,6 +16,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import kotlin.math.log
 
 interface PostRepository {
     fun getAllSavedPostsStream(): Flow<List<PostData>>
@@ -50,7 +54,6 @@ class LocalPostRepository(
     override fun getAllSavedPostsStream(): Flow<List<PostData>> = postDao.getAllSavedPosts()
     override suspend fun insertItem(post: PostData) = postDao.insertPost(post)
 }
-
 class NetworkPostRepository(
     firebaseDatabase: FirebaseDatabase
 ) : PostRepository {
@@ -60,20 +63,26 @@ class NetworkPostRepository(
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val postList = mutableListOf<PostData>()
-                dataSnapshot.children.forEach { snapshot ->
-                    val post = snapshot.getValue(PostData::class.java)
-                    post?.let { postList.add(it) }
+                for (postSnapshot in dataSnapshot.children) {
+                    val post = postSnapshot.getValue(PostData::class.java)
+                    if (post != null) {
+                        postList.add(post)
+                    }
+                    Log.d("NetworkPostRepository", "Fetched post: $post")
                 }
+                Log.d("NetworkPostRepository", "Total posts fetched: ${postList.size}")
                 trySend(postList)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("NetworkPostRepository", "DatabaseError: ${databaseError.message}")
                 close(databaseError.toException())
             }
         }
         databaseReference.addValueEventListener(postListener)
 
         awaitClose {
+            Log.d("NetworkPostRepository", "Removing event listener")
             databaseReference.removeEventListener(postListener)
         }
     }
@@ -82,6 +91,6 @@ class NetworkPostRepository(
         val newPostRef = databaseReference.push()
         post.postid = newPostRef.key.toString()
         newPostRef.setValue(post).await()
+        Log.d("NetworkPostRepository", "Inserted post with ID: ${post.postid}")
     }
 }
-

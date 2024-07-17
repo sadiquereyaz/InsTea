@@ -177,7 +177,7 @@ fun PostCard(
     }
 }
 
-\
+
 
 @Composable
 fun UpAndDownVoteButtons(post: PostData) {
