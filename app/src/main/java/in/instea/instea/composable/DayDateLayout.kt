@@ -1,4 +1,4 @@
-package `in`.instea.instea.screens.schedule
+package `in`.instea.instea.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

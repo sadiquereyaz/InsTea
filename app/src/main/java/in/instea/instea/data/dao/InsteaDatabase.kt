@@ -9,9 +9,15 @@ import `in`.instea.instea.data.dao.PostDao
 import `in`.instea.instea.data.dao.UserDao
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.ScheduleModel
+import androidx.room.TypeConverters
+import `in`.instea.instea.data.datamodel.AttendanceTypeConverter
+import `in`.instea.instea.data.datamodel.RoomPostModel
+import `in`.instea.instea.data.datamodel.ScheduleModel
+import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 import `in`.instea.instea.data.datamodel.UserModel
 
-@Database(entities = [PostData::class, UserModel::class, ScheduleModel::class], version =8 , exportSchema = false)
+@Database(entities = [PostData::class, UserModel::class, ScheduleModel::class, TaskAttendanceModel::class],
+          version = 8, exportSchema = false)
 abstract class InsteaDatabase : RoomDatabase() {
 
     abstract fun postDao(): PostDao
