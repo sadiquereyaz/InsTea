@@ -49,8 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
-import `in`.instea.instea.data.datamodel.PostData
-
+import `in`.instea.instea.data.datamodel.RoomPostModel
 import `in`.instea.instea.data.datamodel.UserModel
 import `in`.instea.instea.data.viewmodel.SelfProfileViewModel
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
@@ -156,19 +155,19 @@ private fun PersonalizedFeed(profileUiState: ProfileUiState) {
     }
     when (selectedTabIndex) {
         0 -> {
-            TabItem(postList = savedPosts, noPostText = "No Saved Post")
+//            TabItem(postList = savedPosts, noPostText = "No Saved Post")
         }
 
         1 -> {
-            TabItem(postList = myPosts)
+//            TabItem(postList = myPosts)
         }
     }
 }
-
+/*
 @Composable
 fun TabItem(
     modifier: Modifier = Modifier,
-    postList: List<PostData>,
+   postList: List<PostData>,
     noPostText: String = "No Post Made"
 ) {
     if (postList.isEmpty()) {
@@ -179,14 +178,17 @@ fun TabItem(
         )
     } else {
         LazyColumn {
-            items(postList) { post ->
-                PostCard(post
+//            items(postList) { post ->
+                PostCard(
+//                    name = post.name,
+//                    location = post.location,
+//                    content = post.postDescription
                 )
             }
         }
     }
 }
-
+*/
 @Composable
 fun SocialLink(modifier: Modifier, currentUser: Boolean = true) {
     LazyRow(

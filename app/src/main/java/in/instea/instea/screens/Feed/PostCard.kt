@@ -177,8 +177,6 @@ fun PostCard(
     }
 }
 
-\
-
 @Composable
 fun UpAndDownVoteButtons(post: PostData) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }

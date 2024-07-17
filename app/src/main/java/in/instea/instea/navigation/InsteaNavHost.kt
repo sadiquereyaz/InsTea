@@ -1,8 +1,6 @@
 package `in`.instea.instea.navigation
 
-
 import FEED
-import FeedContent
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -10,14 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.google.firebase.database.FirebaseDatabase
 import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.data.FeedViewModel
-import `in`.instea.instea.data.dao.PostDao
-import `in`.instea.instea.data.repo.CombinedPostRepository
-import `in`.instea.instea.data.repo.LocalPostRepository
-import `in`.instea.instea.data.repo.NetworkPostRepository
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
+import `in`.instea.instea.data.viewmodel.signupViewModel
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
 import `in`.instea.instea.screens.auth.InboxScreen
@@ -35,7 +29,6 @@ fun InsteaNavHost(
     contentPadding: PaddingValues,
 //    scheduleViewModel: ScheduleViewModel
 ) {
-
     NavHost(
         navController = navController,
         startDestination = InsteaScreens.Signup.name,
@@ -45,8 +38,9 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Signup.name) {
             Signup(
                 viewModel = AuthViewModel(),
-
-                navController
+                feedViewmodel = FeedViewModel(),
+                navController,
+                signupviewModel = signupViewModel()
             )
         }
         composable(route = InsteaScreens.Login.name) {
@@ -54,7 +48,7 @@ fun InsteaNavHost(
         }
         composable(route = InsteaScreens.Feed.name) {
             FEED(
-                navController = navController
+                navController = navController, feedViewModel = FeedViewModel()
 //                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
             )
         }
@@ -82,9 +76,6 @@ fun InsteaNavHost(
             EditProfile(
 
             )
-        }
-        composable(route = InsteaScreens.Addpost.name) {
-            FeedContent()
         }
     }
 }
