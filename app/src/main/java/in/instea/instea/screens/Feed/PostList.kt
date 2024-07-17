@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 //import androidx.lifecycle.viewmodel.CreationExtras.Empty.map
 
 
-@SuppressLint("StateFlowValueCalledInComposition")
+
 @Composable
 fun PostList(feedViewModel: FeedViewModel) {
     val posts by feedViewModel.feedUiState.value.posts.collectAsState(initial = emptyList())
@@ -22,5 +22,4 @@ fun PostList(feedViewModel: FeedViewModel) {
     LazyColumn {
         items(posts) { post -> PostCard(post = post) }
     }
-
 }
