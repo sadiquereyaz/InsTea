@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.material.tabs.TabItem
 import `in`.instea.instea.data.datamodel.UserModel
 import `in`.instea.instea.data.viewmodel.OtherProfileUiState
 import `in`.instea.instea.data.viewmodel.OtherProfileViewModel
@@ -92,7 +93,7 @@ fun OtherProfileScreen(
                     )
                 )
                 // FEED
-                    TabItem(modifier = Modifier, postList = emptyList())
+//                    TabItem(modifier = Modifier, postList = emptyList())
                 Spacer(modifier = Modifier.weight(1f))
             }
             // developer

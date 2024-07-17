@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import `in`.instea.instea.data.AuthViewModel
@@ -28,12 +29,15 @@ fun ForgetPass(
         var emailState = rememberSaveable {
             mutableStateOf("")
         }
-        MyTextField(
-            labelValue = "Email Id",
+        CustomTextField(
+            textField = emailState.value,
+            OnTextFieldChange = {emailState.value=it},
             icon = Icons.Default.Email,
-            textState = emailState,
             keyboardType = KeyboardType.Email,
-            onValueChange = { emailState.value = it })
+            textFieldLabel = "Email Id",
+            errorText = "Invalid Email"
+            )
+
 
         ButtonComp(value = "Reset Password",
             onButtonClicked = {
@@ -49,8 +53,3 @@ fun ForgetPass(
 
 }
 
-//@Preview
-//@Composable
-//private fun PreviewForgetPass() {
-//    ForgetPass()
-//}
