@@ -59,9 +59,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.DropdownMenuBox
 import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.data.DataSource.departments
@@ -304,7 +307,7 @@ fun ScreenChangeText(
 }
 
 @Composable
-fun ButtonComp(value: String, onButtonClicked: () -> Unit, isEnabled: Boolean = true) {
+fun ButtonComp(modifier: Modifier=Modifier,value: String, onButtonClicked: () -> Unit, isEnabled: Boolean = true) {
     val isDarkMode = isSystemInDarkTheme()
     val textColor = if (isDarkMode) Color.White else Color.Black
     Button(
@@ -357,13 +360,12 @@ fun CustomTextField(
 ) {
     // State variables to manage password visibility and validity
     val localFocusmanager = LocalFocusManager.current
-//    var isInputError by remember { mutableStateOf<Boolean>(false) }
 
     OutlinedTextField(
         value = textField,
         onValueChange = {
             OnTextFieldChange(it)
-//            isInputError = !TextFieldValue(it).isValidInput()
+
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
@@ -438,7 +440,7 @@ fun Signup(
             .padding(top = 20.dp, start = 28.dp, end = 28.dp, bottom = 10.dp)
             .verticalScroll(scrollState)
     ) {
-        val btnEnabled by remember { derivedStateOf { !signupUiState.nameError && !signupUiState.usernameError && !signupUiState.emailError && !signupUiState.passError && signupUiState.departmenr.isNotEmpty() && signupUiState.university.isNotEmpty() && signupUiState.semester.isNotEmpty() } }
+        val btnEnabled by remember { derivedStateOf { !signupUiState.nameError && !signupUiState.usernameError && !signupUiState.emailError && !signupUiState.passError && signupUiState.department.isNotEmpty() && signupUiState.university.isNotEmpty() && signupUiState.semester.isNotEmpty() } }
 
         HeadingText(Modifier, "Create an Account")
         Spacer(modifier = Modifier.height(10.dp))
@@ -495,13 +497,14 @@ fun Signup(
         DropdownMenuBox(
             label = "Department",
             options = departments,
-            selectedOption = signupUiState.departmenr,
+            selectedOption = signupUiState.department,
             onOptionSelected = {
                 signupviewModel.updateDepartment(it)
             },
             modifier = Modifier
                 .padding(horizontal = 8.dp)
-                .height(60.dp)
+                .height(60.dp),
+            isEnabled = signupUiState.isDeptEnabled
         )
         Spacer(modifier = Modifier.height(5.dp))
         DropdownMenuBox(
@@ -513,7 +516,8 @@ fun Signup(
             },
             modifier = Modifier
                 .padding(horizontal = 8.dp)
-                .height(60.dp)
+                .height(60.dp),
+            isEnabled = signupUiState.isSemEnabled
         )
         Spacer(modifier = Modifier.height(5.dp))
         PasswordTextField(
@@ -543,7 +547,7 @@ fun Signup(
                                 signupUiState.emailid,
                                 signupUiState.username,
                                 signupUiState.university,
-                                signupUiState.departmenr,
+                                signupUiState.department,
                                 signupUiState.semester
                             )
                         }
@@ -559,17 +563,17 @@ fun Signup(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//private fun CustomfieldPreview() {
-//    val authViewModel: AuthViewModel = viewModel()
-//    val signupviewModel: signupViewModel = viewModel()
-//    val feedViewmodel: FeedViewModel = viewModel()
-//    val navController = rememberNavController()
-//    Signup(
-//        viewModel = authViewModel,
-//        feedViewmodel = feedViewmodel,
-//        navController = navController,
-//        signupviewModel = signupviewModel
-//    )
-//}
+@Preview(showBackground = true)
+@Composable
+private fun CustomfieldPreview() {
+    val authViewModel: AuthViewModel = viewModel()
+    val signupviewModel: signupViewModel = viewModel()
+    val feedViewmodel: FeedViewModel = viewModel()
+    val navController = rememberNavController()
+    Signup(
+        viewModel = authViewModel,
+        feedViewmodel = feedViewmodel,
+        navController = navController,
+        signupviewModel = signupviewModel
+    )
+}

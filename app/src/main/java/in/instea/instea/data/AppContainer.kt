@@ -29,7 +29,7 @@ private const val USER_PREFERENCES_NAME = "user_preferences"
 val Context.dataStore by preferencesDataStore(name = USER_PREFERENCES_NAME)
 
 
-class AppDataContainer(private val context: Context, ) : AppContainer {
+class AppDataContainer(private val context: Context ) : AppContainer {
     override val postRepository: PostRepository by lazy {
         val localPostRepository = LocalPostRepository(InsteaDatabase.getDatabase(context).postDao())
         val networkPostRepository = NetworkPostRepository(FirebaseDatabase.getInstance())

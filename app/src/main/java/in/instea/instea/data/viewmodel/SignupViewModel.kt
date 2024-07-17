@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import `in`.instea.instea.data.datamodel.SignupUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +16,8 @@ import java.util.regex.Pattern
 class signupViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(SignupUiState())
     val uiState: StateFlow<SignupUiState> = _uiState.asStateFlow()
+
+    val db = Firebase.database.reference
 
     private var emailState by mutableStateOf("")
     private var name by mutableStateOf("")
@@ -47,12 +51,24 @@ class signupViewModel : ViewModel() {
 
     fun updateDepartment(department: String) {
         departmentState = department
-        _uiState.update { it.copy(departmenr = department) }
+        _uiState.update { it.copy(department = department) }
+        if(departmentState.isNotEmpty()&& universityState.isNotEmpty()){
+            _uiState.update { it.copy(
+                isSemEnabled = true
+            ) }
+        }
+
     }
 
     fun updateUniversity(university: String) {
         universityState = university
         _uiState.update { it.copy(university = university) }
+        if(universityState.isNotEmpty()){
+            _uiState.update { it.copy(
+                isDeptEnabled = true
+            ) }
+        }
+
     }
 
     fun updateSemester(semester: String) {
@@ -96,6 +112,10 @@ class signupViewModel : ViewModel() {
 
     }
 
+    fun addNewUniv (univ: String): Unit {
+        val newUniv = db.child("academic").child("Univ").push()
+
+    }
 
 }
 

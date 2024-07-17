@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
+import `in`.instea.instea.data.viewmodel.signupViewModel
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
 import `in`.instea.instea.screens.auth.InboxScreen
@@ -30,16 +31,17 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Schedule.name,
+        startDestination = InsteaScreens.Signup.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
         composable(route = InsteaScreens.Signup.name) {
-//            Signup(
-//                viewModel = AuthViewModel(),
-//                feedViewmodel = FeedViewModel(),
-//                navController
-//            )
+            Signup(
+                viewModel = AuthViewModel(),
+                feedViewmodel = FeedViewModel(),
+                navController,
+                signupviewModel = signupViewModel()
+            )
         }
         composable(route = InsteaScreens.Login.name) {
             Login(navController = navController,viewModel = AuthViewModel())
