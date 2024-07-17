@@ -1,6 +1,7 @@
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,8 +19,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,6 +50,7 @@ import `in`.instea.instea.R
 import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.screens.profile.OtherProfileScreen
 
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -60,9 +64,11 @@ fun PostCard(
         mutableStateOf(false)
     }
 
-    Card(
-        elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
-        modifier = Modifier.padding(8.dp)
+    Box(
+        modifier = Modifier
+            .padding(8.dp)
+            .background(MaterialTheme.colorScheme.background)
+
     ) {
 
         Box(modifier = Modifier.padding(8.dp)) {
@@ -75,16 +81,22 @@ fun PostCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = if (post.profileImage != null) post.profileImage else R.drawable.ic_launcher_foreground),
+                        painter = painterResource(
+                            id = if (post.profileImage != null) post.profileImage
+                            else R.drawable.ic_launcher_foreground
+                        ),
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(Color.Black),
+                            .background(Color.Black)
+                            .clickable {
+
+                            },
                         contentDescription = "Profile"
                     )
 
                     Column(modifier = Modifier.padding(start = 8.dp)) {
-                        Text(text = post.postedByUser!!, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(text = "location", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         Text(
                             text = post.department!!,
                             fontSize = 12.sp,
@@ -157,14 +169,21 @@ fun PostCard(
 
             }
         }
+        Divider(
+            Modifier
+                .height(3.dp)
+                .fillMaxWidth()
+        )
     }
 }
+
+\
 
 @Composable
 fun UpAndDownVoteButtons(post: PostData) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }
     val isDownVoted = rememberSaveable { mutableStateOf(false) }
-    val feedViewModel : FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val mAuth = Firebase.auth
     val coroutineScope = rememberCoroutineScope()
     val userDislikeCurrentPost =

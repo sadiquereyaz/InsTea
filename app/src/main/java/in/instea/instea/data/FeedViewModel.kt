@@ -14,6 +14,7 @@ import `in`.instea.instea.data.datamodel.PostData
 
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.CombinedPostRepository
+import `in`.instea.instea.data.repo.PostRepository
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class FeedViewModel(
-    private  val postRepository: CombinedPostRepository
+    private  val postRepository: PostRepository
 ) : ViewModel() {
     private val mAuth = Firebase.auth
     val db = Firebase.database.reference

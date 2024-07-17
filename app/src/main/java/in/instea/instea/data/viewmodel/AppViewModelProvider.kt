@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import `in`.instea.instea.InsteaApplication
+import `in`.instea.instea.data.FeedViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -25,6 +26,12 @@ object AppViewModelProvider {
                 ScheduleViewModel(
                     scheduleRepository = insteaApplication().container.scheduleRepository
                 )
+        }
+
+        initializer {
+            FeedViewModel(
+                postRepository = insteaApplication().container.postRepository
+            )
         }
     }
 }

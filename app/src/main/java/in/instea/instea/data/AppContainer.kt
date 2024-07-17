@@ -21,6 +21,7 @@ interface AppContainer {
     val postRepository: PostRepository
     val userRepository: UserRepository
     val scheduleRepository: ScheduleRepository
+
 //    val userPreferenceRepository: UserPreferenceRepository
 }
 
