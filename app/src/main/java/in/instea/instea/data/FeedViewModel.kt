@@ -17,6 +17,7 @@ import `in`.instea.instea.data.datamodel.FeedUiState
 import `in`.instea.instea.data.datamodel.PostData
 
 import `in`.instea.instea.data.datamodel.User
+import `in`.instea.instea.data.repo.NetworkPostRepository
 import `in`.instea.instea.data.repo.PostRepository
 
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -32,12 +34,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 class FeedViewModel(
-    private val postRepository: PostRepository,
+    private val postRepository: NetworkPostRepository,
 ) : ViewModel() {
     private val mAuth = Firebase.auth
     val db = Firebase.database.reference
     val currentuser = mAuth.currentUser?.uid
-
+    lateinit var fetchedUsers : List<User>
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
@@ -45,22 +47,23 @@ class FeedViewModel(
     // private val chatUiState = MutableStateFlow(PostData())
 //    val _uistate: StateFlow<PostData> = chatUiState.asStateFlow()
 //    private val _feedUiState = MutableStateFlow(FeedUiState())
+//    val feeduiState:StateFlow<FeedUiState> =
     private val _user = MutableStateFlow(User())
     val user: StateFlow<User> = _user.asStateFlow()
-     var feedUiState:StateFlow<FeedUiState> = postRepository.getAllSavedPostsStream().map { posts ->
-
-        FeedUiState(posts = flowOf(posts))
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-        initialValue = FeedUiState()
-    )
+//    var feedUiState: StateFlow<FeedUiState> = postRepository.getAllSavedPostsStream().map { posts ->
+//        FeedUiState(posts = (posts))
+//    }.stateIn(
+//        scope = viewModelScope,
+//        started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+//        initialValue = FeedUiState()
+//    )
+    val feedUiState = postRepository.getAllSavedPostsStream()
 
 
     init {
         viewModelScope.launch {
 
-            val fetchedUsers = fetchUserData()
+             fetchedUsers = fetchUserData()
 
             val currentUser = fetchedUsers.find { it.email == mAuth.currentUser?.email }
 
@@ -68,7 +71,6 @@ class FeedViewModel(
 
                 _user.update { currentState ->
                     currentState.copy(
-                        name = currentUser.name,
                         email = currentUser.email,
                         username = currentUser.username,
                         university = currentUser.university,
@@ -81,9 +83,6 @@ class FeedViewModel(
             }
 
 
-
-
-
         }
 
 
@@ -93,7 +92,15 @@ class FeedViewModel(
         viewModelScope.launch {
             postRepository.insertItem(post);
         }
+
 //        _feedUiState.update { currentState -> currentState.copy(posts = postRepository.getAllSavedPostsStream()) }
+    }
+
+    fun updateVotes(post: PostData){
+        Log.d("posts", "updateVotes: $post")
+        viewModelScope.launch {
+            postRepository.updateUpAndDownVote(post)
+        }
     }
 
 
@@ -112,7 +119,7 @@ class FeedViewModel(
         }
 
         val user = User(
-            name, email, username, null, university, department, semester
+            email= email,username= username,university= university, dept = department, sem=semester
         )
         val currentUser = mAuth.currentUser ?: return // Handle case where user is not logged in
 

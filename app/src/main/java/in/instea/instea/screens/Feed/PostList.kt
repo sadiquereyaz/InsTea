@@ -7,6 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import `in`.instea.instea.data.FeedViewModel
+import `in`.instea.instea.data.datamodel.FeedUiState
 import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun PostList(feedViewModel: FeedViewModel) {
-    val posts by feedViewModel.feedUiState.value.posts.collectAsState(initial = emptyList())
+    val posts = feedViewModel.feedUiState.collectAsState(initial = emptyList()).value.reversed()
 
     LazyColumn {
         items(posts) { post -> PostCard(post = post) }

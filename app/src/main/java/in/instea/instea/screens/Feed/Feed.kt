@@ -195,13 +195,16 @@ fun FeedContent(feedViewModel: FeedViewModel = viewModel(factory = AppViewModelP
 
                                         )
                                     )
+
+                                    textState = ""
                                 }
 
 
-                                textState = ""
+
                             }
                         )
                     }
+
                 }
             )
 

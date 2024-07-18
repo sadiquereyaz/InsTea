@@ -41,6 +41,6 @@ class NetworkUserRepository(private val firebaseDatabase: FirebaseDatabase) : Us
     }
 
     override suspend fun insertUser(user: UserModel) {
-        TODO("Not yet implemented")
+
     }
 }

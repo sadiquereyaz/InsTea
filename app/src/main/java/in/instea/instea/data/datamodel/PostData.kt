@@ -24,18 +24,21 @@ class StringListConverter {
 @TypeConverters(StringListConverter::class)
 data class PostData(
     @PrimaryKey
-    var postid: String ,
+    var postid: String = "", // Initialize with an empty string
     val department: String? = null,
     val profileImage: Int? = null,
-    val postDescription: String? = null,
+    val postDescription: String? = "",
     val postImage: Int? = null,
-    val postedByUser: String? = null,
-    val userLikedCurrentPost: MutableList<String?> = mutableListOf(),
-    val userDislikedCurrentPost: MutableList<String?> = mutableListOf(),
+    val postedByUser: String? = "",
+    val userLikedCurrentPost: MutableList<String?> = mutableListOf(""),
+    val userDislikedCurrentPost: MutableList<String?> = mutableListOf(""),
     val hasReports: Int = 0
-)
+) {
+    // No-argument constructor
+    constructor() : this("", null, null, null, null, null, mutableListOf(), mutableListOf(), 0)
+}
 
 @Immutable
 data class FeedUiState(
-    val posts: Flow<List<PostData>> = emptyFlow()
+    val posts:List<PostData> = emptyList()
 )

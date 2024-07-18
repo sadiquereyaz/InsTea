@@ -21,6 +21,7 @@ interface AppContainer {
     val postRepository: PostRepository
     val userRepository: UserRepository
     val scheduleRepository: ScheduleRepository
+    val networkRepository: NetworkPostRepository
 
 //    val userPreferenceRepository: UserPreferenceRepository
 }
@@ -47,5 +48,9 @@ class AppDataContainer(private val context: Context, ) : AppContainer {
     override val scheduleRepository: ScheduleRepository by lazy {
         LocalScheduleRepository(InsteaDatabase.getDatabase(context).classDao())
     }
+    override val networkRepository: NetworkPostRepository by lazy {
+        NetworkPostRepository(FirebaseDatabase.getInstance())
+    }
+
 
 }
