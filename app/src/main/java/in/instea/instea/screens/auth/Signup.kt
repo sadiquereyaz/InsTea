@@ -71,6 +71,7 @@ import `in`.instea.instea.data.DataSource.departments
 import `in`.instea.instea.data.DataSource.semesters
 import `in`.instea.instea.data.DataSource.universities
 import `in`.instea.instea.data.FeedViewModel
+import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.signupViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.ui.theme.DarkColors
@@ -409,9 +410,9 @@ fun CustomTextField(
 @Composable
 fun Signup(
     viewModel: AuthViewModel,
-    feedViewmodel: FeedViewModel,
     navController: NavController,
-    signupviewModel: signupViewModel
+    feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    signupviewModel: signupViewModel,
 ) {
     val authState = viewModel.authState.collectAsState()
     val signupUiState by signupviewModel.uiState.collectAsState()
@@ -542,7 +543,7 @@ fun Signup(
                         signupUiState.password
                     ) { success ->
                         if (success) {
-                            FeedViewModel().writeNewUser(
+                            feedViewModel.writeNewUser(
                                 signupUiState.name,
                                 signupUiState.emailid,
                                 signupUiState.username,
@@ -572,7 +573,6 @@ private fun CustomfieldPreview() {
     val navController = rememberNavController()
     Signup(
         viewModel = authViewModel,
-        feedViewmodel = feedViewmodel,
         navController = navController,
         signupviewModel = signupviewModel
     )

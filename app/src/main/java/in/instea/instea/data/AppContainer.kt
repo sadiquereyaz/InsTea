@@ -3,7 +3,7 @@ package `in`.instea.instea.data
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.database.FirebaseDatabase
-import `in`.instea.instea.data.dao.InsteaDatabase
+//import `in`.instea.instea.data.dao.InsteaDatabase
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.data.repo.CombinedPostRepository
 import `in`.instea.instea.data.repo.CombinedUserRepository

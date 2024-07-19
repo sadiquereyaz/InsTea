@@ -67,12 +67,12 @@ fun PostCard(
 
     Box(
         modifier = Modifier
-            .padding(8.dp)
+            .padding(start = 3.dp, end = 3.dp, bottom = 0.dp)
             .background(MaterialTheme.colorScheme.background)
 
     ) {
 
-        Box(modifier = Modifier.padding(8.dp)) {
+        Box(modifier = Modifier.padding(2.dp)) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -178,7 +178,6 @@ fun PostCard(
         )
     }
 }
-
 @Composable
 fun UpAndDownVoteButtons(post: PostData) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }
@@ -193,8 +192,12 @@ fun UpAndDownVoteButtons(post: PostData) {
         mutableStateOf(post.userLikedCurrentPost.contains(feedViewModel.currentuser))
     }
 
-    Box(contentAlignment = Alignment.BottomEnd) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    Box(contentAlignment = Alignment.BottomEnd,
+        modifier = Modifier.padding(0.dp)) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp) // Custom spacing between elements
+        ) {
 
             Button(
                 onClick = { },
@@ -213,90 +216,101 @@ fun UpAndDownVoteButtons(post: PostData) {
                 )
             }
 
-            IconButton(
-                onClick = {
-                    isUpVoted.value = !isUpVoted.value
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp) // Custom spacing between button and text
+            ) {
+                IconButton(
+                    onClick = {
+                        isUpVoted.value = !isUpVoted.value
 
-                    if (isUpVoted.value) {
-                        isDownVoted.value = false
-                    }
-
-                    coroutineScope.launch {
-                        if (userlikeCurrentPost && !userDislikeCurrentPost) {
-                            post.userLikedCurrentPost.remove(feedViewModel.currentuser)
-                        } else if (!userlikeCurrentPost && userDislikeCurrentPost) {
-                            post.userDislikedCurrentPost.remove(feedViewModel.currentuser)
-                            post.userLikedCurrentPost.add(feedViewModel.currentuser)
-                        } else {
-                            post.userLikedCurrentPost.add(feedViewModel.currentuser)
+                        if (isUpVoted.value) {
+                            isDownVoted.value = false
                         }
 
-                        feedViewModel.updateVotes(post)
+                        coroutineScope.launch {
+                            if (userlikeCurrentPost && !userDislikeCurrentPost) {
+                                post.userLikedCurrentPost.remove(feedViewModel.currentuser)
+                            } else if (!userlikeCurrentPost && userDislikeCurrentPost) {
+                                post.userDislikedCurrentPost.remove(feedViewModel.currentuser)
+                                post.userLikedCurrentPost.add(feedViewModel.currentuser)
+                            } else {
+                                post.userLikedCurrentPost.add(feedViewModel.currentuser)
+                            }
 
-                        // Update the local state to reflect changes
-                        userDislikeCurrentPost =
-                            post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
-                        userlikeCurrentPost =
-                            post.userLikedCurrentPost.contains(feedViewModel.currentuser)
-                    }
-                },
-                modifier = Modifier.padding(8.dp),
-                enabled = true
-            ) {
-                Image(
-                    painter = painterResource(id = if (userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
-                    contentDescription = "Upvote",
-                    modifier = Modifier.size(20.dp),
-                    colorFilter = ColorFilter.tint(if (userlikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
+                            feedViewModel.updateVotes(post)
 
-                )
+                            // Update the local state to reflect changes
+                            userDislikeCurrentPost =
+                                post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
+                            userlikeCurrentPost =
+                                post.userLikedCurrentPost.contains(feedViewModel.currentuser)
+                        }
+                    },
+                    modifier = Modifier.padding(4.dp), // Minimal padding
+                    enabled = true
+                ) {
+                    Image(
+                        painter = painterResource(id = if (userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
+                        contentDescription = "Upvote",
+                        modifier = Modifier.size(20.dp),
+                        colorFilter = ColorFilter.tint(if (userlikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
+                    )
+                }
+
+                Text(text = "U", fontSize = 10.sp, modifier = Modifier.padding(0.dp))
             }
 
-            Text(text = "U")
             Spacer(
                 modifier = Modifier
-                    .height(16.dp)
                     .width(1.dp)
+                    .height(16.dp)
                     .background(Color.Black)
                     .align(Alignment.CenterVertically)
             )
-            Text(text = "D")
 
-            IconButton(
-                onClick = {
-                    isDownVoted.value = !isDownVoted.value
-                    if (isDownVoted.value) {
-                        isUpVoted.value = false
-                    }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp) // Custom spacing between button and text
+            ) {
+                Text(text = "D", fontSize = 10.sp, modifier = Modifier.padding(0.dp))
 
-                    coroutineScope.launch {
-                        if (!userlikeCurrentPost && userDislikeCurrentPost) {
-                            post.userDislikedCurrentPost.remove(feedViewModel.currentuser)
-                        } else if (userlikeCurrentPost && !userDislikeCurrentPost) {
-                            post.userLikedCurrentPost.remove(feedViewModel.currentuser)
-                            post.userDislikedCurrentPost.add(feedViewModel.currentuser)
-                        } else {
-                            post.userDislikedCurrentPost.add(feedViewModel.currentuser)
+                IconButton(
+                    onClick = {
+                        isDownVoted.value = !isDownVoted.value
+                        if (isDownVoted.value) {
+                            isUpVoted.value = false
                         }
 
-                        feedViewModel.updateVotes(post)
+                        coroutineScope.launch {
+                            if (!userlikeCurrentPost && userDislikeCurrentPost) {
+                                post.userDislikedCurrentPost.remove(feedViewModel.currentuser)
+                            } else if (userlikeCurrentPost && !userDislikeCurrentPost) {
+                                post.userLikedCurrentPost.remove(feedViewModel.currentuser)
+                                post.userDislikedCurrentPost.add(feedViewModel.currentuser)
+                            } else {
+                                post.userDislikedCurrentPost.add(feedViewModel.currentuser)
+                            }
 
-                        // Update the local state to reflect changes
-                        userDislikeCurrentPost =
-                            post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
-                        userlikeCurrentPost =
-                            post.userLikedCurrentPost.contains(feedViewModel.currentuser)
-                    }
-                },
-                modifier = Modifier.padding(8.dp),
-                enabled = true
-            ) {
-                Image(
-                    painter = painterResource(id = if (userDislikeCurrentPost) R.drawable.arrowdownfilled else R.drawable.arrowdownoutline),
-                    contentDescription = "Downvote",
-                    modifier = Modifier.size(20.dp),
-                    colorFilter = ColorFilter.tint(if (userDislikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
-                )
+                            feedViewModel.updateVotes(post)
+
+                            // Update the local state to reflect changes
+                            userDislikeCurrentPost =
+                                post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
+                            userlikeCurrentPost =
+                                post.userLikedCurrentPost.contains(feedViewModel.currentuser)
+                        }
+                    },
+                    modifier = Modifier.padding(4.dp), // Minimal padding
+                    enabled = true
+                ) {
+                    Image(
+                        painter = painterResource(id = if (userDislikeCurrentPost) R.drawable.arrowdownfilled else R.drawable.arrowdownoutline),
+                        contentDescription = "Downvote",
+                        modifier = Modifier.size(20.dp),
+                        colorFilter = ColorFilter.tint(if (userDislikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
+                    )
+                }
             }
         }
     }

@@ -38,7 +38,6 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Signup.name) {
             Signup(
                 viewModel = AuthViewModel(),
-                feedViewmodel = FeedViewModel(),
                 navController,
                 signupviewModel = signupViewModel()
             )
@@ -48,7 +47,7 @@ fun InsteaNavHost(
         }
         composable(route = InsteaScreens.Feed.name) {
             FEED(
-                navController = navController, feedViewModel = FeedViewModel()
+                navController = navController
 //                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
             )
         }
