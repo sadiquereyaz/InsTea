@@ -16,14 +16,18 @@ import androidx.compose.ui.unit.sp
 import `in`.instea.instea.ui.theme.DarkColors
 
 @Composable
-fun UnderlinedTextComp(value: String, OnTextClicked: Unit, modifier: Modifier = Modifier) {
+fun UnderlinedTextComp(
+    value: String,
+    onTextClicked: ()->Unit,
+    modifier: Modifier = Modifier
+) {
     Text(
         text = value,
         modifier = Modifier
             .fillMaxWidth()
             .heightIn(40.dp)
             .clickable {
-                OnTextClicked
+                onTextClicked()
             },
         style = TextStyle(
             fontSize = 18.sp,

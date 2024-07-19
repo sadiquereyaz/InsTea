@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import `in`.instea.instea.data.datamodel.UserModel
+import `in`.instea.instea.data.datamodel.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -29,7 +29,7 @@ class LocalUserRepository(
     }
 
     // Function to get the user details
-    fun getCurrentUser(): Flow<UserModel> = dataStore.data
+    fun getCurrentUser(): Flow<User> = dataStore.data
         .catch {
             if (it is IOException) {
                 Log.e("SHARED_STORE", "Error reading preferences.", it)
@@ -38,7 +38,7 @@ class LocalUserRepository(
                 throw it
         }
         .map { preferences ->
-            UserModel(
+            User(
                 userId = preferences[USER_ID] ?: "datastore id",
                 username = preferences[USER_NAME] ?: "data Store",
                 about = preferences[USER_ABOUT]
@@ -48,11 +48,11 @@ class LocalUserRepository(
         }
 
     // Function to save the user details
-    suspend fun upsertUser(user: UserModel) {
+    suspend fun upsertUser(user: User) {
         dataStore.edit { preferences ->
-            preferences[USER_ID] = user.userId
-            preferences[USER_NAME] = user.username
-            preferences[USER_ABOUT] = user.about
+            preferences[USER_ID] = user.userId ?: ""
+            preferences[USER_NAME] = user.username ?: ""
+            preferences[USER_ABOUT] = user.about ?: "Hey there, InsTea is great!"
         }
     }
 

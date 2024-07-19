@@ -1,17 +1,17 @@
 package `in`.instea.instea.data.repo
 
-import `in`.instea.instea.data.datamodel.UserModel
+import `in`.instea.instea.data.datamodel.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 
 interface UserRepository {
     fun getCurrentUserId(): Flow<String>
-    fun getUserById(userId: String): Flow<UserModel>
-    suspend fun upsertUser(user: UserModel)
-    suspend fun saveUserToFirebase(user: UserModel)
+    fun getUserById(userId: String): Flow<User>
+    suspend fun upsertUserLocally(user: User)
+    suspend fun upsertUserToFirebase(user: User)
     suspend fun signIn(email: String, password: String): Result<String>
-    suspend fun signUp(email: String, password: String): Result<String>
+    suspend fun signUp(user: User): Result<String>
     suspend fun clearUser()
 }
 
@@ -21,7 +21,7 @@ class CombinedUserRepository(
 ) : UserRepository {
     override fun getCurrentUserId(): Flow<String> = localUserRepository.getUserId()
 
-    override fun getUserById(userId: String): Flow<UserModel> = flow {
+    override fun getUserById(userId: String): Flow<User> = flow {
         // Try fetching user from local database first
         val localUser = localUserRepository.getCurrentUser().firstOrNull()
         if (localUser?.userId == userId) {
@@ -31,26 +31,24 @@ class CombinedUserRepository(
             val networkUser = networkUserRepository.getUserById(userId).firstOrNull()
             if (networkUser != null) {
                 emit(networkUser) // Emit user fetched from Firebase
-                // Insert user into Room database asynchronously
-                localUserRepository.upsertUser(networkUser)
             } else {
                 // Handle the case where the user is not found in Firebase
-                emit(UserModel(userId, "userIdNotAvailable", "Given ID is not present in Firebase"))
+                emit(User(userId="userIdNotAvailable", email = "Given ID is not present in Firebase"))
             }
         }
     }
 
-    override suspend fun upsertUser(user: UserModel) {
+    override suspend fun upsertUserLocally(user: User) {
         localUserRepository.upsertUser(user)
         //insert in firebase as well
-        networkUserRepository.updateUser(user)
+//        networkUserRepository.updateUser(user)
     }
 
     override suspend fun clearUser() {
         localUserRepository.clearUser()
     }
 
-    override suspend fun saveUserToFirebase(user: UserModel) {
+    override suspend fun upsertUserToFirebase(user: User) {
 //        TODO("check for the non existence of email")
         networkUserRepository.updateUser(user = user)
     }
@@ -59,8 +57,8 @@ class CombinedUserRepository(
         return networkUserRepository.signIn(email, password)
     }
 
-    override suspend fun signUp(email: String, password: String): Result<String> {
-        return networkUserRepository.signUp(email, password)
+    override suspend fun signUp(user: User): Result<String> {
+        return networkUserRepository.signUp(user)
     }
 }
 

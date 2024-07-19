@@ -16,8 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.material.tabs.TabItem
-import `in`.instea.instea.data.datamodel.UserModel
+import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.OtherProfileUiState
 import `in`.instea.instea.data.viewmodel.OtherProfileViewModel
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
@@ -30,8 +29,8 @@ fun OtherProfileScreen(
 ) {
     when (val otherProfileUiState = viewModel.otherProfileUiState.collectAsState().value) {
         is OtherProfileUiState.Success -> {
-            val userDataState = otherProfileUiState.userData?.collectAsState(initial = UserModel())
-            val userData = userDataState?.value ?: UserModel()
+            val userDataState = otherProfileUiState.userData?.collectAsState(initial = User())
+            val userData = userDataState?.value ?: User()
             val profilePostsState = otherProfileUiState.profilePosts?.collectAsState(initial = emptyList())
             val profilePosts = profilePostsState?.value ?: emptyList()
 

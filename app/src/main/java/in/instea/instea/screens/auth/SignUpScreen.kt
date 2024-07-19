@@ -1,5 +1,6 @@
 package `in`.instea.instea.screens.auth
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -29,13 +31,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import `in`.instea.instea.composable.DropdownMenuBox
-import `in`.instea.instea.data.DataSource.semesters
+import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
-import `in`.instea.instea.data.viewmodel.SignUpVM
+import `in`.instea.instea.data.viewmodel.SignUpViewModel
+import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.screens.auth.composable.ButtonComp
 import `in`.instea.instea.screens.auth.composable.CustomTextField
 import `in`.instea.instea.screens.auth.composable.HeadingText
 import `in`.instea.instea.screens.auth.composable.PasswordTextField
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
@@ -43,7 +47,7 @@ fun SignUpScreen(
     navController: NavController,
 ) {
 //    val authState = viewModel.authState.collectAsState()
-    val viewModel: SignUpVM = viewModel(factory = AppViewModelProvider.Factory)
+    val viewModel: SignUpViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val signUpUiState by viewModel.signUpUiState.collectAsState()
 
     /*   LaunchedEffect(authState.value) {
@@ -59,13 +63,13 @@ fun SignUpScreen(
            }
        }*/
     val scrollState = rememberScrollState(0) // Remember the scroll state
-    var username by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var university by rememberSaveable { mutableStateOf("") }
-    var department by rememberSaveable { mutableStateOf("") }
-    var semester by rememberSaveable { mutableStateOf("") }
-
+    var username by rememberSaveable { mutableStateOf("sad") }
+    var email by rememberSaveable { mutableStateOf("sad@gmail.com") }
+    var password by rememberSaveable { mutableStateOf("ssssss") }
+    var university by rememberSaveable { mutableStateOf("JMI") }
+    var department by rememberSaveable { mutableStateOf("CSE") }
+    var semester by rememberSaveable { mutableStateOf("V") }
+    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = modifier
             .verticalScroll(scrollState)
@@ -130,6 +134,7 @@ fun SignUpScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                //department
                 DropdownMenuBox(
                     modifier = Modifier.weight(3f),
                     label = "Department",
@@ -144,7 +149,7 @@ fun SignUpScreen(
                         )
                         semester = ""
                     },
-//                isEnabled = signupUiState.isDeptEnabled
+                    errorMessage = "Please select university first"
                 )
                 // semester
                 DropdownMenuBox(
@@ -155,19 +160,30 @@ fun SignUpScreen(
                     selectedOption = semester,
                     onOptionSelected = {
                         semester = it
-                    },
-                    isEnabled = true
+                    }
                 )
             }
-            // department
-
         }
         Spacer(modifier = Modifier.height(14.dp))
 
         ButtonComp(
             value = "Sign Up",
             onButtonClicked = {
-//                viewModel.signUp(email, password)
+                viewModel.signUp(
+                    User(
+                        username = username,
+                        email = email,
+                        password = password,
+                        university = university,
+                        dept = department,
+                        sem = semester
+                    ),
+                    moveToSignIn = {
+                        Log.d("SIGNUP", username)
+                            navController.navigate(InsteaScreens.SignIn.name)
+
+                    }
+                )
             },
             isEnabled = true
         )

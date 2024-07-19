@@ -4,21 +4,28 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.UserRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
-class SignInViewModel(private val userRepository: UserRepository) : ViewModel() {
+class SignInViewModel(
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow<SignInUiState>(SignInUiState.Idle)
     val uiState: StateFlow<SignInUiState> = _uiState
 
-    suspend fun signIn(email: String, password: String) {
+    fun signIn(email: String, password: String) {
         viewModelScope.launch {
-            val user = userRepository.signIn(email, password)
-            _uiState.value = when (user) {
-                null -> SignInUiState.Error("Sign In Failed")
-                else -> SignInUiState.Success(User())
+            val result = userRepository.signIn(email, password)
+            if (result.isSuccess) {
+                val userId = result.getOrNull()
+                if (userId != null) {
+                    val userObj: Flow<User> = userRepository.getUserById(userId)
+                    userRepository.upsertUserLocally(userObj.firstOrNull()!!)
+                }
             }
         }
     }
@@ -26,6 +33,7 @@ class SignInViewModel(private val userRepository: UserRepository) : ViewModel() 
 
 sealed class SignInUiState {
     object Idle : SignInUiState()
+    object Loading : SignInUiState()
     data class Success(val user: User) : SignInUiState()
     data class Error(val message: String) : SignInUiState()
 }

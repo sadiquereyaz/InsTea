@@ -1,16 +1,16 @@
 package `in`.instea.instea.data.datamodel
 
- data class User(
-
-    val name: String?=null,
-    val email: String?=null,
-    val username: String?=null,
-    val password: String?=null,
-    val university: String?=null,
-    val dept: String?=null,
-    val sem: String?=null,
-    val instaId: String?=null,
-    val linkedinId: String?=null,
-    val hostel: String?=null,
-    val roomNo: String?=null
+data class User(
+    val userId: String? = null,
+    val email: String? = null,
+    val username: String? = null,
+    var password: String? = null,
+    var university: String? = null,
+    var dept: String? = null,
+    var sem: String? = null,
+    var about: String? = null,
+    var instaId: String? = null,
+    var linkedinId: String? = null,
+    val hostel: String? = null,
+    val roomNo: String? = null
 )
