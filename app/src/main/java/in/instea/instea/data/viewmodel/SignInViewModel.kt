@@ -1,5 +1,6 @@
 package `in`.instea.instea.data.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.User
@@ -21,12 +22,13 @@ class SignInViewModel(
         viewModelScope.launch {
             val result = userRepository.signIn(email, password)
             if (result.isSuccess) {
-                val userId = result.getOrNull()
-                if (userId != null) {
-                    val userObj: Flow<User> = userRepository.getUserById(userId)
-                    userRepository.upsertUserLocally(userObj.firstOrNull()!!)
-                }
+                val userObj: Flow<User> = userRepository.getUserById(result.getOrNull()!!)//getting user obj from firebase
+                userRepository.upsertUserLocally(userObj.firstOrNull()!!)
+                Log.d("CURRENT", userObj.firstOrNull()!!.username!!)
+                Log.d("LOCAL_UID", userRepository.getCurrentUserId().firstOrNull()!!)
+                Log.d("USERNAME", userRepository.getUserById(userRepository.getCurrentUserId().firstOrNull()!!).firstOrNull()!!.username!!)
             }
+            Log.d("USER ID", result.getOrNull().toString())
         }
     }
 }

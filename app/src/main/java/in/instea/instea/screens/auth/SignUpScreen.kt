@@ -179,9 +179,7 @@ fun SignUpScreen(
                         sem = semester
                     ),
                     moveToSignIn = {
-                        Log.d("SIGNUP", username)
                             navController.navigate(InsteaScreens.SignIn.name)
-
                     }
                 )
             },

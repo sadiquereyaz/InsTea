@@ -1,5 +1,6 @@
 package `in`.instea.instea.data.repo
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import `in`.instea.instea.data.datamodel.User
@@ -61,8 +62,11 @@ class NetworkUserRepository(
     suspend fun signIn(email: String, password: String): Result<String> {
         return try {
             val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            Result.success(result.user?.uid ?: "No UID")
+            val userId = result.user?.uid ?: "No UID"
+//            Log.d("USER_ID", userId)
+            Result.success(userId)
         } catch (e: Exception) {
+            Log.e("NetworkUserRepository", "Sign-in error", e)
             Result.failure(e)
         }
     }
@@ -74,7 +78,8 @@ class NetworkUserRepository(
                 user.email ?: "noemailrecieved@networkrepo.com", user.password ?: "networkPassword"
             ).await()
             val userId = result.user?.uid ?: return Result.failure(Exception("No UID"))
-            firebaseDatabase.reference.child("user").child(userId).setValue(user).await()
+            val newUser = user.copy(userId = userId)
+            firebaseDatabase.reference.child("user").child(userId).setValue(newUser).await()
             Result.success(userId)
         } catch (e: Exception) {
             Result.failure(e)

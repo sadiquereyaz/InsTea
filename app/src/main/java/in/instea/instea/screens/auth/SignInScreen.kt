@@ -1,6 +1,7 @@
 package `in`.instea.instea.screens.auth
 
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,7 +39,7 @@ fun SignInScreen(
     ) {
     val viewModel: SignInViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val signInUiState by viewModel.uiState.collectAsState()
-    var email by rememberSaveable { mutableStateOf("sss") }
+    var email by rememberSaveable { mutableStateOf("sadique@gmail.com") }
     var password by rememberSaveable { mutableStateOf("ssssss") }
 
     Column(
@@ -75,7 +76,8 @@ fun SignInScreen(
                 navController.navigate(InsteaScreens.Forget.name)
             })
         ButtonComp(
-            value = "Login", onButtonClicked = {
+            value = "Login",
+            onButtonClicked = {
                 viewModel.signIn(email = email, password = password)
                 navController.navigate(InsteaScreens.Feed.name)
             },
@@ -88,7 +90,7 @@ fun SignInScreen(
 
             is SignInUiState.Success -> {
                 // Navigate to the next screen
-                navController.navigate(InsteaScreens.Feed.name)
+//                navController.navigate(InsteaScreens.Feed.name)
             }
 
             is SignInUiState.Error -> {
