@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import `in`.instea.instea.data.AuthViewModel
 import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 
@@ -82,7 +83,8 @@ fun InsteaTopAppBar(
                     Icon(imageVector = Icons.Default.DateRange, contentDescription = "Attendance")
                 }
             } else if (currentScreen == InsteaScreens.SelfProfile) {
-                IconButton(onClick = { navController.navigate(InsteaScreens.EditProfile.name) }) {
+                IconButton(onClick = { AuthViewModel().signOut()
+                navController.navigate(InsteaScreens.Login.name)}) {
                     Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Edit Profile")
                 }
             } else if (currentScreen == InsteaScreens.EditProfile) {
