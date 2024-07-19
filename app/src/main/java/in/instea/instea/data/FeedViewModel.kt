@@ -19,6 +19,7 @@ import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.NetworkPostRepository
 import `in`.instea.instea.data.repo.PostRepository
+import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -48,8 +49,14 @@ class FeedViewModel(
 //    val _uistate: StateFlow<PostData> = chatUiState.asStateFlow()
 //    private val _feedUiState = MutableStateFlow(FeedUiState())
 //    val feeduiState:StateFlow<FeedUiState> =
+    private val _posts = MutableStateFlow<List<PostData>>(emptyList())
+    val posts: StateFlow<List<PostData>> get() = _posts
     private val _user = MutableStateFlow(User())
     val user: StateFlow<User> = _user.asStateFlow()
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> get() = _isLoading
+
+
 //    var feedUiState: StateFlow<FeedUiState> = postRepository.getAllSavedPostsStream().map { posts ->
 //        FeedUiState(posts = (posts))
 //    }.stateIn(
@@ -57,12 +64,12 @@ class FeedViewModel(
 //        started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
 //        initialValue = FeedUiState()
 //    )
-    val feedUiState = postRepository.getAllSavedPostsStream()
+
 
 
     init {
         viewModelScope.launch {
-
+           fetchPosts()
              fetchedUsers = fetchUserData()
 
             val currentUser = fetchedUsers.find { it.email == mAuth.currentUser?.email }
@@ -86,6 +93,17 @@ class FeedViewModel(
         }
 
 
+    }
+
+    private fun fetchPosts() {
+        viewModelScope.launch {
+            delay(3000)
+            postRepository.getAllSavedPostsStream().collect { posts ->
+                _posts.update { posts }
+                _isLoading.value = false
+            }
+
+        }
     }
 
     fun insertPostsInDatabase(post: PostData) {

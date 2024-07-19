@@ -58,6 +58,7 @@ import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.SelfProfileViewModel
+import `in`.instea.instea.ui.PostList
 import kotlinx.coroutines.launch
 
 //import `in`.instea.instea.data.UserViewModel
