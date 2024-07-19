@@ -25,6 +25,7 @@ class CombinedUserRepository(
     override fun getUserById(userId: String): Flow<User> = flow {
         // Try fetching user from local database first
         val localUser = localUserRepository.getCurrentUser().firstOrNull()
+//        Log.d("USER_FROM_DATASTORE", localUser?.username.toString())
         if (localUser?.userId == userId) {
             emit(localUser) // Emit user from local storage if found
         } else {
