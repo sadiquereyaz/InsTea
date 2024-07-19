@@ -2,6 +2,8 @@ package `in`.instea.instea.data.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.PostRepository
 import `in`.instea.instea.data.repo.UserRepository
@@ -15,7 +17,7 @@ class SelfProfileViewModel(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val userId: String = "24RTAXT5nGSRj1D3ChrK2xGUohT2"
+    private val userId = Firebase.auth.currentUser?.uid.toString()
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L

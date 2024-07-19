@@ -12,7 +12,7 @@ interface UserRepository {
     suspend fun upsertUserLocally(user: User)
     suspend fun upsertUserToFirebase(user: User)
     suspend fun signIn(email: String, password: String): Result<String>
-    suspend fun signUp(user: User): Result<String>
+    suspend fun signUp(user: User,password: String): Result<String>
     suspend fun clearUser()
 }
 
@@ -25,6 +25,7 @@ class CombinedUserRepository(
     override fun getUserById(userId: String): Flow<User> = flow {
         // Try fetching user from local database first
         val localUser = localUserRepository.getCurrentUser().firstOrNull()
+//        Log.d("USER_FROM_DATASTORE", localUser?.username.toString())
         if (localUser?.userId == userId) {
             emit(localUser) // Emit user from local storage if found
         } else {
@@ -58,8 +59,8 @@ class CombinedUserRepository(
         return networkUserRepository.signIn(email, password)
     }
 
-    override suspend fun signUp(user: User): Result<String> {
-        return networkUserRepository.signUp(user)
+    override suspend fun signUp(user: User,password: String): Result<String> {
+        return networkUserRepository.signUp(user,password)
     }
 }
 

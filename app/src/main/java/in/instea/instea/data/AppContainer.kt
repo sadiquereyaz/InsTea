@@ -24,6 +24,9 @@ interface AppContainer {
     val postRepository: PostRepository
     val userRepository: UserRepository
     val scheduleRepository: ScheduleRepository
+    val networkRepository: NetworkPostRepository
+
+//    val userPreferenceRepository: UserPreferenceRepository
     val academicRepository: AcademicRepository
 }
 
@@ -62,5 +65,9 @@ class AppDataContainer(
     override val academicRepository: AcademicRepository by lazy {
         NetworkAcademicRepository(firebaseInstance = firebaseDatabase)
     }
+    override val networkRepository: NetworkPostRepository by lazy {
+        NetworkPostRepository(FirebaseDatabase.getInstance())
+    }
+
 
 }

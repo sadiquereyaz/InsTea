@@ -70,6 +70,7 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.firebase.database.ktx)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.androidx.compose.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -81,7 +82,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.ktx)  // ViewModel KTX
     implementation(libs.androidx.lifecycle.viewmodel.compose)  // ViewModel Compose
     implementation(libs.androidx.material.icons.extended)
-
 
     implementation(libs.androidx.room.runtime)
     // To use Kotlin Symbol Processing (KSP)

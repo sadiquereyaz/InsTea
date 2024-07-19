@@ -41,7 +41,7 @@ object AppViewModelProvider {
 
         initializer {
             FeedViewModel(
-                postRepository = insteaApplication().container.postRepository
+                postRepository = insteaApplication().container.networkRepository
             )
         }
     }

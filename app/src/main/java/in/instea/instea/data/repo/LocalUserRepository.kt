@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.google.android.play.integrity.internal.i
 import `in`.instea.instea.data.datamodel.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -49,10 +50,10 @@ class LocalUserRepository(
 
     // Function to save the user details
     suspend fun upsertUser(user: User) {
-        Log.d("LOCAL REPO", user.userId!!)
+        Log.d("datastore username saving", user.username!!)
         dataStore.edit { preferences ->
-            preferences[USER_ID] = user.userId ?: "empty uid"
-            preferences[USER_NAME] = user.username ?: "empty ds"
+            preferences[USER_ID] = user.userId ?: "datastore id"
+            preferences[USER_NAME] = user.username
             preferences[USER_ABOUT] = user.about ?: "Hey there, InsTea is great!"
         }
     }

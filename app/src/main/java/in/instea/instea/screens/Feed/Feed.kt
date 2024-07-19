@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key.Companion.F
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +58,7 @@ import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.SelfProfileViewModel
+import `in`.instea.instea.ui.PostList
 import kotlinx.coroutines.launch
 
 //import `in`.instea.instea.data.UserViewModel
@@ -69,10 +71,7 @@ fun FEED(
 ) {
     val user by feedViewModel.user.collectAsState()
 
-    Column {
-
-        PostList(feedViewModel)
-    }
+  PostList(feedViewModel)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -197,13 +196,16 @@ fun FeedContent(feedViewModel: FeedViewModel = viewModel(factory = AppViewModelP
 
                                         )
                                     )
+
+                                    textState = ""
                                 }
 
 
-                                textState = ""
+
                             }
                         )
                     }
+
                 }
             )
 
