@@ -1,8 +1,8 @@
 package `in`.instea.instea.screens.profile
 
 import `in`.instea.instea.data.datamodel.PostData
+import `in`.instea.instea.data.datamodel.User
 //import `in`.instea.instea.data.datamodel.RoomPostModel
-import `in`.instea.instea.data.datamodel.UserModel
 
 //data class ProfileUiState(
 //    val userName: String = "No Name",
@@ -21,5 +21,5 @@ import `in`.instea.instea.data.datamodel.UserModel
 //}
 data class ProfileUiState(
     var savedPosts: List<PostData>? = listOf(), //savedPost can be null
-    var userData: UserModel? = UserModel()      //userDate can be null
+    var userData: User? = User()      //userDate can be null
 )
