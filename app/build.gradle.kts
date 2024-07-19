@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "in.instea.instea"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -82,12 +82,12 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)  // ViewModel Compose
     implementation(libs.androidx.material.icons.extended)
 
-    val room_version = "2.6.1"
-    implementation("androidx.room:room-runtime:$room_version")
+
+    implementation(libs.androidx.room.runtime)
     // To use Kotlin Symbol Processing (KSP)
-    ksp("androidx.room:room-compiler:$room_version")
+    ksp(libs.androidx.room.compiler)
     // optional - Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:$room_version")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")    // data store
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.datastore.preferences)    // data store
 
 }

@@ -1,15 +1,16 @@
 package `in`.instea.instea.screens.schedule
 
-import `in`.instea.instea.data.datamodel.ScheduleModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flow
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
+import `in`.instea.instea.data.datamodel.DayDateModel
 
 
 data class ScheduleUiState(
-    val classList: List<ScheduleModel> = listOf(),
-    var selectedDateIndex: Int = 15,
-//    val currentDate: String="04",
-//    val currentTime: String = "10:00",
-    var selectedMonth: String = "August",
+    val classList: List<CombinedScheduleTaskModel> = listOf(),
+    val dayDateList: List<DayDateModel> = listOf(),
+    val selectedDateIndex: Int = 15,      //current day/date
+    val selectedDate: Int = 16,
+    val selectedDay: Int = 16,
+    val selectedMonth: String = "",
+    val selectedYear: Int = 0,
 )
+//before commit

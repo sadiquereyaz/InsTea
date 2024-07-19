@@ -1,3 +1,5 @@
+package `in`.instea.instea.composable
+
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
@@ -46,6 +48,7 @@ fun InsteaTopAppBar(
                 fontWeight = FontWeight.Bold
             )
         },
+
         navigationIcon = {
             if (canNavigateBack) {
                 IconButton(onClick = navigateBack) {

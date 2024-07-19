@@ -4,6 +4,7 @@ import InsteaApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import `in`.instea.instea.screens.auth.Signup
 import `in`.instea.instea.ui.theme.InsTeaTheme
 
 
