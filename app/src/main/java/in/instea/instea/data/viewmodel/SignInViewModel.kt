@@ -22,7 +22,7 @@ class SignInViewModel(
         viewModelScope.launch {
             val result = userRepository.signIn(email, password)
             if (result.isSuccess) {
-                val userObj: Flow<User> = userRepository.getUserById(result.getOrNull()!!)//getting user obj from firebase
+                val userObj: Flow<User> = userRepository.getUserById(result.getOrNull()!!)  //getting user obj from firebase
                 userRepository.upsertUserLocally(userObj.firstOrNull()!!)
                 Log.d("CURRENT", userObj.firstOrNull()!!.username!!)
                 Log.d("LOCAL_UID", userRepository.getCurrentUserId().firstOrNull()!!)

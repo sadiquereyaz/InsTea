@@ -49,7 +49,7 @@ class LocalUserRepository(
 
     // Function to save the user details
     suspend fun upsertUser(user: User) {
-//        Log.d("LOCAL REPO", user.userId!!)
+        Log.d("LOCAL REPO", user.userId!!)
         dataStore.edit { preferences ->
             preferences[USER_ID] = user.userId ?: "empty uid"
             preferences[USER_NAME] = user.username ?: "empty ds"
