@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
 
-
 sealed interface OtherProfileUiState {
     data class Success(
         val profilePosts: Flow<List<UserModel>>?,
@@ -26,7 +25,7 @@ class OtherProfileViewModel(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    val userId: Int = 11
+    val userId: String = "11"
 
     private val _otherProfileUiState = MutableStateFlow<OtherProfileUiState>(OtherProfileUiState.Loading)
     val otherProfileUiState: StateFlow<OtherProfileUiState> = _otherProfileUiState
@@ -36,7 +35,7 @@ class OtherProfileViewModel(
 //        getProfilePosts(userId)
     }
 
-    private fun getUserDetail(userId: Int) {
+    private fun getUserDetail(userId: String) {
         viewModelScope.launch {
             _otherProfileUiState.value = OtherProfileUiState.Loading
             _otherProfileUiState.value = try {

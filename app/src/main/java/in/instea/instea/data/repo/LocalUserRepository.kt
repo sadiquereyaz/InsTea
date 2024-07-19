@@ -15,10 +15,10 @@ import java.io.IOException
 
 class LocalUserRepository(
     private val dataStore: DataStore<Preferences>
-): UserRepository {
+) {
     // Define keys for storing user data
     private companion object {
-        val USER_ID = intPreferencesKey("user_id")
+        val USER_ID = stringPreferencesKey("user_id")
         val USER_NAME = stringPreferencesKey("user_name")
         val USER_POINT = intPreferencesKey("user_point")
         val USER_ABOUT = stringPreferencesKey("user_about")
@@ -29,7 +29,7 @@ class LocalUserRepository(
     }
 
     // Function to get the user details
-    override fun getUserById(int: Int): Flow<UserModel> = dataStore.data
+    fun getCurrentUser(): Flow<UserModel> = dataStore.data
         .catch {
             if (it is IOException) {
                 Log.e("SHARED_STORE", "Error reading preferences.", it)
@@ -39,7 +39,7 @@ class LocalUserRepository(
         }
         .map { preferences ->
             UserModel(
-                userId = preferences[USER_ID] ?: 12345,
+                userId = preferences[USER_ID] ?: "datastore id",
                 username = preferences[USER_NAME] ?: "data Store",
                 about = preferences[USER_ABOUT]
                     ?: "this is default value of user detail in data store",
@@ -48,7 +48,7 @@ class LocalUserRepository(
         }
 
     // Function to save the user details
-    override suspend fun insertUser(user: UserModel) {
+    suspend fun upsertUser(user: UserModel) {
         dataStore.edit { preferences ->
             preferences[USER_ID] = user.userId
             preferences[USER_NAME] = user.username
@@ -56,8 +56,14 @@ class LocalUserRepository(
         }
     }
 
-    // Function to clear the user details
-    suspend fun clearUserDetails() {
+    fun getUserId(): Flow<String> {
+        return dataStore.data
+            .map { preferences ->
+                preferences[USER_ID] ?: throw Exception("User ID not found")
+            }
+    }
+
+    suspend fun clearUser() {
         dataStore.edit { preferences ->
             preferences.clear()
         }

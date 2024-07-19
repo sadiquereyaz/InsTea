@@ -27,6 +27,17 @@ object AppViewModelProvider {
                     scheduleRepository = insteaApplication().container.scheduleRepository
                 )
         }
+        initializer {
+                SignInViewModel(
+                    userRepository = insteaApplication().container.userRepository
+                )
+        }
+        initializer {
+                SignUpVM(
+                    userRepository = insteaApplication().container.userRepository,
+                    academicRepository = insteaApplication().container.academicRepository
+                )
+        }
 
         initializer {
             FeedViewModel(

@@ -8,15 +8,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import `in`.instea.instea.data.AuthViewModel
-import `in`.instea.instea.data.FeedViewModel
-import `in`.instea.instea.data.viewmodel.ScheduleViewModel
-import `in`.instea.instea.data.viewmodel.signupViewModel
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
-import `in`.instea.instea.screens.auth.InboxScreen
-import `in`.instea.instea.screens.auth.Login
-import `in`.instea.instea.screens.auth.Signup
+import `in`.instea.instea.screens.InboxScreen
+import `in`.instea.instea.screens.auth.SignInScreen
+import `in`.instea.instea.screens.auth.SignUpScreen
 import `in`.instea.instea.screens.profile.OtherProfileScreen
 import `in`.instea.instea.screens.profile.SelfProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleScreen
@@ -36,19 +32,16 @@ fun InsteaNavHost(
             .padding(contentPadding)
     ) {
         composable(route = InsteaScreens.Signup.name) {
-            Signup(
-                viewModel = AuthViewModel(),
-                feedViewmodel = FeedViewModel(),
-                navController,
-                signupviewModel = signupViewModel()
+            SignUpScreen(
+                navController=navController
             )
         }
-        composable(route = InsteaScreens.Login.name) {
-            Login(navController = navController,viewModel = AuthViewModel())
+        composable(route = InsteaScreens.SignIn.name) {
+            SignInScreen(navController = navController)
         }
         composable(route = InsteaScreens.Feed.name) {
             FEED(
-                navController = navController, feedViewModel = FeedViewModel()
+                navController = navController,
 //                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
             )
         }

@@ -10,13 +10,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import `in`.instea.instea.data.AuthViewModel
+import `in`.instea.instea.data.viewmodel.AuthViewModel
+import `in`.instea.instea.screens.auth.composable.ButtonComp
+import `in`.instea.instea.screens.auth.composable.CustomTextField
 
 @Composable
-fun ForgetPass(
+fun ForgetScreen(
     viewModel: AuthViewModel,
     navController: NavController,
     modifier: Modifier = Modifier
@@ -31,7 +32,7 @@ fun ForgetPass(
         }
         CustomTextField(
             textField = emailState.value,
-            OnTextFieldChange = {emailState.value=it},
+            onTextFieldChange = {emailState.value=it},
             icon = Icons.Default.Email,
             keyboardType = KeyboardType.Email,
             textFieldLabel = "Email Id",
