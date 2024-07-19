@@ -2,24 +2,17 @@ package `in`.instea.instea.data.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.AcademicRepository
 import `in`.instea.instea.data.repo.UserRepository
+import `in`.instea.instea.screens.auth.SignUpUiState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-data class SignUpUiState(
-//        val username: String = "defaultuser",
-//        val email: String = "defaultemail@mail.com",
-//        val password: String = "",
-    var universityList: List<String> = emptyList(),
-    var departmentList: List<String> = emptyList(),
-    var semesterList: List<String> = emptyList()
-)
-
-class SignUpVM(
+class SignUpViewModel(
     private val userRepository: UserRepository,
     private val academicRepository: AcademicRepository
 ) : ViewModel() {
@@ -38,16 +31,27 @@ class SignUpVM(
         viewModelScope.launch {
             signUpUiState.value.departmentList = emptyList()
             academicRepository.getAllDepartment(university).collect {
-                if (university=="AMU") signUpUiState.value.departmentList = it
+                if (university == "AMU") signUpUiState.value.departmentList = it
             }
         }
     }
+
     fun getAllSemester(university: String, department: String) {
         viewModelScope.launch {
             signUpUiState.value.semesterList = emptyList()
             academicRepository.getAllSemester(university, department).collect {
-                if (university=="AMU") signUpUiState.value.semesterList = it
+                if (university == "AMU") signUpUiState.value.semesterList = it
             }
+        }
+    }
+
+    fun signUp(user: User, moveToSignIn: () -> Unit) {
+        viewModelScope.launch {
+            val result = userRepository.signUp(user)
+            if(result.isSuccess) {
+                moveToSignIn()
+            } else { //TODO: show toast message of failure
+             }
         }
     }
 }

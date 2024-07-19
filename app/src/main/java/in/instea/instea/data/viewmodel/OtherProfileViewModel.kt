@@ -2,9 +2,9 @@ package `in`.instea.instea.data.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.PostRepository
 import `in`.instea.instea.data.repo.UserRepository
-import `in`.instea.instea.data.datamodel.UserModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,8 +13,8 @@ import java.io.IOException
 
 sealed interface OtherProfileUiState {
     data class Success(
-        val profilePosts: Flow<List<UserModel>>?,
-        val userData: Flow<UserModel>?
+        val profilePosts: Flow<List<User>>?,
+        val userData: Flow<User>?
     ) : OtherProfileUiState
 
     object Error : OtherProfileUiState

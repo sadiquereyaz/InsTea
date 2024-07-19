@@ -1,6 +1,5 @@
 package `in`.instea.instea.screens.profile
 
-import PostCard
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
-import `in`.instea.instea.data.datamodel.UserModel
+import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.SelfProfileViewModel
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 
@@ -240,7 +238,7 @@ private fun SocialItem(
 }
 
 @Composable
-fun AcademicDetails(userData: UserModel?, modifier: Modifier) {
+fun AcademicDetails(userData: User?, modifier: Modifier) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -272,7 +270,7 @@ private fun AcademicItem(icon: ImageVector, text: String) {
 
 @Composable
 fun UserTitle(
-    userData: UserModel?,
+    userData: User?,
     modifier: Modifier,
     onSubUserNameClick: () -> Unit,
     dpId: Int = R.drawable.dp,

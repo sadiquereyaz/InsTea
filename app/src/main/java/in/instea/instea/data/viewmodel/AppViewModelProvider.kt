@@ -33,7 +33,7 @@ object AppViewModelProvider {
                 )
         }
         initializer {
-                SignUpVM(
+                SignUpViewModel(
                     userRepository = insteaApplication().container.userRepository,
                     academicRepository = insteaApplication().container.academicRepository
                 )

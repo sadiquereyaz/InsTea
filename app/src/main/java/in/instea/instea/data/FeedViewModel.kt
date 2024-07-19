@@ -49,7 +49,6 @@ class FeedViewModel(
 
                 _user.update { currentState ->
                     currentState.copy(
-                        name = currentUser.name,
                         email = currentUser.email,
                         username = currentUser.username,
                         university = currentUser.university,

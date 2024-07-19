@@ -35,7 +35,7 @@ fun PasswordTextField(
     isError: Boolean = false
 ) {
     // State variables to manage password visibility and validity
-    val localFocusmanager = LocalFocusManager.current
+    val localFocusManager = LocalFocusManager.current
     var showPassword by remember { mutableStateOf(false) }
 //    var isPasswordError by remember { mutableStateOf(true) }
 
@@ -51,8 +51,9 @@ fun PasswordTextField(
         },
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
+            imeAction = ImeAction.Done,
         ),
-        keyboardActions = KeyboardActions(onDone = { localFocusmanager.clearFocus() }),
+        keyboardActions = KeyboardActions(onDone = { localFocusManager.clearFocus() }),
         visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
         leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = "password")},
         trailingIcon = {

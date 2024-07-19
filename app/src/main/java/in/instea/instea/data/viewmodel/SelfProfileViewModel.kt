@@ -2,9 +2,9 @@ package `in`.instea.instea.data.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.PostRepository
 import `in`.instea.instea.data.repo.UserRepository
-import `in`.instea.instea.data.datamodel.UserModel
 import `in`.instea.instea.screens.profile.ProfileUiState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ class SelfProfileViewModel(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val userId: String = "12345 self profile vm"
+    private val userId: String = "24RTAXT5nGSRj1D3ChrK2xGUohT2"
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
@@ -25,7 +25,7 @@ class SelfProfileViewModel(
         userRepository.getUserById(userId).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = UserModel()
+            initialValue = User()
         ),
         postRepository.getAllSavedPostsStream().stateIn(
             scope = viewModelScope,
