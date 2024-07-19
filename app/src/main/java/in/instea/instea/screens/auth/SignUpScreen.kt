@@ -173,11 +173,11 @@ fun SignUpScreen(
                     User(
                         username = username,
                         email = email,
-                        password = password,
                         university = university,
                         dept = department,
                         sem = semester
                     ),
+                    password,
                     moveToSignIn = {
                             navController.navigate(InsteaScreens.SignIn.name)
                     }

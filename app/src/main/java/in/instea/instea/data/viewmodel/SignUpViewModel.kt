@@ -45,9 +45,9 @@ class SignUpViewModel(
         }
     }
 
-    fun signUp(user: User, moveToSignIn: () -> Unit) {
+    fun signUp(user: User,password: String, moveToSignIn: () -> Unit) {
         viewModelScope.launch {
-            val result = userRepository.signUp(user)
+            val result = userRepository.signUp(user,password)
             if(result.isSuccess) {
                 moveToSignIn()
             } else { //TODO: show toast message of failure

@@ -15,7 +15,7 @@ import `in`.instea.instea.data.datamodel.AttendanceTypeConverter
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 
 @Database(entities = [PostData::class, ScheduleModel::class, TaskAttendanceModel::class],
-          version = 8, exportSchema = false)
+          version = 9, exportSchema = false)
 abstract class InsteaDatabase : RoomDatabase() {
 
     abstract fun postDao(): PostDao

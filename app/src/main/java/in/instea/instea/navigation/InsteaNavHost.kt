@@ -1,6 +1,7 @@
 package `in`.instea.instea.navigation
 
 import FEED
+import FeedContent
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -8,15 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import `in`.instea.instea.data.AuthViewModel
-import `in`.instea.instea.data.FeedViewModel
-import `in`.instea.instea.data.viewmodel.ScheduleViewModel
-import `in`.instea.instea.data.viewmodel.signupViewModel
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
-import `in`.instea.instea.screens.auth.InboxScreen
-import `in`.instea.instea.screens.auth.Login
-import `in`.instea.instea.screens.auth.Signup
+import `in`.instea.instea.screens.InboxScreen
+import `in`.instea.instea.screens.auth.SignInScreen
+import `in`.instea.instea.screens.auth.SignUpScreen
 import `in`.instea.instea.screens.profile.OtherProfileScreen
 import `in`.instea.instea.screens.profile.SelfProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleScreen
@@ -31,7 +28,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Signup.name,
+        startDestination = InsteaScreens.SignIn.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {

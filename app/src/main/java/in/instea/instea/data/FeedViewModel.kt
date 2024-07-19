@@ -97,7 +97,7 @@ class FeedViewModel(
 
     private fun fetchPosts() {
         viewModelScope.launch {
-            delay(3000)
+
             postRepository.getAllSavedPostsStream().collect { posts ->
                 _posts.update { posts }
                 _isLoading.value = false

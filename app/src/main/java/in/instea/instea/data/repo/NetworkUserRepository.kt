@@ -72,10 +72,10 @@ class NetworkUserRepository(
     }
 
     // sign up
-    suspend fun signUp(user: User): Result<String> {
+    suspend fun signUp(user: User,password: String): Result<String> {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(
-                user.email ?: "noemailrecieved@networkrepo.com", user.password ?: "networkPassword"
+                user.email ?: "noemailrecieved@networkrepo.com", password ?: "networkPassword"
             ).await()
             val userId = result.user?.uid ?: return Result.failure(Exception("No UID"))
             val newUser = user.copy(userId = userId)
@@ -84,5 +84,5 @@ class NetworkUserRepository(
         } catch (e: Exception) {
             Result.failure(e)
         }
-
+    }
 }
