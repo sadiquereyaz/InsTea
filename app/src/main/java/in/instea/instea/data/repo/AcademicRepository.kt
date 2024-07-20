@@ -62,7 +62,7 @@ class NetworkAcademicRepository(
 
     override fun getAllDepartment(university: String): Flow<List<String>> = flow {
         val depart = listOf("AMU CSE", "EEE", "ECE", "MECH")
-        val deptRef =
+        /*val deptRef =
             firebaseInstance.getReference("academic").child(university).child("classDetails")
         var isResumed = false // Flag to track if the continuation has been resumed
         val departList = suspendCancellableCoroutine<List<String>> { continuation ->
@@ -87,9 +87,9 @@ class NetworkAcademicRepository(
                         isResumed = true // Set the flag to true after resuming the continuation
                     }
                 }
-            }
+            }*/
 
-            emit(departList)
+        emit(depart)
     }
 
     override fun getAllSemester(university: String, department: String): Flow<List<String>> = flow {
