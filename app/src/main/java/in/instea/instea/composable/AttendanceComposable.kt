@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.AttendanceType
@@ -57,14 +58,13 @@ fun AttendanceComposable(
                     imageVector = scheduleObj.attendance?.icon ?: Icons.Default.CheckCircle,
                     contentDescription = "attendance",
                     modifier = Modifier
-                        .clickable {
-
-                        }
-
+                        .clickable {}
                         .size(16.dp))
                 Text(
                     modifier = Modifier,
-                    text = scheduleObj.attendance?.name ?: AttendanceType.MarkAttendance.name,
+                    text = scheduleObj.attendance?.title ?: AttendanceType.MarkAttendance.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                     fontSize = 12.sp/*modifier = Modifier.padding(start = 4.dp)*/
                 )
             }
@@ -90,7 +90,7 @@ fun AttendanceComposable(
         ) {
             AttendanceType.values().forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(text = option.name) },
+                    text = { Text(text = option.title) },
                     onClick = {
                         onAttendanceClick(option)
                         expanded = false

@@ -58,13 +58,19 @@ fun EditScheduleScreen(
                 options = uiState.subjectList,
                 value = uiState.selectedSubject,
                 label = "Subject",
+                onOptionSelect = {
+                    viewModel.onSubjectSelected(it)
+                }
             )
             // day
             ExposedDropDown(
                 options = uiState.dayList,
                 value = uiState.selectedDay,
                 addButton = false,
-                label = "Day"
+                label = "Day",
+                onOptionSelect = {
+                    viewModel.onDaySelected(it)
+                }
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -84,7 +90,10 @@ fun EditScheduleScreen(
                 TimePicker(
                     modifier = Modifier.weight(1f),
                     value = uiState.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")),
-                    label = "End Time"
+                    label = "End Time",
+                    onTimeSelect = { localTime ->
+                        viewModel.setEndTime(localTime)
+                    }
                 )
             }
         }

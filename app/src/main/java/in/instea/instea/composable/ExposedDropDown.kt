@@ -3,6 +3,7 @@ package `in`.instea.instea.composable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material3.DropdownMenu
@@ -20,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,6 +33,7 @@ fun ExposedDropDown(
     options: List<String> = listOf("opt 1", "opt 2", "opt 3"),
     addButton: Boolean = true,
     label: String = "",
+    onOptionSelect: (String) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var readOnly by remember { mutableStateOf(true) }
@@ -48,6 +52,7 @@ fun ExposedDropDown(
                     .menuAnchor(),
                 value = textFieldValue, // Initial value
                 onValueChange = {
+                    onOptionSelect(it)
                     textFieldValue = it
                 }, // No value change for this example
                 /*supportingText = {
@@ -65,7 +70,12 @@ fun ExposedDropDown(
                 shape = RoundedCornerShape(8.dp),
                 singleLine = true,
                 label = { Text(text = label) },
+                keyboardOptions = KeyboardOptions(
+                    autoCorrect = false,
+                    capitalization = KeyboardCapitalization.Words,
+                    keyboardType = KeyboardType.Text
                 )
+            )
             DropdownMenu(
                 modifier = Modifier,
                 expanded = expanded,
@@ -76,6 +86,7 @@ fun ExposedDropDown(
                         onClick = {
                             expanded = false
                             textFieldValue = option
+                            onOptionSelect(option)
                         },
                         text = { Text(text = option) }
                     )

@@ -42,9 +42,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.android.material.timepicker.TimeFormat
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,8 +84,9 @@ fun ScheduleItem(
         Column(
             horizontalAlignment = Alignment.End
         ) {
-            Text(text = "8", fontSize = 20.sp)
-            Text(text = "6", fontSize = 12.sp)
+            //time
+            Text(text = scheduleObj.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 16.sp)
+            Text(text = scheduleObj.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 12.sp)
         }
         //bubble and vertical line
         Box(

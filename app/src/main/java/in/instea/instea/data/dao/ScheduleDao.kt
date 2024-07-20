@@ -39,10 +39,11 @@ interface ScheduleDao {
     @Query("SELECT subject FROM schedule")
     suspend fun getAllSubject(): List<String>
 
-    @Query("SELECT * FROM schedule where day = :day")
+    // for conflict checking
+    @Query("SELECT * FROM schedule WHERE day = :day ORDER BY startTime")
     suspend fun getAllScheduleByDay(day: String): List<ScheduleModel>
 
-//    @Query("SELECT * FROM tasks WHERE scheduleId IN (SELECT id FROM schedules WHERE day = :selectedDay) AND date = :selectedDate")
+//    @Query("SELECT * FROM tasks WHERE scheduleId IN        (SELECT id FROM schedules WHERE day = :selectedDay) AND date = :selectedDate")
 //    fun getTasksByDayAndDate(selectedDay: String, selectedDate: Long): Flow<List<TaskModel>>
 
     @Query(
@@ -51,7 +52,7 @@ interface ScheduleDao {
                t.taskId, t.timestamp, t.attendance, t.task, t.taskReminder
         FROM schedule s 
         LEFT JOIN taskAttendance t ON s.scheduleId = t.scheduleId AND (t.timestamp = :selectedDate OR t.timestamp IS NULL)
-        WHERE s.day = :selectedDay
+        WHERE s.day = :selectedDay ORDER BY s.startTime
     """
     )
     fun getClassesWithTasksByDayAndDate(

@@ -1,8 +1,8 @@
 package `in`.instea.instea.data.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.schedule.EditScheduleUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,8 +41,8 @@ class EditScheduleViewModel(
         _uiState.value = _uiState.value.copy(selectedDay = day)
     }
 
-    fun setStartTime(time: LocalTime) {
-        _uiState.update { currentState -> currentState.copy(startTime = time) }
+    fun setStartTime(startTime: LocalTime) {
+        _uiState.update { currentState -> currentState.copy(startTime = startTime) }
     }
 
     fun setEndTime(endTime: LocalTime) {
@@ -55,18 +55,21 @@ class EditScheduleViewModel(
         val endTime = uiStateValue.endTime
         val day = uiStateValue.selectedDay
         val isConflict = checkTimeConflict(startTime, endTime, day)
-         if (!isConflict) {
-             scheduleRepository.upsertSchedule(
-                 subject = uiStateValue.selectedSubject,
-                 scheduleId = 0,
-                 startTime = startTime,
-                 endTime = endTime,
-                 day = day
-             )
-             _uiState.value = _uiState.value.copy(errorMessage = null)
-         } else {
-             _uiState.value = _uiState.value.copy(errorMessage = "Time conflict with another class")
-         }
+        Log.d("CONFLICT", isConflict.toString())
+        if (!isConflict) {
+            Log.d("CONFLICT_SAVING", "no conflict")
+            scheduleRepository.upsertSchedule(
+                subject = uiStateValue.selectedSubject,
+                scheduleId = 0,
+                startTime = startTime,
+                endTime = endTime,
+                day = day
+            )
+            _uiState.value = _uiState.value.copy(errorMessage = null)
+        } else {
+            Log.d("CONFLICT_elsebranch", "true")
+            _uiState.value = _uiState.value.copy(errorMessage = "Time conflict with another class")
+        }
     }
 
     private suspend fun checkTimeConflict(
@@ -75,8 +78,14 @@ class EditScheduleViewModel(
         day: String
     ): Boolean {
         val daySchedulesList = scheduleRepository.getAllScheduleByDay(day)
+        if (startTime >= endTime) return true
         return daySchedulesList.any {
-            (it.startTime >= startTime && it.endTime >= endTime)
+            Log.d("conflict check", it.toString())
+            val sT = startTime.plusMinutes(1)
+            val eT = endTime.minusMinutes(1)
+            (sT in it.startTime..it.endTime) ||
+                    (eT in it.startTime..it.endTime) ||
+                    (sT <= it.startTime && endTime >= it.endTime)
         }
     }
 }

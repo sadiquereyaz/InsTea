@@ -3,7 +3,9 @@ package `in`.instea.instea.data.datamodel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.AddTask
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.Entity
@@ -13,14 +15,14 @@ import androidx.room.TypeConverters
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-enum class AttendanceType (val icon: ImageVector, title: String){
+enum class AttendanceType (val icon: ImageVector, val title: String){
     Present(
         title = "Present",
-        icon = Icons.Default.AddTask
+        icon = Icons.Default.CheckCircle
     ),
     Absent(
         title = "Absent",
-        icon = Icons.Default.Clear
+        icon = Icons.Default.RemoveCircle
     ),
     Cancelled(
         title = "Cancelled",
@@ -28,7 +30,7 @@ enum class AttendanceType (val icon: ImageVector, title: String){
     ),
     MarkAttendance(
         title = "Attendance",
-        icon = Icons.Default.AcUnit
+        icon = Icons.Default.AddTask
     ),
 }
 
@@ -93,14 +95,14 @@ data class TaskAttendanceModel(
 
 data class CombinedScheduleTaskModel(
     val scheduleId: Int,
-    val startTime: String,
-    val endTime: String,
+    val startTime: LocalTime,
+    val endTime: LocalTime,
     val day: String,
     val dailyReminder: Boolean,
     val taskId: Int,
     val timestamp: Long?,
     val subject: String?,
-    val attendance: AttendanceType?,
+    val attendance: AttendanceType? = AttendanceType.MarkAttendance,
     var task: String?,
     val taskReminder: Boolean?
 )
