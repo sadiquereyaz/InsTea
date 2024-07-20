@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
 import `in`.instea.instea.screens.InboxScreen
+import `in`.instea.instea.screens.auth.AddInfo
 import `in`.instea.instea.screens.auth.SignInScreen
 import `in`.instea.instea.screens.auth.SignUpScreen
 import `in`.instea.instea.screens.profile.OtherProfileScreen
@@ -28,7 +29,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.SignIn.name,
+        startDestination = InsteaScreens.Signup.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -74,5 +75,9 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Addpost.name){
             FeedContent()
         }
+        composable(route = InsteaScreens.AddAcademicInfo.name) {
+            AddInfo(navController = navController)
+        }
+
     }
 }

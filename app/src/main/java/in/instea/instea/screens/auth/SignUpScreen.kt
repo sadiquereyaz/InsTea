@@ -1,6 +1,5 @@
 package `in`.instea.instea.screens.auth
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +38,6 @@ import `in`.instea.instea.screens.auth.composable.ButtonComp
 import `in`.instea.instea.screens.auth.composable.CustomTextField
 import `in`.instea.instea.screens.auth.composable.HeadingText
 import `in`.instea.instea.screens.auth.composable.PasswordTextField
-import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
@@ -128,6 +126,7 @@ fun SignUpScreen(
                     department = ""
                     semester = ""
                 },
+                onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) }
             )
             // department and semester
             Row(
@@ -149,6 +148,9 @@ fun SignUpScreen(
                         )
                         semester = ""
                     },
+                    onAddItemClicked = {
+                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
+                    },
                     errorMessage = "Please select university first"
                 )
                 // semester
@@ -160,6 +162,9 @@ fun SignUpScreen(
                     selectedOption = semester,
                     onOptionSelected = {
                         semester = it
+                    },
+                    onAddItemClicked = {
+                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
                     }
                 )
             }

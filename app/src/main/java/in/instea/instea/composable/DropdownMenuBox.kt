@@ -40,7 +40,8 @@ fun DropdownMenuBox(
     leadingIcon: ImageVector = Icons.Default.Abc,
     isError: Boolean = false,
     errorMessage: String = "Error Message",
-    keyboardActions: KeyboardActions = KeyboardActions.Default
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    onAddItemClicked: () -> Unit = {}
 
     ) {
     var expanded by remember { mutableStateOf(false) }
@@ -102,7 +103,7 @@ fun DropdownMenuBox(
                 }
                 DropdownMenuItem(
                     text = { Text("Add New") },
-                    onClick = { /*TODO*/ }
+                    onClick = { onAddItemClicked() }
                 )
             }
         }

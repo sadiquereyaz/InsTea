@@ -54,4 +54,9 @@ class SignUpViewModel(
              }
         }
     }
+    fun AddItem(semester: String, department: String, university: String) {
+        viewModelScope.launch {
+            academicRepository.addClassDetail(semester, department, university)
+        }
+    }
 }
