@@ -60,9 +60,7 @@ fun InsteaTopAppBar(
                     )
                 }
             } else if (currentScreen == InsteaScreens.Feed) {
-
                 IconButton(onClick = {
-
                 }) {
                     Icon(
                         imageVector = Icons.Default.Search,

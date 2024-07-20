@@ -1,6 +1,5 @@
 package `in`.instea.instea.screens.auth
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +38,6 @@ import `in`.instea.instea.screens.auth.composable.ButtonComp
 import `in`.instea.instea.screens.auth.composable.CustomTextField
 import `in`.instea.instea.screens.auth.composable.HeadingText
 import `in`.instea.instea.screens.auth.composable.PasswordTextField
-import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
@@ -167,7 +165,7 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(14.dp))
 
         ButtonComp(
-            value = "Sign Up",
+            text = "Sign Up",
             onButtonClicked = {
                 viewModel.signUp(
                     User(

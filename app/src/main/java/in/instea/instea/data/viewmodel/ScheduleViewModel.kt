@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalTime
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -146,8 +147,8 @@ class ScheduleViewModel(
     suspend fun upsertSchedule(
         subject: String,
         scheduleId: Int,
-        startTime: String,
-        endTime: String,
+        startTime: LocalTime,
+        endTime: LocalTime,
         day: String
     ) {
         scheduleRepository.upsertSchedule(

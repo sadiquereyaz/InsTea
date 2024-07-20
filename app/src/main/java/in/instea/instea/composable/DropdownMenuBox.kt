@@ -8,6 +8,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Abc
+import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,18 +43,23 @@ fun DropdownMenuBox(
     leadingIcon: ImageVector = Icons.Default.Abc,
     isError: Boolean = false,
     errorMessage: String = "Error Message",
-    keyboardActions: KeyboardActions = KeyboardActions.Default
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    addItemClick: (Boolean) -> Unit = {}
 
-    ) {
+) {
     var expanded by remember { mutableStateOf(false) }
+    var enabled by remember { mutableStateOf(false) }
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
             OutlinedTextField(
-                modifier = modifier.menuAnchor(),
+                modifier = Modifier.menuAnchor(),
                 value = selectedOption,
                 onValueChange = {},
-                enabled = false,
+                enabled = enabled,
                 isError = isError,
                 label = {
                     Text(
@@ -101,8 +109,17 @@ fun DropdownMenuBox(
                     )
                 }
                 DropdownMenuItem(
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.AddCircleOutline,
+                            contentDescription = "Add button"
+                        )
+                    },
                     text = { Text("Add New") },
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        expanded = !expanded
+                        enabled = true
+                    }
                 )
             }
         }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,7 +19,6 @@ import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.AddClassButton
 import `in`.instea.instea.composable.CalendarComposable
 import `in`.instea.instea.composable.ScheduleList
-import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import kotlinx.coroutines.launch
@@ -56,19 +56,26 @@ fun ScheduleScreen(
             }
         )
         //add class
-        AddClassButton(navController)
+        AddClassButton(
+            modifier = Modifier.align(Alignment.End),
+            navController = navController
+        )
 
         // schedule list
         ScheduleList(
             scheduleUiState = scheduleUiState,
-            onAttendanceClick = { taskId: Int, scheduleId:Int, attendance->
+            onAttendanceClick = { taskId: Int, scheduleId: Int, attendance ->
                 coroutineScope.launch {
-                    viewModel.upsertAttendance(taskId = taskId, attendance = attendance, scheduleId = scheduleId)
+                    viewModel.upsertAttendance(
+                        taskId = taskId,
+                        attendance = attendance,
+                        scheduleId = scheduleId
+                    )
                 }
             },
-            upsertTask = { taskId: Int, scheduleId:Int, task: String ->
+            upsertTask = { taskId: Int, scheduleId: Int, task: String ->
                 coroutineScope.launch {
-                    viewModel.upsertTask(taskId = taskId, scheduleId = scheduleId, task = task )
+                    viewModel.upsertTask(taskId = taskId, scheduleId = scheduleId, task = task)
                 }
             }
         )

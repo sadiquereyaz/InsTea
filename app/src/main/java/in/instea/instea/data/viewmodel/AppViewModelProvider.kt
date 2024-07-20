@@ -44,6 +44,11 @@ object AppViewModelProvider {
                 postRepository = insteaApplication().container.networkRepository
             )
         }
+        initializer {
+            EditScheduleViewModel(
+                scheduleRepository = insteaApplication().container.scheduleRepository
+            )
+        }
     }
 }
 

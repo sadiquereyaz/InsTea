@@ -6,15 +6,15 @@ import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalTime
 
 interface ScheduleRepository {
-    fun getClassListByDayAndTaskByDate(
-        day: String,
-        timeStamp: Int
-    ): Flow<List<CombinedScheduleTaskModel>>
+    fun getClassListByDayAndTaskByDate(day: String,timeStamp: Int): Flow<List<CombinedScheduleTaskModel>>
     suspend fun upsertTask(task: String, taskId: Int, scheduleId: Int, timeStamp: Int)
     suspend fun upsertAttendance(attendance: AttendanceType, taskId: Int, scheduleId: Int, timeStamp: Int)
-    suspend fun upsertSchedule(subject: String, scheduleId: Int, startTime: String, endTime: String, day: String)
+    suspend fun upsertSchedule(subject: String, scheduleId: Int, startTime: LocalTime, endTime: LocalTime, day: String)
+    suspend fun getAllSubjects(): List<String>
+    suspend fun getAllScheduleByDay(day: String): List<ScheduleModel>
 }
 
 class LocalScheduleRepository(
@@ -62,8 +62,8 @@ class LocalScheduleRepository(
     override suspend fun upsertSchedule(
         subject: String,
         scheduleId: Int,
-        startTime: String,
-        endTime: String,
+        startTime: LocalTime,
+        endTime: LocalTime,
         day: String
     ) {
         if (scheduleId == 0){
@@ -72,4 +72,10 @@ class LocalScheduleRepository(
             scheduleDao.updateSchedule(subject = subject, scheduleId = scheduleId, startTime = startTime, endTime = endTime, day = day)
         }
     }
+
+    override suspend fun getAllSubjects(): List<String> = scheduleDao.getAllSubject()
+    override suspend fun getAllScheduleByDay(day: String): List<ScheduleModel> {
+        return scheduleDao.getAllScheduleByDay(day)
+    }
+
 }

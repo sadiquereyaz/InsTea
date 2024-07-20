@@ -1,7 +1,6 @@
 package `in`.instea.instea.screens.auth
 
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -76,7 +75,7 @@ fun SignInScreen(
                 navController.navigate(InsteaScreens.Forget.name)
             })
         ButtonComp(
-            value = "Login",
+            text = "Login",
             onButtonClicked = {
                 viewModel.signIn(email = email, password = password)
                 navController.navigate(InsteaScreens.Feed.name)

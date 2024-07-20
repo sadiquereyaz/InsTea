@@ -11,13 +11,14 @@ import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 import kotlinx.coroutines.flow.Flow
 import java.sql.Time
+import java.time.LocalTime
 
 @Dao
 interface ScheduleDao {
     @Insert
     suspend fun insertSchedule(scheduleModel: ScheduleModel): Long
     @Query("UPDATE schedule SET subject = :subject, startTime = :startTime, endTime = :endTime, day= :day WHERE scheduleId = :scheduleId")
-    suspend fun updateSchedule(subject: String, scheduleId: Int, startTime: String, endTime: String, day: String)
+    suspend fun updateSchedule(subject: String, scheduleId: Int, startTime: LocalTime, endTime: LocalTime, day: String)
 
     // Method to insert a new task
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -34,6 +35,12 @@ interface ScheduleDao {
 
     @Query("Update taskAttendance SET attendance = :attendance WHERE taskId = :taskId")
     suspend fun upsertAttendance(attendance: String, taskId: Int)
+
+    @Query("SELECT subject FROM schedule")
+    suspend fun getAllSubject(): List<String>
+
+    @Query("SELECT * FROM schedule where day = :day")
+    suspend fun getAllScheduleByDay(day: String): List<ScheduleModel>
 
 //    @Query("SELECT * FROM tasks WHERE scheduleId IN (SELECT id FROM schedules WHERE day = :selectedDay) AND date = :selectedDate")
 //    fun getTasksByDayAndDate(selectedDay: String, selectedDate: Long): Flow<List<TaskModel>>

@@ -40,8 +40,8 @@ fun ForgetScreen(
             )
 
 
-        ButtonComp(value = "Reset Password",
-            onButtonClicked = {
+        ButtonComp(text = "Reset Password",
+                   onButtonClicked = {
                 viewModel.resetPassword(emailState.value)
 
                 navController.navigate("Login")
