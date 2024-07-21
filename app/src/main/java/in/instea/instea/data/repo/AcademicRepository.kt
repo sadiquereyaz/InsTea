@@ -71,8 +71,8 @@ class NetworkAcademicRepository(
                     if (!isResumed) {
                         val list = mutableListOf<String>()
                         for (departmentSnapshot in snapshot.children) {
-                            val departmentName =
-                                departmentSnapshot.key
+                            val classDetails = departmentSnapshot.getValue<classDetails>()
+                            val departmentName = classDetails?.department
                             departmentName?.let { list.add(it) }
                         }
                         continuation.resume(list)
@@ -87,7 +87,12 @@ class NetworkAcademicRepository(
                         isResumed = true // Set the flag to true after resuming the continuation
                     }
                 }
-            }*/
+            }
+            deptRef.addValueEventListener(departmentListener) // Add the listener
+            continuation.invokeOnCancellation {
+                deptRef.removeEventListener(departmentListener)
+            }
+        }*/
 
         emit(depart)
     }
