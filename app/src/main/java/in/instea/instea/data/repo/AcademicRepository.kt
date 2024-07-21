@@ -40,20 +40,20 @@ class NetworkAcademicRepository(
     }
 
     override fun getAllDepartment(university: String): Flow<List<String>> = flow {
-        val depart = listOf("AMU CSE", "EEE", "ECE", "MECH")
+
         val deptRef =
             firebaseInstance.getReference("academic").child(university).child("classDetails")
-        val deptList = mutableListOf<String>()
+        val deptSet = mutableSetOf<String>()
         emit(
             try {
                 val snapshot = deptRef.get().await()
                 for (deptSnapshot in snapshot.children) {
                     val deptName = deptSnapshot.child("department").getValue(String::class.java)
-                    deptName?.let { deptList.add(it) }
-                    Log.d(TAG, "getAllDepartment: fetched department successfully $deptName")
+                    deptName?.let { deptSet.add(it) }
+//                    Log.d(TAG, "getAllDepartment: fetched department successfully $deptName")
                 }
 
-                deptList
+                deptSet.toList()
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to fetch departments", e)
                 emptyList<String>()
@@ -66,18 +66,18 @@ class NetworkAcademicRepository(
 
         val semRef =
             firebaseInstance.getReference("academic").child(university).child("classDetails")
-        val semList = mutableListOf<String>()
+        val semSet = mutableSetOf<String>()
         emit(
             try {
                 val snapshot = semRef.get().await()
                 for (deptSnapshot in snapshot.children) {
                     val semName = deptSnapshot.child("semester").getValue(String::class.java)
-                    semName?.let { semList.add(it) }
+                    semName?.let { semSet.add(it) }
 //                    Log.d(TAG, "getAllSemester: fetched department successfully $semName")
                 }
 
 
-                semList
+                semSet.toList()
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to fetch departments", e)
                 emptyList<String>()

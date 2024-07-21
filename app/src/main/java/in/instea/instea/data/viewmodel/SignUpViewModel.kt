@@ -33,8 +33,9 @@ class SignUpViewModel(
         viewModelScope.launch {
             signUpUiState.value.departmentList = emptyList()
             academicRepository.getAllDepartment(university).collect {
-                Log.d(TAG, "Departments: $university")
+
                 signUpUiState.value.departmentList = it
+                Log.d(TAG, "Departments: $it")
             }
         }
     }
@@ -44,6 +45,7 @@ class SignUpViewModel(
             signUpUiState.value.semesterList = emptyList()
             academicRepository.getAllSemester(university, department).collect {
                 signUpUiState.value.semesterList = it
+                Log.d(TAG, "Semesters: $it")
             }
         }
     }
