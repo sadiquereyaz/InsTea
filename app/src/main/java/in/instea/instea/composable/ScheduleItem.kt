@@ -42,7 +42,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.android.material.timepicker.TimeFormat
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import kotlinx.coroutines.launch
@@ -51,7 +50,7 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleItem(
-    scheduleObj: CombinedScheduleTaskModel,
+    scheduleModel: CombinedScheduleTaskModel,
     modifier: Modifier = Modifier,
     isBubbleFilled: Boolean = false,
     onReminderClick: () -> Unit = {},
@@ -85,8 +84,8 @@ fun ScheduleItem(
             horizontalAlignment = Alignment.End
         ) {
             //time
-            Text(text = scheduleObj.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 16.sp)
-            Text(text = scheduleObj.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 12.sp)
+            Text(text = scheduleModel.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 16.sp)
+            Text(text = scheduleModel.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 12.sp)
         }
         //bubble and vertical line
         Box(
@@ -158,7 +157,7 @@ fun ScheduleItem(
                 Text(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
-                    text = scheduleObj.subject?:"",
+                    text = scheduleModel.subject?:"",
                     fontWeight = FontWeight.Bold, fontSize = 20.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -174,7 +173,7 @@ fun ScheduleItem(
             }
 
             //task and attendance
-            TaskAttendance(openBottomSheet, scheduleObj, onAttendanceClick, upsertTask = { upsertTask(it) })
+            TaskAttendance(openBottomSheet, scheduleModel, onAttendanceClick, upsertTask = { upsertTask(it) })
         }
     }
     // Reminder Dialog

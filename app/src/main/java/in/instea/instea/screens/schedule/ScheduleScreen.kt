@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.AddClassButton
 import `in`.instea.instea.composable.CalendarComposable
 import `in`.instea.instea.composable.ScheduleList
+import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import kotlinx.coroutines.launch
@@ -58,11 +59,14 @@ fun ScheduleScreen(
         //add class
         AddClassButton(
             modifier = Modifier.align(Alignment.End),
-            navController = navController
+//            moveToEditScreen = { schedule: ScheduleModel->
+//
+//            }
         )
 
         // schedule list
         ScheduleList(
+            navController = navController,
             scheduleUiState = scheduleUiState,
             onAttendanceClick = { taskId: Int, scheduleId: Int, attendance ->
                 coroutineScope.launch {

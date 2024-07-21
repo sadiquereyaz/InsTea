@@ -5,10 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -27,10 +25,18 @@ import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.ExposedDropDown
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.EditScheduleViewModel
+import `in`.instea.instea.navigation.InsteaScreens
+import `in`.instea.instea.navigation.NavigationDestinations
 import `in`.instea.instea.screens.auth.composable.ButtonComp
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 
+object EditScheduleDestination : NavigationDestinations {
+    override val route: String = InsteaScreens.EditSchedule.name
+    override val title: String = InsteaScreens.EditSchedule.title
+    const val DAY_ARG = "selectedDay"
+    val routeWithArg = "$route/{$DAY_ARG}"
+}
 @Composable
 fun EditScheduleScreen(
     modifier: Modifier = Modifier,

@@ -1,8 +1,10 @@
 package `in`.instea.instea.data.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.schedule.EditScheduleUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -49,7 +51,7 @@ class EditScheduleViewModel(
         _uiState.value = _uiState.value.copy(endTime = endTime)
     }
 
-    suspend fun saveSchedule() {
+    suspend fun saveSchedule(scheduleId: Int = 0) {
         val uiStateValue = _uiState.value
         val startTime = uiStateValue.startTime
         val endTime = uiStateValue.endTime
@@ -60,7 +62,7 @@ class EditScheduleViewModel(
             Log.d("CONFLICT_SAVING", "no conflict")
             scheduleRepository.upsertSchedule(
                 subject = uiStateValue.selectedSubject,
-                scheduleId = 0,
+                scheduleId = scheduleId,
                 startTime = startTime,
                 endTime = endTime,
                 day = day

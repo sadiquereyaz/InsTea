@@ -18,15 +18,11 @@ import `in`.instea.instea.navigation.InsteaScreens
 
 @Composable
 fun AddClassButton(
-    modifier: Modifier = Modifier,
-    navController: NavController
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
-            .padding(top = 32.dp)
-            .clickable {
-                navController.navigate(route = InsteaScreens.EditSchedule.name)
-            },
+            .padding(top = 32.dp),
 //        horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically
     ) {

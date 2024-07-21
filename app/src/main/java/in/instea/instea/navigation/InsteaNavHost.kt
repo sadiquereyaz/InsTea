@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
 import `in`.instea.instea.screens.InboxScreen
@@ -16,6 +18,7 @@ import `in`.instea.instea.screens.auth.SignInScreen
 import `in`.instea.instea.screens.auth.SignUpScreen
 import `in`.instea.instea.screens.profile.OtherProfileScreen
 import `in`.instea.instea.screens.profile.SelfProfileScreen
+import `in`.instea.instea.screens.schedule.EditScheduleDestination
 import `in`.instea.instea.screens.schedule.EditScheduleScreen
 import `in`.instea.instea.screens.schedule.ScheduleScreen
 
@@ -34,7 +37,7 @@ fun InsteaNavHost(
     ) {
         composable(route = InsteaScreens.Signup.name) {
             SignUpScreen(
-                navController=navController
+                navController = navController
             )
         }
         composable(route = InsteaScreens.SignIn.name) {
@@ -52,7 +55,12 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Schedule.name) {
             ScheduleScreen(navController = navController)
         }
-        composable(route = InsteaScreens.EditSchedule.name) {
+        composable(
+            route = EditScheduleDestination.routeWithArg,
+            arguments = listOf(navArgument(EditScheduleDestination.DAY_ARG) {
+                type = NavType.StringType
+            })
+        ) {
             EditScheduleScreen(
                 navController = navController
             )
@@ -71,8 +79,13 @@ fun InsteaNavHost(
 
             )
         }
-        composable(route = InsteaScreens.Addpost.name){
+        composable(route = InsteaScreens.Addpost.name) {
             FeedContent()
         }
     }
+}
+
+interface NavigationDestinations {
+    val route: String
+    val title: String
 }
