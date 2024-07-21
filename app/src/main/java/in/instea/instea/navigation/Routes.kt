@@ -1,5 +1,4 @@
 package `in`.instea.instea.navigation
-
 enum class InsteaScreens(
     val title: String
 ) {

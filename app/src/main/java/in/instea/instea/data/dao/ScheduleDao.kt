@@ -10,15 +10,25 @@ import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 import kotlinx.coroutines.flow.Flow
-import java.sql.Time
 import java.time.LocalTime
 
 @Dao
 interface ScheduleDao {
-    @Insert
-    suspend fun insertSchedule(scheduleModel: ScheduleModel): Long
-    @Query("UPDATE schedule SET subject = :subject, startTime = :startTime, endTime = :endTime, day= :day WHERE scheduleId = :scheduleId")
-    suspend fun updateSchedule(subject: String, scheduleId: Int, startTime: LocalTime, endTime: LocalTime, day: String)
+//    @Insert
+//    suspend fun insertSchedule(scheduleModel: ScheduleModel): Long
+
+//    @Query("UPDATE schedule SET subject = :subject, startTime = :startTime, endTime = :endTime, day= :day WHERE scheduleId = :scheduleId")
+//    suspend fun updateSchedule(
+//        subject: String,
+//        scheduleId: Int,
+//        startTime: LocalTime,
+//        endTime: LocalTime,
+//        day: String
+//    )
+    @Upsert
+    suspend fun upsertSchedule(
+      scheduleModel: ScheduleModel
+    )
 
     // Method to insert a new task
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -30,13 +40,15 @@ interface ScheduleDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAttendance(taskAttendanceModel: TaskAttendanceModel): Long
+
     @Query("UPDATE taskAttendance SET attendance = :attendance WHERE taskId = :taskId")
     suspend fun updateAttendance(attendance: AttendanceType, taskId: Int)
 
     @Query("Update taskAttendance SET attendance = :attendance WHERE taskId = :taskId")
     suspend fun upsertAttendance(attendance: String, taskId: Int)
 
-    @Query("SELECT subject FROM schedule")
+    // subject list
+    @Query("SELECT DISTINCT subject FROM schedule")
     suspend fun getAllSubject(): List<String>
 
     // for conflict checking
@@ -55,10 +67,13 @@ interface ScheduleDao {
         WHERE s.day = :selectedDay ORDER BY s.startTime
     """
     )
-    fun getClassesWithTasksByDayAndDate(
-        selectedDay: String,
-        selectedDate: Int
-    ): Flow<List<CombinedScheduleTaskModel>>
+    fun getClassesWithTasksByDayAndDate(selectedDay: String, selectedDate: Int): Flow<List<CombinedScheduleTaskModel>>
+
+    @Query("SELECT * FROM schedule WHERE scheduleId = :id")
+    suspend fun getScheduleById(id: Int): ScheduleModel
+
+    @Query("DELETE FROM schedule WHERE scheduleId = :id")
+    suspend fun deleteById(id: Int)
 }
 
 /*

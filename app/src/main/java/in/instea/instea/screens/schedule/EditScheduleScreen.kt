@@ -34,15 +34,16 @@ import java.time.format.DateTimeFormatter
 object EditScheduleDestination : NavigationDestinations {
     override val route: String = InsteaScreens.EditSchedule.name
     override val title: String = InsteaScreens.EditSchedule.title
-    const val DAY_ARG = "selectedDay"
-    val routeWithArg = "$route/{$DAY_ARG}"
+    const val ID_ARG = "idArg"
+    const val DAY_ARG = "dayArg"
+    val routeWithArg = "${route}/{$ID_ARG}/{$DAY_ARG}"
 }
+
 @Composable
 fun EditScheduleScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: EditScheduleViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    editScreenType: EditScreenType = EditScreenType.EditScreen,
+    viewModel: EditScheduleViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutine = rememberCoroutineScope()
@@ -109,26 +110,30 @@ fun EditScheduleScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
 
             ) {
-            if (editScreenType.isEditable) {
+            if (uiState.editScreenType.isEditable) {
                 OutlinedButton(
                     modifier = Modifier.weight(1f),
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        coroutine.launch {
+                            viewModel.onDeleteClick()
+                        }
+                        navController.popBackStack()
+                    },
 //                    colors = ButtonDefaults.outlinedButtonColors(),
                     border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.error)
                 ) {
                     Text(text = "Delete", color = MaterialTheme.colorScheme.error)
                 }
-                ButtonComp(
-                    modifier = Modifier.weight(1f),
-                    text = editScreenType.positiveButtonText,
-                    onButtonClicked = {
-                        coroutine.launch {
-                            viewModel.saveSchedule()
-                        }
-                        navController.popBackStack()
-                    }
-                )
             }
+            ButtonComp(
+                modifier = Modifier.weight(1f),
+                text = uiState.editScreenType.positiveButtonText,
+                onButtonClicked = {
+                    coroutine.launch {
+                        if (viewModel.saveSchedule()) navController.popBackStack()
+                    }
+                }
+            )
         }
     }
 }

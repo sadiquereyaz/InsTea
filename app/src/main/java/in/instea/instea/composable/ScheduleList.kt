@@ -7,17 +7,15 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import `in`.instea.instea.data.datamodel.AttendanceType
-import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.screens.schedule.ScheduleUiState
 
 @Composable
 fun ScheduleList(
+    navigateToEditSchedule: (Int) -> Unit = {},
     scheduleUiState: ScheduleUiState,
     onAttendanceClick: (Int, Int, AttendanceType) -> Unit,
     upsertTask: (Int, Int, String) -> Unit,
-    navController: NavController
 ) {
     LazyColumn(
         modifier = Modifier
@@ -27,9 +25,7 @@ fun ScheduleList(
         items(items = scheduleUiState.classList, key = { it.scheduleId }) { scheduleModel ->
             ScheduleItem(
                 scheduleModel = scheduleModel,
-                onEditClick = {
-                    navController.navigate(route = InsteaScreens.EditSchedule.name)
-                },
+                onEditClick = { navigateToEditSchedule(scheduleModel.scheduleId) },
                 onAttendanceClick = { attendanceType ->
                     onAttendanceClick(
                         scheduleModel.taskId,

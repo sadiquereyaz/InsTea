@@ -37,9 +37,6 @@ fun ExposedDropDown(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var readOnly by remember { mutableStateOf(true) }
-    var textFieldValue by remember {
-        mutableStateOf(value)
-    }
 
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         ExposedDropdownMenuBox(
@@ -50,11 +47,10 @@ fun ExposedDropDown(
                 modifier = Modifier
                     .fillMaxWidth()
                     .menuAnchor(),
-                value = textFieldValue, // Initial value
+                value = value, // Initial value
                 onValueChange = {
                     onOptionSelect(it)
-                    textFieldValue = it
-                }, // No value change for this example
+                },
                 /*supportingText = {
                     if (!readOnly) {
                         Text(text = "Enter Value")
@@ -85,7 +81,7 @@ fun ExposedDropDown(
                     DropdownMenuItem(
                         onClick = {
                             expanded = false
-                            textFieldValue = option
+//                            value = option
                             onOptionSelect(option)
                         },
                         text = { Text(text = option) }

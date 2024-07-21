@@ -34,6 +34,14 @@ class ScheduleViewModel(
 
     // Use MutableStateFlow for state variables that need updates
     private val _calendar = Calendar.getInstance()
+
+    private val _selectedDay = MutableStateFlow(
+        _calendar.getDisplayName(
+            Calendar.DAY_OF_WEEK,
+            Calendar.SHORT,
+            Locale.getDefault()
+        ) ?: ""
+    )
     private val _selectedMonth = MutableStateFlow(
         _calendar.getDisplayName(
             Calendar.MONTH,
@@ -41,19 +49,13 @@ class ScheduleViewModel(
             Locale.getDefault()
         ) ?: ""
     )
-    private val _selectedDay = MutableStateFlow(
-        _calendar.getDisplayName(
-            Calendar.MONTH,
-            Calendar.LONG,
-            Locale.getDefault()
-        ) ?: ""
-    )
     private val _selectedYear =
-        MutableStateFlow(_calendar.get(Calendar.YEAR) % 100)        //by default current year
+        MutableStateFlow(_calendar.get(Calendar.YEAR) % 100)
     private val _selectedDateIndex =
         MutableStateFlow(todayDateIndex) // Initial selected index (16th position)
 
     // Expose state variables as StateFlow for observation
+    private val currentDay: StateFlow<String> = _selectedDay
     private val currentMonth: StateFlow<String> = _selectedMonth
     private val currentYear: StateFlow<Int> = _selectedYear
     private val selectedDateIndex: StateFlow<Int> = _selectedDateIndex
@@ -68,13 +70,15 @@ class ScheduleViewModel(
 
     val scheduleUiState: StateFlow<ScheduleUiState> = combine(
         scheduleList,
+        currentDay,
         currentMonth,
         currentYear,
         selectedDateIndex
-    ) { scheduleList, month, year, selectedIndex ->
+    ) { scheduleList, day, month, year, selectedIndex ->
         ScheduleUiState(
             dayDateList = _dayDateList,
             classList = scheduleList,
+            selectedDay = day,
             selectedMonth = month,
             selectedYear = year,
             selectedDateIndex = selectedIndex
@@ -85,6 +89,7 @@ class ScheduleViewModel(
         initialValue = ScheduleUiState(
             dayDateList = _dayDateList,
             classList = emptyList(),
+            selectedDay = _selectedDay.value,
             selectedMonth = _selectedMonth.value,
             selectedYear = _selectedYear.value,
             selectedDateIndex = _selectedDateIndex.value,
@@ -109,6 +114,7 @@ class ScheduleViewModel(
             val selectedDay = selectedDateCalendar.getDisplayName(
                 Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()
             ) ?: ""
+            _selectedDay.value = selectedDay
             timestamp = getTimestampForSelectedDay(selectedDateCalendar.time)
             fetchSchedulesForDay(selectedDay, timestamp)
         }

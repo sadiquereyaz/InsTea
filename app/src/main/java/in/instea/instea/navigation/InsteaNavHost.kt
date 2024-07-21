@@ -46,20 +46,24 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Feed.name) {
             FEED(
                 navController = navController
-//                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
             )
         }
         composable(route = InsteaScreens.Inbox.name) {
             InboxScreen(navController = navController)
         }
         composable(route = InsteaScreens.Schedule.name) {
-            ScheduleScreen(navController = navController)
+            ScheduleScreen(
+                navigateToEditSchedule = { id: Int, day: String ->
+                    navController.navigate("${InsteaScreens.EditSchedule.name}/$id/$day")
+                }
+            )
         }
         composable(
             route = EditScheduleDestination.routeWithArg,
-            arguments = listOf(navArgument(EditScheduleDestination.DAY_ARG) {
-                type = NavType.StringType
-            })
+            arguments = listOf(
+                navArgument(EditScheduleDestination.ID_ARG) { type = NavType.IntType },
+                navArgument(EditScheduleDestination.DAY_ARG) { type = NavType.StringType }
+            )
         ) {
             EditScheduleScreen(
                 navController = navController
