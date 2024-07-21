@@ -2,15 +2,10 @@ package `in`.instea.instea.data.repo
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.getValue
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
+import kotlinx.coroutines.tasks.await
 
 interface AcademicRepository {
     fun getAllUniversity(): Flow<List<String>>
@@ -25,85 +20,69 @@ class NetworkAcademicRepository(
     override fun getAllUniversity(): Flow<List<String>> = flow {
         // Get the list of universities from Firebase
 
-
+        val universityList = mutableListOf<String>()
         val universitiesRef = firebaseInstance.getReference("academic")
-        var isResumed = false // Flag to track if the continuation has been resumed
-
-        val universityList = suspendCancellableCoroutine<List<String>> { continuation ->
-            val universityListener = object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (!isResumed) {
-                        val list = mutableListOf<String>()
-                        for (universitySnapshot in snapshot.children) {
-                            val universityName =
-                                universitySnapshot.key
-                            universityName?.let { list.add(it) }
-                        }
-                        continuation.resume(list)
-                        isResumed = true // Set the flag to true after resuming the continuation
-                    }
+        emit(
+            try {
+                val snapshot = universitiesRef.get().await()
+                for (universitySnapshot in snapshot.children) {
+                    val universityName = universitySnapshot.key
+                    universityName?.let { universityList.add(it) }
                 }
+//                Log.d(TAG, "getAllUniversity: fetched universities successfully")
+                universityList
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to fetch universities", e)
+                emptyList()
+            }
+        )
 
-                override fun onCancelled(error: DatabaseError) {
-                    if (!isResumed) {
-                        Log.w(TAG, "loadPost:onCancelled", error.toException())
-                        continuation.resume(emptyList()) // Resume with an empty list on error
-                        isResumed = true // Set the flag to true after resuming the continuation
-                    }
-                }
-            }
-            universitiesRef.addValueEventListener(universityListener)
-            continuation.invokeOnCancellation {
-                universitiesRef.removeEventListener(universityListener)
-            }
-        }
-        emit(universityList)
     }
 
     override fun getAllDepartment(university: String): Flow<List<String>> = flow {
         val depart = listOf("AMU CSE", "EEE", "ECE", "MECH")
-        /*val deptRef =
+        val deptRef =
             firebaseInstance.getReference("academic").child(university).child("classDetails")
-        var isResumed = false // Flag to track if the continuation has been resumed
-        val departList = suspendCancellableCoroutine<List<String>> { continuation ->
-            val departmentListener = object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (!isResumed) {
-                        val list = mutableListOf<String>()
-                        for (departmentSnapshot in snapshot.children) {
-                            val classDetails = departmentSnapshot.getValue<classDetails>()
-                            val departmentName = classDetails?.department
-                            departmentName?.let { list.add(it) }
-                        }
-                        continuation.resume(list)
-                        isResumed = true // Set the flag to true after resuming the continuation
-                    }
+        val deptList = mutableListOf<String>()
+        emit(
+            try {
+                val snapshot = deptRef.get().await()
+                for (deptSnapshot in snapshot.children) {
+                    val deptName = deptSnapshot.child("department").getValue(String::class.java)
+                    deptName?.let { deptList.add(it) }
+                    Log.d(TAG, "getAllDepartment: fetched department successfully $deptName")
                 }
 
-                override fun onCancelled(error: DatabaseError) {
-                    if (!isResumed) {
-                        Log.w(TAG, "loadPost:onCancelled", error.toException())
-                        continuation.resume(emptyList()) // Resume with an empty list on error
-                        isResumed = true // Set the flag to true after resuming the continuation
-                    }
-                }
+                deptList
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to fetch departments", e)
+                emptyList<String>()
             }
-            deptRef.addValueEventListener(departmentListener) // Add the listener
-            continuation.invokeOnCancellation {
-                deptRef.removeEventListener(departmentListener)
-            }
-        }*/
+        )
 
-        emit(depart)
     }
 
     override fun getAllSemester(university: String, department: String): Flow<List<String>> = flow {
 
-        if (university == "JMI") {
-            emit(listOf("JMI SEM"))
-        } else {
-            emit(listOf("not jmi SEM"))
-        }
+        val semRef =
+            firebaseInstance.getReference("academic").child(university).child("classDetails")
+        val semList = mutableListOf<String>()
+        emit(
+            try {
+                val snapshot = semRef.get().await()
+                for (deptSnapshot in snapshot.children) {
+                    val semName = deptSnapshot.child("semester").getValue(String::class.java)
+                    semName?.let { semList.add(it) }
+//                    Log.d(TAG, "getAllSemester: fetched department successfully $semName")
+                }
+
+
+                semList
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to fetch departments", e)
+                emptyList<String>()
+            }
+        )
     }
 
         override suspend fun addClassDetail(
@@ -113,7 +92,7 @@ class NetworkAcademicRepository(
         ) {
             //Add the new academic details to firebase
             val universitiesRef = firebaseInstance.getReference("academic").child(university)
-            val details = classDetails(semester, department)
+            val details = ClassDetails(semester, department)
             val newUniversity = University(university, details)
             universitiesRef.child("classDetails").push().setValue(details)
                 .addOnSuccessListener {
@@ -132,10 +111,10 @@ class NetworkAcademicRepository(
 
     class University(
         val name: String,
-        classDetails: classDetails
+        classDetails: ClassDetails
     )
 
-    class classDetails(
+data class ClassDetails(
         val semester: String,
         val department: String
     )

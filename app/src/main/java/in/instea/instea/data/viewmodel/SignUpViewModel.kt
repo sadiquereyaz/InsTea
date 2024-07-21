@@ -1,5 +1,7 @@
 package `in`.instea.instea.data.viewmodel
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.User
@@ -31,7 +33,8 @@ class SignUpViewModel(
         viewModelScope.launch {
             signUpUiState.value.departmentList = emptyList()
             academicRepository.getAllDepartment(university).collect {
-                if (university == "AMU") signUpUiState.value.departmentList = it
+                Log.d(TAG, "Departments: $university")
+                signUpUiState.value.departmentList = it
             }
         }
     }
@@ -40,7 +43,7 @@ class SignUpViewModel(
         viewModelScope.launch {
             signUpUiState.value.semesterList = emptyList()
             academicRepository.getAllSemester(university, department).collect {
-                if (university == "AMU") signUpUiState.value.semesterList = it
+                signUpUiState.value.semesterList = it
             }
         }
     }
