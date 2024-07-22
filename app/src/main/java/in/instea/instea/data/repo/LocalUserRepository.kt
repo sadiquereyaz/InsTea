@@ -26,7 +26,7 @@ class LocalUserRepository(
         val USER_EMAIL = stringPreferencesKey("user_email")
         val USER_LINKEDIN = stringPreferencesKey("user_linkedin")
         val USER_INSTAGRAM = stringPreferencesKey("user_instagram")
-        val USER_WHATSAPP = stringPreferencesKey("user_whatsapp")
+        val USER_WHATSAPP = intPreferencesKey("user_whatsapp")
     }
 
     // Function to get the user details
@@ -42,9 +42,11 @@ class LocalUserRepository(
             User(
                 userId = preferences[USER_ID] ?: "datastore id",
                 username = preferences[USER_NAME] ?: "data Store",
-                about = preferences[USER_ABOUT]
-                    ?: "this is default value of user detail in data store",
-//                isLoggedIn = preferences[IS_LOGGED_IN] ?: false
+                about = preferences[USER_ABOUT] ?: "this is default value of user detail in data store",
+                email = preferences[USER_EMAIL] ?: "data store email",
+                linkedinId = preferences[USER_LINKEDIN] ?: "data store linkedin",
+                instaId = preferences[USER_INSTAGRAM] ?: "data store instagram",
+                whatsappNo = preferences[USER_WHATSAPP] ?: 0
             )
         }
 

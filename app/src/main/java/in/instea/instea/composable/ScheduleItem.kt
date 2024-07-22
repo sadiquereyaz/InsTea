@@ -84,8 +84,8 @@ fun ScheduleItem(
             horizontalAlignment = Alignment.End
         ) {
             //time
-            Text(text = scheduleModel.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 12.sp)
-            Text(text = scheduleModel.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 8.sp)
+            Text(text = scheduleModel.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 14.sp)
+            Text(text = scheduleModel.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 10.sp)
         }
         //bubble and vertical line
         Box(

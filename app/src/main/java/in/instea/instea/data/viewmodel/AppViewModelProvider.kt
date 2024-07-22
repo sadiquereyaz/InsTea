@@ -18,6 +18,12 @@ object AppViewModelProvider {
                 )
         }
         initializer {
+                EditProfileViewModel(
+                    savedStateHandle = this.createSavedStateHandle(),
+                    userRepository =insteaApplication().container.userRepository
+                )
+        }
+        initializer {
                 OtherProfileViewModel(
                     postRepository = insteaApplication().container.postRepository,
                     userRepository =insteaApplication().container.userRepository

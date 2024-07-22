@@ -16,25 +16,28 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.composable.DropdownMenuBox
 import `in`.instea.instea.data.DataSource.departments
 import `in`.instea.instea.data.DataSource.platforms
 import `in`.instea.instea.data.DataSource.semesters
 import `in`.instea.instea.data.DataSource.universities
+import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.data.viewmodel.EditProfileViewModel
 
 @Composable
 fun EditProfile(
     modifier: Modifier = Modifier
         .fillMaxSize()
         .padding(16.dp),
-    userName: String = "John Doe",  // Dummy name
-    onUserNameChanged: (String) -> Unit = {},  // Empty lambda
     onDepartmentChanged: (String) -> Unit = {},  // Empty lambda
     onSemesterChanged: (String) -> Unit = {},  // Empty lambda
     onSaveButtonClicked: () -> Unit = {},  // Empty lambda
@@ -43,21 +46,19 @@ fun EditProfile(
     selectedSemester: String = "Fall 2024",  // Dummy semester
     selectedUniversity: String = "University of Example",  // Dummy university
     onUniversityChanged: (String) -> Unit = {},  // Empty lambda
-    instagram: String = "johndoe_dev",  // Dummy username
-    linkedin: String = "johndoe/linkedin",  // Dummy profile link
+    viewModel: EditProfileViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     Column(
         modifier = modifier,
     ) {
-        val username = rememberSaveable { mutableStateOf<String>(userName) }
         EditText(
             modifier = modifier,
-            value = userName,
+            value = uiState.username ?: "",
             onValueChange = {
-                username.value = it
-                onUserNameChanged(it)
+                viewModel.onUsernameChanged(it)
             },
-            label = "User Name",
+            label = "Username",
         )
         Spacer(modifier = Modifier.height(16.dp))
         DropdownComposables(
@@ -67,13 +68,12 @@ fun EditProfile(
             onSemesterChanged,
             selectedUniversity,
             onUniversityChanged,
-
-
-
         )
         Spacer(modifier = Modifier.height(16.dp))
-        BioText(value = "Instea is really a great app", onValueChange = {},
-            label = "Bio")
+        BioText(
+            value = "Instea is really a great app", onValueChange = {},
+            label = "Bio"
+        )
         Spacer(modifier = Modifier.height(16.dp))
         platformComp()
         Spacer(modifier = Modifier.height(16.dp))
@@ -115,7 +115,7 @@ private fun DropdownComposables(
     selectedUniversity: String,
     onUniversityChanged: (String) -> Unit,
 
-) {
+    ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -170,7 +170,6 @@ private fun DropdownComposables(
 @Composable
 fun platformComp(
     modifier: Modifier = Modifier
-        .fillMaxWidth()
 ) {
     Row(
         modifier = Modifier
@@ -180,7 +179,8 @@ fun platformComp(
         val sociaLink = rememberSaveable { mutableStateOf("") }
 
         DropdownMenuBox(
-            modifier = Modifier.fillMaxWidth(0.4f)
+            modifier = Modifier
+                .fillMaxWidth(0.4f)
                 .height(70.dp),
             label = "Platform",
             options = platforms,
@@ -193,7 +193,8 @@ fun platformComp(
 
 
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(1f)
+            modifier = Modifier
+                .fillMaxWidth(1f)
                 .height(65.dp),
 
             value = sociaLink.value,
@@ -218,12 +219,12 @@ fun BioText(
 ) {
     OutlinedTextField(modifier = Modifier
         .fillMaxWidth(),
-        shape = RoundedCornerShape(15.dp),
-        value = value,
-        minLines = 3,
-        maxLines = 5,
-        label = { Text(text = label) },
-        onValueChange = {})
+                      shape = RoundedCornerShape(15.dp),
+                      value = value,
+                      minLines = 3,
+                      maxLines = 5,
+                      label = { Text(text = label) },
+                      onValueChange = {})
 
 }
 
@@ -235,6 +236,7 @@ fun EditText(
     label: String,
     imeAction: ImeAction = ImeAction.Next
 ) {
+//    val isEmpty by rememberSavable {mutableStateOf(value.isEmpty())}
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = value,
@@ -245,7 +247,8 @@ fun EditText(
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = imeAction,
 //            keyboardType = KeyboardType.Text
-        )
+        ),
+//        supportingText = if (isEmpty) "must contains a value" else ""
     )
 
 }
@@ -254,23 +257,5 @@ fun EditText(
 @Preview(showSystemUi = true)
 @Composable
 fun EditProfilePreview() {
-
-    EditProfile(
-        userName = "John Doe",
-        onUserNameChanged = {
-
-        },
-        onDepartmentChanged = {},
-        onSemesterChanged = {},
-        onSaveButtonClicked = {},
-        onCancelButtonClicked = {},
-        selectedDepartment = "Computer Science",
-        selectedSemester = "5",
-        selectedUniversity = "Jamia",
-        onUniversityChanged = {
-
-        },
-        instagram = "johndoe_insta",
-        linkedin = "johndoe_linkedin"
-    )
+    EditProfile()
 }

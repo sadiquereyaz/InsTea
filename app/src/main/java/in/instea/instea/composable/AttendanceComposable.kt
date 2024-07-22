@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.AddTask
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,16 +32,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun AttendanceComposable(
     onAttendanceClick: (AttendanceType) -> Unit,
     scheduleObj: CombinedScheduleTaskModel
 ) {
-    Box() {
+    Box {
         var expanded by remember { mutableStateOf(false) }
-//                    var attendance by remember { mutableStateOf(attendanceType) }
-//                    val attendanceModifier = Modifier.clickable { attendanceType = AttendanceType.Present }
+        var coroutineScope = rememberCoroutineScope()
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -51,21 +52,24 @@ fun AttendanceComposable(
         ) {
             Row(
                 modifier = Modifier
-                    .clickable { onAttendanceClick(AttendanceType.Present) },
+                    .clickable {
+                        coroutineScope.launch {
+                            onAttendanceClick(AttendanceType.Present)
+                        }
+                    },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = scheduleObj.attendance?.icon ?: Icons.Default.CheckCircle,
+                    imageVector = scheduleObj.attendance?.icon ?: Icons.Default.AddTask,
                     contentDescription = "attendance",
                     modifier = Modifier
-                        .clickable {}
                         .size(16.dp))
                 Text(
-                    modifier = Modifier,
+                    modifier = Modifier.padding(start = 4.dp),
                     text = scheduleObj.attendance?.title ?: AttendanceType.MarkAttendance.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontSize = 12.sp/*modifier = Modifier.padding(start = 4.dp)*/
+                    fontSize = 12.sp
                 )
             }
 
