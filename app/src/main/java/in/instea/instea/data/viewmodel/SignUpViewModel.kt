@@ -1,5 +1,7 @@
 package `in`.instea.instea.data.viewmodel
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.User
@@ -31,7 +33,9 @@ class SignUpViewModel(
         viewModelScope.launch {
             signUpUiState.value.departmentList = emptyList()
             academicRepository.getAllDepartment(university).collect {
-                if (university == "AMU") signUpUiState.value.departmentList = it
+
+                signUpUiState.value.departmentList = it
+                Log.d(TAG, "Departments: $it")
             }
         }
     }
@@ -40,7 +44,8 @@ class SignUpViewModel(
         viewModelScope.launch {
             signUpUiState.value.semesterList = emptyList()
             academicRepository.getAllSemester(university, department).collect {
-                if (university == "AMU") signUpUiState.value.semesterList = it
+                signUpUiState.value.semesterList = it
+                Log.d(TAG, "Semesters: $it")
             }
         }
     }
@@ -52,6 +57,11 @@ class SignUpViewModel(
                 moveToSignIn()
             } else { //TODO: show toast message of failure
              }
+        }
+    }
+    fun AddItem(semester: String, department: String, university: String) {
+        viewModelScope.launch {
+            academicRepository.addClassDetail(semester, department, university)
         }
     }
 }

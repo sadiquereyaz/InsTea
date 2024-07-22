@@ -44,22 +44,18 @@ fun DropdownMenuBox(
     isError: Boolean = false,
     errorMessage: String = "Error Message",
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    addItemClick: (Boolean) -> Unit = {}
+    onAddItemClicked: () -> Unit = {}
 
-) {
+    ) {
     var expanded by remember { mutableStateOf(false) }
-    var enabled by remember { mutableStateOf(false) }
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = !expanded }
-        ) {
+        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             OutlinedTextField(
-                modifier = Modifier.menuAnchor(),
+                modifier = modifier.menuAnchor(),
                 value = selectedOption,
                 onValueChange = {},
-                enabled = enabled,
+                enabled = false,
                 isError = isError,
                 label = {
                     Text(
@@ -116,10 +112,7 @@ fun DropdownMenuBox(
                         )
                     },
                     text = { Text("Add New") },
-                    onClick = {
-                        expanded = !expanded
-                        enabled = true
-                    }
+                    onClick = { onAddItemClicked() }
                 )
             }
         }

@@ -15,4 +15,5 @@ enum class InsteaScreens(
     Forget("Forget"),
     Guidelines("Guidelines"),
     Addpost("Add Post"),
+    AddAcademicInfo("Add Academic Info"),
 }

@@ -126,6 +126,7 @@ fun SignUpScreen(
                     department = ""
                     semester = ""
                 },
+                onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) }
             )
             // department and semester
             Row(
@@ -147,6 +148,9 @@ fun SignUpScreen(
                         )
                         semester = ""
                     },
+                    onAddItemClicked = {
+                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
+                    },
                     errorMessage = "Please select university first"
                 )
                 // semester
@@ -158,6 +162,9 @@ fun SignUpScreen(
                     selectedOption = semester,
                     onOptionSelected = {
                         semester = it
+                    },
+                    onAddItemClicked = {
+                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
                     }
                 )
             }

@@ -14,6 +14,7 @@ import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfile
 import `in`.instea.instea.screens.InboxScreen
+import `in`.instea.instea.screens.auth.AddInfo
 import `in`.instea.instea.screens.auth.SignInScreen
 import `in`.instea.instea.screens.auth.SignUpScreen
 import `in`.instea.instea.screens.profile.OtherProfileScreen
@@ -46,6 +47,7 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Feed.name) {
             FEED(
                 navController = navController
+//                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
             )
         }
         composable(route = InsteaScreens.Inbox.name) {
@@ -86,6 +88,10 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Addpost.name) {
             FeedContent()
         }
+        composable(route = InsteaScreens.AddAcademicInfo.name) {
+            AddInfo(navController = navController)
+        }
+
     }
 }
 
