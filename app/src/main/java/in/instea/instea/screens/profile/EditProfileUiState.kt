@@ -1,18 +1,18 @@
 package `in`.instea.instea.screens.profile
 
-import `in`.instea.instea.data.datamodel.User
-import kotlinx.coroutines.flow.flowOf
-
 data class EditProfileUiState(
 //    var user: User = User(),
-    var username: String = "",
+    var username: String? = "",
     var university: String = "",
+    val universityList: List<String> = emptyList(),
     var department: String = "",
+    val departmentList: List<String> = emptyList(),
     var semester: String = "",
+    val semesterList: List<String> = emptyList(),
     var email: String ="",
     var instagram: String = "",
     var linkedin: String = "",
-    var whatsappNo: Int = 0,
+    var whatsappNo: String = "",
     var about: String = "",
     var isLoading: Boolean = false,
     var errorMessage: String? = null,

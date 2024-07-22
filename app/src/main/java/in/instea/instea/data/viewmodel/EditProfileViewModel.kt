@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import `in`.instea.instea.data.datamodel.User
+import `in`.instea.instea.data.repo.AcademicRepository
 import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.profile.EditProfileUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +16,8 @@ import kotlinx.coroutines.launch
 
 class EditProfileViewModel(
     savedStateHandle: SavedStateHandle,
-    val userRepository: UserRepository
+    val userRepository: UserRepository,
+    private val academicRepository: AcademicRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditProfileUiState())
     val uiState: StateFlow<EditProfileUiState> = _uiState
@@ -27,9 +30,8 @@ class EditProfileViewModel(
     fun onUsernameChanged(userName: String) {
         _uiState.value = _uiState.value.copy(username = userName)
     }
-    fun onDepartmentChanged(department: String) {
-        _uiState.value = _uiState.value.copy(department = department)
-    }
+
+
     private fun fetchInitialInfo() {
         viewModelScope.launch {
             userRepository.getUserById(userId).collect { user ->
@@ -42,11 +44,85 @@ class EditProfileViewModel(
                         email = user.email ?: "",
                         instagram = user.instaId ?: "",
                         linkedin = user.linkedinId ?: "",
-                        whatsappNo = user.whatsappNo ?: 0,
+                        whatsappNo = user.whatsappNo ?: "",
                         about = user.about ?: "",
                     )
                 }
             }
+        }
+    }
+
+    fun onUniversityChanged(university: String) {
+        viewModelScope.launch {
+            academicRepository.getAllDepartment(university).collect { departments ->
+                _uiState.value = _uiState.value.copy(
+                    university = university,
+                    departmentList = departments,
+                    department = "",
+                    semester = ""
+                )
+            }
+        }
+    }
+
+    fun onDepartmentChanged(department: String) {
+        viewModelScope.launch {
+            academicRepository.getAllSemester(
+                department = department, university = _uiState.value.university
+            ).collect { semesters ->
+                _uiState.value = _uiState.value.copy(
+                    semesterList = semesters, department = department, semester = ""
+                )
+            }
+        }
+    }
+
+    fun onSemesterChanged(semester: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                semester = semester
+            )
+        }
+    }
+
+    fun onAboutChanged(about: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(about = about)
+        }
+    }
+
+    fun onWhatsappNoChanged(no: String) {
+        _uiState.value = _uiState.value.copy(whatsappNo = no)
+
+    }
+
+    fun onInstagramChanged(ig: String) {
+        _uiState.value = _uiState.value.copy(instagram = ig)
+
+    }
+
+    fun onLinkedInChanged(it: String) {
+        _uiState.value = _uiState.value.copy(linkedin = it)
+
+    }
+
+    fun saveUserDetails() {
+        viewModelScope.launch {
+            val uiStateValue = uiState.value
+            val user = User(
+                userId = userId,
+                username = uiStateValue.username,
+                university = uiStateValue.university,
+                dept = uiStateValue.department,
+                sem = uiStateValue.semester,
+                email = uiStateValue.email,
+                instaId = uiStateValue.instagram,
+                linkedinId = uiStateValue.linkedin,
+                whatsappNo = uiStateValue.whatsappNo,
+                about = uiStateValue.about
+            )
+            userRepository.upsertUserLocally(user)
+            userRepository.upsertUserToFirebase(user)
         }
     }
 }

@@ -9,8 +9,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.AddCircleOutline
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,7 +32,7 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun DropdownMenuBox(
+fun DropdownComposable(
     modifier: Modifier = Modifier,
     label: String = "",
     options: List<String> = listOf("opt 1", "opt 2", "opt 3"),
@@ -46,11 +44,11 @@ fun DropdownMenuBox(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     onAddItemClicked: () -> Unit = {}
 
-    ) {
+) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+        ExposedDropdownMenuBox(modifier = modifier, expanded = expanded, onExpandedChange = { expanded = !expanded }) {
             OutlinedTextField(
                 modifier = modifier.menuAnchor(),
                 value = selectedOption,
@@ -88,8 +86,7 @@ fun DropdownMenuBox(
                 ),
             )
             DropdownMenu(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
+                modifier = Modifier,
                 expanded = expanded,
                 onDismissRequest = { expanded = false }
             ) {

@@ -38,36 +38,37 @@ fun AddInfo(
 
         //University
         CustomTextField(
-            textField = university,
-            onTextFieldChange = {
+            value = university,
+            onValueChange = {
                 university = it
             },
-            textFieldLabel = "University",
-            icon = Icons.Default.AccountBalance,
+            label = "University",
+            leadingIcon = Icons.Default.AccountBalance,
         )
         //Department
         CustomTextField(
-            textField = department,
-            onTextFieldChange = {
+            value = department,
+            onValueChange = {
                 department = it
             },
-            textFieldLabel = "Department",
-            icon = Icons.Default.School
+            label = "Department",
+            leadingIcon = Icons.Default.School
         )
         //Semester
         CustomTextField(
-            textField = semester,
-            onTextFieldChange = {
+            value = semester,
+            onValueChange = {
                 semester = it
             },
-            textFieldLabel = "Semester", icon = Icons.Default.AutoGraph
+            label = "Semester", leadingIcon = Icons.Default.AutoGraph
         )
         Spacer(modifier = Modifier.weight(1f))
-        ButtonComp(value = "Add",
-            onButtonClicked = {
-                viewModel.AddItem(semester, department, university)
+        ButtonComp(
+            text = "Add",
+                   onButtonClicked = {
+                       viewModel.AddItem(semester, department, university)
 
-            })
+                   })
 
 
     }

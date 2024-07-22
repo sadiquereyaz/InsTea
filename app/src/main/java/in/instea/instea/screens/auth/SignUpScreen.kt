@@ -29,7 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import `in`.instea.instea.composable.DropdownMenuBox
+import `in`.instea.instea.composable.DropdownComposable
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.SignUpViewModel
@@ -86,23 +86,23 @@ fun SignUpScreen(
             //username
             CustomTextField(
                 modifier = Modifier,
-                textField = username,
-                onTextFieldChange = {
+                value = username,
+                onValueChange = {
                     username = it
                 },
-                icon = Icons.Default.Person,
-                textFieldLabel = "Username",
+                leadingIcon = Icons.Default.Person,
+                label = "Username",
                 errorText = "Invalid username",
 //                isError = signupUiState.usernameError
             )
             //email
             CustomTextField(
                 modifier = Modifier,
-                textField = email,
-                onTextFieldChange = { email = it },
-                icon = Icons.Default.Email,
+                value = email,
+                onValueChange = { email = it },
+                leadingIcon = Icons.Default.Email,
                 keyboardType = KeyboardType.Email,
-                textFieldLabel = "Enter Email",
+                label = "Enter Email",
                 errorText = "Invalid Email"
             )
 
@@ -114,7 +114,7 @@ fun SignUpScreen(
                 errorText = "Password not valid",
             )
             // university
-            DropdownMenuBox(
+            DropdownComposable(
                 modifier = Modifier.fillMaxWidth(),
                 label = "University",
                 options = signUpUiState.universityList,
@@ -134,7 +134,7 @@ fun SignUpScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 //department
-                DropdownMenuBox(
+                DropdownComposable(
                     modifier = Modifier.weight(3f),
                     label = "Department",
                     selectedOption = department,
@@ -154,7 +154,7 @@ fun SignUpScreen(
                     errorMessage = "Please select university first"
                 )
                 // semester
-                DropdownMenuBox(
+                DropdownComposable(
                     modifier = Modifier.weight(2.5f),
                     label = "Sem",
                     leadingIcon = Icons.Default.AutoGraph,

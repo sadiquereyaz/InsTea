@@ -2,11 +2,7 @@ package `in`.instea.instea.screens.auth.composable
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Abc
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -14,39 +10,42 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+
 @Composable
 fun CustomTextField(
     modifier: Modifier = Modifier,
-    textField: String,
-    onTextFieldChange: (String) -> Unit,
-    icon: ImageVector,
+    value: String = "",
+    onValueChange: (String) -> Unit = {},
+    leadingIcon: ImageVector? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
-    textFieldLabel: String = "Enter your text",
+    capitalization: KeyboardCapitalization = KeyboardCapitalization.None,
     errorText: String = "Invalid input",
     isError: Boolean = false,
-    leadingIcon: ImageVector = Icons.Default.Abc
+    label: String = "textFieldLabel"
 ) {
     OutlinedTextField(
         modifier = modifier
             .fillMaxWidth(),
-        value = textField,
+        value = value,
         onValueChange = {
-            onTextFieldChange(it)
+            onValueChange(it)
         },
         keyboardOptions = KeyboardOptions(
+            capitalization = capitalization,
             keyboardType = keyboardType,
             imeAction = ImeAction.Next,
         ),
         leadingIcon = {
-            Icon(imageVector = icon, contentDescription = "icon")
+            if (leadingIcon != null) {
+                Icon(imageVector = leadingIcon, contentDescription = "icon",/* modifier = Modfier*/)
+            }
         },
-        label = { Text(text = textFieldLabel) },
+        label = { Text(text = label) },
         shape = RoundedCornerShape(8.dp),
         singleLine = true,
         isError = isError,

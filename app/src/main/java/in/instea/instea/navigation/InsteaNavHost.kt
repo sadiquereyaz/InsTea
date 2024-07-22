@@ -82,8 +82,7 @@ fun InsteaNavHost(
         }
         composable(route = InsteaScreens.EditProfile.name) {
             EditProfile(
-
-            )
+                navigateToAddAcademics = { navController.navigate(InsteaScreens.AddAcademicInfo.name) })
         }
         composable(route = InsteaScreens.Addpost.name) {
             FeedContent()

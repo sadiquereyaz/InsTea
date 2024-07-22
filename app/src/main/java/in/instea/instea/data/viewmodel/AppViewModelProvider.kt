@@ -20,7 +20,8 @@ object AppViewModelProvider {
         initializer {
                 EditProfileViewModel(
                     savedStateHandle = this.createSavedStateHandle(),
-                    userRepository =insteaApplication().container.userRepository
+                    userRepository =insteaApplication().container.userRepository,
+                    academicRepository = insteaApplication().container.academicRepository
                 )
         }
         initializer {

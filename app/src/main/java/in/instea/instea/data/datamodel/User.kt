@@ -11,7 +11,7 @@ data class User(
     var about: String? = null,
     val instaId: String? = null,
     val linkedinId: String? = null,
-    val whatsappNo: Int? = 0,
+    val whatsappNo: String? = "",
     val hostel: String? = null,
     val roomNo: String? = null
 )
