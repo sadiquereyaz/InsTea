@@ -16,4 +16,5 @@ enum class InsteaScreens(
     Guidelines("Guidelines"),
     Addpost("Add Post"),
     AddAcademicInfo("Add Academic Info"),
+    More("More"),
 }
