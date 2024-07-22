@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import `in`.instea.instea.data.dao.PostDao
 import `in`.instea.instea.data.repo.AcademicRepository
 import `in`.instea.instea.data.repo.CombinedPostRepository
 import `in`.instea.instea.data.repo.CombinedUserRepository
@@ -25,7 +26,7 @@ interface AppContainer {
     val userRepository: UserRepository
     val scheduleRepository: ScheduleRepository
     val networkRepository: NetworkPostRepository
-
+    val localPostRepository:LocalPostRepository
 //    val userPreferenceRepository: UserPreferenceRepository
     val academicRepository: AcademicRepository
 }
@@ -67,6 +68,9 @@ class AppDataContainer(
     }
     override val networkRepository: NetworkPostRepository by lazy {
         NetworkPostRepository(FirebaseDatabase.getInstance())
+    }
+    override val localPostRepository: LocalPostRepository by lazy {
+       LocalPostRepository(postDao = roomDatabase.postDao())
     }
 
 

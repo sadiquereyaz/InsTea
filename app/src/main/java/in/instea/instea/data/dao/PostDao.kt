@@ -22,13 +22,14 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import `in`.instea.instea.data.datamodel.PostData
 
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PostDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Upsert
     suspend fun insertPost(post: PostData)
 
     @Update

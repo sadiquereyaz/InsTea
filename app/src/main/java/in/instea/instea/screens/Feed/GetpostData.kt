@@ -1,5 +1,4 @@
 import androidx.compose.runtime.Composable
-import `in`.instea.instea.R
 import `in`.instea.instea.data.datamodel.PostData
 
 @Composable

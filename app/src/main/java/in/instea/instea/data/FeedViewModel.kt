@@ -1,6 +1,7 @@
 package `in`.instea.instea.data
 
 
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
@@ -17,8 +18,10 @@ import `in`.instea.instea.data.datamodel.FeedUiState
 import `in`.instea.instea.data.datamodel.PostData
 
 import `in`.instea.instea.data.datamodel.User
+import `in`.instea.instea.data.repo.LocalPostRepository
 import `in`.instea.instea.data.repo.NetworkPostRepository
 import `in`.instea.instea.data.repo.PostRepository
+import `in`.instea.instea.data.viewmodel.NetworkUtils
 import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +39,8 @@ import kotlinx.coroutines.tasks.await
 
 class FeedViewModel(
     private val postRepository: NetworkPostRepository,
+    private val localPostRepository: LocalPostRepository,
+    val context: Context
 ) : ViewModel() {
     private val mAuth = Firebase.auth
     val db = Firebase.database.reference
@@ -51,6 +56,7 @@ class FeedViewModel(
 //    val feeduiState:StateFlow<FeedUiState> =
     private val _posts = MutableStateFlow<List<PostData>>(emptyList())
     val posts: StateFlow<List<PostData>> get() = _posts
+
     private val _user = MutableStateFlow(User())
     val user: StateFlow<User> = _user.asStateFlow()
     private val _isLoading = MutableStateFlow(true)
@@ -98,9 +104,17 @@ class FeedViewModel(
     private fun fetchPosts() {
         viewModelScope.launch {
 
-            postRepository.getAllSavedPostsStream().collect { posts ->
-                _posts.update { posts }
-                _isLoading.value = false
+            if(NetworkUtils.isNetworkAvailable(context)){
+                postRepository.getAllSavedPostsStream().collect { posts ->
+                    _posts.update { posts }
+                    _isLoading.update { false }
+                }
+            }
+            else{
+                localPostRepository.getAllSavedPostsStream().collect{ posts ->
+                    _posts.update { posts }
+                    _isLoading.update { false }
+                }
             }
 
         }
@@ -109,9 +123,20 @@ class FeedViewModel(
     fun insertPostsInDatabase(post: PostData) {
         viewModelScope.launch {
             postRepository.insertItem(post);
+
         }
 
 //        _feedUiState.update { currentState -> currentState.copy(posts = postRepository.getAllSavedPostsStream()) }
+    }
+    fun inserLocal(post:PostData){
+        viewModelScope.launch {
+            localPostRepository.insertItem(post)
+        }
+    }
+    fun getlocalPosts(){
+        viewModelScope.launch{
+            localPostRepository.getAllSavedPostsStream()
+        }
     }
 
     fun updateVotes(post: PostData){

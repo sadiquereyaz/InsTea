@@ -55,8 +55,10 @@ class CombinedPostRepository(
 class LocalPostRepository(
     private val postDao: PostDao,
 ) : PostRepository {
+
     override fun getAllSavedPostsStream(): Flow<List<PostData>> = postDao.getAllSavedPosts()
     override suspend fun insertItem(post: PostData) = postDao.insertPost(post)
+
     override suspend fun updateUpAndDownVote(post: PostData) {
         TODO("Not yet implemented")
     }

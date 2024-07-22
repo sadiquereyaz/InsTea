@@ -2,12 +2,71 @@ package `in`.instea.instea.data.datamodel
 
 import androidx.compose.runtime.Immutable
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
+@Entity(tableName = "posts")
+@TypeConverters(StringListConverter::class, DateAndHourConverter::class)
+data class PostData(
+    @PrimaryKey
+    var postid: String = "", // Initialize with an empty string
+    var department: String? = null,
+    var profileImage: Int? = null,
+    var postDescription: String? = "",
+    @Ignore
+    var comments: MutableList<Comments> = mutableListOf(),
+    var postImage: Int? = null,
+    var postedByUser: String? = "",
+    var timestamp: DateAndHour = DateAndHour(),
+    var userLikedCurrentPost: MutableList<String?> = mutableListOf(""),
+    var userDislikedCurrentPost: MutableList<String?> = mutableListOf(""),
+    var saved:Boolean = false,
+    var hasReports: Int = 0
+) {
+    constructor() : this("", null, null, "", mutableListOf(), null, "", DateAndHour(), mutableListOf(), mutableListOf(), false,0)
+}
+
+data class Comments(
+    val comment:String ="",
+    val commentByUser:String=""
+)
+
+@Immutable
+data class FeedUiState(
+    val posts:List<PostData> = emptyList()
+)
+
+
+
+class DateAndHourConverter {
+
+    @TypeConverter
+    fun fromTimestamp(value: Long?): DateAndHour? {
+        return value?.let { DateAndHour(Date(it)) }
+    }
+
+    @TypeConverter
+    fun dateAndHourToTimestamp(dateAndHour: DateAndHour?): Long? {
+        return dateAndHour?.toTimestamp()
+    }
+}
+data class DateAndHour(
+    var date: Date = Date() // No-argument constructor required by Firebase
+) {
+    fun format(): String {
+        val dateFormat = SimpleDateFormat("dd MMM yy", Locale.getDefault())
+        return dateFormat.format(this.date)
+    }
+
+    fun toTimestamp(): Long {
+        return this.date.time
+    }
+}
 class StringListConverter {
     @TypeConverter
     fun fromString(value: String?): MutableList<String?> {
@@ -19,26 +78,3 @@ class StringListConverter {
         return list.filterNotNull().joinToString(",")
     }
 }
-
-@Entity(tableName = "posts")
-@TypeConverters(StringListConverter::class)
-data class PostData(
-    @PrimaryKey
-    var postid: String = "", // Initialize with an empty string
-    val department: String? = null,
-    val profileImage: Int? = null,
-    val postDescription: String? = "",
-    val postImage: Int? = null,
-    val postedByUser: String? = "",
-    val userLikedCurrentPost: MutableList<String?> = mutableListOf(""),
-    val userDislikedCurrentPost: MutableList<String?> = mutableListOf(""),
-    val hasReports: Int = 0
-) {
-    // No-argument constructor
-    constructor() : this("", null, null, null, null, null, mutableListOf(), mutableListOf(), 0)
-}
-
-@Immutable
-data class FeedUiState(
-    val posts:List<PostData> = emptyList()
-)

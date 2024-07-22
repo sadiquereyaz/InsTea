@@ -1,5 +1,6 @@
 package `in`.instea.instea.ui
 
+import GetPostData
 import PostCard
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -24,6 +25,7 @@ import `in`.instea.instea.data.datamodel.PostData
 @Composable
 fun PostList(feedViewModel: FeedViewModel) {
     val posts = feedViewModel.posts.collectAsState(initial = emptyList()).value.reversed()
+
     if (feedViewModel.isLoading.value) {
         Column {
             repeat(8) {
@@ -87,7 +89,9 @@ fun ShimmerGridItem(brush: Brush, modifier: Modifier = Modifier) {
                     .clip(RoundedCornerShape(10.dp))
                     .background(brush)
             )
-            Spacer(modifier = modifier.height(3.dp).fillMaxWidth())
+            Spacer(modifier = modifier
+                .height(3.dp)
+                .fillMaxWidth())
             Spacer(
                 modifier = modifier
                     .height(12.dp)
