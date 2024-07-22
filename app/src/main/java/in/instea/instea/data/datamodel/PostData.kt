@@ -33,8 +33,11 @@ data class PostData(
 
 data class Comments(
     val comment:String ="",
-    val commentByUser:String=""
-)
+    val commentByUser:String="",
+    val userLikedComment : MutableList<String> = mutableListOf(),
+    val userDislikeComment:MutableList<String> = mutableListOf(),
+
+    )
 
 @Immutable
 data class FeedUiState(

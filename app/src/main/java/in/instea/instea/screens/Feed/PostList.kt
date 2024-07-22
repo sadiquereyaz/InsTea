@@ -33,7 +33,10 @@ fun PostList(feedViewModel: FeedViewModel) {
             }
         }
     } else {
-        LazyColumn {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(8.dp)
+        ) {
             items(posts) { post -> PostCard(post = post) }
         }
     }

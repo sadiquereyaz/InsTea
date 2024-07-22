@@ -9,6 +9,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import `in`.instea.instea.data.dao.PostDao
+import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.PostData
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -21,6 +22,7 @@ interface PostRepository {
     fun getAllSavedPostsStream(): Flow<List<PostData>>
     suspend fun insertItem(post: PostData)
     suspend fun updateUpAndDownVote(post: PostData)
+    suspend fun UpdateComment(post:PostData)
 }
 
 class CombinedPostRepository(
@@ -50,6 +52,14 @@ class CombinedPostRepository(
     override suspend fun updateUpAndDownVote(post: PostData) {
 
     }
+
+    override suspend fun UpdateComment(post: PostData) {
+        TODO("Not yet implemented")
+    }
+
+
+
+
 }
 
 class LocalPostRepository(
@@ -62,6 +72,13 @@ class LocalPostRepository(
     override suspend fun updateUpAndDownVote(post: PostData) {
         TODO("Not yet implemented")
     }
+
+    override suspend fun UpdateComment(post: PostData) {
+        TODO("Not yet implemented")
+    }
+
+
+
 }
 
 class NetworkPostRepository(
@@ -115,6 +132,14 @@ class NetworkPostRepository(
             }
 
         }
+    }
+
+    override suspend fun UpdateComment(post: PostData) {
+        val db = Firebase.database.reference
+        db.child("posts").child(post.postid).setValue(post)
+
+
+
     }
 }
 

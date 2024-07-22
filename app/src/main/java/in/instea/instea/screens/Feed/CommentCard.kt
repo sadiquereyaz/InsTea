@@ -40,12 +40,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
 import `in`.instea.instea.data.FeedViewModel
+import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun CommentCard(post:PostData){
+fun CommentCard(comment:Comments,post: PostData){
     var isExpanded by remember {
         mutableStateOf(false)
     }
@@ -69,8 +70,7 @@ fun CommentCard(post:PostData){
                 ) {
                     Image(
                         painter = painterResource(
-                            id = if (post.profileImage != null) post.profileImage!!
-                            else R.drawable.ic_launcher_foreground
+                            id = R.drawable.logo
                         ),
                         modifier = Modifier
                             .size(30.dp)
@@ -89,12 +89,12 @@ fun CommentCard(post:PostData){
                             fontWeight = FontWeight.Light
                         )
 
-                        val displayText = if (isExpanded) post.postDescription!!
-                        else post.postDescription?.take(100)
+                        val displayText = if (isExpanded) comment.comment
+                        else comment.comment.take(100)
                         Text(
                             text = displayText!!, modifier = Modifier.padding(2.dp)
                         )
-                        if (post.postDescription?.length!! > 100) {
+                        if (comment.comment.length!! > 100) {
 
                             TextButton(
                                 onClick = {
@@ -124,7 +124,7 @@ fun CommentCard(post:PostData){
                     modifier = Modifier.fillMaxWidth()
                 ) {
 
-                    UpAndDownVoteButtonsForComment(post)
+                    UpAndDownVoteButtonsForComment(comment)
                 }
 
 
@@ -135,7 +135,7 @@ fun CommentCard(post:PostData){
 }
 
 @Composable
-fun UpAndDownVoteButtonsForComment(post: PostData) {
+fun UpAndDownVoteButtonsForComment(comment: Comments) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }
     val isDownVoted = rememberSaveable { mutableStateOf(false) }
     val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -144,10 +144,10 @@ fun UpAndDownVoteButtonsForComment(post: PostData) {
         mutableStateOf(false)
     }
     var userDislikeCurrentPost by rememberSaveable {
-        mutableStateOf(post.userDislikedCurrentPost.contains(feedViewModel.currentuser))
+        mutableStateOf(comment.userDislikeComment.contains(feedViewModel.currentuser))
     }
     var userlikeCurrentPost by rememberSaveable {
-        mutableStateOf(post.userLikedCurrentPost.contains(feedViewModel.currentuser))
+        mutableStateOf(comment.userLikedComment.contains(feedViewModel.currentuser))
     }
 
     Box(
@@ -194,21 +194,21 @@ fun UpAndDownVoteButtonsForComment(post: PostData) {
 
                             coroutineScope.launch {
                                 if (!userlikeCurrentPost && userDislikeCurrentPost) {
-                                    post.userDislikedCurrentPost.remove(feedViewModel.currentuser)
+                                    comment.userDislikeComment.remove(feedViewModel.currentuser)
                                 } else if (userlikeCurrentPost && !userDislikeCurrentPost) {
-                                    post.userLikedCurrentPost.remove(feedViewModel.currentuser)
-                                    post.userDislikedCurrentPost.add(feedViewModel.currentuser)
+                                    comment.userLikedComment.remove(feedViewModel.currentuser)
+                                    comment.userDislikeComment.add(feedViewModel.currentuser!!)
                                 } else {
-                                    post.userDislikedCurrentPost.add(feedViewModel.currentuser)
+                                    comment.userDislikeComment.add(feedViewModel.currentuser!!)
                                 }
 
-                                feedViewModel.updateVotes(post)
+//                                feedViewModel.updateVotes(post)
 
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
-                                    post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
+                                    comment.userDislikeComment.contains(feedViewModel.currentuser)
                                 userlikeCurrentPost =
-                                    post.userLikedCurrentPost.contains(feedViewModel.currentuser)
+                                    comment.userLikedComment.contains(feedViewModel.currentuser)
                             }
                         },
                     tint = (if (userDislikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
@@ -246,21 +246,21 @@ fun UpAndDownVoteButtonsForComment(post: PostData) {
 
                             coroutineScope.launch {
                                 if (userlikeCurrentPost && !userDislikeCurrentPost) {
-                                    post.userLikedCurrentPost.remove(feedViewModel.currentuser)
+                                    comment.userLikedComment.remove(feedViewModel.currentuser)
                                 } else if (!userlikeCurrentPost && userDislikeCurrentPost) {
-                                    post.userDislikedCurrentPost.remove(feedViewModel.currentuser)
-                                    post.userLikedCurrentPost.add(feedViewModel.currentuser)
+                                    comment.userDislikeComment.remove(feedViewModel.currentuser)
+                                    comment.userLikedComment.add(feedViewModel.currentuser!!)
                                 } else {
-                                    post.userLikedCurrentPost.add(feedViewModel.currentuser)
+                                    comment.userLikedComment.add(feedViewModel.currentuser!!)
                                 }
 
-                                feedViewModel.updateVotes(post)
+//                                feedViewModel.updateVotes(post)
 
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
-                                    post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
+                                    comment.userDislikeComment.contains(feedViewModel.currentuser)
                                 userlikeCurrentPost =
-                                    post.userLikedCurrentPost.contains(feedViewModel.currentuser)
+                                    comment.userLikedComment.contains(feedViewModel.currentuser)
                             }
                         },
                     tint = (if (userlikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)

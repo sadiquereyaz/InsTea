@@ -14,6 +14,7 @@ import com.google.firebase.auth.FederatedAuthProvider
 import com.google.firebase.auth.auth
 
 import com.google.firebase.database.database
+import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.FeedUiState
 import `in`.instea.instea.data.datamodel.PostData
 
@@ -56,22 +57,10 @@ class FeedViewModel(
 //    val feeduiState:StateFlow<FeedUiState> =
     private val _posts = MutableStateFlow<List<PostData>>(emptyList())
     val posts: StateFlow<List<PostData>> get() = _posts
-
     private val _user = MutableStateFlow(User())
     val user: StateFlow<User> = _user.asStateFlow()
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> get() = _isLoading
-
-
-//    var feedUiState: StateFlow<FeedUiState> = postRepository.getAllSavedPostsStream().map { posts ->
-//        FeedUiState(posts = (posts))
-//    }.stateIn(
-//        scope = viewModelScope,
-//        started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-//        initialValue = FeedUiState()
-//    )
-
-
 
     init {
         viewModelScope.launch {
@@ -133,11 +122,6 @@ class FeedViewModel(
             localPostRepository.insertItem(post)
         }
     }
-    fun getlocalPosts(){
-        viewModelScope.launch{
-            localPostRepository.getAllSavedPostsStream()
-        }
-    }
 
     fun updateVotes(post: PostData){
         Log.d("posts", "updateVotes: $post")
@@ -146,6 +130,12 @@ class FeedViewModel(
         }
     }
 
+    fun updateComment(post: PostData){
+        Log.d("balle", "updateComment: ${post.postid}")
+        viewModelScope.launch {
+            postRepository.UpdateComment(post)
+        }
+    }
 
     fun writeNewUser(
         name: String,
