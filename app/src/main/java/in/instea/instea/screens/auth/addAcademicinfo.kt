@@ -66,7 +66,7 @@ fun AddInfo(
         ButtonComp(
             text = "Add",
                    onButtonClicked = {
-                       viewModel.AddItem(semester, department, university)
+                       viewModel.addItem(semester, department, university)
 
                    })
 

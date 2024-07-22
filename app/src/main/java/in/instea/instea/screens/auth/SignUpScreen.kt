@@ -46,7 +46,7 @@ fun SignUpScreen(
 ) {
 //    val authState = viewModel.authState.collectAsState()
     val viewModel: SignUpViewModel = viewModel(factory = AppViewModelProvider.Factory)
-    val signUpUiState by viewModel.signUpUiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     /*   LaunchedEffect(authState.value) {
            when (authState.value) {
@@ -117,12 +117,12 @@ fun SignUpScreen(
             DropdownComposable(
                 modifier = Modifier.fillMaxWidth(),
                 label = "University",
-                options = signUpUiState.universityList,
+                options = uiState.universityList,
                 leadingIcon = Icons.Default.AccountBalance,
                 selectedOption = university,
                 onOptionSelected = { selectedOption ->
                     university = selectedOption
-                    viewModel.getAllDepartment(selectedOption)
+                    viewModel.getAllDepartment(university = selectedOption)
                     department = ""
                     semester = ""
                 },
@@ -139,7 +139,7 @@ fun SignUpScreen(
                     label = "Department",
                     selectedOption = department,
                     leadingIcon = Icons.Default.School,
-                    options = signUpUiState.departmentList,
+                    options = uiState.departmentList,
                     onOptionSelected = { selectedOption ->
                         department = selectedOption
                         viewModel.getAllSemester(
@@ -158,7 +158,7 @@ fun SignUpScreen(
                     modifier = Modifier.weight(2.5f),
                     label = "Sem",
                     leadingIcon = Icons.Default.AutoGraph,
-                    options = signUpUiState.semesterList,
+                    options = uiState.semesterList,
                     selectedOption = semester,
                     onOptionSelected = {
                         semester = it

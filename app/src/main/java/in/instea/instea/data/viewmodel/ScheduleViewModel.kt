@@ -42,6 +42,10 @@ class ScheduleViewModel(
             Locale.getDefault()
         ) ?: ""
     )
+
+    // Expose state variables as StateFlow for observation
+    private val currentDay: StateFlow<String> = _selectedDay
+
     private val _selectedMonth = MutableStateFlow(
         _calendar.getDisplayName(
             Calendar.MONTH,
@@ -49,15 +53,14 @@ class ScheduleViewModel(
             Locale.getDefault()
         ) ?: ""
     )
+    private val currentMonth: StateFlow<String> = _selectedMonth
+
     private val _selectedYear =
         MutableStateFlow(_calendar.get(Calendar.YEAR) % 100)
+    private val currentYear: StateFlow<Int> = _selectedYear
+
     private val _selectedDateIndex =
         MutableStateFlow(todayDateIndex) // Initial selected index (16th position)
-
-    // Expose state variables as StateFlow for observation
-    private val currentDay: StateFlow<String> = _selectedDay
-    private val currentMonth: StateFlow<String> = _selectedMonth
-    private val currentYear: StateFlow<Int> = _selectedYear
     private val selectedDateIndex: StateFlow<Int> = _selectedDateIndex
 
     // Use a MutableStateFlow for the current list of schedules
@@ -167,7 +170,12 @@ class ScheduleViewModel(
     }
 
     suspend fun upsertAttendance(taskId: Int, scheduleId: Int, attendance: AttendanceType) {
-        scheduleRepository.upsertAttendance(taskId = taskId, attendance = attendance, scheduleId = scheduleId, timeStamp = timestamp)
+        scheduleRepository.upsertAttendance(
+            taskId = taskId,
+            attendance = attendance,
+            scheduleId = scheduleId,
+            timeStamp = timestamp
+        )
     }
 
     suspend fun upsertTask(scheduleId: Int, taskId: Int, task: String) {
