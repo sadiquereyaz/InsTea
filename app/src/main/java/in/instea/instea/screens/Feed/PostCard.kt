@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -116,34 +117,7 @@ fun PostCard(
                 }
             }
         }
-//            // Profile Image and Post Information
-//            Row(verticalAlignment = Alignment.CenterVertically) {
-//                (if (post.profileImage != null) post.profileImage
-//                else R.drawable.ic_launcher_foreground)?.let {
-//                    Image(
-//                        painter = painterResource(id = it),
-//                        modifier = Modifier
-//                            .size(40.dp)
-//                            .clip(CircleShape)
-//                            .background(Color.Black)
-//                            .clickable { /* Handle click */ },
-//                        contentDescription = "Profile"
-//                    )
-//                }
-//
-//                Column(modifier = Modifier.padding(start = 8.dp)) {
-//                    Text(text = "name", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-//                    Text(
-//                        text = post.timestamp.format(),
-//                        fontSize = 12.sp,
-//                        fontWeight = FontWeight.Light
-//                    )
-//                }
-//                Box(modifier = Modifier, contentAlignment = Alignment.End) {
-//                    Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
-//
-//                }
-//            }
+
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -200,16 +174,13 @@ fun PostCard(
                 }
             }
 
-            // Conditionally display the CommentCard below the Divider
-
-            // Divider
-            Divider(
-                Modifier
-                    .height(3.dp)
-                    .fillMaxWidth()
-            )
         }
     }
+    Divider(
+        Modifier
+            .height(1.dp)
+            .fillMaxWidth()
+    )
     if (showComments) {
         CommentList(post, feedViewModel)
     }
@@ -293,11 +264,12 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
                                     post.userLikedCurrentPost.contains(feedViewModel.currentuser)
                             }
                         },
-                    tint = (if (userDislikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
+                    tint = (if (userDislikeCurrentPost) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground)
                 )
                 Text(
                     text = (post.userDislikedCurrentPost.size - 1).toString(),
                     fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(0.dp)
                 )
             }
@@ -318,6 +290,7 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
                 Text(
                     text = (post.userLikedCurrentPost.size - 1).toString(),
                     fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(0.dp)
                 )
                 Icon(
@@ -351,7 +324,7 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
                                     post.userLikedCurrentPost.contains(feedViewModel.currentuser)
                             }
                         },
-                    tint = (if (userlikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
+                    tint = (if (userlikeCurrentPost) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground)
                 )
             }
         }

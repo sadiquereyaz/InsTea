@@ -135,10 +135,6 @@ class NetworkPostRepository(
     }
 
     override suspend fun UpdateComment(post: PostData) {
-        val db = Firebase.database.reference
-        db.child("posts").child(post.postid).setValue(post)
-
-
 
     }
 }

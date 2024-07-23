@@ -58,15 +58,15 @@ fun ReplyCard(reply: Replies, comment: Comments,post: PostData) {
             Row(
                 verticalAlignment = Alignment.Bottom
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.dp),
-                    modifier = Modifier
-                        .size(30.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black)
-                        .clickable {},
-                    contentDescription = "Profile"
-                )
+//                Image(
+//                    painter = painterResource(id = R.drawable.dp),
+//                    modifier = Modifier
+//                        .size(30.dp)
+//                        .clip(CircleShape)
+//                        .background(Color.Black)
+//                        .clickable {},
+//                    contentDescription = "Profile"
+//                )
 
                 Column(
                     modifier = Modifier.padding(start = 8.dp),
