@@ -40,19 +40,26 @@ import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReplyList(post:PostData,comment: Comments,feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
-   var textstate by remember{ mutableStateOf("") }
+fun ReplyList(
+    post: PostData,
+    comment: Comments,
+    feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),
+
+) {
+    var textstate by remember { mutableStateOf("") }
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = if(comment.replies.isEmpty()) Modifier.height(100.dp).fillMaxWidth() else Modifier.fillMaxWidth().height(500.dp)
+        horizontalAlignment = Alignment.End,
+        modifier = if (comment.replies.isEmpty()) Modifier.height(150.dp).fillMaxWidth().padding(start = 35.dp) else Modifier.fillMaxWidth().height(500.dp).padding(start = 35.dp)
     ) {
         item {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.padding(8.dp)
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.Start,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(0.8f)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.dp),
@@ -84,7 +91,7 @@ fun ReplyList(post:PostData,comment: Comments,feedViewModel: FeedViewModel = vie
                             if (textstate.isNotEmpty()) {
                                 Icon(
                                     modifier = Modifier.clickable {
-//                                        getting current comment index
+                                        // Getting current comment index
                                         val commentIndex = post.comments.indexOf(comment)
 
                                         comment.replies.add(
@@ -93,8 +100,8 @@ fun ReplyList(post:PostData,comment: Comments,feedViewModel: FeedViewModel = vie
                                                 replyByUser = feedViewModel.currentuser!!,
                                             )
                                         )
-//                                        setting updated comment
-                                       post.comments[commentIndex] = comment
+                                        // Setting updated comment
+                                        post.comments[commentIndex] = comment
 
                                         feedViewModel.updateComment(post)
                                         textstate = "" // Clear text field after sending comment
@@ -105,7 +112,6 @@ fun ReplyList(post:PostData,comment: Comments,feedViewModel: FeedViewModel = vie
                             }
                         }
                     )
-
                 }
             }
         }
@@ -123,7 +129,7 @@ fun ReplyList(post:PostData,comment: Comments,feedViewModel: FeedViewModel = vie
             }
         } else {
             items(comment.replies) { reply ->
-                ReplyCard(reply,comment)
+                ReplyCard(reply, comment,post)
             }
         }
     }

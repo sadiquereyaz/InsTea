@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,138 +44,102 @@ import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.Replies
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import kotlinx.coroutines.launch
-
 @Composable
-fun ReplyCard(reply:Replies,comment:Comments) {
-    var isExpanded by remember {
-        mutableStateOf(false)
-    }
-
+fun ReplyCard(reply: Replies, comment: Comments,post: PostData) {
+    var isExpanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier
-            .padding(start = 3.dp, end = 3.dp, bottom = 0.dp)
-            .background(MaterialTheme.colorScheme.background)
-
+        modifier = Modifier.fillMaxWidth(0.8f)
+            .padding(start = 30.dp, end = 2.dp)
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.CenterEnd
     ) {
-
-        Box(modifier = Modifier.padding(2.dp)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(4.dp)
+        Column(modifier = Modifier.padding(2.dp), horizontalAlignment = Alignment.Start) {
+            Row(
+                verticalAlignment = Alignment.Bottom
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(
-                            id = R.drawable.logo
-                        ),
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clip(CircleShape)
-                            .background(Color.Black)
-                            .clickable {
+                Image(
+                    painter = painterResource(id = R.drawable.dp),
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clip(CircleShape)
+                        .background(Color.Black)
+                        .clickable {},
+                    contentDescription = "Profile"
+                )
 
-                            },
-                        contentDescription = "Profile"
+                Column(
+                    modifier = Modifier.padding(start = 8.dp),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        text = "location",
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Light
                     )
 
-                    Column(modifier = Modifier.padding(start = 8.dp)) {
-                        Text(
-                            text = "location",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Light
-                        )
-
-                        val displayText = if (isExpanded) reply.reply
-                        else reply.reply.take(100)
-                        Text(
-                            text = displayText!!, modifier = Modifier.padding(2.dp)
-                        )
-                        if (reply.reply.length!! > 100) {
-
-                            TextButton(
-                                onClick = {
-                                    isExpanded = !isExpanded
-                                },
-
-                                ) {
-                                Text(
-                                    text = if (isExpanded) "Show Less" else "Read More",
-                                    fontSize = 12.sp
-                                )
-                            }
+                    val displayText = if (isExpanded) reply.reply else reply.reply.take(100)
+                    Text(
+                        text = displayText!!, modifier = Modifier.padding(2.dp)
+                    )
+                    if (reply.reply.length!! > 100) {
+                        TextButton(onClick = { isExpanded = !isExpanded }) {
+                            Text(
+                                text = if (isExpanded) "Show Less" else "Read More",
+                                fontSize = 12.sp
+                            )
                         }
                     }
                 }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-
-                Column {
-
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-
-                    UpAndDownVoteButtonsForReply(comment,reply)
-
-                }
-
-
             }
-        }
 
+            Spacer(modifier = Modifier.height(12.dp))
+
+//            Row(
+//                verticalAlignment = Alignment.Top,
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                modifier = Modifier.fillMaxWidth()
+//            ) {
+                UpAndDownVoteButtonsForReply(comment, reply,post)
+//            }
+        }
     }
 }
 
+
 @Composable
-fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies) {
+fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies,post:PostData) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }
     val isDownVoted = rememberSaveable { mutableStateOf(false) }
     val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val coroutineScope = rememberCoroutineScope()
-    var showReply by remember {
-        mutableStateOf(false)
-    }
+
     var userDislikeCurrentPost by rememberSaveable {
-        mutableStateOf(comment.userDislikeComment.contains(feedViewModel.currentuser))
+        mutableStateOf(reply.userDislikeReply.contains(feedViewModel.currentuser))
     }
     var userlikeCurrentPost by rememberSaveable {
-        mutableStateOf(comment.userLikedComment.contains(feedViewModel.currentuser))
+        mutableStateOf(reply.userDislikeReply.contains(feedViewModel.currentuser))
     }
 
     Box(
         contentAlignment = Alignment.BottomEnd,
-        modifier = Modifier.padding(3.dp)
+        modifier = Modifier.fillMaxSize(0.7f).padding(3.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp) // Custom spacing between elements
         ) {
 
-            Button(
-                onClick = { showReply = !showReply},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Unspecified
-                ),
-                modifier = Modifier
-                    .padding(0.dp)
-                    .align(Alignment.CenterVertically)
+
+            Box(
+                modifier = Modifier.padding(end = 8.dp)
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.chatbubble),
-                    contentDescription = "",
-                    modifier = Modifier.size(20.dp)
-                )
+                Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
+                val list = listOf("Report","Edit Comment")
+
             }
+            Spacer(modifier = Modifier.width(20.dp).height(10.dp))
+
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -194,47 +159,41 @@ fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies) {
 
                             coroutineScope.launch {
                                 if (!userlikeCurrentPost && userDislikeCurrentPost) {
-                                    comment.userDislikeComment.remove(feedViewModel.currentuser)
+                                    reply.userDislikeReply.remove(feedViewModel.currentuser)
                                 } else if (userlikeCurrentPost && !userDislikeCurrentPost) {
-                                    comment.userLikedComment.remove(feedViewModel.currentuser)
-                                    comment.userDislikeComment.add(feedViewModel.currentuser!!)
+                                    reply.userLikedReply.remove(feedViewModel.currentuser)
+                                    reply.userDislikeReply.add(feedViewModel.currentuser!!)
                                 } else {
-                                    comment.userDislikeComment.add(feedViewModel.currentuser!!)
+                                    reply.userDislikeReply.add(feedViewModel.currentuser!!)
                                 }
 
-//                                val commetIndex = post.comments.indexOf(comment)
-////                                feedViewModel.updateVotes(post)
-//                                post.comments[commetIndex] = comment
-//                                feedViewModel.updateVotes(post)
+                                val replyIndex = comment.replies.indexOf(reply)
+                                val commmentIndex = post.comments.indexOf(comment)
+                                comment.replies[replyIndex]= reply
+                               post.comments[commmentIndex] = comment
+                                feedViewModel.updateVotes(post)
 
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
-                                    comment.userDislikeComment.contains(feedViewModel.currentuser)
+                                    reply.userDislikeReply.contains(feedViewModel.currentuser)
                                 userlikeCurrentPost =
-                                    comment.userLikedComment.contains(feedViewModel.currentuser)
+                                    reply.userLikedReply.contains(feedViewModel.currentuser)
                             }
                         },
                     tint = (if (userDislikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
 
                 )
-                Text(text = comment.userDislikeComment.size.toString(), fontSize = 10.sp, modifier = Modifier.padding(0.dp))
+                Text(text = reply.userDislikeReply.size.toString(), fontSize = 10.sp, modifier = Modifier.padding(0.dp))
 
             }
 
-            Spacer(
-                modifier = Modifier
-                    .width(1.dp)
-                    .height(16.dp)
-                    .background(Color.Black)
-                    .align(Alignment.CenterVertically)
-            )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp) // Custom spacing between button and text
             ) {
 
-                Text(text = comment.userLikedComment.size.toString(), fontSize = 10.sp, modifier = Modifier.padding(0.dp))
+                Text(text =reply.userLikedReply.size.toString(), fontSize = 10.sp, modifier = Modifier.padding(0.dp))
                 Icon(
                     painter = painterResource(id = if (userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
                     contentDescription = "Upvote",
@@ -249,44 +208,35 @@ fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies) {
 
                             coroutineScope.launch {
                                 if (userlikeCurrentPost && !userDislikeCurrentPost) {
-                                    comment.userLikedComment.remove(feedViewModel.currentuser)
+                                    reply.userLikedReply.remove(feedViewModel.currentuser)
                                 } else if (!userlikeCurrentPost && userDislikeCurrentPost) {
-                                    comment.userDislikeComment.remove(feedViewModel.currentuser)
-                                    comment.userLikedComment.add(feedViewModel.currentuser!!)
+                                    reply.userDislikeReply.remove(feedViewModel.currentuser)
+                                    reply.userLikedReply.add(feedViewModel.currentuser!!)
                                 } else {
-                                    comment.userLikedComment.add(feedViewModel.currentuser!!)
+                                    reply.userLikedReply.add(feedViewModel.currentuser!!)
                                 }
 
-//                                feedViewModel.updateVotes(post)
-//                                val commetIndex = post.comments.indexOf(comment)
-////                                feedViewModel.updateVotes(post)
-//                                post.comments[commetIndex] = comment
-//                                feedViewModel.updateVotes(post)
+                                val replyIndex = comment.replies.indexOf(reply)
+                                val commmentIndex = post.comments.indexOf(comment)
+                                comment.replies[replyIndex]= reply
+                                post.comments[commmentIndex] = comment
+                                feedViewModel.updateVotes(post)
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
-                                    comment.userDislikeComment.contains(feedViewModel.currentuser)
+                                    reply.userDislikeReply.contains(feedViewModel.currentuser)
                                 userlikeCurrentPost =
-                                    comment.userLikedComment.contains(feedViewModel.currentuser)
+                                    reply.userLikedReply.contains(feedViewModel.currentuser)
                             }
                         },
                     tint = (if (userlikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
 
 
                 )
-                Spacer(modifier = Modifier.width(20.dp).height(10.dp))
-                Box(
-                    modifier = Modifier.padding(end = 8.dp)
-                ) {
-                    Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
-                    val list = listOf("Report","Edit Comment")
-
-
-                }
 
             }
         }
     }
-//    if (showComments){
+
 
 
 }
