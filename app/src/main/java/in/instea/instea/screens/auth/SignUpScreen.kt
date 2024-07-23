@@ -1,6 +1,5 @@
 package `in`.instea.instea.screens.auth
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,7 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import `in`.instea.instea.composable.DropdownMenuBox
+import `in`.instea.instea.composable.DropdownComposable
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.SignUpViewModel
@@ -39,7 +38,6 @@ import `in`.instea.instea.screens.auth.composable.ButtonComp
 import `in`.instea.instea.screens.auth.composable.CustomTextField
 import `in`.instea.instea.screens.auth.composable.HeadingText
 import `in`.instea.instea.screens.auth.composable.PasswordTextField
-import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
@@ -48,7 +46,7 @@ fun SignUpScreen(
 ) {
 //    val authState = viewModel.authState.collectAsState()
     val viewModel: SignUpViewModel = viewModel(factory = AppViewModelProvider.Factory)
-    val signUpUiState by viewModel.signUpUiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     /*   LaunchedEffect(authState.value) {
            when (authState.value) {
@@ -88,23 +86,23 @@ fun SignUpScreen(
             //username
             CustomTextField(
                 modifier = Modifier,
-                textField = username,
-                onTextFieldChange = {
+                value = username,
+                onValueChange = {
                     username = it
                 },
-                icon = Icons.Default.Person,
-                textFieldLabel = "Username",
+                leadingIcon = Icons.Default.Person,
+                label = "Username",
                 errorText = "Invalid username",
 //                isError = signupUiState.usernameError
             )
             //email
             CustomTextField(
                 modifier = Modifier,
-                textField = email,
-                onTextFieldChange = { email = it },
-                icon = Icons.Default.Email,
+                value = email,
+                onValueChange = { email = it },
+                leadingIcon = Icons.Default.Email,
                 keyboardType = KeyboardType.Email,
-                textFieldLabel = "Enter Email",
+                label = "Enter Email",
                 errorText = "Invalid Email"
             )
 
@@ -116,18 +114,19 @@ fun SignUpScreen(
                 errorText = "Password not valid",
             )
             // university
-            DropdownMenuBox(
+            DropdownComposable(
                 modifier = Modifier.fillMaxWidth(),
                 label = "University",
-                options = signUpUiState.universityList,
+                options = uiState.universityList,
                 leadingIcon = Icons.Default.AccountBalance,
                 selectedOption = university,
                 onOptionSelected = { selectedOption ->
                     university = selectedOption
-                    viewModel.getAllDepartment(selectedOption)
+                    viewModel.getAllDepartment(university = selectedOption)
                     department = ""
                     semester = ""
                 },
+                onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) }
             )
             // department and semester
             Row(
@@ -135,12 +134,12 @@ fun SignUpScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 //department
-                DropdownMenuBox(
+                DropdownComposable(
                     modifier = Modifier.weight(3f),
                     label = "Department",
                     selectedOption = department,
                     leadingIcon = Icons.Default.School,
-                    options = signUpUiState.departmentList,
+                    options = uiState.departmentList,
                     onOptionSelected = { selectedOption ->
                         department = selectedOption
                         viewModel.getAllSemester(
@@ -149,17 +148,23 @@ fun SignUpScreen(
                         )
                         semester = ""
                     },
+                    onAddItemClicked = {
+                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
+                    },
                     errorMessage = "Please select university first"
                 )
                 // semester
-                DropdownMenuBox(
+                DropdownComposable(
                     modifier = Modifier.weight(2.5f),
                     label = "Sem",
                     leadingIcon = Icons.Default.AutoGraph,
-                    options = signUpUiState.semesterList,
+                    options = uiState.semesterList,
                     selectedOption = semester,
                     onOptionSelected = {
                         semester = it
+                    },
+                    onAddItemClicked = {
+                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
                     }
                 )
             }
@@ -167,7 +172,7 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(14.dp))
 
         ButtonComp(
-            value = "Sign Up",
+            text = "Sign Up",
             onButtonClicked = {
                 viewModel.signUp(
                     User(

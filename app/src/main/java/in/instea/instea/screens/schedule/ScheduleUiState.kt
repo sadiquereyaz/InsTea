@@ -9,7 +9,7 @@ data class ScheduleUiState(
     val dayDateList: List<DayDateModel> = listOf(),
     val selectedDateIndex: Int = 15,      //current day/date
     val selectedDate: Int = 16,
-    val selectedDay: Int = 16,
+    val selectedDay: String = "",
     val selectedMonth: String = "",
     val selectedYear: Int = 0,
 )

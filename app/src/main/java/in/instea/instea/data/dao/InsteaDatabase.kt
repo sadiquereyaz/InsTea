@@ -1,21 +1,25 @@
 package `in`.instea.instea.data
 
+//import `in`.instea.instea.data.datamodel.RoomPostModel
+//import `in`.instea.instea.data.datamodel.ScheduleModel
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import `in`.instea.instea.data.dao.ScheduleDao
+import androidx.room.TypeConverters
 import `in`.instea.instea.data.dao.PostDao
+import `in`.instea.instea.data.dao.ScheduleDao
+import `in`.instea.instea.data.datamodel.AttendanceTypeConverter
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.ScheduleModel
-import androidx.room.TypeConverters
-import `in`.instea.instea.data.datamodel.AttendanceTypeConverter
-//import `in`.instea.instea.data.datamodel.RoomPostModel
-//import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
+import `in`.instea.instea.data.datamodel.TimeConverters
 
-@Database(entities = [PostData::class, ScheduleModel::class, TaskAttendanceModel::class],
-          version = 11, exportSchema = false)
+@Database(
+    entities = [PostData::class, ScheduleModel::class, TaskAttendanceModel::class],
+    version = 10, exportSchema = false
+)
+@TypeConverters(TimeConverters::class, AttendanceTypeConverter::class)
 abstract class InsteaDatabase : RoomDatabase() {
 
     abstract fun postDao(): PostDao

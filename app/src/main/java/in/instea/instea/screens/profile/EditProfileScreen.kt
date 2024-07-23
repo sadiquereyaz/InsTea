@@ -7,80 +7,125 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import `in`.instea.instea.composable.DropdownMenuBox
-import `in`.instea.instea.data.DataSource.departments
+import androidx.lifecycle.viewmodel.compose.viewModel
+import `in`.instea.instea.R
+import `in`.instea.instea.composable.AcademicsComposable
+import `in`.instea.instea.composable.DropdownComposable
 import `in`.instea.instea.data.DataSource.platforms
-import `in`.instea.instea.data.DataSource.semesters
-import `in`.instea.instea.data.DataSource.universities
+import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.data.viewmodel.EditProfileViewModel
+import `in`.instea.instea.screens.auth.composable.CustomTextField
+import `in`.instea.instea.screens.profile.EditProfileUiState
+import kotlinx.coroutines.launch
 
 @Composable
-fun EditProfile(
-    modifier: Modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp),
-    userName: String = "John Doe",  // Dummy name
-    onUserNameChanged: (String) -> Unit = {},  // Empty lambda
-    onDepartmentChanged: (String) -> Unit = {},  // Empty lambda
-    onSemesterChanged: (String) -> Unit = {},  // Empty lambda
-    onSaveButtonClicked: () -> Unit = {},  // Empty lambda
-    onCancelButtonClicked: () -> Unit = {},  // Empty lambda
-    selectedDepartment: String = "Computer Science",  // Dummy department
-    selectedSemester: String = "Fall 2024",  // Dummy semester
-    selectedUniversity: String = "University of Example",  // Dummy university
-    onUniversityChanged: (String) -> Unit = {},  // Empty lambda
-    instagram: String = "johndoe_dev",  // Dummy username
-    linkedin: String = "johndoe/linkedin",  // Dummy profile link
+fun EditProfileScreen(
+    modifier: Modifier = Modifier,
+    navigateToAddAcademics: () -> Unit,  // Empty lambda
+    navigateBack: () -> Unit = {},  // Empty lambda
+    viewModel: EditProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
     Column(
-        modifier = modifier,
+        modifier = modifier.verticalScroll(scrollState).imePadding()
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        val username = rememberSaveable { mutableStateOf<String>(userName) }
-        EditText(
-            modifier = modifier,
-            value = userName,
+        //username
+        CustomTextField(
+            value = uiState.username ?: "",
             onValueChange = {
-                username.value = it
-                onUserNameChanged(it)
+                viewModel.onUsernameChanged(it)
             },
-            label = "User Name",
+            label = "Username",
+            leadingIcon = Icons.Default.Person
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        DropdownComposables(
-            selectedDepartment,
-            onDepartmentChanged,
-            selectedSemester,
-            onSemesterChanged,
-            selectedUniversity,
-            onUniversityChanged,
-
-
-
+        // about
+        AboutComp(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp), uiState = uiState, viewModel = viewModel)
+        // academics detail
+        AcademicsComposable(
+            modifier = Modifier.fillMaxWidth(),
+            university = uiState.university,
+            universityList = uiState.universityList,
+            onUniversityChanged = {
+                coroutineScope.launch { viewModel.onUniversityChanged(it) }
+            },
+            department = uiState.department,
+            departmentList = uiState.departmentList,
+            onDepartmentChanged = { viewModel.onDepartmentChanged(it) },
+            semester = uiState.semester,
+            semesterList = uiState.semesterList,
+            onSemesterChanged = { viewModel.onSemesterChanged(it) },
+            onAddItemClicked = navigateToAddAcademics
         )
-        Spacer(modifier = Modifier.height(16.dp))
-        BioText(value = "Instea is really a great app", onValueChange = {},
-            label = "Bio")
-        Spacer(modifier = Modifier.height(16.dp))
-        platformComp()
-        Spacer(modifier = Modifier.height(16.dp))
-        platformComp()
-        Spacer(modifier = Modifier.weight(1f))
-        Buttons(onCancelButtonClicked, onSaveButtonClicked)
-
+        // whatsapp
+        CustomTextField(
+            value = uiState.whatsappNo.toString() ?: "",
+            onValueChange = {
+                viewModel.onWhatsappNoChanged(it)
+            },
+            label = "Whatsapp Number",
+            leadingIcon = Icons.Default.Whatsapp,
+            keyboardType = KeyboardType.Phone
+        )
+        // instagram
+        CustomTextField(
+            value = uiState.instagram ?: "",
+            onValueChange = {
+                viewModel.onInstagramChanged(it)
+            },
+            label = "Instagram username",
+            leadingIcon = ImageVector.vectorResource(id = R.drawable.insta),
+        )
+        // linkedIn
+        CustomTextField(
+            value = uiState.linkedin ?: "",
+            onValueChange = {
+                viewModel.onLinkedInChanged(it)
+            },
+            label = "Linkedin username",
+            leadingIcon = ImageVector.vectorResource(id = R.drawable.linked),
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Buttons(
+            navigateBack,
+            onSaveButtonClicked = {
+                coroutineScope.launch {
+                    navigateBack()
+                    viewModel.saveUserDetails()
+                }
+            }
+        )
     }
 }
 
@@ -107,70 +152,8 @@ private fun Buttons(
 }
 
 @Composable
-private fun DropdownComposables(
-    selectedDepartment: String,
-    onDepartmentChanged: (String) -> Unit,
-    selectedSemester: String,
-    onSemesterChanged: (String) -> Unit,
-    selectedUniversity: String,
-    onUniversityChanged: (String) -> Unit,
-
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-
-        val university = rememberSaveable { mutableStateOf<String>(universities[0]) }
-        DropdownMenuBox(
-            label = "University/College",
-            options = universities,
-            selectedOption = university.value,
-            onOptionSelected = {
-                university.value = it
-                onUniversityChanged(it)
-            },
-            modifier = Modifier.weight(1f)
-        )
-
-    }
-    Spacer(modifier = Modifier.height(16.dp))
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        val dept = rememberSaveable { mutableStateOf<String>(departments[0]) }
-        val sem = rememberSaveable { mutableStateOf<String>(semesters[0]) }
-        DropdownMenuBox(
-            label = "Department",
-            options = departments,
-            selectedOption = dept.value,
-            onOptionSelected = {
-                dept.value = it
-                onDepartmentChanged(it)
-            },
-            modifier = Modifier.weight(1f)
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        DropdownMenuBox(
-            label = "Semester",
-            options = semesters,
-            selectedOption = sem.value,
-            onOptionSelected = {
-                sem.value = it
-                onSemesterChanged(it)
-            },
-            modifier = Modifier.weight(0.5f)
-        )
-    }
-}
-
-@Composable
-fun platformComp(
+fun PlatformComp(
     modifier: Modifier = Modifier
-        .fillMaxWidth()
 ) {
     Row(
         modifier = Modifier
@@ -179,8 +162,9 @@ fun platformComp(
         val platform = rememberSaveable { mutableStateOf<String>(platforms[0]) }
         val sociaLink = rememberSaveable { mutableStateOf("") }
 
-        DropdownMenuBox(
-            modifier = Modifier.fillMaxWidth(0.4f)
+        DropdownComposable(
+            modifier = Modifier
+                .fillMaxWidth(0.4f)
                 .height(70.dp),
             label = "Platform",
             options = platforms,
@@ -193,7 +177,8 @@ fun platformComp(
 
 
         OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(1f)
+            modifier = Modifier
+                .fillMaxWidth(1f)
                 .height(65.dp),
 
             value = sociaLink.value,
@@ -203,27 +188,26 @@ fun platformComp(
             label = { Text(text = "Social Link") },
             shape = RoundedCornerShape(10.dp)
         )
-
-
     }
-
 }
 
 @Composable
-fun BioText(
+fun AboutComp(
     modifier: Modifier = Modifier,
-    value: String,
-    onValueChange: (String) -> Unit,
-    label: String,
+    uiState: EditProfileUiState,
+    viewModel: EditProfileViewModel
 ) {
-    OutlinedTextField(modifier = Modifier
-        .fillMaxWidth(),
-        shape = RoundedCornerShape(15.dp),
-        value = value,
+    OutlinedTextField(
+        modifier = modifier,
+        shape = RoundedCornerShape(8.dp),
+        value = uiState.about,
         minLines = 3,
         maxLines = 5,
-        label = { Text(text = label) },
-        onValueChange = {})
+        label = { Text(text = "About") },
+        onValueChange = {
+            if (it.length <= 100) viewModel.onAboutChanged(it)
+        }
+    )
 
 }
 
@@ -235,6 +219,7 @@ fun EditText(
     label: String,
     imeAction: ImeAction = ImeAction.Next
 ) {
+//    val isEmpty by rememberSavable {mutableStateOf(value.isEmpty())}
     OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
         value = value,
@@ -245,7 +230,8 @@ fun EditText(
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = imeAction,
 //            keyboardType = KeyboardType.Text
-        )
+        ),
+//        supportingText = if (isEmpty) "must contains a value" else ""
     )
 
 }
@@ -254,23 +240,5 @@ fun EditText(
 @Preview(showSystemUi = true)
 @Composable
 fun EditProfilePreview() {
-
-    EditProfile(
-        userName = "John Doe",
-        onUserNameChanged = {
-
-        },
-        onDepartmentChanged = {},
-        onSemesterChanged = {},
-        onSaveButtonClicked = {},
-        onCancelButtonClicked = {},
-        selectedDepartment = "Computer Science",
-        selectedSemester = "5",
-        selectedUniversity = "Jamia",
-        onUniversityChanged = {
-
-        },
-        instagram = "johndoe_insta",
-        linkedin = "johndoe_linkedin"
-    )
+    EditProfileScreen(navigateToAddAcademics = {})
 }

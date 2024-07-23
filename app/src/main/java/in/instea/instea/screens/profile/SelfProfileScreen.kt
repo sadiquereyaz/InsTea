@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
@@ -32,15 +31,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,15 +51,19 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
 import `in`.instea.instea.data.datamodel.User
-import `in`.instea.instea.data.viewmodel.SelfProfileViewModel
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.data.viewmodel.SelfProfileViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun SelfProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: SelfProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    navigateToEditProfile: () -> Unit
 ) {
-    val profileUiState by viewModel.profileUiState.collectAsState()
+    val uiState by viewModel.profileUiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -65,13 +72,13 @@ fun SelfProfileScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             //user detail
-            val userData = profileUiState.userData
+            val userData = uiState.userData
             UserTitle(
                 userData = userData,
                 modifier = Modifier
                     .align(Alignment.Start)
                     .padding(horizontal = 16.dp),
-                onSubUserNameClick = { }
+                onSubUserNameClick = navigateToEditProfile
             )
             Divider(modifier = Modifier.padding(16.dp))
 
@@ -86,8 +93,11 @@ fun SelfProfileScreen(
 
             //about
             Text(
-                text = userData?.about ?: "About",
-                modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+                text = userData?.about ?: "",
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+                textAlign = TextAlign.Start
             )
 
             //social link
@@ -97,17 +107,24 @@ fun SelfProfileScreen(
                     end = 16.dp,
                     top = 20.dp,
                     bottom = 20.dp
-                )
+                ),
+                user = userData,
+                socialList = viewModel.getAllSocialList(),
+                openSocialLink = { link ->
+                    coroutineScope.launch {
+                        viewModel.handleSocialItemClick(link, context)
+                    }
+                }
             )
             // FEED tabs
-            PersonalizedFeed(profileUiState = profileUiState)
+            PersonalizedFeed(uiState = uiState)
             Spacer(modifier = Modifier.weight(1f))
         }
         // developer
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                    .align(Alignment.BottomCenter)
+                .align(Alignment.BottomCenter)
                 .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.BottomCenter
         ) {
@@ -129,15 +146,14 @@ fun SelfProfileScreen(
                 )
             }
         }
-
     }
 }
 
 @Composable
-private fun PersonalizedFeed(profileUiState: ProfileUiState) {
+private fun PersonalizedFeed(uiState: ProfileUiState) {
     var selectedTabIndex by remember { mutableStateOf(0) }
-    val savedPosts = profileUiState.savedPosts ?: emptyList()
-    val myPosts = profileUiState.savedPosts ?: emptyList()
+    val savedPosts = uiState.savedPosts ?: emptyList()
+    val myPosts = uiState.savedPosts ?: emptyList()
 
     val tabs = listOf("Saved (${savedPosts.size})", "My Posts (${myPosts.size})")
 
@@ -160,6 +176,7 @@ private fun PersonalizedFeed(profileUiState: ProfileUiState) {
         }
     }
 }
+
 /*
 @Composable
 fun TabItem(
@@ -187,35 +204,45 @@ fun TabItem(
 }
 */
 @Composable
-fun SocialLink(modifier: Modifier, currentUser: Boolean = true) {
+fun SocialLink(
+    modifier: Modifier,
+    currentUser: Boolean = true,
+    user: User?,
+    socialList: List<SocialModel> = emptyList(),
+    openSocialLink: (String) -> Unit
+) {
     LazyRow(
         modifier = modifier,
     ) {
-        val linkList = listOf<Pair<String, ImageVector>>(
-            Pair("sadique_reyaz", Icons.Default.AddCircle),
-            Pair("sadique_", Icons.Default.AccountCircle),
-            Pair("sadiquereyaz", Icons.Default.Home)
-        )
-        items(linkList) {
-            SocialItem(it, onSocialItemClick = {})
-        }
-        if (currentUser) {
-            item {
+        items(socialList) { item ->
+            val title = item.title
+            if (title.isNotEmpty())
                 SocialItem(
-                    Pair("Add Social link", Icons.Default.AddCircle),
-                    onSocialItemClick = {},
+                    title = title,
+                    onSocialItemClicked = { openSocialLink(item.linkHead+title) },
+                    icon = item.icon
                 )
-            }
         }
+
+        /*  if (currentUser) {
+              item {
+                  SocialItem(
+                      Pair("Add Social link", Icons.Default.AddCircle),
+                      onSocialItemClick = {},
+                  )
+              }
+          }*/
     }
 }
 
 @Composable
 private fun SocialItem(
-    it: Pair<String, ImageVector>,
-    onSocialItemClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onSocialItemClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+    title: String,
+    icon: Any
 ) {
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -225,15 +252,24 @@ private fun SocialItem(
                 color = MaterialTheme.colorScheme.tertiary,
                 shape = RoundedCornerShape(50)
             )
-            .clickable { onSocialItemClick() }
+            .clickable {
+                onSocialItemClicked()
+            }
             .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
-        Icon(
-            modifier = Modifier.size(20.dp),
-            imageVector = it.second,
-            contentDescription = "social icon"
-        )
-        Text(text = it.first, modifier = Modifier.padding(start = 4.dp))
+        if (icon is ImageVector) {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                imageVector = icon as ImageVector,
+                contentDescription = "social icon"
+            )
+        } else
+            Icon(
+                modifier = Modifier.size(20.dp),
+                painter = painterResource(id = icon as Int),
+                contentDescription = "social icon"
+            )
+        Text(text = title, modifier = Modifier.padding(start = 4.dp))
     }
 }
 
@@ -243,8 +279,8 @@ fun AcademicDetails(userData: User?, modifier: Modifier) {
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        AcademicItem(icon = Icons.Default.AddCircle, text = "Jamia Millia Islamia")
-        AcademicItem(icon = Icons.Default.Home, text = "Computer Engineering-VII")
+        AcademicItem(icon = Icons.Default.AddCircle, text = userData?.university ?: "")
+        AcademicItem(icon = Icons.Default.Home, text = "${userData?.dept}-${userData?.sem}" ?: "")
     }
 }
 
@@ -277,7 +313,7 @@ fun UserTitle(
     iconButtonData: Pair<ImageVector, String> = Pair(Icons.Default.Edit, "Edit Profile")
 ) {
     Row(
-        modifier = modifier.clickable { onSubUserNameClick() },
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         //avatar
@@ -295,10 +331,12 @@ fun UserTitle(
             //username
             Text(
                 modifier = Modifier.padding(bottom = 4.dp),
-                text = userData?.username ?: "Default User",
+                text = userData?.username ?: "",
                 style = MaterialTheme.typography.bodyLarge,
                 fontSize = 32.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             // sub-username
             Row(
@@ -323,7 +361,7 @@ fun UserTitle(
                 //sub username button
                 Row(
                     modifier = Modifier
-                        .clickable { }
+                        .clickable { onSubUserNameClick() }
                         .padding(start = 2.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -348,5 +386,5 @@ fun UserTitle(
 @Preview(showSystemUi = true)
 @Composable
 fun ProfilePreview() {
-    SelfProfileScreen()
+//    SelfProfileScreen()
 }

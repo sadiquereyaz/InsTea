@@ -45,11 +45,12 @@ import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import kotlinx.coroutines.launch
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleItem(
-    scheduleObj: CombinedScheduleTaskModel,
+    scheduleModel: CombinedScheduleTaskModel,
     modifier: Modifier = Modifier,
     isBubbleFilled: Boolean = false,
     onReminderClick: () -> Unit = {},
@@ -82,8 +83,9 @@ fun ScheduleItem(
         Column(
             horizontalAlignment = Alignment.End
         ) {
-            Text(text = "8", fontSize = 20.sp)
-            Text(text = "6", fontSize = 12.sp)
+            //time
+            Text(text = scheduleModel.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 14.sp)
+            Text(text = scheduleModel.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 10.sp)
         }
         //bubble and vertical line
         Box(
@@ -155,7 +157,7 @@ fun ScheduleItem(
                 Text(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
-                    text = scheduleObj.subject?:"",
+                    text = scheduleModel.subject?:"",
                     fontWeight = FontWeight.Bold, fontSize = 20.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -171,7 +173,7 @@ fun ScheduleItem(
             }
 
             //task and attendance
-            TaskAttendance(openBottomSheet, scheduleObj, onAttendanceClick, upsertTask = { upsertTask(it) })
+            TaskAttendance(openBottomSheet, scheduleModel, onAttendanceClick, upsertTask = { upsertTask(it) })
         }
     }
     // Reminder Dialog

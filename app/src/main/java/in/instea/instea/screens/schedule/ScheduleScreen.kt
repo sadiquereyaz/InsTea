@@ -1,5 +1,6 @@
 package `in`.instea.instea.screens.schedule
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,25 +10,24 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.AddClassButton
 import `in`.instea.instea.composable.CalendarComposable
 import `in`.instea.instea.composable.ScheduleList
-import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun ScheduleScreen(
-    navController: NavController,
     modifier: Modifier = Modifier,
     viewModel: ScheduleViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    navigateToEditSchedule: (Int, String) -> Unit,
 ) {
     val scheduleUiState by viewModel.scheduleUiState.collectAsState()
     val listState = rememberLazyListState()
@@ -56,21 +56,34 @@ fun ScheduleScreen(
             }
         )
         //add class
-        AddClassButton(navController)
+        AddClassButton(
+            modifier = Modifier
+                .align(Alignment.End)
+                .clickable {
+                    navigateToEditSchedule(0, scheduleUiState.selectedDay)
+                },
+        )
 
         // schedule list
         ScheduleList(
             scheduleUiState = scheduleUiState,
-            onAttendanceClick = { taskId: Int, scheduleId:Int, attendance->
+            onAttendanceClick = { taskId: Int, scheduleId: Int, attendance ->
                 coroutineScope.launch {
-                    viewModel.upsertAttendance(taskId = taskId, attendance = attendance, scheduleId = scheduleId)
+                    viewModel.upsertAttendance(
+                        taskId = taskId,
+                        attendance = attendance,
+                        scheduleId = scheduleId
+                    )
                 }
             },
-            upsertTask = { taskId: Int, scheduleId:Int, task: String ->
+            upsertTask = { taskId: Int, scheduleId: Int, task: String ->
                 coroutineScope.launch {
-                    viewModel.upsertTask(taskId = taskId, scheduleId = scheduleId, task = task )
+                    viewModel.upsertTask(taskId = taskId, scheduleId = scheduleId, task = task)
                 }
-            }
+            },
+            navigateToEditSchedule = {id:Int->
+                navigateToEditSchedule(id, scheduleUiState.selectedDay)
+            },
         )
     }
 }
@@ -78,6 +91,6 @@ fun ScheduleScreen(
 @Preview(showBackground = true)
 @Composable
 fun ScheduleLayoutPreview() {
-    ScheduleScreen(rememberNavController())
+//    ScheduleScreen(rememberNavController())
 }
 

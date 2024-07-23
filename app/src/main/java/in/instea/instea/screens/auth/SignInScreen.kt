@@ -73,11 +73,11 @@ fun SignInScreen(
         Spacer(modifier = Modifier.height(30.dp))
         CustomTextField(
             modifier = Modifier,
-            textField = email,
-            onTextFieldChange = { email = it },
-            icon = Icons.Default.Email,
+            value = email,
+            onValueChange = { email = it },
+            leadingIcon = Icons.Default.Email,
             keyboardType = KeyboardType.Email,
-            textFieldLabel = "Enter Email",
+            label = "Enter Email",
             errorText = "Invalid Email"
         )
 
@@ -95,7 +95,7 @@ fun SignInScreen(
                 navController.navigate(InsteaScreens.Forget.name)
             })
         ButtonComp(
-            value = "Login",
+            text = "Login",
             onButtonClicked = {
                 viewModel.signIn(email = email, password = password)
                 navController.navigate(InsteaScreens.Feed.name)

@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.google.android.play.integrity.internal.i
 import `in`.instea.instea.data.datamodel.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -23,6 +24,9 @@ class LocalUserRepository(
         val USER_POINT = intPreferencesKey("user_point")
         val USER_ABOUT = stringPreferencesKey("user_about")
         val USER_EMAIL = stringPreferencesKey("user_email")
+        val USER_UNIVERSITY = stringPreferencesKey("user_university")
+        val USER_DEPARTMENT = stringPreferencesKey("user_department")
+        val USER_SEMESTER = stringPreferencesKey("user_semester")
         val USER_LINKEDIN = stringPreferencesKey("user_linkedin")
         val USER_INSTAGRAM = stringPreferencesKey("user_instagram")
         val USER_WHATSAPP = stringPreferencesKey("user_whatsapp")
@@ -39,21 +43,33 @@ class LocalUserRepository(
         }
         .map { preferences ->
             User(
-                userId = preferences[USER_ID] ?: "datastore id",
-                username = preferences[USER_NAME] ?: "data Store",
-                about = preferences[USER_ABOUT]
-                    ?: "this is default value of user detail in data store",
-//                isLoggedIn = preferences[IS_LOGGED_IN] ?: false
+                userId = preferences[USER_ID] ?: "",
+                username = preferences[USER_NAME] ?: "",
+                about = preferences[USER_ABOUT] ?: "Hey there I'm using InsTea!",
+                email = preferences[USER_EMAIL] ?: "",
+                linkedinId = preferences[USER_LINKEDIN] ?: "",
+                instaId = preferences[USER_INSTAGRAM] ?: "",
+                whatsappNo = preferences[USER_WHATSAPP] ?: "",
+                university = preferences[USER_UNIVERSITY] ?: "",
+                dept = preferences[USER_DEPARTMENT] ?: "",
+                sem = preferences[USER_SEMESTER] ?: ""
             )
         }
 
     // Function to save the user details
     suspend fun upsertUser(user: User) {
-//        Log.d("LOCAL REPO", user.userId!!)
+//        Log.d("datastore username saving", user.username!!)
         dataStore.edit { preferences ->
-            preferences[USER_ID] = user.userId ?: "empty uid"
-            preferences[USER_NAME] = user.username ?: "empty ds"
-            preferences[USER_ABOUT] = user.about ?: "Hey there, InsTea is great!"
+            preferences[USER_ID] = user.userId ?: ""
+            preferences[USER_NAME] = user.username ?: ""
+            preferences[USER_ABOUT] = user.about ?: ""
+            preferences[USER_UNIVERSITY] = user.university ?: ""
+            preferences[USER_DEPARTMENT] = user.dept ?: ""
+            preferences[USER_SEMESTER] = user.sem ?: ""
+            preferences[USER_EMAIL] = user.email ?: ""
+            preferences[USER_WHATSAPP] = user.whatsappNo ?: ""
+            preferences[USER_INSTAGRAM] = user.instaId ?: ""
+            preferences[USER_LINKEDIN] = user.linkedinId ?: ""
         }
     }
 

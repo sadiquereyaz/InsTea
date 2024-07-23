@@ -1,6 +1,7 @@
 package `in`.instea.instea.data.viewmodel
 
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
@@ -14,6 +15,13 @@ object AppViewModelProvider {
                 SelfProfileViewModel(
                     postRepository = insteaApplication().container.postRepository,
                     userRepository =insteaApplication().container.userRepository
+                )
+        }
+        initializer {
+                EditProfileViewModel(
+                    savedStateHandle = this.createSavedStateHandle(),
+                    userRepository =insteaApplication().container.userRepository,
+                    academicRepository = insteaApplication().container.academicRepository
                 )
         }
         initializer {
@@ -44,6 +52,12 @@ object AppViewModelProvider {
                 postRepository = insteaApplication().container.networkRepository,
                 localPostRepository = insteaApplication().container.localPostRepository,
                 context = insteaApplication()
+            )
+        }
+        initializer {
+            EditScheduleViewModel(
+                savedStateHandle = this.createSavedStateHandle(),
+                scheduleRepository = insteaApplication().container.scheduleRepository
             )
         }
     }

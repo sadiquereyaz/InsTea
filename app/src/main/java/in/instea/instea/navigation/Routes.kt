@@ -1,11 +1,10 @@
 package `in`.instea.instea.navigation
-
 enum class InsteaScreens(
     val title: String
 ) {
     SelfProfile("Your Account"),
     OtherProfile("InsTea User"),
-    EditProfile("Sadique Reyaz"),
+    EditProfile("Edit Profile"),
     Feed("What's Going"),
     Schedule("Schedule"),
     EditSchedule("Edit Schedule"),
@@ -16,4 +15,6 @@ enum class InsteaScreens(
     Forget("Forget"),
     Guidelines("Guidelines"),
     Addpost("Add Post"),
+    AddAcademicInfo("Add Academic Info"),
+    More("More")
 }

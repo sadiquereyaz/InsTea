@@ -3,7 +3,7 @@ package `in`.instea.instea.composable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -12,6 +12,7 @@ import `in`.instea.instea.screens.schedule.ScheduleUiState
 
 @Composable
 fun ScheduleList(
+    navigateToEditSchedule: (Int) -> Unit = {},
     scheduleUiState: ScheduleUiState,
     onAttendanceClick: (Int, Int, AttendanceType) -> Unit,
     upsertTask: (Int, Int, String) -> Unit,
@@ -21,17 +22,24 @@ fun ScheduleList(
             .fillMaxSize()
             .padding(top = 16.dp)
     ) {
-        itemsIndexed(scheduleUiState.classList) { index, scheduleObj ->
+        items(items = scheduleUiState.classList, key = { it.scheduleId }) { scheduleModel ->
             ScheduleItem(
-                scheduleObj = scheduleObj,
-                onEditClick = {
-//                        navController.navigate(route = InsteaScreens.EditSchedule.name)
+                scheduleModel = scheduleModel,
+                onEditClick = { navigateToEditSchedule(scheduleModel.scheduleId) },
+                onAttendanceClick = { attendanceType ->
+                    onAttendanceClick(
+                        scheduleModel.taskId,
+                        scheduleModel.scheduleId,
+                        attendanceType
+                    )
                 },
-                onAttendanceClick = { attendanceType->
-                    onAttendanceClick(scheduleObj.taskId, scheduleObj.scheduleId, attendanceType) },
                 upsertTask = {
-//                    Log.d("ATT", scheduleObj.taskId.toString())
-                    upsertTask(scheduleObj.taskId, scheduleObj.scheduleId, scheduleObj.task ?:"")
+//                    Log.d("ATT", scheduleModel.taskId.toString())
+                    upsertTask(
+                        scheduleModel.taskId,
+                        scheduleModel.scheduleId,
+                        scheduleModel.task ?: ""
+                    )
                 },
                 repeatReminderSwitchAction = { subName, repeat ->
 //                        viewModel.modifySubjectInRepeatReminderList(

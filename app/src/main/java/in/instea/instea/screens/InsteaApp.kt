@@ -25,11 +25,9 @@ import `in`.instea.instea.navigation.InsteaNavHost
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InsteaApp(
-//    profileViewModel: ProfileViewModel = viewModel(),
     navController: NavHostController = rememberNavController(),
 ) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-//    val profileUiState by profileViewModel.uiState.collectAsState()
     val selectedItemIndex = rememberSaveable {
         mutableIntStateOf(0);
     }
@@ -38,10 +36,10 @@ fun InsteaApp(
     val backStackEntry by navController.currentBackStackEntryAsState()
     // Get the name of the current screen
     val currentScreen = InsteaScreens.valueOf(
-        backStackEntry?.destination?.route ?: InsteaScreens.Feed.name
+        backStackEntry?.destination?.route?.substringBefore("/") ?: InsteaScreens.Feed.name
     )
     LaunchedEffect(currentScreen) {
-        selectedItemIndex.value =
+        selectedItemIndex.intValue =
             BottomNavItemData.bottomNavItems.indexOfFirst { it.route == currentScreen.name }
     }
     val bottomBarItems = listOf(

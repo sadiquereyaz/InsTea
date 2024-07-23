@@ -7,15 +7,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
-import `in`.instea.instea.screens.EditProfile
+import `in`.instea.instea.screens.EditProfileScreen
 import `in`.instea.instea.screens.InboxScreen
+import `in`.instea.instea.screens.auth.AddInfo
 import `in`.instea.instea.screens.auth.SignInScreen
 import `in`.instea.instea.screens.auth.SignUpScreen
 import `in`.instea.instea.screens.profile.OtherProfileScreen
 import `in`.instea.instea.screens.profile.SelfProfileScreen
+import `in`.instea.instea.screens.schedule.EditScheduleDestination
 import `in`.instea.instea.screens.schedule.EditScheduleScreen
 import `in`.instea.instea.screens.schedule.ScheduleScreen
 
@@ -28,13 +32,13 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.SignIn.name,
+        startDestination = InsteaScreens.SelfProfile.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
         composable(route = InsteaScreens.Signup.name) {
             SignUpScreen(
-                navController=navController
+                navController = navController
             )
         }
         composable(route = InsteaScreens.SignIn.name) {
@@ -50,9 +54,19 @@ fun InsteaNavHost(
             InboxScreen(navController = navController)
         }
         composable(route = InsteaScreens.Schedule.name) {
-            ScheduleScreen(navController = navController)
+            ScheduleScreen(
+                navigateToEditSchedule = { id: Int, day: String ->
+                    navController.navigate("${InsteaScreens.EditSchedule.name}/$id/$day")
+                }
+            )
         }
-        composable(route = InsteaScreens.EditSchedule.name) {
+        composable(
+            route = EditScheduleDestination.routeWithArg,
+            arguments = listOf(
+                navArgument(EditScheduleDestination.ID_ARG) { type = NavType.IntType },
+                navArgument(EditScheduleDestination.DAY_ARG) { type = NavType.StringType }
+            )
+        ) {
             EditScheduleScreen(
                 navController = navController
             )
@@ -61,18 +75,30 @@ fun InsteaNavHost(
             AttendanceScreen(navController = navController)
         }
         composable(route = InsteaScreens.SelfProfile.name) {
-            SelfProfileScreen()
+            SelfProfileScreen(
+                navigateToEditProfile = { navController.navigate(InsteaScreens.EditProfile.name) }
+            )
         }
         composable(route = InsteaScreens.OtherProfile.name) {
             OtherProfileScreen()
         }
         composable(route = InsteaScreens.EditProfile.name) {
-            EditProfile(
-
-            )
+            EditProfileScreen(
+                navigateToAddAcademics = { navController.navigate(InsteaScreens.AddAcademicInfo.name) },
+                navigateBack={navController.popBackStack()}
+                )
         }
-        composable(route = InsteaScreens.Addpost.name){
+        composable(route = InsteaScreens.Addpost.name) {
             FeedContent()
         }
+        composable(route = InsteaScreens.AddAcademicInfo.name) {
+            AddInfo(navController = navController)
+        }
+
     }
+}
+
+interface NavigationDestinations {
+    val route: String
+    val title: String
 }
