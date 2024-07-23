@@ -63,12 +63,15 @@ class SelfProfileViewModel(
         // Example using Intent:
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(link))
 
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(intent)
-        } else {
-            // Handle case where no app can handle the intent
-            Log.e("LINK", "No application can handle this request. Please install a web browser or check your URL.")
-        }
+        context.startActivity(intent)
+        Log.d("Link", "handleSocialItemClick: $link")
+//        if (intent.resolveActivity(context.packageManager) != null) {
+//
+//
+//        } else {
+//            // Handle case where no app can handle the intent
+//            Log.e("LINK", "No application can handle this request. Please install a web browser or check your URL.")
+//        }
     }
 
     fun getAllSocialList(): List<SocialModel> {
