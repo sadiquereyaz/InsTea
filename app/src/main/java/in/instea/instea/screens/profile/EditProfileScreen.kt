@@ -1,6 +1,5 @@
 package `in`.instea.instea.screens
 
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -47,12 +46,11 @@ import `in`.instea.instea.screens.profile.EditProfileUiState
 import kotlinx.coroutines.launch
 
 @Composable
-fun EditProfile(
+fun EditProfileScreen(
     modifier: Modifier = Modifier,
     navigateToAddAcademics: () -> Unit,  // Empty lambda
     navigateBack: () -> Unit = {},  // Empty lambda
-    onCancelButtonClicked: () -> Unit = {},  // Dummy department
-    viewModel: EditProfileViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: EditProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -61,7 +59,7 @@ fun EditProfile(
         modifier = modifier.verticalScroll(scrollState).imePadding()
             .fillMaxSize()
             .padding(horizontal = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         //username
         CustomTextField(
@@ -73,7 +71,7 @@ fun EditProfile(
             leadingIcon = Icons.Default.Person
         )
         // about
-        AboutComp(modifier = Modifier.fillMaxWidth(), uiState = uiState, viewModel = viewModel)
+        AboutComp(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp), uiState = uiState, viewModel = viewModel)
         // academics detail
         AcademicsComposable(
             modifier = Modifier.fillMaxWidth(),
@@ -118,9 +116,9 @@ fun EditProfile(
             label = "Linkedin username",
             leadingIcon = ImageVector.vectorResource(id = R.drawable.linked),
         )
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(24.dp))
         Buttons(
-            onCancelButtonClicked,
+            navigateBack,
             onSaveButtonClicked = {
                 coroutineScope.launch {
                     navigateBack()
@@ -190,10 +188,7 @@ fun PlatformComp(
             label = { Text(text = "Social Link") },
             shape = RoundedCornerShape(10.dp)
         )
-
-
     }
-
 }
 
 @Composable
@@ -245,5 +240,5 @@ fun EditText(
 @Preview(showSystemUi = true)
 @Composable
 fun EditProfilePreview() {
-    EditProfile(navigateToAddAcademics = {})
+    EditProfileScreen(navigateToAddAcademics = {})
 }

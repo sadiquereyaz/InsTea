@@ -1,11 +1,11 @@
 package `in`.instea.instea.composable
 
+//import `in`.instea.instea.data.AuthViewModel
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -15,15 +15,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-//import `in`.instea.instea.data.AuthViewModel
-import `in`.instea.instea.data.FeedViewModel
+import `in`.instea.instea.R
 import `in`.instea.instea.data.viewmodel.AuthViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 
@@ -38,7 +36,7 @@ fun InsteaTopAppBar(
     moveToSelfProfile: () -> Unit,
     moveToOtherProfile: () -> Unit,
     navController: NavHostController,
-    onAddButtonClicked:  ()->Unit
+    onAddButtonClicked: () -> Unit
 ) {
     CenterAlignedTopAppBar(
         scrollBehavior = scrollBehavior,
@@ -85,9 +83,14 @@ fun InsteaTopAppBar(
                     Icon(imageVector = Icons.Default.DateRange, contentDescription = "Attendance")
                 }
             } else if (currentScreen == InsteaScreens.SelfProfile) {
-                IconButton(onClick = { AuthViewModel().signOut()
-                navController.navigate(InsteaScreens.SignIn.name)}) {
-                    Icon(imageVector = Icons.Default.ExitToApp, contentDescription = "Edit Profile")
+                IconButton(onClick = {
+                    AuthViewModel().signOut()
+                    navController.navigate(InsteaScreens.More.name)
+                }) {
+                    Icon(
+                        imageVector = ImageVector.vectorResource(id = R.drawable.more),
+                        contentDescription = "Edit Profile"
+                    )
                 }
             } else if (currentScreen == InsteaScreens.EditProfile) {
                 IconButton(onClick = { navController.navigate(InsteaScreens.EditProfile.name) }) {

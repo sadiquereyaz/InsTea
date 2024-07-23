@@ -12,7 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
-import `in`.instea.instea.screens.EditProfile
+import `in`.instea.instea.screens.EditProfileScreen
 import `in`.instea.instea.screens.InboxScreen
 import `in`.instea.instea.screens.auth.AddInfo
 import `in`.instea.instea.screens.auth.SignInScreen
@@ -32,7 +32,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Signup.name,
+        startDestination = InsteaScreens.SelfProfile.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -75,14 +75,18 @@ fun InsteaNavHost(
             AttendanceScreen(navController = navController)
         }
         composable(route = InsteaScreens.SelfProfile.name) {
-            SelfProfileScreen()
+            SelfProfileScreen(
+                navigateToEditProfile = { navController.navigate(InsteaScreens.EditProfile.name) }
+            )
         }
         composable(route = InsteaScreens.OtherProfile.name) {
             OtherProfileScreen()
         }
         composable(route = InsteaScreens.EditProfile.name) {
-            EditProfile(
-                navigateToAddAcademics = { navController.navigate(InsteaScreens.AddAcademicInfo.name) })
+            EditProfileScreen(
+                navigateToAddAcademics = { navController.navigate(InsteaScreens.AddAcademicInfo.name) },
+                navigateBack={navController.popBackStack()}
+                )
         }
         composable(route = InsteaScreens.Addpost.name) {
             FeedContent()

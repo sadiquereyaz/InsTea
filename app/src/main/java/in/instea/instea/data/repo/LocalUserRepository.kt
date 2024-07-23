@@ -24,6 +24,9 @@ class LocalUserRepository(
         val USER_POINT = intPreferencesKey("user_point")
         val USER_ABOUT = stringPreferencesKey("user_about")
         val USER_EMAIL = stringPreferencesKey("user_email")
+        val USER_UNIVERSITY = stringPreferencesKey("user_university")
+        val USER_DEPARTMENT = stringPreferencesKey("user_department")
+        val USER_SEMESTER = stringPreferencesKey("user_semester")
         val USER_LINKEDIN = stringPreferencesKey("user_linkedin")
         val USER_INSTAGRAM = stringPreferencesKey("user_instagram")
         val USER_WHATSAPP = stringPreferencesKey("user_whatsapp")
@@ -40,23 +43,33 @@ class LocalUserRepository(
         }
         .map { preferences ->
             User(
-                userId = preferences[USER_ID] ?: "datastore id",
-                username = preferences[USER_NAME] ?: "data Store",
-                about = preferences[USER_ABOUT] ?: "this is default value of user detail in data store",
-                email = preferences[USER_EMAIL] ?: "data store email",
-                linkedinId = preferences[USER_LINKEDIN] ?: "data store linkedin",
-                instaId = preferences[USER_INSTAGRAM] ?: "data store instagram",
-                whatsappNo = preferences[USER_WHATSAPP] ?: ""
+                userId = preferences[USER_ID] ?: "",
+                username = preferences[USER_NAME] ?: "",
+                about = preferences[USER_ABOUT] ?: "Hey there I'm using InsTea!",
+                email = preferences[USER_EMAIL] ?: "",
+                linkedinId = preferences[USER_LINKEDIN] ?: "",
+                instaId = preferences[USER_INSTAGRAM] ?: "",
+                whatsappNo = preferences[USER_WHATSAPP] ?: "",
+                university = preferences[USER_UNIVERSITY] ?: "",
+                dept = preferences[USER_DEPARTMENT] ?: "",
+                sem = preferences[USER_SEMESTER] ?: ""
             )
         }
 
     // Function to save the user details
     suspend fun upsertUser(user: User) {
-        Log.d("datastore username saving", user.username!!)
+//        Log.d("datastore username saving", user.username!!)
         dataStore.edit { preferences ->
-            preferences[USER_ID] = user.userId ?: "datastore id"
-            preferences[USER_NAME] = user.username
-            preferences[USER_ABOUT] = user.about ?: "Hey there, InsTea is great!"
+            preferences[USER_ID] = user.userId ?: ""
+            preferences[USER_NAME] = user.username ?: ""
+            preferences[USER_ABOUT] = user.about ?: ""
+            preferences[USER_UNIVERSITY] = user.university ?: ""
+            preferences[USER_DEPARTMENT] = user.dept ?: ""
+            preferences[USER_SEMESTER] = user.sem ?: ""
+            preferences[USER_EMAIL] = user.email ?: ""
+            preferences[USER_WHATSAPP] = user.whatsappNo ?: ""
+            preferences[USER_INSTAGRAM] = user.instaId ?: ""
+            preferences[USER_LINKEDIN] = user.linkedinId ?: ""
         }
     }
 

@@ -33,10 +33,11 @@ class EditProfileViewModel(
 
 
     private fun fetchInitialInfo() {
+        getUniversities()
         viewModelScope.launch {
             userRepository.getUserById(userId).collect { user ->
-                _uiState.update {
-                    it.copy(
+                _uiState.update { currState ->
+                    currState.copy(
                         username = user.username ?: "",
                         university = user.university ?: "",
                         department = user.dept ?: "",
@@ -52,77 +53,86 @@ class EditProfileViewModel(
         }
     }
 
-    fun onUniversityChanged(university: String) {
+    private fun getUniversities() {
         viewModelScope.launch {
-            academicRepository.getAllDepartment(university).collect { departments ->
+            academicRepository.getAllUniversity().collect { universities ->
                 _uiState.value = _uiState.value.copy(
-                    university = university,
-                    departmentList = departments,
-                    department = "",
-                    semester = ""
+                    universityList = universities
                 )
             }
         }
     }
 
-    fun onDepartmentChanged(department: String) {
-        viewModelScope.launch {
-            academicRepository.getAllSemester(
-                department = department, university = _uiState.value.university
-            ).collect { semesters ->
+        fun onUniversityChanged(university: String) {
+            viewModelScope.launch {
+                academicRepository.getAllDepartment(university).collect { departments ->
+                    _uiState.value = _uiState.value.copy(
+                        university = university,
+                        departmentList = departments,
+                        department = "",
+                        semester = ""
+                    )
+                }
+            }
+        }
+
+        fun onDepartmentChanged(department: String) {
+            viewModelScope.launch {
+                academicRepository.getAllSemester(
+                    department = department, university = _uiState.value.university
+                ).collect { semesters ->
+                    _uiState.value = _uiState.value.copy(
+                        semesterList = semesters, department = department, semester = ""
+                    )
+                }
+            }
+        }
+
+        fun onSemesterChanged(semester: String) {
+            viewModelScope.launch {
                 _uiState.value = _uiState.value.copy(
-                    semesterList = semesters, department = department, semester = ""
+                    semester = semester
                 )
             }
         }
-    }
 
-    fun onSemesterChanged(semester: String) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(
-                semester = semester
-            )
+        fun onAboutChanged(about: String) {
+            viewModelScope.launch {
+                _uiState.value = _uiState.value.copy(about = about)
+            }
+        }
+
+        fun onWhatsappNoChanged(no: String) {
+            _uiState.value = _uiState.value.copy(whatsappNo = no)
+
+        }
+
+        fun onInstagramChanged(ig: String) {
+            _uiState.value = _uiState.value.copy(instagram = ig)
+
+        }
+
+        fun onLinkedInChanged(it: String) {
+            _uiState.value = _uiState.value.copy(linkedin = it)
+
+        }
+
+        fun saveUserDetails() {
+            viewModelScope.launch {
+                val uiStateValue = uiState.value
+                val user = User(
+                    userId = userId,
+                    username = uiStateValue.username,
+                    university = uiStateValue.university,
+                    dept = uiStateValue.department,
+                    sem = uiStateValue.semester,
+                    instaId = uiStateValue.instagram,
+                    linkedinId = uiStateValue.linkedin,
+                    whatsappNo = uiStateValue.whatsappNo,
+                    about = uiStateValue.about
+                )
+                userRepository.upsertUserLocally(user)
+                userRepository.upsertUserToFirebase(user)
+            }
         }
     }
-
-    fun onAboutChanged(about: String) {
-        viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(about = about)
-        }
-    }
-
-    fun onWhatsappNoChanged(no: String) {
-        _uiState.value = _uiState.value.copy(whatsappNo = no)
-
-    }
-
-    fun onInstagramChanged(ig: String) {
-        _uiState.value = _uiState.value.copy(instagram = ig)
-
-    }
-
-    fun onLinkedInChanged(it: String) {
-        _uiState.value = _uiState.value.copy(linkedin = it)
-
-    }
-
-    fun saveUserDetails() {
-        viewModelScope.launch {
-            val uiStateValue = uiState.value
-            val user = User(
-                userId = userId,
-                username = uiStateValue.username,
-                university = uiStateValue.university,
-                dept = uiStateValue.department,
-                sem = uiStateValue.semester,
-                email = uiStateValue.email,
-                instaId = uiStateValue.instagram,
-                linkedinId = uiStateValue.linkedin,
-                whatsappNo = uiStateValue.whatsappNo,
-                about = uiStateValue.about
-            )
-            userRepository.upsertUserLocally(user)
-            userRepository.upsertUserToFirebase(user)
-        }
-    }
-}
