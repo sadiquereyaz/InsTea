@@ -1,4 +1,3 @@
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,11 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -43,15 +40,16 @@ import `in`.instea.instea.R
 import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.PostData
+import `in`.instea.instea.data.datamodel.Replies
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun CommentCard(comment:Comments,post: PostData){
+fun ReplyCard(reply:Replies,comment:Comments) {
     var isExpanded by remember {
         mutableStateOf(false)
     }
-    var showReply by remember{ mutableStateOf(false) }
+
 
     Box(
         modifier = Modifier
@@ -90,12 +88,12 @@ fun CommentCard(comment:Comments,post: PostData){
                             fontWeight = FontWeight.Light
                         )
 
-                        val displayText = if (isExpanded) comment.comment
-                        else comment.comment.take(100)
+                        val displayText = if (isExpanded) reply.reply
+                        else reply.reply.take(100)
                         Text(
                             text = displayText!!, modifier = Modifier.padding(2.dp)
                         )
-                        if (comment.comment.length!! > 100) {
+                        if (reply.reply.length!! > 100) {
 
                             TextButton(
                                 onClick = {
@@ -125,10 +123,7 @@ fun CommentCard(comment:Comments,post: PostData){
                     modifier = Modifier.fillMaxWidth()
                 ) {
 
-                    UpAndDownVoteButtonsForComment(comment,post,showReply){
-                        isVisible->
-                        showReply = isVisible
-                    }
+                    UpAndDownVoteButtonsForReply(comment,reply)
 
                 }
 
@@ -137,18 +132,15 @@ fun CommentCard(comment:Comments,post: PostData){
         }
 
     }
-    if(showReply){
-        ReplyList(post = post,comment = comment)
-    }
 }
 
 @Composable
-fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: Boolean, onReplyClick: (Boolean) -> Unit) {
+fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }
     val isDownVoted = rememberSaveable { mutableStateOf(false) }
     val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val coroutineScope = rememberCoroutineScope()
-    var showComments by remember {
+    var showReply by remember {
         mutableStateOf(false)
     }
     var userDislikeCurrentPost by rememberSaveable {
@@ -166,11 +158,9 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp) // Custom spacing between elements
         ) {
-//            for reply
+
             Button(
-                onClick = {
-                    showComments = !showComments
-                          onReplyClick(!showReply)},
+                onClick = { showReply = !showReply},
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
                     contentColor = Color.Unspecified
@@ -212,10 +202,10 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
                                     comment.userDislikeComment.add(feedViewModel.currentuser!!)
                                 }
 
-                                val commetIndex = post.comments.indexOf(comment)
+//                                val commetIndex = post.comments.indexOf(comment)
+////                                feedViewModel.updateVotes(post)
+//                                post.comments[commetIndex] = comment
 //                                feedViewModel.updateVotes(post)
-                                post.comments[commetIndex] = comment
-                                feedViewModel.updateVotes(post)
 
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
@@ -268,10 +258,10 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
                                 }
 
 //                                feedViewModel.updateVotes(post)
-                                val commetIndex = post.comments.indexOf(comment)
+//                                val commetIndex = post.comments.indexOf(comment)
+////                                feedViewModel.updateVotes(post)
+//                                post.comments[commetIndex] = comment
 //                                feedViewModel.updateVotes(post)
-                                post.comments[commetIndex] = comment
-                                feedViewModel.updateVotes(post)
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
                                     comment.userDislikeComment.contains(feedViewModel.currentuser)
@@ -288,7 +278,7 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
                     modifier = Modifier.padding(end = 8.dp)
                 ) {
                     Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
-                val list = listOf("Report","Edit Comment")
+                    val list = listOf("Report","Edit Comment")
 
 
                 }

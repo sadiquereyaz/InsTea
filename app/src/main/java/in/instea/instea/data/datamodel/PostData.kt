@@ -36,8 +36,16 @@ data class Comments(
     val commentByUser:String="",
     val userLikedComment : MutableList<String> = mutableListOf(),
     val userDislikeComment:MutableList<String> = mutableListOf(),
+    val replies:MutableList<Replies> = mutableListOf()
 
     )
+
+data class Replies(
+    val reply:String="",
+    val replyByUser:String="",
+    val userLikedReply : MutableList<String> = mutableListOf(),
+    val userDislikeReply:MutableList<String> = mutableListOf(),
+)
 
 @Immutable
 data class FeedUiState(

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -80,8 +81,10 @@ fun PostCard(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(8.dp)
         ) {
-            // Profile Image and Post Information
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
                 (if (post.profileImage != null) post.profileImage
                 else R.drawable.ic_launcher_foreground)?.let {
                     Image(
@@ -93,13 +96,54 @@ fun PostCard(
                             .clickable { /* Handle click */ },
                         contentDescription = "Profile"
                     )
-                }
 
                 Column(modifier = Modifier.padding(start = 8.dp)) {
                     Text(text = "name", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                    Text(text = post.timestamp.format(), fontSize = 12.sp, fontWeight = FontWeight.Light)
+                    Text(
+                        text = post.timestamp.format(),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Light
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f)) // This pushes the Box to the end
+
+                Box(
+                    modifier = Modifier.padding(end = 8.dp),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
                 }
             }
+        }
+//            // Profile Image and Post Information
+//            Row(verticalAlignment = Alignment.CenterVertically) {
+//                (if (post.profileImage != null) post.profileImage
+//                else R.drawable.ic_launcher_foreground)?.let {
+//                    Image(
+//                        painter = painterResource(id = it),
+//                        modifier = Modifier
+//                            .size(40.dp)
+//                            .clip(CircleShape)
+//                            .background(Color.Black)
+//                            .clickable { /* Handle click */ },
+//                        contentDescription = "Profile"
+//                    )
+//                }
+//
+//                Column(modifier = Modifier.padding(start = 8.dp)) {
+//                    Text(text = "name", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+//                    Text(
+//                        text = post.timestamp.format(),
+//                        fontSize = 12.sp,
+//                        fontWeight = FontWeight.Light
+//                    )
+//                }
+//                Box(modifier = Modifier, contentAlignment = Alignment.End) {
+//                    Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
+//
+//                }
+//            }
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -117,9 +161,11 @@ fun PostCard(
 
             // Post Image
             if (post.postImage != null) {
-                Image(painter = painterResource(id = post.postImage!!), contentDescription = "Post Image")
+                Image(
+                    painter = painterResource(id = post.postImage!!),
+                    contentDescription = "Post Image"
+                )
             }
-
 
 
             // Comment Button and Up/Down Vote Buttons
@@ -155,12 +201,17 @@ fun PostCard(
             }
 
             // Conditionally display the CommentCard below the Divider
-            if (showComments) {
-                CommentList(post,feedViewModel)
-            }
+
             // Divider
-            Divider(Modifier.height(3.dp).fillMaxWidth())
+            Divider(
+                Modifier
+                    .height(3.dp)
+                    .fillMaxWidth()
+            )
         }
+    }
+    if (showComments) {
+        CommentList(post, feedViewModel)
     }
 }
 
@@ -244,7 +295,11 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
                         },
                     tint = (if (userDislikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
                 )
-                Text(text = "D", fontSize = 10.sp, modifier = Modifier.padding(0.dp))
+                Text(
+                    text = (post.userDislikedCurrentPost.size - 1).toString(),
+                    fontSize = 10.sp,
+                    modifier = Modifier.padding(0.dp)
+                )
             }
 
             Spacer(
@@ -260,7 +315,11 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
                 horizontalArrangement = Arrangement.spacedBy(4.dp) // Custom spacing between button and text
             ) {
 
-                Text(text = "U", fontSize = 10.sp, modifier = Modifier.padding(0.dp))
+                Text(
+                    text = (post.userLikedCurrentPost.size - 1).toString(),
+                    fontSize = 10.sp,
+                    modifier = Modifier.padding(0.dp)
+                )
                 Icon(
                     painter = painterResource(id = if (userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
                     contentDescription = "Upvote",

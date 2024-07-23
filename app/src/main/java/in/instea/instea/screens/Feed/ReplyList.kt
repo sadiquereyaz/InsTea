@@ -1,11 +1,7 @@
-import android.content.res.Resources.Theme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -24,7 +20,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,17 +35,18 @@ import `in`.instea.instea.R
 import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.PostData
+import `in`.instea.instea.data.datamodel.Replies
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
-    var textstate by remember { mutableStateOf("") }
+fun ReplyList(post:PostData,comment: Comments,feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
+   var textstate by remember{ mutableStateOf("") }
 
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = if(post.comments.isEmpty()) Modifier.height(100.dp).fillMaxWidth() else Modifier.fillMaxWidth().height(500.dp)
+        modifier = if(comment.replies.isEmpty()) Modifier.height(100.dp).fillMaxWidth() else Modifier.fillMaxWidth().height(500.dp)
     ) {
         item {
             Row(
@@ -88,12 +84,18 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
                             if (textstate.isNotEmpty()) {
                                 Icon(
                                     modifier = Modifier.clickable {
-                                        post.comments.add(
-                                            Comments(
-                                                comment = textstate,
-                                                commentByUser = feedViewModel.currentuser!!,
+//                                        getting current comment index
+                                        val commentIndex = post.comments.indexOf(comment)
+
+                                        comment.replies.add(
+                                            Replies(
+                                                reply = textstate,
+                                                replyByUser = feedViewModel.currentuser!!,
                                             )
                                         )
+//                                        setting updated comment
+                                       post.comments[commentIndex] = comment
+
                                         feedViewModel.updateComment(post)
                                         textstate = "" // Clear text field after sending comment
                                     },
@@ -107,7 +109,7 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
                 }
             }
         }
-        if (post.comments.isEmpty()) {
+        if (comment.replies.isEmpty()) {
             item {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -120,8 +122,8 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
                 }
             }
         } else {
-            items(post.comments) { comment ->
-                CommentCard(comment = comment, post = post)
+            items(comment.replies) { reply ->
+                ReplyCard(reply,comment)
             }
         }
     }

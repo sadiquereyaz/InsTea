@@ -129,7 +129,12 @@ class FeedViewModel(
             postRepository.updateUpAndDownVote(post)
         }
     }
-
+//    fun updateCommentVotes(post: PostData,comment: Comments,commentIndex:Int){
+//        viewModelScope.launch {
+//            post.comments[commentIndex] = comment
+//            postRepository.updateUpAndDownVote(post)
+//        }
+//    }
     fun updateComment(post: PostData){
         Log.d("balle", "updateComment: ${post.postid}")
         viewModelScope.launch {
