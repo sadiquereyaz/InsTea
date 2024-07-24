@@ -21,8 +21,10 @@ import `in`.instea.instea.data.datamodel.User
 //    object Loading : ProfileUiState
 //}
 data class ProfileUiState(
+    var selfProfile: Boolean = true,
     var savedPosts: List<PostData>? = listOf(), //savedPost can be null
-    var userData: User? = User() ,     //userDate can be null
+    var userData: User? = User(),     //userDate can be null
+    var socialList: List<SocialModel> = listOf()
 )
 
 data class SocialModel (

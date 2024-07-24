@@ -3,37 +3,23 @@ package `in`.instea.instea.data
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
 //import androidx.compose.ui.tooling.data.EmptyGroup.location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FederatedAuthProvider
 import com.google.firebase.auth.auth
 
 import com.google.firebase.database.database
-import `in`.instea.instea.data.datamodel.Comments
-import `in`.instea.instea.data.datamodel.FeedUiState
 import `in`.instea.instea.data.datamodel.PostData
 
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.LocalPostRepository
 import `in`.instea.instea.data.repo.NetworkPostRepository
-import `in`.instea.instea.data.repo.PostRepository
 import `in`.instea.instea.data.viewmodel.NetworkUtils
-import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -138,7 +124,7 @@ class FeedViewModel(
     fun updateComment(post: PostData){
         Log.d("balle", "updateComment: ${post.postid}")
         viewModelScope.launch {
-            postRepository.UpdateComment(post)
+            postRepository.updateComment(post)
         }
     }
 

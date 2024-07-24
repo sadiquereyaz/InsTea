@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import `in`.instea.instea.composable.AddClassButton
 import `in`.instea.instea.composable.CalendarComposable
 import `in`.instea.instea.composable.ScheduleList
@@ -29,7 +28,7 @@ fun ScheduleScreen(
     viewModel: ScheduleViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navigateToEditSchedule: (Int, String) -> Unit,
 ) {
-    val scheduleUiState by viewModel.scheduleUiState.collectAsState()
+    val uiState by viewModel.scheduleUiState.collectAsState()
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -47,7 +46,7 @@ fun ScheduleScreen(
     ) {
 
         CalendarComposable(
-            scheduleUiState,
+            uiState,
             listState,
             onDateClick = {
                 coroutineScope.launch {
@@ -60,13 +59,13 @@ fun ScheduleScreen(
             modifier = Modifier
                 .align(Alignment.End)
                 .clickable {
-                    navigateToEditSchedule(0, scheduleUiState.selectedDay)
+                    navigateToEditSchedule(0, uiState.selectedDay)
                 },
         )
 
         // schedule list
         ScheduleList(
-            scheduleUiState = scheduleUiState,
+            scheduleUiState = uiState,
             onAttendanceClick = { taskId: Int, scheduleId: Int, attendance ->
                 coroutineScope.launch {
                     viewModel.upsertAttendance(
@@ -82,7 +81,7 @@ fun ScheduleScreen(
                 }
             },
             navigateToEditSchedule = {id:Int->
-                navigateToEditSchedule(id, scheduleUiState.selectedDay)
+                navigateToEditSchedule(id, uiState.selectedDay)
             },
         )
     }

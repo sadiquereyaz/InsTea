@@ -9,10 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import java.time.LocalTime
 
 interface ScheduleRepository {
-    fun getClassListByDayAndTaskByDate(
-        day: String,
-        timeStamp: Int
-    ): Flow<List<CombinedScheduleTaskModel>>
+    fun getClassListByDayAndTaskByDate(day: String, timeStamp: Int): Flow<List<CombinedScheduleTaskModel>>
 
     suspend fun upsertTask(task: String, taskId: Int, scheduleId: Int, timeStamp: Int)
     suspend fun upsertAttendance(

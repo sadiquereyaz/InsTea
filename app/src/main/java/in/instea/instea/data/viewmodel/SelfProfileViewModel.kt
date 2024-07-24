@@ -12,27 +12,76 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import `in`.instea.instea.R
-import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.PostRepository
 import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.profile.ProfileUiState
 import `in`.instea.instea.screens.profile.SocialModel
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class SelfProfileViewModel(
     private val postRepository: PostRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
     private val userId = Firebase.auth.currentUser?.uid.toString()
+    val argUserId = ""
+    val myProfile: Boolean = if (argUserId == null) true else false
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
 
-    val profileUiState: StateFlow<ProfileUiState> = combine(
+    private val _uiState = MutableStateFlow(ProfileUiState())
+    val uiState: StateFlow<ProfileUiState> = _uiState
+
+    init {
+        checkProfileType()
+        getUserData()
+        getAllProfilePost()
+        getAllSocialList()
+    }
+
+    private fun getUserData() {
+        viewModelScope.launch {
+            userRepository.getUserById(userId).collect { user ->
+                _uiState.update { currState ->
+                    currState.copy(userData = user)
+                }
+            }
+        }
+    }
+
+    private fun getAllProfilePost() {
+        viewModelScope.launch {
+            if (myProfile) {
+                postRepository.getAllSavedPostsStream().collect { posts ->
+                    _uiState.update { currState ->
+                        currState.copy(savedPosts = posts)
+                    }
+                }
+            }
+            //TODO: get profile posts
+            /* postRepository.getPostsByUser(userId).collect { posts ->
+                 _uiState.update { currState ->
+                     currState.copy(profilePosts = posts)
+                 }
+             }*/
+        }
+    }
+
+    private fun checkProfileType() {
+        viewModelScope.launch {
+            _uiState.update { currState ->
+                currState.copy(
+                    selfProfile = myProfile
+                )
+            }
+        }
+    }
+
+    /*val profileUiState: StateFlow<ProfileUiState> = combine(
         userRepository.getUserById(userId).stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
@@ -51,7 +100,7 @@ class SelfProfileViewModel(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(),
             initialValue = ProfileUiState()
-        )
+        )*/
 
 
     // Handle social item click based on the link
@@ -74,29 +123,34 @@ class SelfProfileViewModel(
 //        }
     }
 
-    fun getAllSocialList(): List<SocialModel> {
-        val user = profileUiState.value.userData
-        return listOf(
-            SocialModel(
-                title = user?.whatsappNo ?: "",
-                linkHead = "https://wa.me/",
-                icon = Icons.Default.Whatsapp
-            ),
-            SocialModel(
-                title = user?.instaId ?: "",
-                linkHead = "https://wa.me/",
-                icon = R.drawable.insta
-            ),
-            SocialModel(
-                title = user?.linkedinId ?:"",
-                linkHead = "https://www.linkedin.com/in/",
-                icon = R.drawable.linked
-            ),
-            SocialModel(
-                title = "mdsadique47@gmail.com",
-                linkHead = "mailto:",
-                icon = Icons.Default.AlternateEmail
-            ),
-        )
+    fun getAllSocialList() {
+        viewModelScope.launch {
+            val user = uiState.value.userData
+            val socialList = listOf(
+                SocialModel(
+                    title = user?.whatsappNo ?: "",
+                    linkHead = "https://wa.me/",
+                    icon = Icons.Default.Whatsapp
+                ),
+                SocialModel(
+                    title = user?.instaId ?: "",
+                    linkHead = "https://wa.me/",
+                    icon = R.drawable.insta
+                ),
+                SocialModel(
+                    title = user?.linkedinId ?: "",
+                    linkHead = "https://www.linkedin.com/in/",
+                    icon = R.drawable.linked
+                ),
+                SocialModel(
+                    title = "mdsadique47@gmail.com",
+                    linkHead = "mailto:",
+                    icon = Icons.Default.AlternateEmail
+                ),
+            )
+            _uiState.update {
+                it.copy(socialList = socialList)
+            }
+        }
     }
 }

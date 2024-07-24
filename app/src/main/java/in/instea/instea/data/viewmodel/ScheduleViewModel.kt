@@ -55,21 +55,17 @@ class ScheduleViewModel(
     )
     private val currentMonth: StateFlow<String> = _selectedMonth
 
-    private val _selectedYear =
-        MutableStateFlow(_calendar.get(Calendar.YEAR) % 100)
+    private val _selectedYear = MutableStateFlow(_calendar.get(Calendar.YEAR) % 100)
     private val currentYear: StateFlow<Int> = _selectedYear
 
-    private val _selectedDateIndex =
-        MutableStateFlow(todayDateIndex) // Initial selected index (16th position)
+    private val _selectedDateIndex = MutableStateFlow(todayDateIndex) // Initial selected index (16th position)
     private val selectedDateIndex: StateFlow<Int> = _selectedDateIndex
 
     // Use a MutableStateFlow for the current list of schedules
     private val _scheduleList = MutableStateFlow<List<CombinedScheduleTaskModel>>(emptyList())
     private val scheduleList: StateFlow<List<CombinedScheduleTaskModel>> = _scheduleList
 
-    init {
-        onDateClick(todayDateIndex)
-    }
+    init { onDateClick(todayDateIndex) }
 
     val scheduleUiState: StateFlow<ScheduleUiState> = combine(
         scheduleList,

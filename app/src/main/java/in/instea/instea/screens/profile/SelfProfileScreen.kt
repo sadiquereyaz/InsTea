@@ -27,6 +27,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,9 +62,11 @@ fun SelfProfileScreen(
     viewModel: SelfProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navigateToEditProfile: () -> Unit
 ) {
-    val uiState by viewModel.profileUiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    // Trigger data refresh when this composable is first composed or recomposed
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -109,7 +112,7 @@ fun SelfProfileScreen(
                     bottom = 20.dp
                 ),
                 user = userData,
-                socialList = viewModel.getAllSocialList(),
+                socialList = uiState.socialList,
                 openSocialLink = { link ->
                     coroutineScope.launch {
                         viewModel.handleSocialItemClick(link, context)

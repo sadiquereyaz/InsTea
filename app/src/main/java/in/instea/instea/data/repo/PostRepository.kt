@@ -1,7 +1,6 @@
 package `in`.instea.instea.data.repo
 
 import android.util.Log
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -9,7 +8,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import `in`.instea.instea.data.dao.PostDao
-import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.PostData
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +20,8 @@ interface PostRepository {
     fun getAllSavedPostsStream(): Flow<List<PostData>>
     suspend fun insertItem(post: PostData)
     suspend fun updateUpAndDownVote(post: PostData)
-    suspend fun UpdateComment(post:PostData)
+    suspend fun updateComment(post: PostData)
+    fun getPostsByUser(userId: String): Flow<List<PostData>>
 }
 
 class CombinedPostRepository(
@@ -53,40 +52,41 @@ class CombinedPostRepository(
 
     }
 
-    override suspend fun UpdateComment(post: PostData) {
+    override suspend fun updateComment(post: PostData) {
         TODO("Not yet implemented")
     }
 
-
+    override fun getPostsByUser(userId: String): Flow<List<PostData>> = flow {
+        networkPostRepository.getProfilePosts(userId)
+    }
 
 
 }
 
 class LocalPostRepository(
     private val postDao: PostDao,
-) : PostRepository {
+) {
 
-    override fun getAllSavedPostsStream(): Flow<List<PostData>> = postDao.getAllSavedPosts()
-    override suspend fun insertItem(post: PostData) = postDao.insertPost(post)
+    fun getAllSavedPostsStream(): Flow<List<PostData>> = postDao.getAllSavedPosts()
+    suspend fun insertItem(post: PostData) = postDao.insertPost(post)
 
-    override suspend fun updateUpAndDownVote(post: PostData) {
+    suspend fun updateUpAndDownVote(post: PostData) {
         TODO("Not yet implemented")
     }
 
-    override suspend fun UpdateComment(post: PostData) {
+    suspend fun UpdateComment(post: PostData) {
         TODO("Not yet implemented")
     }
-
 
 
 }
 
 class NetworkPostRepository(
     firebaseDatabase: FirebaseDatabase,
-) : PostRepository {
+) {
     private val databaseReference = firebaseDatabase.reference.child("posts")
 
-    override fun getAllSavedPostsStream(): Flow<List<PostData>> = callbackFlow {
+    fun getAllSavedPostsStream(): Flow<List<PostData>> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val postList = mutableListOf<PostData>()
@@ -109,14 +109,14 @@ class NetworkPostRepository(
         awaitClose { databaseReference.removeEventListener(postListener) }
     }
 
-    override suspend fun insertItem(post: PostData) {
+    suspend fun insertItem(post: PostData) {
         val newPostRef = databaseReference.push()
         post.postid = newPostRef.key.toString()
         newPostRef.setValue(post).await()
         Log.d("NetworkPostRepository", "Inserted post with ID: ${post.postid}")
     }
 
-    override suspend fun updateUpAndDownVote(post: PostData) {
+    suspend fun updateUpAndDownVote(post: PostData) {
         val db = Firebase.database.reference
 
         val dataSnapshot = db.child("posts").get();
@@ -134,8 +134,12 @@ class NetworkPostRepository(
         }
     }
 
-    override suspend fun UpdateComment(post: PostData) {
+    suspend fun updateComment(post: PostData) {
 
+    }
+
+    fun getProfilePosts(userId: String) {
+        // todo: fetch from firebase
     }
 }
 
