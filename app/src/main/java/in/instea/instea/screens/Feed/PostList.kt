@@ -1,10 +1,21 @@
 package `in`.instea.instea.ui
 
-import GetPostData
 import PostCard
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -20,10 +31,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
 import `in`.instea.instea.data.FeedViewModel
-import `in`.instea.instea.data.datamodel.PostData
 
 @Composable
-fun PostList(feedViewModel: FeedViewModel) {
+fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit) {
     val posts = feedViewModel.posts.collectAsState(initial = emptyList()).value.reversed()
 
     if (feedViewModel.isLoading.value) {
@@ -37,7 +47,12 @@ fun PostList(feedViewModel: FeedViewModel) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(8.dp)
         ) {
-            items(posts) { post -> PostCard(post = post) }
+            items(posts) { post ->
+                PostCard(
+                    post = post,
+                    navigateToProfile = { navigateToProfile(post.postedByUser ?: "") }
+                )
+            }
         }
     }
 }
@@ -92,9 +107,11 @@ fun ShimmerGridItem(brush: Brush, modifier: Modifier = Modifier) {
                     .clip(RoundedCornerShape(10.dp))
                     .background(brush)
             )
-            Spacer(modifier = modifier
-                .height(3.dp)
-                .fillMaxWidth())
+            Spacer(
+                modifier = modifier
+                    .height(3.dp)
+                    .fillMaxWidth()
+            )
             Spacer(
                 modifier = modifier
                     .height(12.dp)

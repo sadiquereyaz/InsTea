@@ -18,6 +18,7 @@ import kotlinx.coroutines.tasks.await
 
 interface PostRepository {
     fun getAllSavedPostsStream(): Flow<List<PostData>>
+    fun getAllProfilePostsStream(): Flow<List<PostData>>
     suspend fun insertItem(post: PostData)
     suspend fun updateUpAndDownVote(post: PostData)
     suspend fun updateComment(post: PostData)
@@ -32,6 +33,13 @@ class CombinedPostRepository(
         // Emit local data immediately
         emitAll(localPostRepository.getAllSavedPostsStream())
 
+        // Then emit network data and update local database
+        networkPostRepository.getAllSavedPostsStream().collect { networkPosts ->
+            emit(networkPosts)
+            networkPosts.forEach { localPostRepository.insertItem(it) }
+        }
+    }
+    override fun getAllProfilePostsStream(): Flow<List<PostData>> = flow {
         // Then emit network data and update local database
         networkPostRepository.getAllSavedPostsStream().collect { networkPosts ->
             emit(networkPosts)

@@ -12,7 +12,8 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         // Initializer for ProfileViewModel
         initializer {
-                SelfProfileViewModel(
+                ProfileViewModel(
+                    savedStateHandle = this.createSavedStateHandle(),
                     postRepository = insteaApplication().container.postRepository,
                     userRepository =insteaApplication().container.userRepository
                 )

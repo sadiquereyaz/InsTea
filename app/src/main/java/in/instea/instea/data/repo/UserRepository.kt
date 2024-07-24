@@ -3,7 +3,8 @@ package `in`.instea.instea.data.repo
 import android.util.Log
 import `in`.instea.instea.data.datamodel.User
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 
 interface UserRepository {
@@ -12,7 +13,7 @@ interface UserRepository {
     suspend fun upsertUserLocally(user: User)
     suspend fun upsertUserToFirebase(user: User)
     suspend fun signIn(email: String, password: String): Result<String>
-    suspend fun signUp(user: User,password: String): Result<String>
+    suspend fun signUp(user: User, password: String): Result<String>
     suspend fun clearUser()
 }
 
@@ -22,23 +23,23 @@ class CombinedUserRepository(
 ) : UserRepository {
     override fun getCurrentUserId(): Flow<String> = localUserRepository.getUserId()
 
-    override fun getUserById(userId: String): Flow<User> = flow {
-        // Try fetching user from local database first
-        val localUser = localUserRepository.getCurrentUser().firstOrNull()
-//        Log.d("USER_FROM_DATASTORE", localUser?.username.toString())
-        if (localUser?.userId == userId) {
-            emit(localUser) // Emit user from local storage if found
-        } else {
-            // Fetch user from Firebase if not found locally
-            val networkUser = networkUserRepository.getUserById(userId).firstOrNull()
-            if (networkUser != null) {
-                emit(networkUser) // Emit user fetched from Firebase
-            } else {
-                // Handle the case where the user is not found in Firebase
-                emit(User(userId="userIdNotAvailable", email = "Given ID is not present in Firebase"))
+    // override fun getUserById(userId: String): Flow<User> = localUserRepository.getCurrentUser()
+
+
+    override fun getUserById(userId: String): Flow<User> =
+        localUserRepository.getCurrentUser()
+            .combine(networkUserRepository.getUserById(userId)) { localUser, networkUser ->
+                when {
+                    localUser?.userId == userId -> localUser
+                    networkUser != null -> networkUser
+                    else -> User(userId = "userIdNotAvailable", email = "User not found")
+                }
             }
-        }
-    }
+            .catch { throwable ->
+                Log.e("UserRepository", "Error fetching user: ${throwable.message}")
+                emit(User(userId = "error", email = "Error fetching user data"))
+            }
+
 
     override suspend fun upsertUserLocally(user: User) {
         localUserRepository.upsertUser(user)
@@ -59,8 +60,8 @@ class CombinedUserRepository(
         return networkUserRepository.signIn(email, password)
     }
 
-    override suspend fun signUp(user: User,password: String): Result<String> {
-        return networkUserRepository.signUp(user,password)
+    override suspend fun signUp(user: User, password: String): Result<String> {
+        return networkUserRepository.signUp(user, password)
     }
 }
 

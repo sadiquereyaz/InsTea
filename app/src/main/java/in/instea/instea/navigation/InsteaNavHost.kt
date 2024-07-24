@@ -17,8 +17,8 @@ import `in`.instea.instea.screens.InboxScreen
 import `in`.instea.instea.screens.auth.AddInfo
 import `in`.instea.instea.screens.auth.SignInScreen
 import `in`.instea.instea.screens.auth.SignUpScreen
-import `in`.instea.instea.screens.profile.OtherProfileScreen
-import `in`.instea.instea.screens.profile.SelfProfileScreen
+import `in`.instea.instea.screens.profile.ProfileDestination
+import `in`.instea.instea.screens.profile.ProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleDestination
 import `in`.instea.instea.screens.schedule.EditScheduleScreen
 import `in`.instea.instea.screens.schedule.ScheduleScreen
@@ -32,7 +32,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.SelfProfile.name,
+        startDestination = InsteaScreens.Feed.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -46,8 +46,7 @@ fun InsteaNavHost(
         }
         composable(route = InsteaScreens.Feed.name) {
             FEED(
-                navController = navController
-//                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
+                navigateToProfile = { navController.navigate("${ProfileDestination.route}/${it}") }
             )
         }
         composable(route = InsteaScreens.Inbox.name) {
@@ -75,18 +74,27 @@ fun InsteaNavHost(
             AttendanceScreen(navController = navController)
         }
         composable(route = InsteaScreens.SelfProfile.name) {
-            SelfProfileScreen(
-                navigateToEditProfile = { navController.navigate(InsteaScreens.EditProfile.name) }
+            ProfileScreen(
+                onSubUsernameClick = { navController.navigate(InsteaScreens.Inbox.name) }
             )
         }
-        composable(route = InsteaScreens.OtherProfile.name) {
-            OtherProfileScreen()
+        //OtherProfileScreen
+        composable(
+            route = ProfileDestination.routeWithArg,
+            arguments = listOf(navArgument(ProfileDestination.USERID_ARG) {
+                type = NavType.StringType
+            })
+        ) {
+//            OtherProfileScreen()
+            ProfileScreen(
+                onSubUsernameClick = { navController.navigate(InsteaScreens.Inbox.name) }
+            )
         }
         composable(route = InsteaScreens.EditProfile.name) {
             EditProfileScreen(
                 navigateToAddAcademics = { navController.navigate(InsteaScreens.AddAcademicInfo.name) },
-                navigateBack={navController.popBackStack()}
-                )
+                navigateBack = { navController.popBackStack() }
+            )
         }
         composable(route = InsteaScreens.Addpost.name) {
             FeedContent()
