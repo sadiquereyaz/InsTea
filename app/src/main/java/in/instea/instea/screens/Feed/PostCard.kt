@@ -82,7 +82,10 @@ fun PostCard(
                         contentDescription = "Profile"
                     )
 
-                    Column(modifier = Modifier.padding(start = 8.dp) .clickable { navigateToProfile() }) {
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .clickable { navigateToProfile() }) {
                         Text(text = "name", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         Text(
                             text = post.timestamp.format(),

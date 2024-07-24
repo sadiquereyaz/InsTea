@@ -26,9 +26,7 @@ interface ScheduleDao {
 //        day: String
 //    )
     @Upsert
-    suspend fun upsertSchedule(
-      scheduleModel: ScheduleModel
-    )
+    suspend fun upsertSchedule(scheduleModel: ScheduleModel)
 
     // Method to insert a new task
     @Insert(onConflict = OnConflictStrategy.REPLACE)

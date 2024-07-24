@@ -58,14 +58,17 @@ class ScheduleViewModel(
     private val _selectedYear = MutableStateFlow(_calendar.get(Calendar.YEAR) % 100)
     private val currentYear: StateFlow<Int> = _selectedYear
 
-    private val _selectedDateIndex = MutableStateFlow(todayDateIndex) // Initial selected index (16th position)
+    private val _selectedDateIndex =
+        MutableStateFlow(todayDateIndex) // Initial selected index (16th position)
     private val selectedDateIndex: StateFlow<Int> = _selectedDateIndex
 
     // Use a MutableStateFlow for the current list of schedules
     private val _scheduleList = MutableStateFlow<List<CombinedScheduleTaskModel>>(emptyList())
     private val scheduleList: StateFlow<List<CombinedScheduleTaskModel>> = _scheduleList
 
-    init { onDateClick(todayDateIndex) }
+    init {
+        onDateClick(todayDateIndex)
+    }
 
     val scheduleUiState: StateFlow<ScheduleUiState> = combine(
         scheduleList,
@@ -94,6 +97,7 @@ class ScheduleViewModel(
             selectedDateIndex = _selectedDateIndex.value,
         )
     )
+
     private var timestamp: Int = 0      // TODO: check its value on different date click
     fun onDateClick(selectedIndex: Int) {
         // getting the timestamp according to selected index
@@ -149,29 +153,15 @@ class ScheduleViewModel(
         return dayDateList
     }
 
-    suspend fun upsertSchedule(
-        subject: String,
-        scheduleId: Int,
-        startTime: LocalTime,
-        endTime: LocalTime,
-        day: String
-    ) {
-        scheduleRepository.upsertSchedule(
-            subject = subject,
-            scheduleId = scheduleId,
-            startTime = startTime,
-            endTime = endTime,
-            day = day
-        )
-    }
-
-    suspend fun upsertAttendance(taskId: Int, scheduleId: Int, attendance: AttendanceType) {
-        scheduleRepository.upsertAttendance(
-            taskId = taskId,
-            attendance = attendance,
-            scheduleId = scheduleId,
-            timeStamp = timestamp
-        )
+    fun upsertAttendance(taskId: Int, scheduleId: Int, attendance: AttendanceType) {
+        viewModelScope.launch {
+            scheduleRepository.upsertAttendance(
+                taskId = taskId,
+                attendance = attendance,
+                scheduleId = scheduleId,
+                timeStamp = timestamp
+            )
+        }
     }
 
     suspend fun upsertTask(scheduleId: Int, taskId: Int, task: String) {

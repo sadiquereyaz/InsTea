@@ -174,7 +174,7 @@ private fun PersonalizedFeed(uiState: ProfileUiState) {
     val savedPosts = uiState.savedPosts ?: emptyList()
     val myPosts = uiState.savedPosts ?: emptyList()
 
-    val tabs = mutableListOf("My Posts (${myPosts.size})")
+    val tabs = mutableListOf("Profile Posts (${myPosts.size})")
     val showOtherTab = uiState.isSelfProfile
     if (showOtherTab) {
         tabs.add("Saved (${savedPosts.size})")
@@ -190,13 +190,13 @@ private fun PersonalizedFeed(uiState: ProfileUiState) {
         }
     }
     when (selectedTabIndex) {
-        0 -> {
+        0-> {
+            TabItem(postList = myPosts)
+        }
+        1-> {
             TabItem(postList = savedPosts, noPostText = "No Saved Post")
         }
 
-        1 -> {
-            TabItem(postList = myPosts)
-        }
     }
 }
 

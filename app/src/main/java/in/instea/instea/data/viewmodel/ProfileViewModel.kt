@@ -33,12 +33,7 @@ class ProfileViewModel(
     private val currentUserId = Firebase.auth.currentUser?.uid.toString()
 //    private val argUserId = "XjyI0mZ4XbXb6paiz11QFjMQuYJ2"
 //    private val argUserId =currentUserId
-    private val argUserId: String = checkNotNull(savedStateHandle[ProfileDestination.USERID_ARG])
-
-
-    companion object {
-        private const val TIMEOUT_MILLIS = 5_000L
-    }
+    private val argUserId: String = savedStateHandle[ProfileDestination.USERID_ARG] ?: currentUserId
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState

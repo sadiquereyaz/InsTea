@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.schedule.EditScheduleDestination
 import `in`.instea.instea.screens.schedule.EditScheduleUiState
@@ -84,16 +85,18 @@ class EditScheduleViewModel(
         val startTime = uiStateValue.startTime
         val endTime = uiStateValue.endTime
         val day = uiStateValue.selectedDay
-        val isConflict = if (scheduleId == 0) checkTimeConflict(startTime, endTime, day) else false
+        val isConflict = checkTimeConflict(startTime, endTime, day, scheduleId)
 //        Log.d("CONFLICT", isConflict.toString())
         if (!isConflict) {
 //            Log.d("CONFLICT_SAVING", "no conflict")
             scheduleRepository.upsertSchedule(
-                subject = uiStateValue.selectedSubject,
-                scheduleId = scheduleId,
-                startTime = startTime,
-                endTime = endTime,
-                day = day
+                ScheduleModel(
+                    subject = uiStateValue.selectedSubject,
+                    scheduleId = scheduleId,
+                    startTime = startTime,
+                    endTime = endTime,
+                    day = day
+                )
             )
             _uiState.value = _uiState.value.copy(errorMessage = null)
             return true
@@ -109,17 +112,21 @@ class EditScheduleViewModel(
     private suspend fun checkTimeConflict(
         startTime: LocalTime,
         endTime: LocalTime,
-        day: String
+        day: String,
+        currentScheduleId: Int
     ): Boolean {
         val daySchedulesList = scheduleRepository.getAllScheduleByDay(day)
         if (startTime >= endTime) return true
-        return daySchedulesList.any {
-            Log.d("conflict check", it.toString())
+
+        return daySchedulesList.any { schedule ->
             val sT = startTime.plusMinutes(1)
             val eT = endTime.minusMinutes(1)
-            (sT in it.startTime..it.endTime) ||
-                    (eT in it.startTime..it.endTime) ||
-                    (sT <= it.startTime && endTime >= it.endTime)
+            Log.d("ID", schedule.scheduleId.toString())
+            // Exclude the current schedule
+            schedule.scheduleId != currentScheduleId &&
+                    ((sT in schedule.startTime..schedule.endTime) ||
+                            (eT in schedule.startTime..schedule.endTime) ||
+                            (sT <= schedule.startTime && endTime >= schedule.endTime))
         }
     }
 }

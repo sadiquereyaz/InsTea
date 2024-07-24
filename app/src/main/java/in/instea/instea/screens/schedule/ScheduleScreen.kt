@@ -67,13 +67,13 @@ fun ScheduleScreen(
         ScheduleList(
             scheduleUiState = uiState,
             onAttendanceClick = { taskId: Int, scheduleId: Int, attendance ->
-                coroutineScope.launch {
+//                coroutineScope.launch {
                     viewModel.upsertAttendance(
                         taskId = taskId,
                         attendance = attendance,
                         scheduleId = scheduleId
                     )
-                }
+//                }
             },
             upsertTask = { taskId: Int, scheduleId: Int, task: String ->
                 coroutineScope.launch {
