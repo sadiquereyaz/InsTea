@@ -1,6 +1,6 @@
 package `in`.instea.instea.ui
 
-import GetPostData
+import EditPost
 import PostCard
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -19,8 +19,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
-import `in`.instea.instea.data.FeedViewModel
-import `in`.instea.instea.data.datamodel.PostData
+import `in`.instea.instea.data.viewmodel.FeedViewModel
 
 @Composable
 fun PostList(feedViewModel: FeedViewModel) {
@@ -37,9 +36,12 @@ fun PostList(feedViewModel: FeedViewModel) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(8.dp)
         ) {
-            items(posts) { post -> PostCard(post = post) }
+            items(posts) { post -> PostCard(post = post, onEditClick = { })
+            }
+
+            }
         }
-    }
+
 }
 
 @OptIn(ExperimentalWearMaterialApi::class)

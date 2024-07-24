@@ -1,39 +1,25 @@
-package `in`.instea.instea.data
+package `in`.instea.instea.data.viewmodel
 
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
 //import androidx.compose.ui.tooling.data.EmptyGroup.location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Firebase
-import com.google.firebase.auth.FederatedAuthProvider
 import com.google.firebase.auth.auth
 
 import com.google.firebase.database.database
-import `in`.instea.instea.data.datamodel.Comments
-import `in`.instea.instea.data.datamodel.FeedUiState
 import `in`.instea.instea.data.datamodel.PostData
 
 import `in`.instea.instea.data.datamodel.User
+import `in`.instea.instea.data.datamodel.userUiState
 import `in`.instea.instea.data.repo.LocalPostRepository
 import `in`.instea.instea.data.repo.NetworkPostRepository
-import `in`.instea.instea.data.repo.PostRepository
-import `in`.instea.instea.data.viewmodel.NetworkUtils
-import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.WhileSubscribed
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -59,14 +45,18 @@ class FeedViewModel(
     val posts: StateFlow<List<PostData>> get() = _posts
     private val _user = MutableStateFlow(User())
     val user: StateFlow<User> = _user.asStateFlow()
+    private val _userListState = MutableStateFlow(userUiState())
+    val userListState: StateFlow<userUiState> = _userListState.asStateFlow()
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> get() = _isLoading
 
     init {
         viewModelScope.launch {
            fetchPosts()
-             fetchedUsers = fetchUserData()
-
+            _userListState.update { currentListState->
+                currentListState.copy(fetchUserData())
+            }
+            fetchedUsers = fetchUserData()
             val currentUser = fetchedUsers.find { it.email == mAuth.currentUser?.email }
 
             if (currentUser != null) {
@@ -129,12 +119,7 @@ class FeedViewModel(
             postRepository.updateUpAndDownVote(post)
         }
     }
-//    fun updateCommentVotes(post: PostData,comment: Comments,commentIndex:Int){
-//        viewModelScope.launch {
-//            post.comments[commentIndex] = comment
-//            postRepository.updateUpAndDownVote(post)
-//        }
-//    }
+
     fun updateComment(post: PostData){
         Log.d("balle", "updateComment: ${post.postid}")
         viewModelScope.launch {
@@ -142,6 +127,11 @@ class FeedViewModel(
         }
     }
 
+    fun DeletePost(post:PostData){
+        viewModelScope.launch {
+            postRepository.Delete(post)
+        }
+    }
     fun writeNewUser(
         name: String,
         email: String,

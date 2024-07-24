@@ -7,9 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -17,9 +15,7 @@ import `in`.instea.instea.composable.BottomNavigationBar
 import `in`.instea.instea.composable.InsteaTopAppBar
 //import `in`.instea.instea.composable.InsteaTopAppBar
 import `in`.instea.instea.data.BottomNavItemData
-import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.navigation.InsteaScreens
-import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import `in`.instea.instea.navigation.InsteaNavHost
 
 @OptIn(ExperimentalMaterial3Api::class)

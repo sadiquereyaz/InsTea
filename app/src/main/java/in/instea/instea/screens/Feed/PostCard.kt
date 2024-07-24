@@ -1,6 +1,7 @@
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,15 +14,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,40 +40,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.google.android.play.integrity.internal.o
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
 import `in`.instea.instea.R
-import `in`.instea.instea.data.FeedViewModel
+import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
+import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 //import `in`.instea.instea.screens.Feed.CommentList
-import `in`.instea.instea.screens.profile.OtherProfileScreen
 
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-import kotlin.math.abs
-import kotlin.math.log
 
 @Composable
 fun PostCard(
     post: PostData,
     feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onEditClick:   (PostData)->Unit
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var showComments by remember { mutableStateOf(false) } // State for showing/hiding CommentCard
-
+    var expandDropdown by remember { mutableStateOf(false) }
+    val moreList = listOf("Report", "Delete", "Edit")
+     var user : User = User()
+    for (u in feedViewModel.userListState.value.userlist){
+        if(u.userId == post.postedByUser){
+            user = u
+        }
+    }
     Box(
         modifier = Modifier
             .padding(start = 3.dp, end = 3.dp, bottom = 0.dp)
@@ -98,25 +96,66 @@ fun PostCard(
                         contentDescription = "Profile"
                     )
 
-                Column(modifier = Modifier.padding(start = 8.dp)) {
-                    Text(text = "name", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                    Text(
-                        text = post.timestamp.format(),
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Light
-                    )
-                }
+                    Column(modifier = Modifier.padding(start = 8.dp)) {
+                        Text(text= if(user.username != null){user.username!!} else "", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = post.timestamp.format(),
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Light
+                        )
+                    }
 
-                Spacer(modifier = Modifier.weight(1f)) // This pushes the Box to the end
+                    Spacer(modifier = Modifier.weight(1f)) // This pushes the Box to the end
 
-                Box(
-                    modifier = Modifier.padding(end = 8.dp),
-                    contentAlignment = Alignment.TopEnd
-                ) {
-                    Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
+                    Box(
+                        modifier = Modifier.padding(end = 8.dp),
+                        contentAlignment = Alignment.TopEnd
+                    ) {
+                        IconButton(onClick = { expandDropdown = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More")
+                        }
+
+
+                        DropdownMenu(
+                            modifier = Modifier.height(100.dp),
+                            expanded = expandDropdown,
+                            onDismissRequest = { expandDropdown = false }) {
+                            moreList.forEach { type ->
+                                if (
+                                    feedViewModel.currentuser == post.postedByUser
+                                    && type != "Report"
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text(type) },
+                                        onClick = {
+                                            if (type == "Delete") {
+                                                feedViewModel.DeletePost(post)
+                                            }
+                                            if (type == "Edit") {
+                                               onEditClick(post)
+                                            }
+                                            Log.d("DeletePost", "PostCard: postDeleted")
+                                            expandDropdown = false // Close the dropdown menu
+                                        }
+                                    )
+
+                                } else if (
+                                    feedViewModel.currentuser != post.postedByUser &&
+                                    type != "Edit" && type !="Delete"
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text(type) },
+                                        onClick = {
+
+                                            expandDropdown = false // Close the dropdown menu
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
                 }
             }
-        }
 
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -203,7 +242,7 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
 
     Box(
         contentAlignment = Alignment.BottomEnd,
-        modifier = Modifier.padding(3.dp)
+        modifier = Modifier.padding(3.dp,end = 5.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

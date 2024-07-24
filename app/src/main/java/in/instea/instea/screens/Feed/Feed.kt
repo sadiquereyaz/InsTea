@@ -46,7 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import `in`.instea.instea.R
-import `in`.instea.instea.data.FeedViewModel
+import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.ui.PostList

@@ -1,5 +1,6 @@
 package `in`.instea.instea.navigation
 
+import EditPost
 import FEED
 import FeedContent
 import androidx.compose.foundation.layout.PaddingValues
@@ -94,6 +95,7 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.AddAcademicInfo.name) {
             AddInfo(navController = navController)
         }
+
 
     }
 }

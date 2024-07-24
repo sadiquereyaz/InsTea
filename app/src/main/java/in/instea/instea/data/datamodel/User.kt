@@ -15,3 +15,7 @@ data class User(
     val hostel: String? = null,
     val roomNo: String? = null
 )
+
+data class userUiState(
+    val userlist: List<User> = mutableListOf()
+)

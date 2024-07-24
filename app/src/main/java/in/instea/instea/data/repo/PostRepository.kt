@@ -23,6 +23,7 @@ interface PostRepository {
     suspend fun insertItem(post: PostData)
     suspend fun updateUpAndDownVote(post: PostData)
     suspend fun UpdateComment(post:PostData)
+    suspend fun Delete(post:PostData)
 }
 
 class CombinedPostRepository(
@@ -57,7 +58,9 @@ class CombinedPostRepository(
         TODO("Not yet implemented")
     }
 
-
+    override suspend fun Delete(post: PostData) {
+        TODO("Not yet implemented")
+    }
 
 
 }
@@ -77,6 +80,9 @@ class LocalPostRepository(
         TODO("Not yet implemented")
     }
 
+    override suspend fun Delete(post: PostData) {
+        TODO("Not yet implemented")
+    }
 
 
 }
@@ -136,6 +142,23 @@ class NetworkPostRepository(
 
     override suspend fun UpdateComment(post: PostData) {
 
+    }
+
+    override suspend fun Delete(post: PostData) {
+        try {
+            val db = Firebase.database.reference
+            val dataSnapshot = db.child("posts").get().await()
+            for (postSnapshot in dataSnapshot.children) {
+                val currentPost = postSnapshot.getValue(PostData::class.java)
+                if (post.postid == currentPost?.postid) {
+                    postSnapshot.ref.removeValue().await()
+                    Log.d("DeletePost", "Post deleted successfully: ${post.postid}")
+                    break
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("DeletePost", "Error deleting post: ${e.message}")
+        }
     }
 }
 
