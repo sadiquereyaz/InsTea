@@ -34,8 +34,8 @@ fun TaskAttendance(
         // task button
         TaskComposable(
             modifier = Modifier.weight(1f),
-            scheduleObj=scheduleObj,
-            upsertTask = {upsertTask(it)}
+            scheduleObj = scheduleObj,
+            upsertTask = upsertTask
         )
         //attendance
         AttendanceComposable(onAttendanceClick, scheduleObj)

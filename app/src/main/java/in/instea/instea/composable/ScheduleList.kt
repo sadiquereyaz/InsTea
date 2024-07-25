@@ -23,7 +23,7 @@ fun ScheduleList(
             .fillMaxSize()
             .padding(top = 16.dp)
     ) {
-        items(items = scheduleUiState.scheduleList, /*key = { it.scheduleId }*/) { scheduleModel ->
+        items(items = scheduleUiState.scheduleList, key = { it.scheduleId }) { scheduleModel ->
             ScheduleItem(
                 scheduleModel = scheduleModel,
                 onEditClick = { navigateToEditSchedule(scheduleModel.scheduleId) },
@@ -34,12 +34,12 @@ fun ScheduleList(
                         attendanceType
                     )
                 },
-                upsertTask = {
+                upsertTask = {task->
 //                    Log.d("ATT", scheduleModel.taskId.toString())
                     upsertTask(
                         scheduleModel.taskId,
                         scheduleModel.scheduleId,
-                        scheduleModel.task ?: ""
+                        task
                     )
                 },
                 repeatReminderSwitchAction = { subName, repeat ->

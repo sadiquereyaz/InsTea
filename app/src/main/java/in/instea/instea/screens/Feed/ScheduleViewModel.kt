@@ -55,7 +55,7 @@ class ScheduleViewModel(
         }
     }
 
-//    private var timestamp: Int = 0      // TODO: check its value on different date click
+    //    private var timestamp: Int = 0      // TODO: check its value on different date click
     fun onDateClick(selectedIndex: Int) {
         // Launch a coroutine to update state in background
         viewModelScope.launch {
@@ -97,15 +97,13 @@ class ScheduleViewModel(
     private fun fetchSchedulesAndTask(/*day: String, timeStamp: Int*/) {
         Log.d("SCHEDULE_FETCH", _uiState.value.selectedDay)
         viewModelScope.launch {
-            scheduleRepository.getScheduleAndTaskList(
-                _uiState.value.selectedDay,
-                _uiState.value.timestamp
-            ).collect { schedules ->
-                _uiState.update {
-                    it.copy(
-                        scheduleList = schedules
+            _uiState.update {
+                it.copy(
+                    scheduleList = scheduleRepository.getScheduleAndTaskList(
+                        _uiState.value.selectedDay,
+                        _uiState.value.timestamp
                     )
-                }
+                )
             }
         }
     }
@@ -118,18 +116,17 @@ class ScheduleViewModel(
                 scheduleId = scheduleId,
                 timeStamp = _uiState.value.timestamp
             )
-            scheduleRepository.getScheduleAndTaskList(
-                _uiState.value.selectedDay,
-                _uiState.value.timestamp
-            ).collect { schedules ->
-                _uiState.update {
-                    it.copy(
-                        scheduleList = schedules
+           /* _uiState.update {
+                it.copy(
+                    scheduleList = scheduleRepository.getScheduleAndTaskList(
+                        _uiState.value.selectedDay,
+                        _uiState.value.timestamp
                     )
-                }
-            }
+                )
+            }*/
         }
     }
+
 
     suspend fun upsertTask(scheduleId: Int, taskId: Int, task: String) {
         scheduleRepository.upsertTask(

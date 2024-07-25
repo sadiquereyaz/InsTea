@@ -5,11 +5,10 @@ import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
-import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {
 
-    fun getScheduleAndTaskList(day: String, timeStamp: Int): Flow<List<CombinedScheduleTaskModel>>
+    suspend fun getScheduleAndTaskList(day: String, timeStamp: Int): List<CombinedScheduleTaskModel>
     suspend fun upsertTask(task: String, taskId: Int, scheduleId: Int, timeStamp: Int)
     suspend fun upsertAttendance(attendance: AttendanceType, taskId: Int, scheduleId: Int, timeStamp: Int)
     suspend fun upsertSchedule(schedule: ScheduleModel)
@@ -21,7 +20,7 @@ interface ScheduleRepository {
 }
 
 class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRepository {
-    override fun getScheduleAndTaskList(day: String, timeStamp: Int): Flow<List<CombinedScheduleTaskModel>> =
+    override suspend fun getScheduleAndTaskList(day: String, timeStamp: Int): List<CombinedScheduleTaskModel> =
         scheduleDao.getScheduleAndTaskList(selectedDay = day, selectedDate = timeStamp)
 
     override suspend fun upsertTask(task: String, taskId: Int, scheduleId: Int, timeStamp: Int) {

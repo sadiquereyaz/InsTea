@@ -171,7 +171,7 @@ fun ScheduleItem(
             }
 
             //task and attendance
-            TaskAttendance(openBottomSheet, scheduleModel, onAttendanceClick, upsertTask = { upsertTask(it) })
+            TaskAttendance(openBottomSheet, scheduleModel, onAttendanceClick, upsertTask = upsertTask)
         }
     }
     // Reminder Dialog

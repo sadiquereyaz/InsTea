@@ -63,7 +63,7 @@ fun AttendanceComposable(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    imageVector = scheduleObj.attendance?.icon ?: Icons.Default.AddTask,
+                    imageVector = attendance?.icon ?: Icons.Default.AddTask,
                     contentDescription = "attendance",
                     modifier = Modifier
                         .size(16.dp))
@@ -100,6 +100,7 @@ fun AttendanceComposable(
                     text = { Text(text = option.title) },
                     onClick = {
                         onAttendanceClick(option)
+                        attendance = option
                         expanded = false
                     }
                 )

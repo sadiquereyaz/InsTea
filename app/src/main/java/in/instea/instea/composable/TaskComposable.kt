@@ -44,8 +44,8 @@ fun TaskComposable(
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     var skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
-    val bottomSheetState =
-        rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
+    var task by rememberSaveable { mutableStateOf(scheduleObj.task) }
     Row(
         modifier = modifier
             .padding(horizontal = 16.dp)
@@ -59,7 +59,7 @@ fun TaskComposable(
             modifier = Modifier.size(16.dp),
         )
         Text(
-            text = scheduleObj.task ?: "Add Task",
+            text = task ?: "Add Task",
             fontSize = 12.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
@@ -76,7 +76,7 @@ fun TaskComposable(
             var remindBefore12Hours by rememberSaveable { mutableStateOf(true) }
             var remindBefore24Hours by rememberSaveable { mutableStateOf(false) }
 
-            var task by remember { mutableStateOf(scheduleObj.task ?:"") }
+//            var task by remember { mutableStateOf(scheduleObj.task ?:"") }
 
             // Reminder Switch
             Column {
@@ -129,7 +129,7 @@ fun TaskComposable(
                         value = task ?: "",
                         onValueChange = {
                             task = it
-                            scheduleObj.task = it
+//                            scheduleObj.task = it
                         },
                         modifier = Modifier
                             .weight(1f)
@@ -145,7 +145,7 @@ fun TaskComposable(
                             .padding(start = 8.dp, end = 16.dp, top = 24.dp),
                         shape = RoundedCornerShape(8),
                         onClick = {
-                            upsertTask(task)
+                            task?.let { upsertTask(it) }
                             scope.launch { bottomSheetState.hide() }
                                 .invokeOnCompletion {
                                     if (!bottomSheetState.isVisible) {
