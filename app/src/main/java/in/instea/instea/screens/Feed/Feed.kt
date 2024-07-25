@@ -65,7 +65,7 @@ fun FEED(
 ) {
     val user by feedViewModel.user.collectAsState()
 
-  PostList(feedViewModel)
+  PostList(feedViewModel,navController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

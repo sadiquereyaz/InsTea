@@ -32,7 +32,7 @@ class FeedViewModel(
     private val mAuth = Firebase.auth
     val db = Firebase.database.reference
     val currentuser = mAuth.currentUser?.uid
-    lateinit var fetchedUsers : List<User>
+     var fetchedUsers : List<User> = emptyList()
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
@@ -45,17 +45,14 @@ class FeedViewModel(
     val posts: StateFlow<List<PostData>> get() = _posts
     private val _user = MutableStateFlow(User())
     val user: StateFlow<User> = _user.asStateFlow()
-    private val _userListState = MutableStateFlow(userUiState())
-    val userListState: StateFlow<userUiState> = _userListState.asStateFlow()
+
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> get() = _isLoading
 
     init {
         viewModelScope.launch {
            fetchPosts()
-            _userListState.update { currentListState->
-                currentListState.copy(fetchUserData())
-            }
+
             fetchedUsers = fetchUserData()
             val currentUser = fetchedUsers.find { it.email == mAuth.currentUser?.email }
 
@@ -278,7 +275,7 @@ class FeedViewModel(
         val userList = mutableListOf<User>()
         try {
             val dataSnapshot =
-                db.child("user").child(mAuth.currentUser!!.uid).get().await() // Fetch all users
+                db.child("user").get().await() // Fetch all users
 
             for (userSnapshot in dataSnapshot.children) {
                 val user = userSnapshot.getValue(User::class.java)

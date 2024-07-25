@@ -89,5 +89,6 @@ dependencies {
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.datastore.preferences)    // data store
+    implementation("androidx.constraintlayout:constraintlayout:2.2.0-alpha13")
 
 }

@@ -45,11 +45,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import `in`.instea.instea.R
 import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.navigation.InsteaScreens
 //import `in`.instea.instea.screens.Feed.CommentList
 
 import kotlinx.coroutines.launch
@@ -58,16 +60,20 @@ import kotlinx.coroutines.launch
 fun PostCard(
     post: PostData,
     feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onEditClick:   (PostData)->Unit
+    navController: NavController,
+    userList: List<User>
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var showComments by remember { mutableStateOf(false) } // State for showing/hiding CommentCard
     var expandDropdown by remember { mutableStateOf(false) }
     val moreList = listOf("Report", "Delete", "Edit")
-     var user : User = User()
-    for (u in feedViewModel.userListState.value.userlist){
-        if(u.userId == post.postedByUser){
+    var user: User = User()
+
+    Log.d("PostCard", "userlist: $userList")
+    for (u in userList) {
+        if (u.userId == post.postedByUser) {
             user = u
+            break
         }
     }
     Box(
@@ -97,7 +103,7 @@ fun PostCard(
                     )
 
                     Column(modifier = Modifier.padding(start = 8.dp)) {
-                        Text(text= if(user.username != null){user.username!!} else "", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(text = if (user.username != null) { user.username!! } else "", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         Text(
                             text = post.timestamp.format(),
                             fontSize = 12.sp,
@@ -115,7 +121,6 @@ fun PostCard(
                             Icon(Icons.Default.MoreVert, contentDescription = "More")
                         }
 
-
                         DropdownMenu(
                             modifier = Modifier.height(100.dp),
                             expanded = expandDropdown,
@@ -132,21 +137,19 @@ fun PostCard(
                                                 feedViewModel.DeletePost(post)
                                             }
                                             if (type == "Edit") {
-                                               onEditClick(post)
+                                                navController.navigate(InsteaScreens.EditPost.name+"/${post.postid}")
                                             }
-                                            Log.d("DeletePost", "PostCard: postDeleted")
                                             expandDropdown = false // Close the dropdown menu
                                         }
                                     )
 
                                 } else if (
                                     feedViewModel.currentuser != post.postedByUser &&
-                                    type != "Edit" && type !="Delete"
+                                    type != "Edit" && type != "Delete"
                                 ) {
                                     DropdownMenuItem(
                                         text = { Text(type) },
                                         onClick = {
-
                                             expandDropdown = false // Close the dropdown menu
                                         }
                                     )
@@ -156,7 +159,6 @@ fun PostCard(
                     }
                 }
             }
-
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -179,7 +181,6 @@ fun PostCard(
                     contentDescription = "Post Image"
                 )
             }
-
 
             // Comment Button and Up/Down Vote Buttons
             Row(

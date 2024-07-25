@@ -3,6 +3,7 @@ package `in`.instea.instea.navigation
 import EditPost
 import FEED
 import FeedContent
+import InboxScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -14,7 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfileScreen
-import `in`.instea.instea.screens.InboxScreen
+
 import `in`.instea.instea.screens.auth.AddInfo
 import `in`.instea.instea.screens.auth.SignInScreen
 import `in`.instea.instea.screens.auth.SignUpScreen
@@ -33,7 +34,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.SelfProfile.name,
+        startDestination = InsteaScreens.SignIn.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -52,7 +53,7 @@ fun InsteaNavHost(
             )
         }
         composable(route = InsteaScreens.Inbox.name) {
-            InboxScreen(navController = navController)
+           InboxScreen()
         }
         composable(route = InsteaScreens.Schedule.name) {
             ScheduleScreen(
@@ -95,7 +96,10 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.AddAcademicInfo.name) {
             AddInfo(navController = navController)
         }
-
+        composable(route = InsteaScreens.EditPost.name+"/{postId}"){ backstackEntry->
+            val post = backstackEntry.arguments?.getString("postId")
+            EditPost(post!!)
+        }
 
     }
 }

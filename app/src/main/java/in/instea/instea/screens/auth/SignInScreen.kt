@@ -46,7 +46,7 @@ fun SignInScreen(
     ) {
     val viewModel: SignInViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val signInUiState by viewModel.uiState.collectAsState()
-    var email by rememberSaveable { mutableStateOf("sadique@gmail.com") }
+    var email by rememberSaveable { mutableStateOf("mah@gmail.com") }
     var password by rememberSaveable { mutableStateOf("ssssss") }
 
     Column(

@@ -18,13 +18,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
 import `in`.instea.instea.data.viewmodel.FeedViewModel
 
 @Composable
-fun PostList(feedViewModel: FeedViewModel) {
+fun PostList(feedViewModel: FeedViewModel,navController: NavController) {
     val posts = feedViewModel.posts.collectAsState(initial = emptyList()).value.reversed()
-
+    val userList = feedViewModel.fetchedUsers
     if (feedViewModel.isLoading.value) {
         Column {
             repeat(8) {
@@ -36,7 +37,7 @@ fun PostList(feedViewModel: FeedViewModel) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(8.dp)
         ) {
-            items(posts) { post -> PostCard(post = post, onEditClick = { })
+            items(posts) { post -> PostCard(post = post, navController=navController, userList = userList)
             }
 
             }

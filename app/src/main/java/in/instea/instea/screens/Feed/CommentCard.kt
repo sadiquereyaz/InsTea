@@ -112,10 +112,8 @@ fun CommentCard(comment:Comments,post: PostData){
                 Spacer(modifier = Modifier.height(12.dp))
 
 
-                Column {
 
-                }
-
+                Spacer(modifier = Modifier.weight(1f))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -164,24 +162,24 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
             horizontalArrangement = Arrangement.spacedBy(8.dp) // Custom spacing between elements
         ) {
 //            for reply
-            Button(
-                onClick = {
-                    showComments = !showComments
-                          onReplyClick(!showReply)},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Unspecified
-                ),
-                modifier = Modifier
-                    .padding(0.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.chatbubble),
-                    contentDescription = "",
-                    modifier = Modifier.size(20.dp)
-                )
-            }
+//            Button(
+//                onClick = {
+//                    showComments = !showComments
+//                          onReplyClick(!showReply)},
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = Color.Transparent,
+//                    contentColor = Color.Unspecified
+//                ),
+//                modifier = Modifier
+//                    .padding(0.dp)
+//                    .align(Alignment.CenterVertically)
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.chatbubble),
+//                    contentDescription = "",
+//                    modifier = Modifier.size(20.dp)
+//                )
+//            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -281,14 +279,14 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
 
                 )
                 Spacer(modifier = Modifier.width(20.dp).height(10.dp))
-                Box(
-                    modifier = Modifier.padding(end = 8.dp)
-                ) {
-                    Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
-                val list = listOf("Report","Edit Comment")
-
-
-                }
+//                Box(
+//                    modifier = Modifier.padding(end = 8.dp)
+//                ) {
+//                    Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
+//                val list = listOf("Report","Edit Comment")
+//
+//
+//                }
 
             }
         }
