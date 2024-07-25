@@ -72,9 +72,7 @@ fun ScheduleItem(
     val bottomSheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
 
-    var showReminderDialog by rememberSaveable {
-        mutableStateOf(false)
-    }
+    var showReminderDialog by rememberSaveable { mutableStateOf(false) }
 
     Row(
         modifier = modifier.fillMaxWidth()

@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.screens.schedule.ScheduleUiState
+import kotlinx.coroutines.coroutineScope
 
 @Composable
 fun ScheduleList(
@@ -22,7 +23,7 @@ fun ScheduleList(
             .fillMaxSize()
             .padding(top = 16.dp)
     ) {
-        items(items = scheduleUiState.classList, key = { it.scheduleId }) { scheduleModel ->
+        items(items = scheduleUiState.scheduleList, /*key = { it.scheduleId }*/) { scheduleModel ->
             ScheduleItem(
                 scheduleModel = scheduleModel,
                 onEditClick = { navigateToEditSchedule(scheduleModel.scheduleId) },

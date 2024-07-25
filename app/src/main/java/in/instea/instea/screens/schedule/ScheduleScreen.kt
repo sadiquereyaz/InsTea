@@ -19,7 +19,7 @@ import `in`.instea.instea.composable.AddClassButton
 import `in`.instea.instea.composable.CalendarComposable
 import `in`.instea.instea.composable.ScheduleList
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
-import `in`.instea.instea.data.viewmodel.ScheduleViewModel
+import `in`.instea.instea.screens.Feed.ScheduleViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -28,7 +28,7 @@ fun ScheduleScreen(
     viewModel: ScheduleViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navigateToEditSchedule: (Int, String) -> Unit,
 ) {
-    val uiState by viewModel.scheduleUiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -67,20 +67,20 @@ fun ScheduleScreen(
         ScheduleList(
             scheduleUiState = uiState,
             onAttendanceClick = { taskId: Int, scheduleId: Int, attendance ->
-//                coroutineScope.launch {
+                coroutineScope.launch {
                     viewModel.upsertAttendance(
                         taskId = taskId,
                         attendance = attendance,
                         scheduleId = scheduleId
                     )
-//                }
+                }
             },
             upsertTask = { taskId: Int, scheduleId: Int, task: String ->
                 coroutineScope.launch {
                     viewModel.upsertTask(taskId = taskId, scheduleId = scheduleId, task = task)
                 }
             },
-            navigateToEditSchedule = {id:Int->
+            navigateToEditSchedule = { id: Int ->
                 navigateToEditSchedule(id, uiState.selectedDay)
             },
         )

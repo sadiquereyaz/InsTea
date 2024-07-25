@@ -8,19 +8,10 @@ import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {
-    fun getClassListByDayAndTaskByDate(
-        day: String,
-        timeStamp: Int
-    ): Flow<List<CombinedScheduleTaskModel>>
 
+    fun getScheduleAndTaskList(day: String, timeStamp: Int): Flow<List<CombinedScheduleTaskModel>>
     suspend fun upsertTask(task: String, taskId: Int, scheduleId: Int, timeStamp: Int)
-    suspend fun upsertAttendance(
-        attendance: AttendanceType,
-        taskId: Int,
-        scheduleId: Int,
-        timeStamp: Int
-    )
-
+    suspend fun upsertAttendance(attendance: AttendanceType, taskId: Int, scheduleId: Int, timeStamp: Int)
     suspend fun upsertSchedule(schedule: ScheduleModel)
     suspend fun getScheduleById(id: Int): ScheduleModel
     suspend fun getAllSubjects(): List<String>
@@ -29,35 +20,19 @@ interface ScheduleRepository {
 
 }
 
-class LocalScheduleRepository(
-    private val scheduleDao: ScheduleDao
-) : ScheduleRepository {
-    override fun getClassListByDayAndTaskByDate(
-        day: String,
-        timeStamp: Int
-    ): Flow<List<CombinedScheduleTaskModel>> =
-        scheduleDao.getClassesWithTasksByDayAndDate(selectedDay = day, selectedDate = timeStamp)
+class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRepository {
+    override fun getScheduleAndTaskList(day: String, timeStamp: Int): Flow<List<CombinedScheduleTaskModel>> =
+        scheduleDao.getScheduleAndTaskList(selectedDay = day, selectedDate = timeStamp)
 
     override suspend fun upsertTask(task: String, taskId: Int, scheduleId: Int, timeStamp: Int) {
         if (taskId == 0) {
-            scheduleDao.insertTask(
-                TaskAttendanceModel(
-                    task = task,
-                    scheduleId = scheduleId,
-                    timestamp = timeStamp
-                )
-            )
+            scheduleDao.insertTask(TaskAttendanceModel(task = task, scheduleId = scheduleId, timestamp = timeStamp))
         } else {
             scheduleDao.updateTask(taskId = taskId, task = task)
         }
     }
 
-    override suspend fun upsertAttendance(
-        attendance: AttendanceType,
-        taskId: Int,
-        scheduleId: Int,
-        timeStamp: Int
-    ) {
+    override suspend fun upsertAttendance(attendance: AttendanceType, taskId: Int, scheduleId: Int, timeStamp: Int) {
         if (taskId == 0) {
             scheduleDao.insertAttendance(TaskAttendanceModel(attendance = attendance, scheduleId = scheduleId, timestamp = timeStamp))
         } else {

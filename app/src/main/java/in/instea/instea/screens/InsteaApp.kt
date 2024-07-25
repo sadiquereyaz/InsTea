@@ -19,7 +19,6 @@ import `in`.instea.instea.composable.InsteaTopAppBar
 import `in`.instea.instea.data.BottomNavItemData
 import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.navigation.InsteaScreens
-import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import `in`.instea.instea.navigation.InsteaNavHost
 
 @OptIn(ExperimentalMaterial3Api::class)

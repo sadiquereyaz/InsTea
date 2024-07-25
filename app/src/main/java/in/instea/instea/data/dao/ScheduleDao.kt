@@ -10,7 +10,6 @@ import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 import kotlinx.coroutines.flow.Flow
-import java.time.LocalTime
 
 @Dao
 interface ScheduleDao {
@@ -65,7 +64,7 @@ interface ScheduleDao {
         WHERE s.day = :selectedDay ORDER BY s.startTime
     """
     )
-    fun getClassesWithTasksByDayAndDate(selectedDay: String, selectedDate: Int): Flow<List<CombinedScheduleTaskModel>>
+    fun getScheduleAndTaskList(selectedDay: String, selectedDate: Int): Flow<List<CombinedScheduleTaskModel>>
 
     @Query("SELECT * FROM schedule WHERE scheduleId = :id")
     suspend fun getScheduleById(id: Int): ScheduleModel

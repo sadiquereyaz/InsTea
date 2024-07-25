@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,6 +40,7 @@ fun AttendanceComposable(
     onAttendanceClick: (AttendanceType) -> Unit,
     scheduleObj: CombinedScheduleTaskModel
 ) {
+    var attendance by rememberSaveable { mutableStateOf(scheduleObj.attendance) }
     Box {
         var expanded by remember { mutableStateOf(false) }
         var coroutineScope = rememberCoroutineScope()
@@ -54,6 +56,7 @@ fun AttendanceComposable(
                 modifier = Modifier
                     .clickable {
                         coroutineScope.launch {
+                            attendance = AttendanceType.Present
                             onAttendanceClick(AttendanceType.Present)
                         }
                     },
@@ -66,7 +69,7 @@ fun AttendanceComposable(
                         .size(16.dp))
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
-                    text = scheduleObj.attendance?.title ?: AttendanceType.MarkAttendance.title,
+                    text = attendance?.title ?: AttendanceType.MarkAttendance.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 12.sp
