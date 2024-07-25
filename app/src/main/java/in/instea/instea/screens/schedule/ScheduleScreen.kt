@@ -19,7 +19,7 @@ import `in`.instea.instea.composable.AddClassButton
 import `in`.instea.instea.composable.CalendarComposable
 import `in`.instea.instea.composable.ScheduleList
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
-import `in`.instea.instea.screens.Feed.ScheduleViewModel
+import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import kotlinx.coroutines.launch
 
 @Composable
@@ -37,7 +37,6 @@ fun ScheduleScreen(
         val initialIndex = 13
         listState.scrollToItem(initialIndex - 1)
     }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -66,18 +65,14 @@ fun ScheduleScreen(
         // schedule list
         ScheduleList(
             scheduleUiState = uiState,
-            onAttendanceClick = { taskId: Int, scheduleId: Int, attendance ->
+            onAttendanceClick = {scheduleId: Int, attendance ->
                 coroutineScope.launch {
-                    viewModel.upsertAttendance(
-                        taskId = taskId,
-                        attendance = attendance,
-                        scheduleId = scheduleId
-                    )
+                    viewModel.upsertAttendance(attendance = attendance, scheduleId = scheduleId)
                 }
             },
-            upsertTask = { taskId: Int, scheduleId: Int, task: String ->
+            upsertTask = {scheduleId: Int, task: String ->
                 coroutineScope.launch {
-                    viewModel.upsertTask(taskId = taskId, scheduleId = scheduleId, task = task)
+                    viewModel.upsertTask(scheduleId = scheduleId, task = task)
                 }
             },
             navigateToEditSchedule = { id: Int ->

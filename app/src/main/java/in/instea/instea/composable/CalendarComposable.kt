@@ -44,7 +44,8 @@ fun CalendarComposable(
     DayDate(
         listState,
         uiState,
-        onDateSelect = { onDateClick(it) })
+        onDateSelect = onDateClick
+    )
 }
 
 @Composable

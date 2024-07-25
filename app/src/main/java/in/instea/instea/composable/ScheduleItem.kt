@@ -60,18 +60,10 @@ fun ScheduleItem(
     reminderOn: Boolean,
     upsertTask: (String)->Unit
 ) {
-//    val attendanceModifier = Modifier.clickable {
-//        attendanceType = AttendanceType.Present
-//    }
-
-//    var at by rememberSaveable{ mutableStateOf(attendanceType) }
-
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     var skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
-    val bottomSheetState =
-        rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
-
+    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
     var showReminderDialog by rememberSaveable { mutableStateOf(false) }
 
     Row(

@@ -7,7 +7,6 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import `in`.instea.instea.InsteaApplication
 import `in`.instea.instea.data.FeedViewModel
-import `in`.instea.instea.screens.Feed.ScheduleViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -59,7 +58,7 @@ object AppViewModelProvider {
         initializer {
             EditScheduleViewModel(
                 savedStateHandle = this.createSavedStateHandle(),
-                scheduleRepository = insteaApplication().container.scheduleRepository
+                scheduleRepository = insteaApplication().container.scheduleRepository,
             )
         }
     }

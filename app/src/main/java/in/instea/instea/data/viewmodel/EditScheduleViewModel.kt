@@ -17,7 +17,7 @@ import java.time.LocalTime
 
 class EditScheduleViewModel(
     savedStateHandle: SavedStateHandle,
-    val scheduleRepository: ScheduleRepository
+    val scheduleRepository: ScheduleRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditScheduleUiState())
     val uiState: StateFlow<EditScheduleUiState> = _uiState

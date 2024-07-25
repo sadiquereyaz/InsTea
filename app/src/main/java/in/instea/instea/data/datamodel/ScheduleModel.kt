@@ -83,12 +83,13 @@ class TimeConverters {
     }
 }
 
-@Entity(tableName = "taskAttendance")
+@Entity(
+    tableName = "taskAttendance",
+    primaryKeys = ["scheduleId", "timestamp"]   //composite key
+)
 data class TaskAttendanceModel(
-    @PrimaryKey(autoGenerate = true)
-    val taskId: Int = 0,
-    val scheduleId: Int? = null, // Foreign key referencing ScheduleModel
-    val timestamp: Int? = null, // Timestamp to track the date
+    val scheduleId: Int, // Foreign key referencing ScheduleModel
+    val timestamp: Int, // Timestamp to track the date
     var attendance: AttendanceType? = null,  // Task or note for the class on the specific date
     var task: String? = null,  // Task or note for the class on the specific date
     val taskReminder: Boolean? = null
@@ -99,13 +100,12 @@ data class CombinedScheduleTaskModel(
     val startTime: LocalTime,
     val endTime: LocalTime,
     val day: String,
-    val dailyReminder: Boolean,
-    val taskId: Int,
-    val timestamp: Long?,
-    val subject: String?,
+    val dailyReminder: Boolean? = false,
+    val timestamp: Int? = null,
+    val subject: String? = null,
     val attendance: AttendanceType? = AttendanceType.MarkAttendance,
-    var task: String?,
-    val taskReminder: Boolean?
+    var task: String? = null,
+    val taskReminder: Boolean? = false
 )
 
 
