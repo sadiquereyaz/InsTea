@@ -1,5 +1,6 @@
 package `in`.instea.instea.data
 
+import NetwrokChatRepository
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.auth.FirebaseAuth
@@ -29,6 +30,7 @@ interface AppContainer {
     val localPostRepository:LocalPostRepository
 //    val userPreferenceRepository: UserPreferenceRepository
     val academicRepository: AcademicRepository
+    val netwrokChatRepository: NetwrokChatRepository
 }
 
 private const val CURRENT_USER = "current_user"
@@ -71,6 +73,9 @@ class AppDataContainer(
     }
     override val localPostRepository: LocalPostRepository by lazy {
        LocalPostRepository(postDao = roomDatabase.postDao())
+    }
+    override val netwrokChatRepository: NetwrokChatRepository by lazy{
+      NetwrokChatRepository()
     }
 
 

@@ -88,7 +88,9 @@ fun PostCard(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().clickable {
+                    navController.navigate(InsteaScreens.Inbox.name+"/${if(user.userId != null) user.userId else " "}")
+                }
             ) {
                 (if (post.profileImage != null) post.profileImage
                 else R.drawable.ic_launcher_foreground)?.let {

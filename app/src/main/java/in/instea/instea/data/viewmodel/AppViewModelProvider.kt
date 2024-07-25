@@ -1,5 +1,6 @@
 package `in`.instea.instea.data.viewmodel
 
+import ChatviewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -57,6 +58,11 @@ object AppViewModelProvider {
             EditScheduleViewModel(
                 savedStateHandle = this.createSavedStateHandle(),
                 scheduleRepository = insteaApplication().container.scheduleRepository
+            )
+        }
+        initializer {
+            ChatviewModel(
+                netWorkChatRepository = insteaApplication().container.netwrokChatRepository
             )
         }
     }

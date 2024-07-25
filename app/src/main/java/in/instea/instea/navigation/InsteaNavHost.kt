@@ -52,8 +52,10 @@ fun InsteaNavHost(
 //                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
             )
         }
-        composable(route = InsteaScreens.Inbox.name) {
-           InboxScreen()
+
+        composable(route = InsteaScreens.Inbox.name+"/{userId}") {backStackEntry->
+            val userId = backStackEntry.arguments?.getString("userId")
+           InboxScreen(userId!!)
         }
         composable(route = InsteaScreens.Schedule.name) {
             ScheduleScreen(
