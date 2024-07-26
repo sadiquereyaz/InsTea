@@ -92,11 +92,11 @@ fun InsteaTopAppBar(
                         contentDescription = "Edit Profile"
                     )
                 }
-            } else if (currentScreen == InsteaScreens.EditProfile) {
+            }/* else if (currentScreen == InsteaScreens.EditProfile) {
                 IconButton(onClick = { navController.navigate(InsteaScreens.EditProfile.name) }) {
                     Icon(imageVector = Icons.Default.Check, contentDescription = "Edit Profile")
                 }
-            }
+            }*/
         }
     )
 }
