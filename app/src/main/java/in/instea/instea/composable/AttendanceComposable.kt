@@ -30,6 +30,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,7 +44,7 @@ fun AttendanceComposable(
     scheduleObj: CombinedScheduleTaskModel
 ) {
     var attendance by rememberSaveable { mutableStateOf(scheduleObj.attendance) }
-    LaunchedEffect(scheduleObj) {
+    LaunchedEffect(scheduleObj.attendance) {
         attendance = scheduleObj.attendance
     }
 /*    Log.d("ATTENDANCE_OBJ", scheduleObj.attendance.toString())
@@ -72,8 +73,10 @@ fun AttendanceComposable(
                 // attendance icon
                 Icon(
                     imageVector = attendance?.icon ?: Icons.Default.AddTask,
+                    tint = attendance?.tint ?: MaterialTheme.colorScheme.onBackground,
                     contentDescription = "attendance",
-                    modifier = Modifier.size(24.dp).padding(horizontal = 4.dp))
+                    modifier = Modifier.size(24.dp).padding(horizontal = 4.dp)
+                )
 
                 // attendance text
                 Text(
