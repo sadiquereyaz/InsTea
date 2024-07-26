@@ -53,6 +53,7 @@ class EditScheduleViewModel(
                 }
                 _uiState.value = _uiState.value.copy(
                     subjectList = subjects,
+                    selectedSubject = day,
                     selectedDay = day,
                     scheduleId = scheduleId,
                     isLoading = false

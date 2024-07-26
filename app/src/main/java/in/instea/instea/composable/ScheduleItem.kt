@@ -1,5 +1,6 @@
 package `in`.instea.instea.composable
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -28,10 +29,12 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,7 +53,7 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScheduleItem(
-    scheduleModel: CombinedScheduleTaskModel,
+    scheduleObj: CombinedScheduleTaskModel,
     modifier: Modifier = Modifier,
     isBubbleFilled: Boolean = false,
     onReminderClick: () -> Unit = {},
@@ -65,6 +68,17 @@ fun ScheduleItem(
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
     var showReminderDialog by rememberSaveable { mutableStateOf(false) }
+//    Log.d("TASK_EACH", scheduleModel.task.toString())     //correct
+
+    var obj by remember { mutableStateOf(scheduleObj) }
+    Log.d("ATTENDANCE_OBJ", "ScheduleObj Attendance: ${scheduleObj.attendance} date: ${(scheduleObj.timestamp)?.rem(100)}")
+    Log.d("ATTENDANCE_Muta", "Local Attendance: ${scheduleObj.attendance} date: ${(obj.timestamp)?.rem(100)}")
+
+    LaunchedEffect(scheduleObj.attendance) {
+        Log.d("ATTENDANCE_OBJ_UPDATE", "Updated scheduleObj: ${scheduleObj.attendance} date: ${(scheduleObj.timestamp)?.rem(100)}")
+        obj = scheduleObj
+    }
+
 
     Row(
         modifier = modifier.fillMaxWidth()
@@ -74,8 +88,8 @@ fun ScheduleItem(
             horizontalAlignment = Alignment.End
         ) {
             //time
-            Text(text = scheduleModel.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 14.sp)
-            Text(text = scheduleModel.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 10.sp)
+            Text(text = scheduleObj.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 14.sp)
+            Text(text = scheduleObj.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 10.sp)
         }
         //bubble and vertical line
         Box(
@@ -147,7 +161,7 @@ fun ScheduleItem(
                 Text(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
-                    text = scheduleModel.subject?:"",
+                    text = scheduleObj.subject?:"",
                     fontWeight = FontWeight.Bold, fontSize = 20.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -163,7 +177,7 @@ fun ScheduleItem(
             }
 
             //task and attendance
-            TaskAttendance(openBottomSheet, scheduleModel, onAttendanceClick, upsertTask = upsertTask)
+            TaskAttendance(openBottomSheet, scheduleObj, onAttendanceClick, upsertTask = upsertTask)
         }
     }
     // Reminder Dialog

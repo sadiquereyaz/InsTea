@@ -25,9 +25,9 @@ fun ScheduleList(
     ) {
 //        Log.d("LIST", scheduleUiState.scheduleList.toString() ) // correct list
         items(items = scheduleUiState.scheduleList) { scheduleModel ->
-            Log.d("CURRENT_TASK", "${scheduleModel.subject} ${scheduleModel.task}")
+//            Log.d("CURRENT_TASK", "subject name: ${scheduleModel.subject} \ntask: ${scheduleModel.task}")
             ScheduleItem(
-                scheduleModel = scheduleModel,
+                scheduleObj = scheduleModel,
                 onEditClick = { navigateToEditSchedule(scheduleModel.scheduleId) },
                 onAttendanceClick = { attendanceType ->
                     onAttendanceClick(scheduleModel.scheduleId, attendanceType)

@@ -1,5 +1,6 @@
 package `in`.instea.instea.composable
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,6 +24,10 @@ fun TaskAttendance(
     upsertTask: (String) -> Unit,
 
     ) {
+   // Log.d("TASK_EACH", scheduleObj.task.toString())   //correct
+    /*var attendance by rememberSaveable { mutableStateOf(scheduleObj.attendance) }
+    Log.d("ATTENDANCE_OBJ", scheduleObj.attendance.toString())
+    Log.d("ATTENDANCE_Muta", attendance.toString())*/
     var openBottomSheet1 = openBottomSheet
     Row(
         modifier = Modifier

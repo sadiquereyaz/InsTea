@@ -21,6 +21,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,10 +44,17 @@ fun TaskComposable(
     upsertTask:(String)->Unit
 ) {
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
-    var skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
+    val skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
     var task by rememberSaveable { mutableStateOf(scheduleObj.task) }
+    LaunchedEffect(scheduleObj.task) {
+        task = scheduleObj.task
+    }
+
+    /*var attendance by rememberSaveable { mutableStateOf(scheduleObj.attendance) }
+    Log.d("ATTENDANCE_OBJ", scheduleObj.attendance.toString())
+    Log.d("ATTENDANCE_Mut", attendance.toString())*/
 
     Row(
         modifier = modifier

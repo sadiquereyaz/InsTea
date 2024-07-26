@@ -1,6 +1,5 @@
 package `in`.instea.instea.data.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.AttendanceType
@@ -74,17 +73,19 @@ class ScheduleViewModel(
             val selectedDay = selectedDateCalendar.getDisplayName(
                 Calendar.DAY_OF_WEEK, Calendar.SHORT, Locale.getDefault()
             ) ?: ""
+            val timestamp = getTimestampForSelectedDay(selectedDateCalendar.time)
+            val scheduleList = scheduleRepository.getScheduleAndTaskList(selectedDay, timestamp)
             _uiState.update {
                 it.copy(
+                    scheduleList = scheduleList,
                     selectedMonth = selectedMonth,
                     selectedYear = selectedYear,
                     selectedDateIndex = selectedIndex,
                     selectedDay = selectedDay,
-                    timestamp = getTimestampForSelectedDay(selectedDateCalendar.time)
+                    timestamp = timestamp
                 )
             }
-//            timestamp = getTimestampForSelectedDay(selectedDateCalendar.time)
-            fetchSchedulesAndTask(/*selectedDay, timestamp*/)
+
         }
     }
 
@@ -92,20 +93,6 @@ class ScheduleViewModel(
         val formatter = SimpleDateFormat("yyMMdd", Locale.getDefault()) // format for YYMMDD
         val formattedDate = formatter.format(selectedDate)
         return formattedDate.toInt() // convert formatted string to Long
-    }
-
-    private fun fetchSchedulesAndTask(/*day: String, timeStamp: Int*/) {
-        Log.d("SCHEDULE_FETCH", _uiState.value.selectedDay)
-        viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    scheduleList = scheduleRepository.getScheduleAndTaskList(
-                        _uiState.value.selectedDay,
-                        _uiState.value.timestamp
-                    )
-                )
-            }
-        }
     }
 
     fun upsertAttendance(scheduleId: Int, attendance: AttendanceType) {
