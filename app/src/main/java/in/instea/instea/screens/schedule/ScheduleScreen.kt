@@ -1,10 +1,17 @@
 package `in`.instea.instea.screens.schedule
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -12,14 +19,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import `in`.instea.instea.composable.AddClassButton
 import `in`.instea.instea.composable.CalendarComposable
 import `in`.instea.instea.composable.ScheduleList
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,23 +64,41 @@ fun ScheduleScreen(
             }
         )
         //add class
-        AddClassButton(
-            modifier = Modifier
-                .align(Alignment.End)
-                .clickable {
-                    navigateToEditSchedule(0, uiState.selectedDay)
-                },
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(top = 24.dp)
+        ) {
+            IconTextBtn(
+                onClick = {viewModel.onDateClick(uiState.selectedDateIndex) },
+                btnText = "Refresh",
+                btnIcon = Icons.Default.Refresh
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            IconTextBtn(
+                onClick = { navigateToEditSchedule(0, uiState.selectedDay) },
+                btnIcon = Icons.Default.Add,
+                btnText = "Add",
+            )
+            /*  AddClassButton(
+                  modifier = Modifier
+                      .clickable {
+                          navigateToEditSchedule(0, uiState.selectedDay)
+                      },
+              )*/
+
+        }
 
         // schedule list
         ScheduleList(
             scheduleUiState = uiState,
-            onAttendanceClick = {scheduleId: Int, attendance ->
+            onAttendanceClick = { scheduleId: Int, attendance ->
                 coroutineScope.launch {
                     viewModel.upsertAttendance(attendance = attendance, scheduleId = scheduleId)
                 }
             },
-            upsertTask = {scheduleId: Int, task: String ->
+            upsertTask = { scheduleId: Int, task: String ->
                 coroutineScope.launch {
                     viewModel.upsertTask(scheduleId = scheduleId, task = task)
                 }
@@ -78,6 +106,23 @@ fun ScheduleScreen(
             navigateToEditSchedule = { id: Int ->
                 navigateToEditSchedule(id, uiState.selectedDay)
             },
+        )
+    }
+}
+
+@Composable
+private fun IconTextBtn(
+    onClick: () -> Unit,
+    btnIcon: ImageVector,
+    btnText: String,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    TextButton(onClick = { coroutineScope.launch { onClick() } }) {
+        Icon(imageVector = btnIcon, contentDescription = "Refresh")
+        Text(
+            text = btnText, modifier = Modifier.padding(start = 4.dp),
+            fontWeight = FontWeight.Normal,
+            fontSize = 18.sp
         )
     }
 }
