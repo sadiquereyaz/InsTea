@@ -47,9 +47,10 @@ fun TaskComposable(
     val skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
-    var task by rememberSaveable { mutableStateOf(scheduleObj.task) }
-    LaunchedEffect(scheduleObj.task) {
-        task = scheduleObj.task
+    val roomTask = scheduleObj.task
+    var task by rememberSaveable { mutableStateOf(roomTask) }
+    LaunchedEffect(roomTask) {
+        task = roomTask
     }
 
     /*var attendance by rememberSaveable { mutableStateOf(scheduleObj.attendance) }

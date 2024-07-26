@@ -81,13 +81,6 @@ fun ScheduleScreen(
                 btnIcon = Icons.Default.Add,
                 btnText = "Add",
             )
-            /*  AddClassButton(
-                  modifier = Modifier
-                      .clickable {
-                          navigateToEditSchedule(0, uiState.selectedDay)
-                      },
-              )*/
-
         }
 
         // schedule list
@@ -103,8 +96,8 @@ fun ScheduleScreen(
                     viewModel.upsertTask(scheduleId = scheduleId, task = task)
                 }
             },
-            navigateToEditSchedule = { id: Int ->
-                navigateToEditSchedule(id, uiState.selectedDay)
+            navigateToEditSchedule = { scheduleId: Int ->
+                navigateToEditSchedule(scheduleId, uiState.selectedDay)
             },
         )
     }

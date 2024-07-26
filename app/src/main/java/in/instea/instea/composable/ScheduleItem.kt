@@ -34,7 +34,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -65,7 +64,7 @@ fun ScheduleItem(
 ) {
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     var skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
-    val scope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
     var showReminderDialog by rememberSaveable { mutableStateOf(false) }
 //    Log.d("TASK_EACH", scheduleModel.task.toString())     //correct
@@ -302,7 +301,7 @@ fun ScheduleItem(
                             .padding(start = 8.dp, end = 16.dp, top = 24.dp),
                         shape = RoundedCornerShape(8),
                         onClick = {
-                            scope.launch { bottomSheetState.hide() }
+                            coroutineScope.launch { bottomSheetState.hide() }
                                 .invokeOnCompletion {
                                     if (!bottomSheetState.isVisible) {
                                         openBottomSheet = false

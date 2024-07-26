@@ -1,6 +1,5 @@
 package `in`.instea.instea.composable
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,7 +29,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,9 +41,10 @@ fun AttendanceComposable(
     onAttendanceClick: (AttendanceType) -> Unit,
     scheduleObj: CombinedScheduleTaskModel
 ) {
-    var attendance by rememberSaveable { mutableStateOf(scheduleObj.attendance) }
-    LaunchedEffect(scheduleObj.attendance) {
-        attendance = scheduleObj.attendance
+    val roomAttendance = scheduleObj.attendance
+    var attendance by rememberSaveable { mutableStateOf(roomAttendance) }
+    LaunchedEffect(roomAttendance) {
+        attendance = roomAttendance
     }
 /*    Log.d("ATTENDANCE_OBJ", scheduleObj.attendance.toString())
     Log.d("ATTENDANCE_Mutable", attendance.toString())*/
