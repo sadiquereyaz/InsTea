@@ -2,7 +2,7 @@ package `in`.instea.instea.navigation
 
 import FEED
 import FeedContent
-import MoreScreen
+import `in`.instea.instea.screens.more.MoreScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -33,7 +33,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.SelfProfile.name,
+        startDestination = InsteaScreens.More.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {

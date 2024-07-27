@@ -51,6 +51,14 @@ data class TaskModel(
     val reminderBefore: String = "24:00",
     val task: String = "Assignment submit on monday"
 )
+data class SubjectAttendanceSummaryModel(
+    val subject: String,
+    val totalClasses: Int,
+    val attendedClasses: Int,
+    val absentClasses: Int,
+    val percentage: Float? = 89f,    //
+)
+
 
 @Entity(tableName = "schedule")
 data class ScheduleModel(

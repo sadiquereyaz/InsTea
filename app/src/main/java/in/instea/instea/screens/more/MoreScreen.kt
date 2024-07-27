@@ -1,3 +1,5 @@
+package `in`.instea.instea.screens.more
+
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,18 +30,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.`in`.instea.instea.screens.more.composable.AllTask
 import `in`.`in`.instea.instea.screens.more.composable.classmates
-import `in`.instea.instea.screens.more.composable.Developers
+import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.data.viewmodel.MoreViewModel
 import `in`.instea.instea.screens.more.composable.Account
 import `in`.instea.instea.screens.more.composable.AttendanceComp
+import `in`.instea.instea.screens.more.composable.Developers
 import `in`.instea.instea.screens.more.composable.report
 
 @Composable
-fun MoreScreen(modifier: Modifier = Modifier) {
+fun MoreScreen(
+    modifier: Modifier = Modifier,
+    viewModel: MoreViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
     val items =
         listOf("Developers", "All Task", "Account", "Attendance Record", "Classmates", "Report")
     var expandedIndex by remember { mutableStateOf<Int?>(null) }
+    val uiState by viewModel.uiState.collectAsState()
 
     LazyColumn(
         modifier = modifier
@@ -47,6 +57,8 @@ fun MoreScreen(modifier: Modifier = Modifier) {
     ) {
         items(items.size) { index ->
             ExpandableItem(
+                uiState = uiState,
+                viewModel = viewModel,
                 title = items[index],
                 isExpanded = (index == expandedIndex),
                 onExpandChange = { expandedIndex = if (expandedIndex == index) null else index })
@@ -59,22 +71,10 @@ fun ExpandableItem(
     title: String,
     isExpanded: Boolean,
     onExpandChange: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    uiState: MoreUiState,
+    viewModel: MoreViewModel
 ) {
-    /*  Card(
-          modifier = modifier
-              .clickable { onExpandChange() }
-              .fillMaxWidth()
-              .padding(vertical = 4.dp)
-              .border(
-                  width = 1.dp,
-                  shape = RoundedCornerShape(8.dp),
-                  color = MaterialTheme.colorScheme.error
-              ),
-          border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
-          elevation = CardDefaults.elevatedCardElevation(4.dp),
-          colors = CardDefaults.cardColors(MaterialTheme.colorScheme.primary)
-      ) {*/
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -116,7 +116,7 @@ fun ExpandableItem(
 //                    .padding(bottom = 16.dp)
                     .heightIn(max = 400.dp, min = 75.dp)
             ) {
-                Divider(modifier = Modifier.padding())
+                Divider(modifier = Modifier)
 
                 when (title) {
                     "Developers" -> {
@@ -124,7 +124,12 @@ fun ExpandableItem(
                     }
 
                     "Attendance Record" -> {
-                        AttendanceComp()
+                        AttendanceComp(
+                            uiState = uiState,
+                            onMonthSelected = {month->
+                                viewModel.onMonthSelected(month)
+                            }
+                        )
                     }
 
                     "All Task" -> {

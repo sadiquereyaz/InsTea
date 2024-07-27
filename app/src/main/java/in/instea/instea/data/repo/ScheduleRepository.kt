@@ -4,6 +4,7 @@ import `in`.instea.instea.data.dao.ScheduleDao
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
+import `in`.instea.instea.data.datamodel.SubjectAttendanceSummaryModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 
 interface ScheduleRepository {
@@ -16,6 +17,7 @@ interface ScheduleRepository {
     suspend fun getAllSubjects(): List<String>
     suspend fun getAllScheduleByDay(day: String): List<ScheduleModel>
     suspend fun deleteScheduleById(id: Int)
+    suspend fun getSubjectAttendanceSummary(): List<SubjectAttendanceSummaryModel>
 
 }
 
@@ -52,8 +54,8 @@ class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRe
 
     override suspend fun getScheduleById(id: Int): ScheduleModel = scheduleDao.getScheduleById(id)
     override suspend fun getAllSubjects(): List<String> = scheduleDao.getAllSubject()
-    override suspend fun getAllScheduleByDay(day: String): List<ScheduleModel> =
-        scheduleDao.getAllScheduleByDay(day)
-
+    override suspend fun getAllScheduleByDay(day: String): List<ScheduleModel> = scheduleDao.getAllScheduleByDay(day)
     override suspend fun deleteScheduleById(id: Int) = scheduleDao.deleteById(id)
+    override suspend fun getSubjectAttendanceSummary(): List<SubjectAttendanceSummaryModel> = scheduleDao.getSubjectAttendanceSummary()
+
 }
