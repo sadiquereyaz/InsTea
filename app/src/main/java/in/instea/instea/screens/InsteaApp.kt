@@ -55,16 +55,12 @@ fun InsteaApp(
             InsteaTopAppBar(
                 scrollBehavior = scrollBehavior,
                 currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null && !bottomBarItems.contains(
-                    currentScreen
-                ),
+                canNavigateBack = navController.previousBackStackEntry != null && !bottomBarItems.contains(currentScreen),
                 navigateBack = { navController.navigateUp() },
                 moveToSelfProfile = { navController.navigate(InsteaScreens.SelfProfile.name) },
                 moveToOtherProfile = { navController.navigate(InsteaScreens.OtherProfile.name) },
                 navController = navController,
-                onAddButtonClicked = {
-                 navController.navigate(InsteaScreens.Addpost.name)
-                }
+                onAddButtonClicked = { navController.navigate(InsteaScreens.Addpost.name) }
             )
         },
         bottomBar = {

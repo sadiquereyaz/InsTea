@@ -78,10 +78,10 @@ fun InsteaTopAppBar(
                         contentDescription = "Add"
                     )
                 }
-            } else if (currentScreen == InsteaScreens.Schedule) {
+           /* } else if (currentScreen == InsteaScreens.Schedule) {
                 IconButton(onClick = { navController.navigate(InsteaScreens.Attendance.name) }) {
                     Icon(imageVector = Icons.Default.DateRange, contentDescription = "Attendance")
-                }
+                }*/
             } else if (currentScreen == InsteaScreens.SelfProfile) {
                 IconButton(onClick = {
                     AuthViewModel().signOut()
@@ -92,7 +92,7 @@ fun InsteaTopAppBar(
                         contentDescription = "Edit Profile"
                     )
                 }
-            }/* else if (currentScreen == InsteaScreens.EditProfile) {
+            } /*else if (currentScreen == InsteaScreens.More) {
                 IconButton(onClick = { navController.navigate(InsteaScreens.EditProfile.name) }) {
                     Icon(imageVector = Icons.Default.Check, contentDescription = "Edit Profile")
                 }

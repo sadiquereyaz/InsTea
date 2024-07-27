@@ -40,6 +40,7 @@ class EditScheduleViewModel(
                     _uiState.update {
                         it.copy(
                             selectedSubject = scheduleDetail.subject,
+//                            selectedDay = day,
                             startTime = scheduleDetail.startTime,
                             endTime = scheduleDetail.endTime,
                         )
@@ -53,7 +54,7 @@ class EditScheduleViewModel(
                 }
                 _uiState.value = _uiState.value.copy(
                     subjectList = subjects,
-                    selectedSubject = day,
+//                    selectedSubject = day,
                     selectedDay = day,
                     scheduleId = scheduleId,
                     isLoading = false

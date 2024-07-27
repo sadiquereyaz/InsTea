@@ -52,16 +52,6 @@ data class TaskModel(
     val task: String = "Assignment submit on monday"
 )
 
-/*@Entity(tableName = "schedule")
-data class SubjectModel(
-    var subjectName: String,
-    var task: String = "Add Task",
-    var attendanceType: AttendanceType = AttendanceType.Absent,
-    var startTime: String,
-    var endTime: String,
-    var reminder: ReminderModel = ReminderModel()
-)*/
-
 @Entity(tableName = "schedule")
 data class ScheduleModel(
     @PrimaryKey(autoGenerate = true)

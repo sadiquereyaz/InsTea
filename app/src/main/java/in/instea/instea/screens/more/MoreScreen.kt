@@ -28,10 +28,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.`in`.instea.instea.screens.more.composable.AllTask
-import `in`.`in`.instea.instea.screens.more.composable.attendance
 import `in`.`in`.instea.instea.screens.more.composable.classmates
 import `in`.instea.instea.screens.more.composable.Developers
 import `in`.instea.instea.screens.more.composable.Account
+import `in`.instea.instea.screens.more.composable.AttendanceComp
 import `in`.instea.instea.screens.more.composable.report
 
 @Composable
@@ -124,7 +124,7 @@ fun ExpandableItem(
                     }
 
                     "Attendance Record" -> {
-                        attendance()
+                        AttendanceComp()
                     }
 
                     "All Task" -> {
