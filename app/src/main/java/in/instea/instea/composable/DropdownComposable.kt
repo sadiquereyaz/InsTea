@@ -1,14 +1,14 @@
 package `in`.instea.instea.composable
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Abc
 import androidx.compose.material.icons.filled.AddCircleOutline
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,25 +30,32 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DropdownComposable(
     modifier: Modifier = Modifier,
     label: String = "",
-    options: List<String> = listOf("opt 1", "opt 2", "opt 3"),
+    options: List<String>,
+    isLoadingOption: Boolean = false,
     selectedOption: String = "",
     onOptionSelected: (String) -> Unit,
     leadingIcon: ImageVector = Icons.Default.Abc,
     isError: Boolean = false,
     errorMessage: String = "Error Message",
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    onAddItemClicked: () -> Unit = {}
-
+    onAddItemClicked: () -> Unit = {},
+    isEnabled: Boolean = true,
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        ExposedDropdownMenuBox(modifier = modifier, expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        ExposedDropdownMenuBox(
+            modifier = modifier,
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }) {
             OutlinedTextField(
                 modifier = modifier.menuAnchor(),
                 value = selectedOption,
@@ -63,7 +70,16 @@ fun DropdownComposable(
                     )
                 },
                 leadingIcon = { Icon(imageVector = leadingIcon, contentDescription = null) },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = {
+                    if (isLoadingOption) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(16.dp),
+                            strokeWidth = 2.dp
+                        )
+                    } else {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                    }
+                },
                 shape = RoundedCornerShape(8.dp),
                 supportingText = {
                     // Display error text if the input is not valid
@@ -76,14 +92,17 @@ fun DropdownComposable(
                     }
                 },
                 keyboardActions = keyboardActions,
-                colors = OutlinedTextFieldDefaults.colors(
-                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                    disabledBorderColor = MaterialTheme.colorScheme.outline,
-                    disabledTrailingIconColor = MaterialTheme.colorScheme.primary,
-                    disabledLabelColor = MaterialTheme.colorScheme.onSurface,
-                    disabledSupportingTextColor = MaterialTheme.colorScheme.error,
-                    disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground
-                ),
+                /*colors =
+                if (isEnabled) {
+                    OutlinedTextFieldDefaults.colors(
+                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
+                        disabledBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledTrailingIconColor = MaterialTheme.colorScheme.primary,
+                        disabledLabelColor = MaterialTheme.colorScheme.onSurface,
+                        disabledSupportingTextColor = MaterialTheme.colorScheme.error,
+                        disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground
+                    )
+                } else OutlinedTextFieldDefaults,*/
             )
             DropdownMenu(
                 modifier = Modifier,

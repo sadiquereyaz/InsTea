@@ -1,10 +1,7 @@
 package `in`.instea.instea.data.viewmodel
 
-import android.content.ContentValues.TAG
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import `in`.instea.instea.data.DataSource.departments
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.AcademicRepository
 import `in`.instea.instea.data.repo.UserRepository
@@ -29,10 +26,15 @@ class SignUpViewModel(
 
     private fun getAllUniversity() {
         viewModelScope.launch {
-            academicRepository.getAllUniversity().collect { universities ->
-                _uiState.update { currState->
+            _uiState.update {
+                it.copy(isUniversityLoading = true)
+            }
+            academicRepository.getAllUniversity().collect { result ->
+                _uiState.update { currState ->
                     currState.copy(
-                        universityList = universities
+                        universityList = result.stringList,
+                        universityErrorMessage = result.errorMessage,
+                        isUniversityLoading = false
                     )
                 }
             }
@@ -41,11 +43,19 @@ class SignUpViewModel(
 
     fun getAllDepartment(university: String) {
         viewModelScope.launch {
-            uiState.value.departmentList = emptyList()
-            academicRepository.getAllDepartment(university).collect {departments->
-                _uiState.update { currState->
+            _uiState.update {
+                it.copy(
+                    isDepartmentLoading = true,
+                    departmentList = emptyList(),
+                    departmentErrorMessage = null
+                )
+            }
+            academicRepository.getAllDepartment(university).collect { result ->
+                _uiState.update { currState ->
                     currState.copy(
-                        departmentList = departments
+                        departmentList = result.stringList,
+                        isDepartmentLoading = false,
+                        universityErrorMessage = result.errorMessage
                     )
                 }
             }
@@ -54,24 +64,46 @@ class SignUpViewModel(
 
     fun getAllSemester(university: String, department: String) {
         viewModelScope.launch {
-            uiState.value.semesterList = emptyList()
-            academicRepository.getAllSemester(university, department).collect {semester->
-                _uiState.update {currentState->
+            _uiState.update {
+                it.copy(
+                    semesterList = emptyList(),
+                    isSemesterLoading = true,
+                    semesterErrorMessage = null
+                )
+            }
+            academicRepository.getAllSemester(university, department).collect { result ->
+                _uiState.update { currentState ->
                     currentState.copy(
-                        semesterList = semester
+                        semesterList = result.stringList,
+                        isSemesterLoading = false,
+                        semesterErrorMessage = result.errorMessage
                     )
                 }
             }
         }
     }
 
-    fun signUp(user: User, password: String, moveToSignIn: () -> Unit) {
+    fun signUp(user: User, password: String) {
         viewModelScope.launch {
-            val result = userRepository.signUp(user, password)
-            if (result.isSuccess) {
-                moveToSignIn()
-            } else { //TODO: show toast message of failure
+            _uiState.update {
+                it.copy(isLoading = true)
             }
+            val result = userRepository.signUp(user, password)
+            result.fold(
+                onSuccess = {
+                    _uiState.update {
+                        it.copy(isSuccess = true, isLoading = false)
+                    }
+                },
+                onFailure = { e ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = e.message ?: "An error occurred"
+                        )
+                    }
+                }
+            )
         }
     }
 

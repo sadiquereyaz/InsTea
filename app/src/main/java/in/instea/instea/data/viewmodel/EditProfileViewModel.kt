@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import `in`.instea.instea.data.DataSource.departments
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.AcademicRepository
 import `in`.instea.instea.data.repo.UserRepository
@@ -55,84 +56,85 @@ class EditProfileViewModel(
 
     private fun getUniversities() {
         viewModelScope.launch {
-            academicRepository.getAllUniversity().collect { universities ->
+            academicRepository.getAllUniversity().collect { result ->
                 _uiState.value = _uiState.value.copy(
-                    universityList = universities
+                    universityList = result.stringList,
+                    errorMessage = result.errorMessage
                 )
             }
         }
     }
 
-        fun onUniversityChanged(university: String) {
-            viewModelScope.launch {
-                academicRepository.getAllDepartment(university).collect { departments ->
-                    _uiState.value = _uiState.value.copy(
-                        university = university,
-                        departmentList = departments,
-                        department = "",
-                        semester = ""
-                    )
-                }
-            }
-        }
-
-        fun onDepartmentChanged(department: String) {
-            viewModelScope.launch {
-                academicRepository.getAllSemester(
-                    department = department, university = _uiState.value.university
-                ).collect { semesters ->
-                    _uiState.value = _uiState.value.copy(
-                        semesterList = semesters, department = department, semester = ""
-                    )
-                }
-            }
-        }
-
-        fun onSemesterChanged(semester: String) {
-            viewModelScope.launch {
+    fun onUniversityChanged(university: String) {
+        viewModelScope.launch {
+            academicRepository.getAllDepartment(university).collect { result ->
                 _uiState.value = _uiState.value.copy(
-                    semester = semester
+                    university = university,
+                    departmentList = result.stringList,
+                    department = "",
+                    semester = ""
                 )
-            }
-        }
-
-        fun onAboutChanged(about: String) {
-            viewModelScope.launch {
-                _uiState.value = _uiState.value.copy(about = about)
-            }
-        }
-
-        fun onWhatsappNoChanged(no: String) {
-            _uiState.value = _uiState.value.copy(whatsappNo = no)
-
-        }
-
-        fun onInstagramChanged(ig: String) {
-            _uiState.value = _uiState.value.copy(instagram = ig)
-
-        }
-
-        fun onLinkedInChanged(it: String) {
-            _uiState.value = _uiState.value.copy(linkedin = it)
-
-        }
-
-        fun saveUserDetails() {
-            viewModelScope.launch {
-                val uiStateValue = uiState.value
-                val user = User(
-                    userId = userId,
-                    username = uiStateValue.username,
-                    university = uiStateValue.university,
-                    dept = uiStateValue.department,
-                    sem = uiStateValue.semester,
-                    instaId = uiStateValue.instagram,
-                    linkedinId = uiStateValue.linkedin,
-                    whatsappNo = uiStateValue.whatsappNo,
-                    about = uiStateValue.about
-                )
-                userRepository.upsertUserLocally(user)
-                userRepository.upsertUserToFirebase(user)
             }
         }
     }
+
+    fun onDepartmentChanged(department: String) {
+        viewModelScope.launch {
+            academicRepository.getAllSemester(
+                department = department, university = _uiState.value.university
+            ).collect { result ->
+                _uiState.value = _uiState.value.copy(
+                    semesterList = result.stringList, department = department, semester = ""
+                )
+            }
+        }
+    }
+
+    fun onSemesterChanged(semester: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                semester = semester
+            )
+        }
+    }
+
+    fun onAboutChanged(about: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(about = about)
+        }
+    }
+
+    fun onWhatsappNoChanged(no: String) {
+        _uiState.value = _uiState.value.copy(whatsappNo = no)
+
+    }
+
+    fun onInstagramChanged(ig: String) {
+        _uiState.value = _uiState.value.copy(instagram = ig)
+
+    }
+
+    fun onLinkedInChanged(it: String) {
+        _uiState.value = _uiState.value.copy(linkedin = it)
+
+    }
+
+    fun saveUserDetails() {
+        viewModelScope.launch {
+            val uiStateValue = uiState.value
+            val user = User(
+                userId = userId,
+                username = uiStateValue.username,
+                university = uiStateValue.university,
+                dept = uiStateValue.department,
+                sem = uiStateValue.semester,
+                instaId = uiStateValue.instagram,
+                linkedinId = uiStateValue.linkedin,
+                whatsappNo = uiStateValue.whatsappNo,
+                about = uiStateValue.about
+            )
+            userRepository.upsertUserLocally(user)
+            userRepository.upsertUserToFirebase(user)
+        }
+    }
+}

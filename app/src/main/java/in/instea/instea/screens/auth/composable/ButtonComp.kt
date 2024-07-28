@@ -19,11 +19,10 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun ButtonComp(
     modifier: Modifier = Modifier,
-    text: String, onButtonClicked: () -> Unit,
+    text: String,
+    onButtonClicked: () -> Unit,
     isEnabled: Boolean = true
 ) {
-//    val isDarkMode = isSystemInDarkTheme()
-//    val textColor = if (isDarkMode) Color.White else Color.Black
     Button(
         onClick = {
             onButtonClicked()
@@ -56,5 +55,5 @@ fun ButtonComp(
 @Composable
 @Preview(showBackground = true)
 fun ComposablePreview() {
-    ButtonComp(text = "Sign Up", onButtonClicked = {})
+//    ButtonComp(text = "Sign Up", onButtonClicked = {})
 }
