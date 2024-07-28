@@ -70,6 +70,6 @@ interface ScheduleDao {
     """)
     suspend fun getSubjectAttendanceSummary(
         startOfTimestamp: Int,
-        endOfTimestamp: Int
+        endOfTimestamp: Int =  startOfTimestamp+32
     ): List<SubjectAttendanceSummaryModel>
 }

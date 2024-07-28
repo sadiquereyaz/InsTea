@@ -18,13 +18,15 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -35,73 +37,84 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.SubjectAttendanceSummaryModel
 import `in`.instea.instea.screens.more.MoreUiState
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
+import java.util.Locale
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AttendanceComp(
-    modifier: Modifier = Modifier, uiState: MoreUiState,
-    onMonthSelected: (Int) -> Unit
+    modifier: Modifier = Modifier,
+    uiState: MoreUiState,
+    onDateSelected: (LocalDate) -> Unit = {}
 ) {
     val attendanceList = uiState.attendanceSummaries
-    val months = listOf(
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December"
-    )
     var expanded by remember { mutableStateOf(false) }
-
-    // Get the current month
-    /*  val currentMonth = remember {
-          LocalDate.now().month.getDisplayName(TextStyle.FULL, Locale.getDefault())
-      }*/
-
-//    var selectedMonth by remember { mutableStateOf(currentMonth) }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
-        OutlinedButton(
-            onClick = { expanded = true },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.padding(start = 12.dp, top = 2.dp)
-        ) {
-            Text(months[uiState.selectedMonth])
-            Spacer(modifier = Modifier.width(16.dp))
-            Icon(
-                imageVector = Icons.Filled.ArrowDropDown,
-                contentDescription = "Dropdown Arrow"
-            )
-        }
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
-        ) {
-            months.forEach { month ->
-                DropdownMenuItem(
-                    onClick = {
-                        onMonthSelected(months.indexOf(month))
-                        expanded = false
-                    },
-                    text = { Text(text = month) }
+        Column {
+            OutlinedButton(
+                onClick = { expanded = true },
+                shape = RoundedCornerShape(8.dp),
+                modifier = Modifier.padding(start = 12.dp, top = 2.dp),
+            ) {
+                Text(selectedDate.format(DateTimeFormatter.ofPattern("MMMM yyyy")))
+                Spacer(modifier = Modifier.width(16.dp))
+                Icon(
+                    imageVector = Icons.Filled.ArrowDropDown,
+                    contentDescription = "Dropdown Arrow"
                 )
+            }
+            Box(modifier = Modifier.padding(start = 16.dp)) {
+                DropdownMenu(
+//            modifier = Modifier.align(Alignment.TopEnd),
+                    expanded = expanded,
+                    onDismissRequest = {
+                        expanded = false
+                        onDateSelected(selectedDate)
+                    }
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        // Month selection
+                        PickerRow(
+                            selectedDate = selectedDate.month.getDisplayName(
+                                TextStyle.SHORT,
+                                Locale.getDefault()
+                            ),
+                            decrease = { selectedDate = selectedDate.minusMonths(1) },
+                            increase = { selectedDate = selectedDate.plusMonths(1) })
+
+                        // Year selection
+                        PickerRow(
+                            selectedDate = selectedDate.year.toString(),
+                            decrease = {
+                                selectedDate = selectedDate.minusYears(1)
+                                Log.d("click", selectedDate.year.toString())
+                            },
+                            increase = { selectedDate = selectedDate.plusYears(1) }
+                        )
+                    }
+                }
             }
         }
     }
@@ -109,7 +122,40 @@ fun AttendanceComp(
         itemsIndexed(attendanceList) { index, item ->
             if (index != 0) Divider()
             AttendanceItem(item = item)
+        }
+    }
+}
 
+@Composable
+private fun PickerRow(selectedDate: String, increase: () -> Unit, decrease: () -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        IconButton(
+            onClick = decrease,
+            modifier = Modifier
+                .clip(shape = CircleShape)
+                .background(MaterialTheme.colorScheme.primary)
+                .size(20.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Remove, contentDescription = "minus",
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+        Text(selectedDate)
+        IconButton(
+            onClick = increase,
+            modifier = Modifier
+                .clip(shape = CircleShape)
+                .background(MaterialTheme.colorScheme.primary)
+                .size(20.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add, contentDescription = "add",
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
         }
     }
 }
@@ -120,7 +166,7 @@ fun AttendanceItem(
     item: SubjectAttendanceSummaryModel
 ) {
     val h = 70.dp
-    Box(modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp)) {
+    Box(modifier = modifier.padding(vertical = 16.dp, horizontal = 8.dp)) {
         Row(
             modifier = Modifier,
 //            .padding(8.dp),
@@ -129,10 +175,8 @@ fun AttendanceItem(
             val absentClasses = item.absentClasses
             val attendedClasses = item.attendedClasses
             val totalClasses = item.totalClasses
-            val percentage: Float = ((attendedClasses.toFloat() / totalClasses.toFloat()) * 100)
-            Log.d("PERCENT", percentage.toString())
-            val color: Color = /*MaterialTheme.colorScheme.primary*/
-                if (percentage < 75.0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            val percentage: Float = ((attendedClasses.toFloat() / totalClasses.toFloat()) * 1000).roundToInt().toFloat() / 10
+            val color: Color = if (percentage < 75.0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             // line
             Box(
                 modifier = Modifier
@@ -222,14 +266,16 @@ private fun AttendanceSubtitle(
     }
 }
 
-@Composable
+/*@Composable
 @Preview(showBackground = true)
 fun AttendanceItemPreview() {
 //    AttendanceItem(item = SubjectAttendanceSummaryModel())
-}
+}*/
 
 @Composable
-@Preview(showBackground = true)
-fun AttendancePreview() {
-//    AttendanceComp()
+fun AttendanceCompPreview() {
+    AttendanceComp(
+        uiState = MoreUiState(),
+//        expanded = true // Force dropdown open
+    )
 }

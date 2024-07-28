@@ -33,7 +33,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.More.name,
+        startDestination = InsteaScreens.SelfProfile.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {

@@ -17,8 +17,7 @@ interface ScheduleRepository {
     suspend fun getAllSubjects(): List<String>
     suspend fun getAllScheduleByDay(day: String): List<ScheduleModel>
     suspend fun deleteScheduleById(id: Int)
-    suspend fun getSubjectAttendanceSummary(): List<SubjectAttendanceSummaryModel>
-
+    suspend fun getSubjectAttendanceSummary(timestamp: Int): List<SubjectAttendanceSummaryModel>
 }
 
 class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRepository {
@@ -56,6 +55,6 @@ class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRe
     override suspend fun getAllSubjects(): List<String> = scheduleDao.getAllSubject()
     override suspend fun getAllScheduleByDay(day: String): List<ScheduleModel> = scheduleDao.getAllScheduleByDay(day)
     override suspend fun deleteScheduleById(id: Int) = scheduleDao.deleteById(id)
-    override suspend fun getSubjectAttendanceSummary(): List<SubjectAttendanceSummaryModel> = scheduleDao.getSubjectAttendanceSummary()
+    override suspend fun getSubjectAttendanceSummary(timestamp: Int): List<SubjectAttendanceSummaryModel> = scheduleDao.getSubjectAttendanceSummary(startOfTimestamp = timestamp)
 
 }

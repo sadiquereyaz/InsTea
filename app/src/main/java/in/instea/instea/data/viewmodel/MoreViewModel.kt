@@ -1,7 +1,7 @@
 package `in`.instea.instea.data.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.more.MoreUiState
@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class MoreViewModel(
     val scheduleRepository: ScheduleRepository
@@ -17,22 +18,22 @@ class MoreViewModel(
     val uiState: StateFlow<MoreUiState> = _uiState
 
     init {
-        onMonthSelected(_uiState.value.selectedMonth)
+        onTimestampSelected(_uiState.value.selectedTimestamp)
     }
 
-    fun onMonthSelected(month: Int) {
+    fun onTimestampSelected(selectedDate: LocalDate) {
         viewModelScope.launch {
+            val month = selectedDate.monthValue.toString().padStart(2, '0')
+            val year = (selectedDate.year%100).toString()
+//            Log.d("loading", selectedDate.year.toString())
+            val timestamp = ("$year$month".toInt())*100
+            Log.d("time", timestamp.toString())
             _uiState.update {
                 it.copy(
-                    selectedMonth = month,
-                    attendanceSummaries = scheduleRepository.getSubjectAttendanceSummary()
+                    selectedTimestamp = selectedDate,
+                    attendanceSummaries = scheduleRepository.getSubjectAttendanceSummary(timestamp)
                 )
             }
         }
-    }
-
-    val attendanceSummary = liveData {
-        val data = scheduleRepository.getSubjectAttendanceSummary()
-        emit(data)
     }
 }

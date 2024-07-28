@@ -126,8 +126,8 @@ fun ExpandableItem(
                     "Attendance Record" -> {
                         AttendanceComp(
                             uiState = uiState,
-                            onMonthSelected = {month->
-                                viewModel.onMonthSelected(month)
+                            onDateSelected = { selectedDate->
+                                viewModel.onTimestampSelected(selectedDate)
                             }
                         )
                     }
