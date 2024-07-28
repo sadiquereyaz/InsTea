@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import `in`.instea.instea.screens.more.MoreUiState
 
 data class taskModel(
     val task: String,
@@ -26,11 +27,13 @@ data class taskModel(
 
 @Composable
 fun AllTask(
+    uiState: MoreUiState,
     modifier: Modifier = Modifier
 ) {
-    val task =
-        "This is the content of the task to be displayed in more screen along with the date and time when it was created"
-    val taskList = listOf(task, task, task, task, task)
+//    val task =
+//        "This is the content of the task to be displayed in more screen along with the date and time when it was created"
+//    val taskList = listOf(task, task, task, task, task)
+    val taskList=uiState.taskList
     LazyColumn(
         modifier = modifier/*.padding(vertical = 16.dp)*/
     ) {

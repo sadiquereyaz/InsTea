@@ -1,5 +1,6 @@
 package `in`.instea.instea.screens.more
 
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.SubjectAttendanceSummaryModel
 import java.time.LocalDate
 

@@ -143,7 +143,7 @@ fun ExpandableItem(
                     }
 
                     "All Task" -> {
-                        AllTask()
+                        AllTask(uiState=uiState)
                     }
 
                     "Classmates" -> {

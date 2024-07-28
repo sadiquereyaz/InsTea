@@ -3,6 +3,7 @@ package `in`.instea.instea.data.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreUiState
@@ -30,11 +31,8 @@ class MoreViewModel(
 
     fun onTimestampSelected(selectedDate: LocalDate) {
         viewModelScope.launch {
-            val month = selectedDate.monthValue.toString().padStart(2, '0')
-            val year = (selectedDate.year % 100).toString()
-//            Log.d("loading", selectedDate.year.toString())
-            val timestamp = ("$year$month".toInt()) * 100
-//            Log.d("time", timestamp.toString())
+            val timestamp = timestamp(selectedDate)
+            //            Log.d("time", timestamp.toString())
             _uiState.update {
                 it.copy(
                     selectedTimestamp = selectedDate,
@@ -42,5 +40,29 @@ class MoreViewModel(
                 )
             }
         }
+    }
+
+    private fun timestamp(selectedDate: LocalDate): Int {
+        val month = selectedDate.monthValue.toString().padStart(2, '0')
+        val year = (selectedDate.year % 100).toString()
+        //            Log.d("loading", selectedDate.year.toString())
+        val timestamp = ("$year$month".toInt()) * 100
+        return timestamp
+    }
+
+    fun getAllTask(selectedDate: LocalDate){
+            viewModelScope.launch {
+
+                val timestamp=timestamp(selectedDate)
+                val combinedTaskList=scheduleRepository.getScheduleAndTaskList(selectedDate.toString(),timestamp)
+
+                val taskDescriptions = combinedTaskList.mapNotNull { it.task }
+
+                _uiState.update {
+                    it.copy(
+                        taskList = taskDescriptions
+                    )
+                }
+            }
     }
 }
