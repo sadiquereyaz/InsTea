@@ -18,6 +18,7 @@ import `in`.instea.instea.screens.InboxScreen
 import `in`.instea.instea.screens.auth.AddInfo
 import `in`.instea.instea.screens.auth.SignInScreen
 import `in`.instea.instea.screens.auth.SignUpScreen
+import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.profile.ProfileDestination
 import `in`.instea.instea.screens.profile.ProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleDestination
@@ -33,7 +34,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.SelfProfile.name,
+        startDestination = InsteaScreens.Schedule.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -47,7 +48,7 @@ fun InsteaNavHost(
         }
         composable(route = InsteaScreens.Feed.name) {
             FEED(
-                navigateToProfile = { navController.navigate("${ProfileDestination.route}/${it}") }
+                navigateToProfile = {userId-> navController.navigate("${ProfileDestination.route}/${userId}") }
             )
         }
         composable(route = InsteaScreens.Inbox.name) {
@@ -74,9 +75,15 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Attendance.name) {
             AttendanceScreen(navController = navController)
         }
+        // self profile
         composable(route = InsteaScreens.SelfProfile.name) {
             ProfileScreen(
-                onSubUsernameClick = { navController.navigate(InsteaScreens.Inbox.name) }
+                onSubUsernameClick = {
+                    navController.navigate(InsteaScreens.EditProfile.name)
+                },
+                navigateToDevelopers = {
+                    navController.navigate("${MoreDestination.route}/${0}")
+                }
             )
         }
         //OtherProfileScreen
@@ -88,7 +95,10 @@ fun InsteaNavHost(
         ) {
 //            OtherProfileScreen()
             ProfileScreen(
-                onSubUsernameClick = { navController.navigate(InsteaScreens.Inbox.name) }
+                onSubUsernameClick = { navController.navigate(InsteaScreens.Inbox.name) },
+                navigateToDevelopers = {
+                    navController.navigate("${MoreDestination.route}/${0}")
+                }
             )
         }
         composable(route = InsteaScreens.EditProfile.name) {
@@ -103,10 +113,14 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.AddAcademicInfo.name) {
             AddInfo(navController = navController)
         }
-        composable(route = InsteaScreens.More.name) {
-            MoreScreen()
+        composable(
+            route = MoreDestination.routeWithArg,
+            arguments = listOf(navArgument(MoreDestination.INDEX_ARG){
+                type = NavType.IntType
+            })
+        ) {
+            MoreScreen(navController=navController)
         }
-
     }
 }
 

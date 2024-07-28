@@ -63,6 +63,7 @@ object AppViewModelProvider {
         }
         initializer {
             MoreViewModel(
+                savedStateHandle = this.createSavedStateHandle(),
                 scheduleRepository = insteaApplication().container.scheduleRepository,
             )
         }

@@ -1,3 +1,4 @@
+//import `in`.instea.instea.composable.InsteaTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
@@ -7,19 +8,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.BottomNavigationBar
 import `in`.instea.instea.composable.InsteaTopAppBar
-//import `in`.instea.instea.composable.InsteaTopAppBar
 import `in`.instea.instea.data.BottomNavItemData
-import `in`.instea.instea.data.FeedViewModel
-import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.navigation.InsteaNavHost
+import `in`.instea.instea.navigation.InsteaScreens
+import `in`.instea.instea.screens.more.MoreDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,10 +53,13 @@ fun InsteaApp(
             InsteaTopAppBar(
                 scrollBehavior = scrollBehavior,
                 currentScreen = currentScreen,
-                canNavigateBack = navController.previousBackStackEntry != null && !bottomBarItems.contains(currentScreen),
+                canNavigateBack = navController.previousBackStackEntry != null && !bottomBarItems.contains(
+                    currentScreen
+                ),
                 navigateBack = { navController.navigateUp() },
                 moveToSelfProfile = { navController.navigate(InsteaScreens.SelfProfile.name) },
                 moveToOtherProfile = { navController.navigate(InsteaScreens.OtherProfile.name) },
+                moveToAttendanceSummary = {index-> navController.navigate("${MoreDestination.route}/${index}") },
                 navController = navController,
                 onAddButtonClicked = { navController.navigate(InsteaScreens.Addpost.name) }
             )

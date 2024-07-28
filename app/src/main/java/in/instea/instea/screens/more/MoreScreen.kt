@@ -31,24 +31,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import `in`.`in`.instea.instea.screens.more.composable.AllTask
 import `in`.`in`.instea.instea.screens.more.composable.classmates
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.MoreViewModel
-import `in`.instea.instea.screens.more.composable.Account
+import `in`.instea.instea.navigation.InsteaScreens
+import `in`.instea.instea.navigation.NavigationDestinations
+import `in`.instea.instea.screens.more.composable.AccountComp
 import `in`.instea.instea.screens.more.composable.AttendanceComp
 import `in`.instea.instea.screens.more.composable.Developers
 import `in`.instea.instea.screens.more.composable.report
-
+object MoreDestination: NavigationDestinations{
+    override val route: String = InsteaScreens.More.name
+    override val title: String = InsteaScreens.More.title
+    const val INDEX_ARG = "expandedIndex"
+    val routeWithArg = "${route}/{$INDEX_ARG}"
+}
 @Composable
 fun MoreScreen(
     modifier: Modifier = Modifier,
+    navController: NavHostController,
     viewModel: MoreViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val items =
-        listOf("Developers", "All Task", "Account", "Attendance Record", "Classmates", "Report")
-    var expandedIndex by remember { mutableStateOf<Int?>(null) }
     val uiState by viewModel.uiState.collectAsState()
+    var expandedIndex by remember { mutableStateOf(uiState.expandedIndex) }
+    val items =listOf("Developers", "Attendance Record", "All Task", "Classmates", "Account", "Report")
 
     LazyColumn(
         modifier = modifier
@@ -59,6 +67,7 @@ fun MoreScreen(
             ExpandableItem(
                 uiState = uiState,
                 viewModel = viewModel,
+                navController = navController,
                 title = items[index],
                 isExpanded = (index == expandedIndex),
                 onExpandChange = { expandedIndex = if (expandedIndex == index) null else index })
@@ -73,7 +82,8 @@ fun ExpandableItem(
     onExpandChange: () -> Unit,
     modifier: Modifier = Modifier,
     uiState: MoreUiState,
-    viewModel: MoreViewModel
+    viewModel: MoreViewModel,
+    navController: NavHostController
 ) {
     Column(
         modifier = modifier
@@ -126,7 +136,7 @@ fun ExpandableItem(
                     "Attendance Record" -> {
                         AttendanceComp(
                             uiState = uiState,
-                            onDateSelected = { selectedDate->
+                            onDateSelected = { selectedDate ->
                                 viewModel.onTimestampSelected(selectedDate)
                             }
                         )
@@ -141,7 +151,12 @@ fun ExpandableItem(
                     }
 
                     "Account" -> {
-                        Account()
+                        AccountComp(
+                            navigateToSignIn = {
+                                navController.popBackStack()
+                                navController.navigate(InsteaScreens.Signup.name)
+                            }
+                        )
                     }
 
                     "Report" -> {
@@ -157,5 +172,5 @@ fun ExpandableItem(
 @Preview
 @Composable
 private fun morePrev() {
-    MoreScreen()
+//    MoreScreen()
 }

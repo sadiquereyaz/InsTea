@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.SubjectAttendanceSummaryModel
 import `in`.instea.instea.screens.more.MoreUiState
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
@@ -62,21 +64,42 @@ fun AttendanceComp(
     val attendanceList = uiState.attendanceSummaries
     var expanded by remember { mutableStateOf(false) }
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    val coroutineScope = rememberCoroutineScope()
+    // Calculate totals
+    var totalCommenced = 0
+    var present = 0
+    var absent = 0
+
+    attendanceList.forEach { item ->
+        totalCommenced += item.totalClasses
+        present += item.attendedClasses
+        absent += item.absentClasses
+    }
 
     Box(
         modifier = modifier.fillMaxWidth(),
     ) {
         Column {
-            OutlinedButton(
-                onClick = { expanded = true },
-                shape = RoundedCornerShape(8.dp),
-                modifier = Modifier.padding(start = 12.dp, top = 2.dp),
+            Row(
+                verticalAlignment = Alignment.Top
             ) {
-                Text(selectedDate.format(DateTimeFormatter.ofPattern("MMMM yyyy")))
-                Spacer(modifier = Modifier.width(16.dp))
-                Icon(
-                    imageVector = Icons.Filled.ArrowDropDown,
-                    contentDescription = "Dropdown Arrow"
+                OutlinedButton(
+                    onClick = { expanded = true },
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.padding(start = 12.dp, top = 2.dp, bottom = 2.dp),
+                ) {
+                    Text(selectedDate.format(DateTimeFormatter.ofPattern("MMMM yyyy")))
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Icon(
+                        imageVector = Icons.Filled.ArrowDropDown,
+                        contentDescription = "Dropdown Arrow"
+                    )
+                }
+                Text(
+                    text = "Showing summary of marked classes only.",
+                    modifier = Modifier.padding(top = 4.dp, start = 16.dp),
+                    fontSize = 12.sp,
+                    fontStyle = FontStyle.Italic
                 )
             }
             Box(modifier = Modifier.padding(start = 16.dp)) {
@@ -84,8 +107,10 @@ fun AttendanceComp(
 //            modifier = Modifier.align(Alignment.TopEnd),
                     expanded = expanded,
                     onDismissRequest = {
-                        expanded = false
-                        onDateSelected(selectedDate)
+                        coroutineScope.launch {
+                            expanded = false
+                            onDateSelected(selectedDate)
+                        }
                     }
                 ) {
                     Column(
@@ -119,8 +144,19 @@ fun AttendanceComp(
         }
     }
     LazyColumn {
+        item {
+            Divider()
+            if (totalCommenced > 0) AttendanceItem(
+                item = SubjectAttendanceSummaryModel(
+                    subject = "Overall",
+                    totalClasses = totalCommenced,
+                    attendedClasses = present,
+                    absentClasses = absent
+                )
+            )
+        }
         itemsIndexed(attendanceList) { index, item ->
-            if (index != 0) Divider()
+            /* if (index != 0) */Divider()
             AttendanceItem(item = item)
         }
     }
@@ -175,8 +211,11 @@ fun AttendanceItem(
             val absentClasses = item.absentClasses
             val attendedClasses = item.attendedClasses
             val totalClasses = item.totalClasses
-            val percentage: Float = ((attendedClasses.toFloat() / totalClasses.toFloat()) * 1000).roundToInt().toFloat() / 10
-            val color: Color = if (percentage < 75.0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
+            val percentage: Float =
+                ((attendedClasses.toFloat() / totalClasses.toFloat()) * 1000).roundToInt()
+                    .toFloat() / 10
+            val color: Color =
+                if (percentage < 75.0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
             // line
             Box(
                 modifier = Modifier

@@ -72,7 +72,8 @@ object ProfileDestination : NavigationDestinations {
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onSubUsernameClick: () -> Unit
+    onSubUsernameClick: () -> Unit,
+    navigateToDevelopers: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
@@ -159,7 +160,7 @@ fun ProfileScreen(
                 Text(
                     text = "Jamians", // Make Jamians clickable
                     modifier = Modifier
-                        .clickable { /* Handle click on Jamians */ },
+                        .clickable { navigateToDevelopers() },
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )

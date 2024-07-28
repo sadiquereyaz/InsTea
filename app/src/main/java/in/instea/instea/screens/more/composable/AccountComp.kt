@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.HeartBroken
-import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.PersonRemove
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,12 +15,20 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import `in`.instea.instea.data.viewmodel.AuthViewModel
 
 @Composable
-fun Account(modifier: Modifier = Modifier) {
-   Box(modifier = Modifier.padding(10.dp)) {
+fun AccountComp(
+    modifier: Modifier = Modifier,
+    navigateToSignIn: () -> Unit
+) {
+    Box(modifier = Modifier.padding(10.dp)) {
         Column {
-            TextButton(onClick = { /*TODO*/ }) {
+            // sign out
+            TextButton(onClick = {
+                AuthViewModel().signOut()
+                navigateToSignIn()
+            }) {
                 Text(text = "Sign Out")
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
