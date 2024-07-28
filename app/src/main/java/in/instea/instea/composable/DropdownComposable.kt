@@ -3,7 +3,6 @@ package `in`.instea.instea.composable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
@@ -17,7 +16,6 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,18 +40,25 @@ fun DropdownComposable(
     isError: Boolean = false,
     errorMessage: String = "Error Message",
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    onAddItemClicked: () -> Unit = {}
-
+    onAddItemClicked: () -> Unit = {},
+    isEnabled: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        ExposedDropdownMenuBox(modifier = modifier, expanded = expanded, onExpandedChange = { expanded = !expanded }) {
+        ExposedDropdownMenuBox(
+            modifier = modifier,
+            expanded = expanded,
+            onExpandedChange = {
+                if (isEnabled) expanded = !expanded
+            },
+            ) {
             OutlinedTextField(
                 modifier = modifier.menuAnchor(),
+                readOnly = true,
                 value = selectedOption,
                 onValueChange = {},
-                enabled = false,
+                enabled = isEnabled,
                 isError = isError,
                 label = {
                     Text(
@@ -76,14 +81,6 @@ fun DropdownComposable(
                     }
                 },
                 keyboardActions = keyboardActions,
-                colors = OutlinedTextFieldDefaults.colors(
-                    disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                    disabledBorderColor = MaterialTheme.colorScheme.outline,
-                    disabledTrailingIconColor = MaterialTheme.colorScheme.primary,
-                    disabledLabelColor = MaterialTheme.colorScheme.onSurface,
-                    disabledSupportingTextColor = MaterialTheme.colorScheme.error,
-                    disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground
-                ),
             )
             DropdownMenu(
                 modifier = Modifier,
