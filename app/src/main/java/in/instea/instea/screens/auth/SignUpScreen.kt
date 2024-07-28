@@ -1,9 +1,6 @@
 package `in`.instea.instea.screens.auth
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,19 +8,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalance
-import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.School
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -36,12 +26,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import `in`.instea.instea.composable.DropdownComposable
+import `in`.instea.instea.composable.DropdownButtonComposable
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.SignUpViewModel
@@ -85,9 +74,17 @@ fun SignUpScreen(
     var username by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-    var university by rememberSaveable { mutableStateOf("") }
-    var department by rememberSaveable { mutableStateOf("") }
-    var semester by rememberSaveable { mutableStateOf("") }
+    var university by rememberSaveable {
+        mutableStateOf(
+            uiState.selectedUniversity ?: "University"
+        )
+    }
+    var department by rememberSaveable {
+        mutableStateOf(
+            uiState.selectedDepartment ?: "Department"
+        )
+    }
+    var semester by rememberSaveable { mutableStateOf(uiState.selectedSemester ?: "Semester") }
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -135,68 +132,51 @@ fun SignUpScreen(
                 textFieldLabel = "Enter your password",
                 errorText = "Password not valid",
             )
-            // university
-           Row(verticalAlignment = Alignment.CenterVertically) {
-                DropdownComposable(
-                    modifier = Modifier.fillMaxWidth(),
-                    label = "University",
-                    options = uiState.universityList,
-                    isLoadingOption = uiState.isUniversityLoading,
-                    leadingIcon = Icons.Default.AccountBalance,
-                    selectedOption = university,
-                    onOptionSelected = { selectedOption ->
-                        university = selectedOption
-                        viewModel.getAllDepartment(university = selectedOption)
-                        department = ""
-                        semester = ""
-                    },
-                    onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) }
-                )
-               if (/*uiState.universityList.isEmpty()*/true) {
-                   CircularProgressIndicator(modifier = Modifier.size(40.dp))
-               }
-            }
+            // outline button university
+            DropdownButtonComposable(
+                modifier = Modifier,
+                text = university,
+                options = uiState.universityList,
+                isLoadingOption = uiState.isUniversityLoading,
+//                leadingIcon = Icons.Default.AccountBalance,
+//                selectedOption = university,
+                onOptionSelected = { selectedOption ->
+                    university = selectedOption
+                    viewModel.getAllDepartment(university = selectedOption)
+                    department = ""
+                    semester = ""
+                },
+                onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) }
+            )
             // department and semester
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 //department
-                DropdownComposable(
+                DropdownButtonComposable(
                     modifier = Modifier.weight(3f),
-                    label = "Department",
-                    selectedOption = department,
-                    leadingIcon = Icons.Default.School,
-                    isEnabled = university.isBlank(),
-                    isLoadingOption = uiState.isDepartmentLoading,
+                    text = department,
                     options = uiState.departmentList,
+                    isLoadingOption = uiState.isDepartmentLoading,
                     onOptionSelected = { selectedOption ->
                         department = selectedOption
-                        viewModel.getAllSemester(
-                            university = university, department = selectedOption
-                        )
+                        viewModel.getAllSemester(university = university, department = selectedOption)
                         semester = ""
                     },
-                    onAddItemClicked = {
-                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
-                    },
-                    errorMessage = "Please select university first"
+                    onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) }
                 )
                 // semester
-                DropdownComposable(
+                DropdownButtonComposable(
                     modifier = Modifier.weight(2.5f),
-                    label = "Sem",
-                    leadingIcon = Icons.Default.AutoGraph,
+                    text = semester,
                     options = uiState.semesterList,
                     isLoadingOption = uiState.isSemesterLoading,
-                    selectedOption = semester,
-                    isEnabled = university.isNotEmpty() && department.isNotEmpty(),
-                    onOptionSelected = {
-                        semester = it
+                    onOptionSelected = { selectedOption ->
+                        semester = selectedOption
                     },
-                    onAddItemClicked = {
-                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
-                    }
+                    onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) }
                 )
             }
         }

@@ -45,6 +45,7 @@ class SignUpViewModel(
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
+                    selectedUniversity = university,
                     isDepartmentLoading = true,
                     departmentList = emptyList(),
                     departmentErrorMessage = null
