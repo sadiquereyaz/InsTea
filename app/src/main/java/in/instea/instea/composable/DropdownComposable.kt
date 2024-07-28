@@ -1,5 +1,6 @@
 package `in`.instea.instea.composable
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -17,10 +18,11 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,7 +38,6 @@ fun DropdownComposable(
     modifier: Modifier = Modifier,
     label: String = "",
     options: List<String>,
-    isLoadingOption: Boolean = false,
     selectedOption: String = "",
     onOptionSelected: (String) -> Unit,
     leadingIcon: ImageVector = Icons.Default.Abc,
@@ -45,9 +46,19 @@ fun DropdownComposable(
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     onAddItemClicked: () -> Unit = {},
     isEnabled: Boolean = true,
+    isLoadingOption: Boolean,
+    isExpandable: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var expandable by remember { mutableStateOf(isExpandable) }
+    var count by remember{ mutableIntStateOf(0) }
 
+    Log.d("IN LOADING", "$label loading: $isLoadingOption")
+//    Log.d("IN EXPANDABLE", "$label loading: $expandable")
+
+    LaunchedEffect(isExpandable) {
+        expandable = isExpandable
+    }
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -55,12 +66,18 @@ fun DropdownComposable(
         ExposedDropdownMenuBox(
             modifier = modifier,
             expanded = expanded,
-            onExpandedChange = { expanded = !expanded }) {
+            onExpandedChange = {
+                if (expandable) {
+                    expanded = !expanded
+                }
+            }) {
             OutlinedTextField(
                 modifier = modifier.menuAnchor(),
                 value = selectedOption,
                 onValueChange = {},
-                enabled = false,
+                readOnly = true,
+                singleLine = true,
+                enabled = !isLoadingOption && isEnabled,
                 isError = isError,
                 label = {
                     Text(
@@ -92,17 +109,6 @@ fun DropdownComposable(
                     }
                 },
                 keyboardActions = keyboardActions,
-                /*colors =
-                if (isEnabled) {
-                    OutlinedTextFieldDefaults.colors(
-                        disabledTextColor = MaterialTheme.colorScheme.onSurface,
-                        disabledBorderColor = MaterialTheme.colorScheme.outline,
-                        disabledTrailingIconColor = MaterialTheme.colorScheme.primary,
-                        disabledLabelColor = MaterialTheme.colorScheme.onSurface,
-                        disabledSupportingTextColor = MaterialTheme.colorScheme.error,
-                        disabledLeadingIconColor = MaterialTheme.colorScheme.onBackground
-                    )
-                } else OutlinedTextFieldDefaults,*/
             )
             DropdownMenu(
                 modifier = Modifier,

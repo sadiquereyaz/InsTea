@@ -41,7 +41,8 @@ fun AcademicsComposable(
             leadingIcon = Icons.Default.AccountBalance,
             selectedOption = university,
             onOptionSelected = onUniversityChanged,
-            onAddItemClicked = onAddItemClicked
+            onAddItemClicked = onAddItemClicked,
+            isLoadingOption = false
         )
         Spacer(modifier = Modifier.height(8.dp))
         // department and semester
@@ -58,7 +59,8 @@ fun AcademicsComposable(
                 options = departmentList,
                 onOptionSelected = onDepartmentChanged,
                 onAddItemClicked = onAddItemClicked,
-                errorMessage = "Please select university first"
+                errorMessage = "Please select university first",
+                isLoadingOption = false
             )
             // semester
             DropdownComposable(
@@ -68,7 +70,8 @@ fun AcademicsComposable(
                 options = semesterList,
                 selectedOption = semester,
                 onOptionSelected = onSemesterChanged,
-                onAddItemClicked = onAddItemClicked
+                onAddItemClicked = onAddItemClicked,
+                isLoadingOption = false,
             )
         }
     }

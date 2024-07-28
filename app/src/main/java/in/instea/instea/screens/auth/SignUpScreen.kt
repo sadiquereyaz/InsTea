@@ -11,8 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalance
+import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.School
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import `in`.instea.instea.composable.DropdownButtonComposable
+import `in`.instea.instea.composable.DropdownComposable
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.SignUpViewModel
@@ -74,17 +78,9 @@ fun SignUpScreen(
     var username by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-    var university by rememberSaveable {
-        mutableStateOf(
-            uiState.selectedUniversity ?: "University"
-        )
-    }
-    var department by rememberSaveable {
-        mutableStateOf(
-            uiState.selectedDepartment ?: "Department"
-        )
-    }
-    var semester by rememberSaveable { mutableStateOf(uiState.selectedSemester ?: "Semester") }
+    var university by rememberSaveable { mutableStateOf("") }
+    var department by rememberSaveable { mutableStateOf("") }
+    var semester by rememberSaveable { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -132,51 +128,71 @@ fun SignUpScreen(
                 textFieldLabel = "Enter your password",
                 errorText = "Password not valid",
             )
-            // outline button university
-            DropdownButtonComposable(
-                modifier = Modifier,
-                text = university,
+            // university
+            DropdownComposable(
+                modifier = Modifier.fillMaxWidth(),
+                label = "University",
                 options = uiState.universityList,
+                leadingIcon = Icons.Default.AccountBalance,
+                isError = uiState.universityErrorMessage != null,
+                errorMessage = uiState.universityErrorMessage ?: "",
+                selectedOption = university,
                 isLoadingOption = uiState.isUniversityLoading,
-//                leadingIcon = Icons.Default.AccountBalance,
-//                selectedOption = university,
+                isExpandable = uiState.universityExpandable,
                 onOptionSelected = { selectedOption ->
                     university = selectedOption
                     viewModel.getAllDepartment(university = selectedOption)
                     department = ""
                     semester = ""
                 },
+//                isEnabled = !uiState.isUniversityLoading,
                 onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) }
             )
             // department and semester
             Row(
-                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 //department
-                DropdownButtonComposable(
+                DropdownComposable(
                     modifier = Modifier.weight(3f),
-                    text = department,
+                    label = "Department",
+                    selectedOption = department,
+                    leadingIcon = Icons.Default.School,
+                    isEnabled = university.isNotBlank(),
                     options = uiState.departmentList,
-                    isLoadingOption = uiState.isDepartmentLoading,
                     onOptionSelected = { selectedOption ->
                         department = selectedOption
-                        viewModel.getAllSemester(university = university, department = selectedOption)
+                        viewModel.getAllSemester(
+                            university = university,
+                            department = selectedOption
+                        )
                         semester = ""
                     },
-                    onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) }
+                    onAddItemClicked = {
+                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
+                    },
+                    errorMessage = uiState.departmentErrorMessage  ?: "",
+                    isError = uiState.departmentErrorMessage != null,
+                    isLoadingOption = uiState.isDepartmentLoading,
+                    isExpandable = uiState.departmentExpandable
                 )
                 // semester
-                DropdownButtonComposable(
+                DropdownComposable(
                     modifier = Modifier.weight(2.5f),
-                    text = semester,
+                    label = "Semester",
+                    isEnabled = department.isNotBlank(),
+                    leadingIcon = Icons.Default.AutoGraph,
                     options = uiState.semesterList,
-                    isLoadingOption = uiState.isSemesterLoading,
-                    onOptionSelected = { selectedOption ->
-                        semester = selectedOption
+                    selectedOption = semester,
+                    onOptionSelected = {
+                        semester = it
                     },
-                    onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) }
+                    onAddItemClicked = {
+                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
+                    },
+                    isLoadingOption = uiState.isSemesterLoading,
+                    isExpandable = uiState.semesterExpandable
                 )
             }
         }
@@ -213,10 +229,10 @@ fun SignUpScreen(
         ) {
             Text(text = "Already have account? SignIn")
         }
-        if (uiState.errorMessage != null) {
+        if (uiState.universityErrorMessage != null) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = uiState.errorMessage!!,
+                text = uiState.universityErrorMessage!!,
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium
             )

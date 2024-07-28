@@ -169,6 +169,7 @@ fun PlatformComp(
             label = "Platform",
             options = platforms,
             selectedOption = platform.value,
+            isLoadingOption = false,
             onOptionSelected = {
 
                 platform.value = it

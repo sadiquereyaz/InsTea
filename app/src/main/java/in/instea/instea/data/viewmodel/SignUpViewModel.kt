@@ -27,14 +27,17 @@ class SignUpViewModel(
     private fun getAllUniversity() {
         viewModelScope.launch {
             _uiState.update {
-                it.copy(isUniversityLoading = true)
+                it.copy(
+                    isUniversityLoading = true,
+                )
             }
             academicRepository.getAllUniversity().collect { result ->
                 _uiState.update { currState ->
                     currState.copy(
                         universityList = result.stringList,
                         universityErrorMessage = result.errorMessage,
-                        isUniversityLoading = false
+                        isUniversityLoading = false,
+                        universityExpandable = true
                     )
                 }
             }
@@ -45,10 +48,13 @@ class SignUpViewModel(
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
-                    selectedUniversity = university,
                     isDepartmentLoading = true,
+                    departmentExpandable = false,
                     departmentList = emptyList(),
-                    departmentErrorMessage = null
+                    semesterList = emptyList(),
+                    departmentErrorMessage = null,
+                    semesterErrorMessage = null,
+                    isSemesterLoading = false,
                 )
             }
             academicRepository.getAllDepartment(university).collect { result ->
@@ -56,7 +62,8 @@ class SignUpViewModel(
                     currState.copy(
                         departmentList = result.stringList,
                         isDepartmentLoading = false,
-                        universityErrorMessage = result.errorMessage
+                        universityErrorMessage = result.errorMessage,
+                        departmentExpandable = true
                     )
                 }
             }
@@ -69,6 +76,7 @@ class SignUpViewModel(
                 it.copy(
                     semesterList = emptyList(),
                     isSemesterLoading = true,
+                    semesterExpandable = false,
                     semesterErrorMessage = null
                 )
             }
@@ -77,7 +85,8 @@ class SignUpViewModel(
                     currentState.copy(
                         semesterList = result.stringList,
                         isSemesterLoading = false,
-                        semesterErrorMessage = result.errorMessage
+                        semesterErrorMessage = result.errorMessage,
+                        semesterExpandable = true
                     )
                 }
             }
