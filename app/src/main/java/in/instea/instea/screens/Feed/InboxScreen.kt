@@ -180,7 +180,7 @@ fun SenderTextField(message: Message) {
             Row(
                 modifier = Modifier
                     .padding(10.dp)
-                    .wrapContentWidth()
+                    .wrapContentWidth(Alignment.End)
                     .fillMaxWidth(0.5f),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(2.dp)
@@ -217,7 +217,7 @@ fun ReceiverTextField(message: Message) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .wrapContentSize(Alignment.Center)
+            .wrapContentWidth(Alignment.Start)
     ) {
         Card(
             shape = RoundedCornerShape(20.dp),
