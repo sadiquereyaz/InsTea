@@ -34,7 +34,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.SignIn.name,
+        startDestination = InsteaScreens.Signup.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {

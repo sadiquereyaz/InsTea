@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,6 +50,7 @@ import androidx.compose.ui.modifier.ModifierLocalReadScope
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -59,28 +62,26 @@ import `in`.instea.instea.data.viewmodel.FeedViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InboxScreen(
     userId: String,
     chatViewModel: ChatviewModel = viewModel(factory = AppViewModelProvider.Factory),
-    feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     var receiverRoom by remember { mutableStateOf(userId + feedViewModel.currentuser) }
     var senderRoom by remember { mutableStateOf(feedViewModel.currentuser + userId) }
 
 
-
-    val chatList = chatViewModel.chatUiState.collectAsState(initial = emptyList()).value // Observe the flow directly
+    val chatList =
+        chatViewModel.chatUiState.collectAsState(initial = emptyList()).value // Observe the flow directly
 
     var textState by remember { mutableStateOf("") }
 
-    LaunchedEffect(key1=chatList) {
+    LaunchedEffect(key1 = chatList) {
         chatViewModel.getChats(senderRoom, receiverRoom)
     }
-    Log.d("ChatRepository", "InboxScreen: $chatList")
-
-
 
 
     Surface {
@@ -114,7 +115,7 @@ fun InboxScreen(
                     onValueChange = { textState = it },
                     placeholder = { Text("Enter message") },
                     colors = TextFieldDefaults.textFieldColors(
-                        containerColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
                     ),
@@ -174,22 +175,35 @@ fun SenderTextField(message: Message) {
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ),
-            modifier = Modifier.wrapContentSize(Alignment.TopEnd)
+            modifier = Modifier.wrapContentSize(Alignment.Center)
         ) {
-            Column(modifier = Modifier.padding(10.dp)) {
+            Row(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .wrapContentWidth()
+                    .fillMaxWidth(0.5f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
                 Text(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .weight(1f),
                     text = message.message,
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onTertiaryContainer
+                    ),
+                    overflow = TextOverflow.Ellipsis
+                )
+                Box(contentAlignment = Alignment.BottomEnd) {
+                    Text(
+                        text = message.timeStamp,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        fontSize = 10.sp,
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = message.timeStamp,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    fontSize = 10.sp
-                )
+                }
             }
         }
     }
@@ -203,6 +217,7 @@ fun ReceiverTextField(message: Message) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
+            .wrapContentSize(Alignment.Center)
     ) {
         Card(
             shape = RoundedCornerShape(20.dp),
@@ -210,20 +225,33 @@ fun ReceiverTextField(message: Message) {
                 containerColor = MaterialTheme.colorScheme.secondaryContainer
             )
         ) {
-            Column(modifier = Modifier.padding(10.dp)) {
+            Row(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .wrapContentWidth()
+                    .fillMaxWidth(0.5f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
                 Text(
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .weight(1f),
                     text = message.message,
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onTertiaryContainer
+                    ),
+                    overflow = TextOverflow.Ellipsis
+                )
+                Box(contentAlignment = Alignment.BottomEnd) {
+                    Text(
+                        text = message.timeStamp,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+                        fontSize = 10.sp,
+                        modifier = Modifier.padding(bottom = 4.dp)
                     )
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = message.timeStamp,
-                    color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    fontSize = 10.sp
-                )
+                }
             }
         }
     }

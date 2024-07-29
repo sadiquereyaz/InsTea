@@ -184,12 +184,15 @@ fun SignUpScreen(
                     ),
                     password,
                     moveToSignIn = {
-                            navController.navigate(InsteaScreens.SignIn.name)
+                            navController.navigate(InsteaScreens.Feed.name)
                     }
                 )
+
             },
             isEnabled = true
         )
+
+        ButtonComp(text = "login", onButtonClicked = { navController.navigate(InsteaScreens.SignIn.name)})
 
     }
 }
