@@ -33,7 +33,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import `in`.instea.instea.composable.DropdownButtonComposable
 import `in`.instea.instea.composable.DropdownComposable
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
@@ -103,7 +102,9 @@ fun SignUpScreen(
                 modifier = Modifier,
                 value = username,
                 onValueChange = {
-                    username = it
+                    coroutineScope.launch {
+                        viewModel.onUserNameChanged(it)
+                    }
                 },
                 leadingIcon = Icons.Default.Person,
                 label = "Username",
@@ -172,7 +173,7 @@ fun SignUpScreen(
                     onAddItemClicked = {
                         navController.navigate(InsteaScreens.AddAcademicInfo.name)
                     },
-                    errorMessage = uiState.departmentErrorMessage  ?: "",
+                    errorMessage = uiState.departmentErrorMessage ?: "",
                     isError = uiState.departmentErrorMessage != null,
                     isLoadingOption = uiState.isDepartmentLoading,
                     isExpandable = uiState.departmentExpandable

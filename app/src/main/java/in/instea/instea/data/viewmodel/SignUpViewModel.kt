@@ -122,4 +122,39 @@ class SignUpViewModel(
             academicRepository.addClassDetail(semester, department, university)
         }
     }
+
+    fun onUserNameChanged(username: String) {
+        viewModelScope.launch {
+            if (username.length > 15) {
+                _uiState.update {
+                    it.copy(usernameErrorMessage = "Maximum 15 characters are allowed!")
+                }
+            } else if (!username.matches(Regex("^[a-z.]{1,15}$"))) {
+                _uiState.update {
+                    it.copy(usernameErrorMessage = "Username must contain only lowercase letters, and dot(.)")
+                }
+            } else {
+                _uiState.update {
+                    it.copy(username = username, usernameErrorMessage = null)
+                }
+
+                val result = userRepository.isUserNameAvailable(username)
+                result.fold(
+                    onSuccess = { isAvailable ->
+                        _uiState.update {
+                            it.copy(
+                                usernameErrorMessage = if (isAvailable) null else "Username already exists!"
+                            )
+                        }
+                    },
+                    onFailure = { e ->
+                        _uiState.update {
+                            it.copy(usernameErrorMessage = e.message ?: "Error checking username")
+                        }
+                    }
+                )
+            }
+        }
+    }
+
 }

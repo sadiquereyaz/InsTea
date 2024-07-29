@@ -85,4 +85,21 @@ class NetworkUserRepository(
             Result.failure(e)
         }
     }
+
+    suspend fun isUserNameAvailable(username: String): Result<Boolean> {
+            return try {
+                val snapshot = firebaseDatabase.reference
+                    .child("user")
+                    .orderByChild("username")
+                    .equalTo(username)
+                    .get()
+                    .await()
+
+                val isAvailable = snapshot.childrenCount == 0L
+                Result.success(isAvailable)
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+        }
+    }
 }

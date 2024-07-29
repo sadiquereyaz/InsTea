@@ -1,6 +1,10 @@
 package `in`.instea.instea.screens.auth
 
 data class SignUpUiState(
+    var username: String = "",
+    var usernameErrorMessage: String? = null,
+
+
     var universityList: List<String> = emptyList(),
     var isUniversityLoading: Boolean = true,
     var universityErrorMessage: String? = null,

@@ -15,6 +15,7 @@ interface UserRepository {
     suspend fun signIn(email: String, password: String): Result<String>
     suspend fun signUp(user: User, password: String): Result<String>
     suspend fun clearUser()
+    suspend fun isUserNameAvailable(username: String): Result<Boolean>
 }
 
 class CombinedUserRepository(
@@ -49,6 +50,10 @@ class CombinedUserRepository(
 
     override suspend fun clearUser() {
         localUserRepository.clearUser()
+    }
+
+    override suspend fun isUserNameAvailable(username: String): Result<Boolean> {
+        return networkUserRepository.isUserNameAvailable(username)
     }
 
     override suspend fun upsertUserToFirebase(user: User) {
