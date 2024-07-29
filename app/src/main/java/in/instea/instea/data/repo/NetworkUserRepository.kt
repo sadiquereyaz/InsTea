@@ -75,10 +75,12 @@ class NetworkUserRepository(
     suspend fun signUp(user: User, password: String): Result<String?> {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(
-                user.email ?: "noemailrecieved@networkrepo.com", password ?: "networkPassword"
+                user.email ?: "noemailrecieved@networkrepo.com", password
             ).await()
+            // Check for successful creation and get user ID
             val userId = result.user?.uid ?: return Result.failure(Exception("No UID"))
             val newUser = user.copy(userId = userId)
+            // Save user data to Firebase Realtime Database
             firebaseDatabase.reference.child("user").child(userId).setValue(newUser).await()
             Result.success(null)
         } catch (e: Exception) {

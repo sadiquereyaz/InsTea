@@ -19,20 +19,23 @@ object Validator {
      }*/
     fun validateUsername(username: String): String? {
         return when {
-            username.isEmpty() -> "Username cannot be empty"
+//            username.isEmpty() -> "Username cannot be empty"
             username.length > 15 -> "Maximum 15 characters are allowed"
+            username.length < 3 -> "Minimum 3 characters are allowed"
             username.any { it.isWhitespace() } -> "Username should not contain spaces"
-            username.any { !it.isLowerCase() && it != '.' } -> "Only lowercase letters and dots are allowed"
+            username.any { it.isUpperCase()} -> "Only lowercase letters are allowed"
+            !username.matches("^[a-zA-Z0-9.]+\$".toRegex())-> "Special characters except dot(.) are not allowed"
+            username.all { it == username.first() } -> "Repeated characters found"
             else -> null
         }
     }
 
     fun validateEmail(email: String): String? {
         return when {
-            email.any { !it.isLowerCase() } -> "Only lowercase characters allowed"
+            email.any { it.isUpperCase() } -> "Only lowercase characters allowed"
             email.length > 25 -> "Character length exceeded"
             email.any { it.isWhitespace() } -> "Should not contain spaces"
-            email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[a-zA-Z]{2,4}$".toRegex())  -> "Invalid email format"
+//            !(email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[a-zA-Z]{2,4}$".toRegex()))  -> "Invalid email format"
             else -> null
         }
     }

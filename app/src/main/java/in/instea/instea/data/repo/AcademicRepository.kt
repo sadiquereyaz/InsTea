@@ -73,7 +73,7 @@ class NetworkAcademicRepository(
                     }
                     StringListResult(stringList = semSet.toList())
                 } catch (e: Exception) {
-                    Log.e(TAG, "Failed to fetch departments", e)
+//                    Log.e(TAG, "Failed to fetch departments", e)
                     StringListResult(errorMessage = e.localizedMessage)
                 }
             )

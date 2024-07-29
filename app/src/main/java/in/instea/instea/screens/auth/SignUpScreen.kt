@@ -23,10 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import `in`.instea.instea.composable.DropdownComposable
-import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.SignUpViewModel
 import `in`.instea.instea.navigation.InsteaScreens
@@ -73,12 +69,12 @@ fun SignUpScreen(
         }
     }
     val scrollState = rememberScrollState(0) // Remember the scroll state
-    var username by rememberSaveable { mutableStateOf("") }
-    var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var university by rememberSaveable { mutableStateOf("") }
-    var department by rememberSaveable { mutableStateOf("") }
-    var semester by rememberSaveable { mutableStateOf("") }
+//    var username by rememberSaveable { mutableStateOf("") }
+//    var email by rememberSaveable { mutableStateOf("") }
+//    var password by rememberSaveable { mutableStateOf("") }
+//    var university by rememberSaveable { mutableStateOf("") }
+//    var department by rememberSaveable { mutableStateOf("") }
+//    var semester by rememberSaveable { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -101,9 +97,8 @@ fun SignUpScreen(
                 modifier = Modifier,
                 value = uiState.username,
                 onValueChange = {
-                    username = it
                     coroutineScope.launch {
-                        viewModel.onUserNameChanged(it)
+                        viewModel.onUserNameChanged(it.trim())
                     }
                 },
                 leadingIcon = Icons.Default.Person,
@@ -116,19 +111,23 @@ fun SignUpScreen(
                 modifier = Modifier,
                 value = uiState.email,
                 onValueChange = {
-                    email = it
-                    coroutineScope.launch { viewModel.emailChanged(it) }
+                    coroutineScope.launch { viewModel.onEmailChanged(it.trim()) }
                 },
                 leadingIcon = Icons.Default.Email,
                 keyboardType = KeyboardType.Email,
                 label = "Enter Email",
-                errorMessage = uiState.emailErrorMessage
+                errorMessage = uiState.emailErrorMessage,
+                supportingText = "OTP will be sent for the verification"
             )
 
             PasswordTextField(
                 modifier = Modifier,
-                password = password,
-                onPasswordChange = { password = it },
+                password = uiState.password,
+                onPasswordChange = {
+                    coroutineScope.launch {
+                        viewModel.onPasswordChanged(it.trim())
+                    }
+                },
                 textFieldLabel = "Enter your password",
                 errorMessage = uiState.passwordErrorMessage,
             )
@@ -137,20 +136,17 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 label = "University",
                 options = uiState.universityList,
+                onOptionSelected = { selectedOption ->
+                    viewModel.onUniversitySelect(university = selectedOption)
+                },
                 leadingIcon = Icons.Default.AccountBalance,
                 isError = uiState.universityErrorMessage != null,
-                errorMessage = uiState.universityErrorMessage ?: "",
-                selectedOption = university,
+                errorMessage = uiState.universityErrorMessage,
+                selectedOption = uiState.selectedUniversity,
+                onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) },
                 isLoadingOption = uiState.isUniversityLoading,
-                isExpandable = uiState.universityExpandable,
-                onOptionSelected = { selectedOption ->
-                    university = selectedOption
-                    viewModel.getAllDepartment(university = selectedOption)
-                    department = ""
-                    semester = ""
-                },
 //                isEnabled = !uiState.isUniversityLoading,
-                onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) }
+                isExpandable = uiState.universityExpandable
             )
             // department and semester
             Row(
@@ -161,23 +157,23 @@ fun SignUpScreen(
                 DropdownComposable(
                     modifier = Modifier.weight(3f),
                     label = "Department",
-                    selectedOption = department,
-                    leadingIcon = Icons.Default.School,
-                    isEnabled = university.isNotBlank(),
                     options = uiState.departmentList,
-                    onOptionSelected = { selectedOption ->
-                        department = selectedOption
-                        viewModel.getAllSemester(
-                            university = university,
-                            department = selectedOption
+                    onOptionSelected = { department ->
+//                        department = selectedOption
+                        viewModel.onDepartmentSelected(
+//                            university = university,
+                            /*department = */department
                         )
-                        semester = ""
+//                        semester = ""
                     },
+                    leadingIcon = Icons.Default.School,
+                    isError = uiState.departmentErrorMessage != null,
+                    errorMessage = uiState.departmentErrorMessage ?: "",
+                    selectedOption = uiState.selectedDepartment ?: "",
                     onAddItemClicked = {
                         navController.navigate(InsteaScreens.AddAcademicInfo.name)
                     },
-                    errorMessage = uiState.departmentErrorMessage ?: "",
-                    isError = uiState.departmentErrorMessage != null,
+                    isEnabled = uiState.selectedUniversity != null,
                     isLoadingOption = uiState.isDepartmentLoading,
                     isExpandable = uiState.departmentExpandable
                 )
@@ -185,16 +181,16 @@ fun SignUpScreen(
                 DropdownComposable(
                     modifier = Modifier.weight(2.5f),
                     label = "Semester",
-                    isEnabled = department.isNotBlank(),
-                    leadingIcon = Icons.Default.AutoGraph,
                     options = uiState.semesterList,
-                    selectedOption = semester,
                     onOptionSelected = {
-                        semester = it
+                        viewModel.onSemesterSelected(it)
                     },
+                    leadingIcon = Icons.Default.AutoGraph,
+                    selectedOption = uiState.selectedSemester ?: "",
                     onAddItemClicked = {
                         navController.navigate(InsteaScreens.AddAcademicInfo.name)
                     },
+                    isEnabled = uiState.selectedDepartment != null,
                     isLoadingOption = uiState.isSemesterLoading,
                     isExpandable = uiState.semesterExpandable
                 )
@@ -203,22 +199,18 @@ fun SignUpScreen(
         Spacer(modifier = Modifier.height(14.dp))
 
         ButtonComp(
-            text = "Sign Up",
+            text = "Send OTP",
+            isLoading = uiState.isSendingOtp,
             onButtonClicked = {
                 coroutineScope.launch {
-                    viewModel.signUp(
-                        user = User(
-                            username = username,
-                            email = email,
-                            university = university,
-                            dept = department,
-                            sem = semester
-                        ),
-                        password = password,
-                    )
+                    viewModel.signUp()
                 }
             },
-            isEnabled = (email.isNotBlank() && username.isNotBlank() && password.isNotBlank() && semester.isNotBlank())
+            isEnabled = (uiState.email.isNotBlank() && uiState.username.isNotBlank() &&
+                    uiState.password.isNotBlank() && uiState.selectedSemester != null &&
+                    uiState.usernameErrorMessage == null && uiState.passwordErrorMessage == null &&
+                    uiState.emailErrorMessage == null && uiState.errorMessage == null
+                    )
         )
 
         TextButton(
@@ -233,7 +225,6 @@ fun SignUpScreen(
         ) {
             Text(text = "Already have account? SignIn")
         }
-
 
         // Signup screen error
         if (uiState.errorMessage != null) {

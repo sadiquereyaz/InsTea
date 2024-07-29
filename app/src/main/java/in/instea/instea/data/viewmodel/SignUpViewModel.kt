@@ -45,10 +45,13 @@ class SignUpViewModel(
         }
     }
 
-    fun getAllDepartment(university: String) {
+    fun onUniversitySelect(university: String) {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
+                    selectedUniversity = university,
+                    selectedDepartment = null,
+                    selectedSemester = null,
                     isDepartmentLoading = true,
                     departmentExpandable = false,
                     semesterExpandable = false,
@@ -64,53 +67,75 @@ class SignUpViewModel(
                     currState.copy(
                         departmentList = result.stringList,
                         isDepartmentLoading = false,
-                        universityErrorMessage = result.errorMessage,
+                        departmentErrorMessage = result.errorMessage,
                         departmentExpandable = true
                     )
                 }
             }
         }
     }
-
-    fun getAllSemester(university: String, department: String) {
+    fun onDepartmentSelected(department: String) {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(
+                    selectedDepartment = department,
                     semesterList = emptyList(),
+                    selectedSemester = null,
                     isSemesterLoading = true,
                     semesterExpandable = false,
                     semesterErrorMessage = null
                 )
             }
-            academicRepository.getAllSemester(university, department).collect { result ->
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        semesterList = result.stringList,
-                        isSemesterLoading = false,
-                        semesterErrorMessage = result.errorMessage,
-                        semesterExpandable = true
-                    )
+            academicRepository.getAllSemester(_uiState.value.selectedUniversity!!, department)
+                .collect { result ->
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            semesterList = result.stringList,
+                            isSemesterLoading = false,
+                            semesterErrorMessage = result.errorMessage,
+                            semesterExpandable = true
+                        )
+                    }
                 }
+        }
+    }
+    fun onSemesterSelected(sem: String) {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    selectedSemester = sem,
+                    semesterErrorMessage = null
+                )
             }
         }
     }
 
-    fun signUp(user: User, password: String) {
+    fun signUp() {
         viewModelScope.launch {
             _uiState.update {
-                it.copy(isSignUpLoading = true)
+                it.copy(isSendingOtp = true)
             }
-            val result: Result<String?> = userRepository.signUp(user, password)
+            val values = _uiState.value
+            val result: Result<String?> = userRepository.signUp(
+                user = User(
+                    username = values.username,
+                    email = values.email,
+                    university = values.selectedUniversity,
+                    dept = values.selectedDepartment,
+                    sem = values.selectedSemester
+                ),
+                password = values.password
+            )
             result.fold(
                 onSuccess = {
                     _uiState.update {
-                        it.copy(isSuccess = true, isSignUpLoading = false)
+                        it.copy(isSuccess = true, isSendingOtp = false)
                     }
                 },
                 onFailure = { e ->
                     _uiState.update {
                         it.copy(
-                            isSignUpLoading = false,
+                            isSendingOtp = false,
                             errorMessage = e.message
                         )
                     }
@@ -136,26 +161,24 @@ class SignUpViewModel(
                     .onFailure { usernameErrorMsg = it.message }
             }
             _uiState.update { it.copy(usernameErrorMessage = usernameErrorMsg) }
-            isButtonEnabled()
         }
     }
-
-    private fun isButtonEnabled(): Boolean {
-        val values = _uiState.value
-        return (
-                values.username.isNotBlank() && values.usernameErrorMessage == null &&
-                        values.password.isNotBlank() && values.passwordErrorMessage == null &&
-                        values.email.isNotBlank() && values.emailErrorMessage == null &&
-                        values.selectedSemester != null
+    fun onEmailChanged(email: String) {
+        viewModelScope.launch {
+            val errorMsg = Validator.validateEmail(email)
+            _uiState.update {
+                it.copy(
+                    email = email,
+                    emailErrorMessage = errorMsg,
+                    errorMessage = null
                 )
+            }
+        }
+    }
+    fun onPasswordChanged(pas: String) {
+        _uiState.update {
+            it.copy(password = pas, errorMessage = null)
+        }
     }
 
-    fun emailChanged(email: String) {
-        _uiState.update {
-            it.copy(email = email)
-        }
-        if (_uiState.value.email.length > 12) {
-            val emailValidatorResult: String? = Validator.validateEmail(email)
-        }
-    }
 }

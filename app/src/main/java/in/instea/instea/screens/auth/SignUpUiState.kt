@@ -30,7 +30,7 @@ data class SignUpUiState(
     var selectedSemester: String? = null,
 
 
-    var isSignUpLoading: Boolean = false,
+    var isSendingOtp: Boolean = false,
     var errorMessage: String? = null,
     var isSuccess: Boolean = false,
 

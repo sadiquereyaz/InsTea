@@ -168,12 +168,13 @@ fun PlatformComp(
                 .height(70.dp),
             label = "Platform",
             options = platforms,
-            selectedOption = platform.value,
-            isLoadingOption = false,
             onOptionSelected = {
 
                 platform.value = it
-            })
+            },
+            selectedOption = platform.value,
+            isLoadingOption = false
+        )
         Spacer(modifier = Modifier.width(10.dp))
 
 

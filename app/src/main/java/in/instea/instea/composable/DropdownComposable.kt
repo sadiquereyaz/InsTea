@@ -38,11 +38,11 @@ fun DropdownComposable(
     modifier: Modifier = Modifier,
     label: String = "",
     options: List<String>,
-    selectedOption: String = "",
     onOptionSelected: (String) -> Unit,
     leadingIcon: ImageVector = Icons.Default.Abc,
     isError: Boolean = false,
-    errorMessage: String = "Error Message",
+    errorMessage: String? = null,
+    selectedOption: String? = null,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     onAddItemClicked: () -> Unit = {},
     isEnabled: Boolean = true,
@@ -73,7 +73,7 @@ fun DropdownComposable(
             }) {
             OutlinedTextField(
                 modifier = modifier.menuAnchor(),
-                value = selectedOption,
+                value = selectedOption?:"",
                 onValueChange = {},
                 readOnly = true,
                 singleLine = true,
@@ -103,7 +103,7 @@ fun DropdownComposable(
                     if (isError) {
                         Text(
                             modifier = Modifier.fillMaxWidth(),
-                            text = errorMessage,
+                            text = errorMessage?:"",
                             color = MaterialTheme.colorScheme.error
                         )
                     }
