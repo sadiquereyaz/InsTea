@@ -5,7 +5,6 @@ import `in`.instea.instea.data.datamodel.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 
 interface UserRepository {
     fun getCurrentUserId(): Flow<String>
@@ -15,7 +14,7 @@ interface UserRepository {
     suspend fun signIn(email: String, password: String): Result<String>
     suspend fun signUp(user: User, password: String): Result<String>
     suspend fun clearUser()
-    suspend fun isUserNameAvailable(username: String): Result<Boolean>
+    suspend fun isUserNameAvailable(username: String): Result<String?>
 }
 
 class CombinedUserRepository(
@@ -52,7 +51,7 @@ class CombinedUserRepository(
         localUserRepository.clearUser()
     }
 
-    override suspend fun isUserNameAvailable(username: String): Result<Boolean> {
+    override suspend fun isUserNameAvailable(username: String): Result<String?> {
         return networkUserRepository.isUserNameAvailable(username)
     }
 

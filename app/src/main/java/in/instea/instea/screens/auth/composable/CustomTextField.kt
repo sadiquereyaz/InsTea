@@ -15,7 +15,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.MaterialTheme.colors
 
 @Composable
 fun CustomTextField(
@@ -26,8 +25,8 @@ fun CustomTextField(
     keyboardType: KeyboardType = KeyboardType.Text,
     capitalization: KeyboardCapitalization = KeyboardCapitalization.None,
     errorText: String = "Invalid input",
-    errorMessage: String = "",
-    isError: Boolean = errorMessage.isBlank(),
+    errorMessage: String? = null,
+    isError: Boolean = errorMessage != null,
     label: String = "textFieldLabel"
 ) {
     OutlinedTextField(
@@ -44,7 +43,7 @@ fun CustomTextField(
         ),
         leadingIcon = {
             if (leadingIcon != null) {
-                Icon(imageVector = leadingIcon, contentDescription = "icon",/* modifier = Modfier*/)
+                Icon(imageVector = leadingIcon, contentDescription = "icon"/* modifier = Modfier*/)
             }
         },
         label = { Text(text = label) },

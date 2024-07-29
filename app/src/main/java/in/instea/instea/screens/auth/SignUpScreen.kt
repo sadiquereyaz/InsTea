@@ -100,7 +100,7 @@ fun SignUpScreen(
             //username
             CustomTextField(
                 modifier = Modifier,
-                value = username,
+                value = uiState.username,
                 onValueChange = {
                     coroutineScope.launch {
                         viewModel.onUserNameChanged(it)
@@ -108,8 +108,8 @@ fun SignUpScreen(
                 },
                 leadingIcon = Icons.Default.Person,
                 label = "Username",
-                errorText = "Invalid username",
-//                isError = signupUiState.usernameError
+                errorText = uiState.usernameErrorMessage ?: "Invalid username",
+                isError = uiState.usernameErrorMessage != null
             )
             //email
             CustomTextField(

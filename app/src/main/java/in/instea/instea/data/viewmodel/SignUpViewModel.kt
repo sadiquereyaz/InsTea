@@ -1,11 +1,13 @@
 package `in`.instea.instea.data.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.AcademicRepository
 import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.auth.SignUpUiState
+import `in`.instea.instea.utility.Validator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -125,36 +127,18 @@ class SignUpViewModel(
 
     fun onUserNameChanged(username: String) {
         viewModelScope.launch {
-            if (username.length > 15) {
-                _uiState.update {
-                    it.copy(usernameErrorMessage = "Maximum 15 characters are allowed!")
-                }
-            } else if (!username.matches(Regex("^[a-z.]{1,15}$"))) {
-                _uiState.update {
-                    it.copy(usernameErrorMessage = "Username must contain only lowercase letters, and dot(.)")
-                }
-            } else {
-                _uiState.update {
-                    it.copy(username = username, usernameErrorMessage = null)
-                }
+            _uiState.update { it.copy(username = username) }
+            var usernameErrorMsg: String? = Validator.validateUsername(username)        //format check
+//            _uiState.update { it.copy(usernameErrorMessage = usernameErrorMsg) }
+            if (usernameErrorMsg == null) {
+                val existenceResult: Result<String? > = userRepository.isUserNameAvailable(username)
+                existenceResult.onSuccess {  usernameErrorMsg = it }.onFailure { usernameErrorMsg = null}
 
-                val result = userRepository.isUserNameAvailable(username)
-                result.fold(
-                    onSuccess = { isAvailable ->
-                        _uiState.update {
-                            it.copy(
-                                usernameErrorMessage = if (isAvailable) null else "Username already exists!"
-                            )
-                        }
-                    },
-                    onFailure = { e ->
-                        _uiState.update {
-                            it.copy(usernameErrorMessage = e.message ?: "Error checking username")
-                        }
-                    }
-                )
+
+//                usernameErrorMsg = userExistenceMessage
             }
+            Log.d("USERNAME_ERROR", usernameErrorMsg.toString())
+            _uiState.update { it.copy(usernameErrorMessage = usernameErrorMsg) }
         }
     }
-
 }

@@ -17,15 +17,13 @@ object Validator {
              email.isNotEmpty() && email.matches(emailRegex)
          )
      }*/
-    fun validateUsername(username: String): ValidationResult {
-        return ValidationResult(
-            when {
-                username.isEmpty() -> "Username cannot be empty"
-                username.length > 15 -> "Maximum 15 characters are allowed"
-                username.any { it.isWhitespace() } -> "Username should not contain spaces"
-                username.any { !it.isLowerCase() && it != '.' } -> "Only lowercase letters and dots are allowed"
-                else -> null
-            }
-        )
+    fun validateUsername(username: String): String? {
+        return when {
+            username.isEmpty() -> "Username cannot be empty"
+            username.length > 15 -> "Maximum 15 characters are allowed"
+            username.any { it.isWhitespace() } -> "Username should not contain spaces"
+            username.any { !it.isLowerCase() && it != '.' } -> "Only lowercase letters and dots are allowed"
+            else -> null
+        }
     }
 }
