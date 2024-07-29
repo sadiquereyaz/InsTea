@@ -3,9 +3,9 @@ package `in`.instea.instea.screens.auth.composable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,34 +21,39 @@ fun ButtonComp(
     modifier: Modifier = Modifier,
     text: String,
     onButtonClicked: () -> Unit,
-    isEnabled: Boolean = true
+    isEnabled: Boolean = true,
+    isLoading: Boolean = false
 ) {
-    Button(
-        onClick = {
-            onButtonClicked()
-        },
-        modifier = modifier
-            .fillMaxWidth(),
-        contentPadding = PaddingValues(),
-        shape = RoundedCornerShape(50),
-        enabled = isEnabled
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-//                .heightIn(48.dp)
-                .shadow(
-                    5.dp,
-                    shape = RoundedCornerShape(50)
-                )
+    if (!isLoading) {
+        Button(
+            onClick = {
+                onButtonClicked()
+            },
+            modifier = modifier
+                .fillMaxWidth(),
+            contentPadding = PaddingValues(),
+            shape = RoundedCornerShape(50),
+            enabled = isEnabled
         ) {
-            Text(
-                text = text,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-            )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+//                .heightIn(48.dp)
+                    .shadow(
+                        5.dp,
+                        shape = RoundedCornerShape(50)
+                    )
+            ) {
+                Text(
+                    text = text,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
         }
+    } else {
+        LinearProgressIndicator(modifier = modifier.fillMaxWidth())
     }
 }
 

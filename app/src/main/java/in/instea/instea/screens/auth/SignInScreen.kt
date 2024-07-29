@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,7 +35,6 @@ import `in`.instea.instea.data.viewmodel.SignInViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.screens.auth.composable.ButtonComp
 import `in`.instea.instea.screens.auth.composable.CustomTextField
-import `in`.instea.instea.screens.auth.composable.HeadingText
 import `in`.instea.instea.screens.auth.composable.PasswordTextField
 import `in`.instea.instea.screens.auth.composable.UnderlinedTextComp
 
@@ -72,6 +70,7 @@ fun SignInScreen(
             textAlign = TextAlign.Start
         )
         Spacer(modifier = Modifier.height(30.dp))
+        // email
         CustomTextField(
             modifier = Modifier,
             value = email,
@@ -79,7 +78,7 @@ fun SignInScreen(
             leadingIcon = Icons.Default.Email,
             keyboardType = KeyboardType.Email,
             label = "Enter Email",
-            errorText = "Invalid Email"
+            errorMessage = "Invalid Email"
         )
 
         PasswordTextField(
@@ -87,7 +86,7 @@ fun SignInScreen(
             onPasswordChange = { password = it },
             errorColor = MaterialTheme.colorScheme.error,
             textFieldLabel = "Enter your password",
-            errorText = "Password not valid"
+            errorMessage = "Password not valid"
         )
         Spacer(modifier = Modifier.height(14.dp))
         UnderlinedTextComp(

@@ -1,6 +1,5 @@
 package `in`.instea.instea.data.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.User
@@ -52,6 +51,7 @@ class SignUpViewModel(
                 it.copy(
                     isDepartmentLoading = true,
                     departmentExpandable = false,
+                    semesterExpandable = false,
                     departmentList = emptyList(),
                     semesterList = emptyList(),
                     departmentErrorMessage = null,
@@ -98,20 +98,20 @@ class SignUpViewModel(
     fun signUp(user: User, password: String) {
         viewModelScope.launch {
             _uiState.update {
-                it.copy(isLoading = true)
+                it.copy(isSignUpLoading = true)
             }
-            val result = userRepository.signUp(user, password)
+            val result: Result<String?> = userRepository.signUp(user, password)
             result.fold(
                 onSuccess = {
                     _uiState.update {
-                        it.copy(isSuccess = true, isLoading = false)
+                        it.copy(isSuccess = true, isSignUpLoading = false)
                     }
                 },
                 onFailure = { e ->
                     _uiState.update {
                         it.copy(
-                            isLoading = false,
-                            errorMessage = e.message ?: "An error occurred"
+                            isSignUpLoading = false,
+                            errorMessage = e.message
                         )
                     }
                 }
@@ -128,17 +128,34 @@ class SignUpViewModel(
     fun onUserNameChanged(username: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(username = username) }
-            var usernameErrorMsg: String? = Validator.validateUsername(username)        //format check
-//            _uiState.update { it.copy(usernameErrorMessage = usernameErrorMsg) }
+            var usernameErrorMsg: String? =
+                Validator.validateUsername(username)        //format check
             if (usernameErrorMsg == null) {
-                val existenceResult: Result<String? > = userRepository.isUserNameAvailable(username)
-                existenceResult.onSuccess {  usernameErrorMsg = it }.onFailure { usernameErrorMsg = it.message}
-
-
-//                usernameErrorMsg = userExistenceMessage
+                val existenceResult: Result<String?> = userRepository.isUserNameAvailable(username)
+                existenceResult.onSuccess { usernameErrorMsg = it }
+                    .onFailure { usernameErrorMsg = it.message }
             }
-            Log.d("USERNAME_ERROR", usernameErrorMsg.toString())
             _uiState.update { it.copy(usernameErrorMessage = usernameErrorMsg) }
+            isButtonEnabled()
+        }
+    }
+
+    private fun isButtonEnabled(): Boolean {
+        val values = _uiState.value
+        return (
+                values.username.isNotBlank() && values.usernameErrorMessage == null &&
+                        values.password.isNotBlank() && values.passwordErrorMessage == null &&
+                        values.email.isNotBlank() && values.emailErrorMessage == null &&
+                        values.selectedSemester != null
+                )
+    }
+
+    fun emailChanged(email: String) {
+        _uiState.update {
+            it.copy(email = email)
+        }
+        if (_uiState.value.email.length > 12) {
+            val emailValidatorResult: String? = Validator.validateEmail(email)
         }
     }
 }

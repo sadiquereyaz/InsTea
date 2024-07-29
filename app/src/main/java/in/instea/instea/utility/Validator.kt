@@ -26,4 +26,14 @@ object Validator {
             else -> null
         }
     }
+
+    fun validateEmail(email: String): String? {
+        return when {
+            email.any { !it.isLowerCase() } -> "Only lowercase characters allowed"
+            email.length > 25 -> "Character length exceeded"
+            email.any { it.isWhitespace() } -> "Should not contain spaces"
+            email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[a-zA-Z]{2,4}$".toRegex())  -> "Invalid email format"
+            else -> null
+        }
+    }
 }

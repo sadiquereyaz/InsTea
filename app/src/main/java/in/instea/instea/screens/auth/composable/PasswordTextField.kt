@@ -31,8 +31,8 @@ fun PasswordTextField(
     onPasswordChange: (String) -> Unit,
     errorColor: Color = MaterialTheme.colorScheme.error,
     textFieldLabel: String = "Enter your password",
-    errorText: String = "Password not valid",
-    isError: Boolean = false
+    errorMessage: String? = null,
+    isError: Boolean = errorMessage!=null
 ) {
     // State variables to manage password visibility and validity
     val localFocusManager = LocalFocusManager.current
@@ -72,7 +72,7 @@ fun PasswordTextField(
             if (isError) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = errorText,
+                    text = errorMessage ?: "",
                     color = errorColor
                 )
             }

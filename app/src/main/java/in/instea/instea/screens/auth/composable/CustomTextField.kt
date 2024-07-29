@@ -24,7 +24,6 @@ fun CustomTextField(
     leadingIcon: ImageVector? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     capitalization: KeyboardCapitalization = KeyboardCapitalization.None,
-    errorText: String = "Invalid input",
     errorMessage: String? = null,
     isError: Boolean = errorMessage != null,
     label: String = "textFieldLabel"
@@ -60,7 +59,7 @@ fun CustomTextField(
             if (isError) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = errorText,
+                    text = errorMessage ?: "",
                     color = MaterialTheme.colorScheme.error
                 )
             }

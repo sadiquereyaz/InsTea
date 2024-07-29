@@ -36,7 +36,7 @@ fun ForgetScreen(
             leadingIcon = Icons.Default.Email,
             keyboardType = KeyboardType.Email,
             label = "Email Id",
-            errorText = "Invalid Email"
+            errorMessage = "Invalid Email"
         )
 
 

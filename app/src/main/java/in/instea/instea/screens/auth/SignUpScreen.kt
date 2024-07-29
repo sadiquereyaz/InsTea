@@ -65,7 +65,6 @@ fun SignUpScreen(
                else -> Unit
            }
        }*/
-
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
             navController.navigate(InsteaScreens.SignIn.name) {
@@ -102,24 +101,28 @@ fun SignUpScreen(
                 modifier = Modifier,
                 value = uiState.username,
                 onValueChange = {
+                    username = it
                     coroutineScope.launch {
                         viewModel.onUserNameChanged(it)
                     }
                 },
                 leadingIcon = Icons.Default.Person,
                 label = "Username",
-                errorText = uiState.usernameErrorMessage ?: "Invalid username",
-                isError = uiState.usernameErrorMessage != null
+                errorMessage = uiState.usernameErrorMessage,
+//                isError = uiState.usernameErrorMessage != null
             )
             //email
             CustomTextField(
                 modifier = Modifier,
-                value = email,
-                onValueChange = { email = it },
+                value = uiState.email,
+                onValueChange = {
+                    email = it
+                    coroutineScope.launch { viewModel.emailChanged(it) }
+                },
                 leadingIcon = Icons.Default.Email,
                 keyboardType = KeyboardType.Email,
                 label = "Enter Email",
-                errorText = "Invalid Email"
+                errorMessage = uiState.emailErrorMessage
             )
 
             PasswordTextField(
@@ -127,7 +130,7 @@ fun SignUpScreen(
                 password = password,
                 onPasswordChange = { password = it },
                 textFieldLabel = "Enter your password",
-                errorText = "Password not valid",
+                errorMessage = uiState.passwordErrorMessage,
             )
             // university
             DropdownComposable(
@@ -215,7 +218,7 @@ fun SignUpScreen(
                     )
                 }
             },
-            isEnabled = !(email.isBlank() || username.isBlank() || password.isEmpty() || university.isBlank() || department.isBlank() || semester.isBlank())
+            isEnabled = (email.isNotBlank() && username.isNotBlank() && password.isNotBlank() && semester.isNotBlank())
         )
 
         TextButton(
@@ -230,10 +233,13 @@ fun SignUpScreen(
         ) {
             Text(text = "Already have account? SignIn")
         }
-        if (uiState.universityErrorMessage != null) {
+
+
+        // Signup screen error
+        if (uiState.errorMessage != null) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = uiState.universityErrorMessage!!,
+                text = uiState.errorMessage ?: "",
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium
             )
