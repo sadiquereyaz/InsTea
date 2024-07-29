@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
+import `in`.`in`.instea.instea.screens.more.composable.taskModel
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
@@ -14,7 +15,10 @@ import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 @Dao
 interface ScheduleDao {
     @Query("SELECT * FROM taskAttendance WHERE scheduleId = :scheduleId AND timestamp = :timestamp")
-    suspend fun checkTaskAttendanceRowExistence(scheduleId: Int, timestamp: Int): TaskAttendanceModel?
+    suspend fun checkTaskAttendanceRowExistence(
+        scheduleId: Int,
+        timestamp: Int
+    ): TaskAttendanceModel?
 
     @Upsert
     suspend fun upsertSchedule(scheduleModel: ScheduleModel)
@@ -22,9 +26,11 @@ interface ScheduleDao {
     // insert a new task/attendance row
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTaskAttendance(taskAttendanceObj: TaskAttendanceModel): Long
+
     // update task
     @Query("UPDATE taskAttendance SET task = :task  WHERE scheduleId = :scheduleId AND timestamp = :timestamp")
     suspend fun updateTask(task: String, scheduleId: Int, timestamp: Int)
+
     // update attendance
     @Query("UPDATE taskAttendance SET attendance = :attendance WHERE scheduleId = :scheduleId AND timestamp = :timestamp")
     suspend fun updateAttendance(attendance: AttendanceType, scheduleId: Int, timestamp: Int)
@@ -39,13 +45,23 @@ interface ScheduleDao {
 
     @Query(
         """
-        SELECT s.scheduleId, s.startTime, s.endTime, s.day, s.dailyReminder, s.subject, t.timestamp, t.attendance, t.task, t.taskReminder
-        FROM schedule s 
-        LEFT JOIN taskAttendance t ON s.scheduleId = t.scheduleId AND (t.timestamp = :selectedDate OR t.timestamp IS NULL)
-        WHERE s.day = :selectedDay ORDER BY s.startTime
-    """
+            SELECT s.scheduleId, s.startTime, s.endTime, s.day, s.dailyReminder, s.subject, t.timestamp, t.attendance, t.task, t.taskReminder
+            FROM schedule s 
+            LEFT JOIN taskAttendance t ON s.scheduleId = t.scheduleId AND (t.timestamp = :selectedDate OR t.timestamp IS NULL)
+            WHERE s.day = :selectedDay ORDER BY s.startTime
+        """
     )
-    suspend fun getScheduleAndTaskList(selectedDay: String, selectedDate: Int): List<CombinedScheduleTaskModel>
+    suspend fun getScheduleAndTaskList(
+        selectedDay: String,
+        selectedDate: Int
+    ): List<CombinedScheduleTaskModel>
+
+
+    @Query("SELECT task,timestamp,scheduleId FROM taskAttendance Where task is NOT NULL ORDER BY timestamp")
+    suspend fun getAllTask():List<taskModel>
+
+    @Query("UPDATE taskAttendance SET task = NULL WHERE timestamp = :timestamp AND scheduleId = :scheduleId")
+    suspend fun clearTaskById(timestamp: Int, scheduleId: Int)
 
     @Query("SELECT * FROM schedule WHERE scheduleId = :id")
     suspend fun getScheduleById(id: Int): ScheduleModel
@@ -53,7 +69,8 @@ interface ScheduleDao {
     @Query("DELETE FROM schedule WHERE scheduleId = :id")
     suspend fun deleteById(id: Int)
 
-    @Query("""
+    @Query(
+        """
         SELECT 
             s.subject,
             COUNT(*) AS totalClasses,
@@ -67,9 +84,12 @@ interface ScheduleDao {
             t.timestamp BETWEEN :startOfTimestamp AND :endOfTimestamp
         GROUP BY 
             s.subject
-    """)
+    """
+    )
     suspend fun getSubjectAttendanceSummary(
         startOfTimestamp: Int,
-        endOfTimestamp: Int =  startOfTimestamp+32
+        endOfTimestamp: Int = startOfTimestamp + 32
     ): List<SubjectAttendanceSummaryModel>
+
+
 }

@@ -1,9 +1,13 @@
 package `in`.instea.instea.data.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import `in`.`in`.instea.instea.screens.more.composable.taskModel
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
+import `in`.instea.instea.data.datamodel.TaskModel
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreUiState
@@ -27,6 +31,7 @@ class MoreViewModel(
             _uiState.update { it.copy(expandedIndex = argIndex) }
         }
             onTimestampSelected(_uiState.value.selectedTimestamp)
+            getAllTask()
     }
 
     fun onTimestampSelected(selectedDate: LocalDate) {
@@ -36,7 +41,7 @@ class MoreViewModel(
             _uiState.update {
                 it.copy(
                     selectedTimestamp = selectedDate,
-                    attendanceSummaries = scheduleRepository.getSubjectAttendanceSummary(timestamp)
+                    attendanceSummaries = scheduleRepository.getSubjectAttendanceSummary(timestamp),
                 )
             }
         }
@@ -50,19 +55,23 @@ class MoreViewModel(
         return timestamp
     }
 
-    fun getAllTask(selectedDate: LocalDate){
+
+    fun getAllTask(){
             viewModelScope.launch {
-
-                val timestamp=timestamp(selectedDate)
-                val combinedTaskList=scheduleRepository.getScheduleAndTaskList(selectedDate.toString(),timestamp)
-
-                val taskDescriptions = combinedTaskList.mapNotNull { it.task }
-
+                val tasks=scheduleRepository.getAllTasks()
                 _uiState.update {
                     it.copy(
-                        taskList = taskDescriptions
+                        taskList = tasks
                     )
                 }
             }
+
+    }
+    fun onDeleteTaskClicked(taskModel: taskModel){
+        viewModelScope.launch {
+            scheduleRepository.deleteTaskbyId(taskModel.scheduleId,taskModel.timestamp)
+            Log.d("View Model", "VIew Model delete task clicked  ")
+        }
+        getAllTask()
     }
 }
