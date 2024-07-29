@@ -4,14 +4,17 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-07-28T16:36:41.375531700Z">
+        <DropdownSelection timestamp="2024-07-25T15:11:12.240275300Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="Default" identifier="serial=192.0.0.2:5555;connection=ca2aad88" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=VKHUHYS4TK5H4HZT" />
             </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="InboxScreen">
+        <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
   </component>

@@ -88,13 +88,14 @@ class NetworkUserRepository(
 
     suspend fun isUserNameAvailable(username: String): Result<String?> {
         return try {
-            val snapshot = firebaseDatabase.getReference("user")
+            val snapshot = firebaseDatabase.reference.child("user")
                 .orderByChild("username")
                 .equalTo(username)
                 .get()
                 .await()
             if (snapshot.exists()) {
                 Result.success("Username taken")
+
             } else {
                 Result.success(null)
             }

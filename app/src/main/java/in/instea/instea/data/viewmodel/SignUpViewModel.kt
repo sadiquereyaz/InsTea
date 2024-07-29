@@ -132,7 +132,7 @@ class SignUpViewModel(
 //            _uiState.update { it.copy(usernameErrorMessage = usernameErrorMsg) }
             if (usernameErrorMsg == null) {
                 val existenceResult: Result<String? > = userRepository.isUserNameAvailable(username)
-                existenceResult.onSuccess {  usernameErrorMsg = it }.onFailure { usernameErrorMsg = null}
+                existenceResult.onSuccess {  usernameErrorMsg = it }.onFailure { usernameErrorMsg = it.message}
 
 
 //                usernameErrorMsg = userExistenceMessage
