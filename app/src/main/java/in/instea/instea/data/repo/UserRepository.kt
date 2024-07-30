@@ -1,6 +1,5 @@
 package `in`.instea.instea.data.repo
 
-import android.util.Log
 import `in`.instea.instea.data.datamodel.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -35,7 +34,7 @@ class CombinedUserRepository(
                 emit(networkUser) // Emit user fetched from Firebase
             } else {
                 // Handle the case where the user is not found in Firebase
-                emit(User(userId="userIdNotAvailable", email = "Given ID is not present in Firebase"))
+                emit(User(userId ="userIdNotAvailable", email = "Given ID is not present in Firebase"))
             }
         }
     }

@@ -8,6 +8,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+fun reduceMultipleSpaces(input: String): String {
+    return input.replace("\\s+".toRegex(), " ").trim()
+}
 class ChatviewModel(
     val netWorkChatRepository: ChatRepository
 ) : ViewModel() {
@@ -15,14 +18,15 @@ class ChatviewModel(
     val chatUiState: StateFlow<List<Message>> get() = _chatUiState
 
 
+
     fun getChats(senderRoom: String, receiverRoom: String) {
         viewModelScope.launch {
             // Combine messages from both rooms
             val allMessages = mutableListOf<Message>()
             netWorkChatRepository.getAllMesaages(senderRoom, receiverRoom).collect { messages ->
-                allMessages.addAll(messages)
+                _chatUiState.value = (messages)
                 // Update _chatUiState only once after collecting from both rooms
-                _chatUiState.update { allMessages }
+
             }
         }
     }
@@ -30,6 +34,8 @@ class ChatviewModel(
     fun insertMessages(message: Message,receiverRoom: String, senderRoom: String) {
         viewModelScope.launch {
             netWorkChatRepository.insertMessage(message, receiverRoom, senderRoom)
+            netWorkChatRepository.updateChatPartners(message.senderId,receiverRoom.removePrefix(message.senderId))
+
         }
     }
 }

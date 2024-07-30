@@ -66,12 +66,14 @@ fun EditPost(postId:String) {
         mutableStateOf(PostData())
     }
     var textState by remember { mutableStateOf("") }
-   for(p in feedViewModel.posts.collectAsState(initial = emptyList()).value){
-       if(p.postid == postId){
-           textState = p.postDescription!!
-           break
-       }
-   }
+    LaunchedEffect(postId) {
+        feedViewModel.posts.collect { posts ->
+            posts.find { it.postid == postId }?.let {
+                post = it
+                textState = it.postDescription.orEmpty()
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -176,15 +178,11 @@ fun EditPost(postId:String) {
                         Icon(imageVector = Icons.Filled.Send,
                             contentDescription = "send",
                             modifier = Modifier.clickable {
-
+                                textState.replace(" +".toRegex()," ")
                                 coroutine.launch {
-                                    feedViewModel.insertPostsInDatabase(
-                                        post = PostData(
-                                            postid = "",
-                                            postDescription = textState,
-                                            postedByUser = feedViewModel.currentuser
-
-                                        )
+                                    post.postDescription = textState
+                                    feedViewModel.updateVotes(
+                                        post
                                     )
 
 

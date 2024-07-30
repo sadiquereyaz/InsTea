@@ -79,13 +79,15 @@ fun InboxScreen(
 
     var textState by remember { mutableStateOf("") }
 
-    LaunchedEffect(key1 = chatList) {
+    LaunchedEffect(senderRoom, receiverRoom) {
         chatViewModel.getChats(senderRoom, receiverRoom)
     }
 
 
-    Surface {
-        Column(modifier = Modifier.fillMaxSize()) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
 
             LazyColumn(
                 modifier = Modifier
@@ -127,6 +129,7 @@ fun InboxScreen(
                 )
 
                 Card(
+
                     modifier = Modifier
                         .size(50.dp)
                         .padding(6.dp),
@@ -140,6 +143,7 @@ fun InboxScreen(
                             .size(40.dp)
                             .padding(1.dp)
                             .clickable {
+                                textState = reduceMultipleSpaces(textState)
                                 chatViewModel.insertMessages(
                                     message = Message(
                                         message = textState,
@@ -171,19 +175,20 @@ fun SenderTextField(message: Message) {
             .padding(15.dp)
     ) {
         Card(
+            elevation = CardDefaults.cardElevation(8.dp),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer
             ),
-            modifier = Modifier.wrapContentSize(Alignment.Center)
+            modifier = Modifier.wrapContentSize(Alignment.TopEnd)
         ) {
             Row(
                 modifier = Modifier
                     .padding(10.dp)
-                    .wrapContentWidth(Alignment.End)
+                    .wrapContentWidth()
                     .fillMaxWidth(0.5f),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(2.dp)
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                verticalAlignment = Alignment.Bottom // Align items to bottom in Row
             ) {
                 Text(
                     modifier = Modifier
@@ -194,16 +199,14 @@ fun SenderTextField(message: Message) {
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onTertiaryContainer
                     ),
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Clip
                 )
-                Box(contentAlignment = Alignment.BottomEnd) {
-                    Text(
-                        text = message.timeStamp,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        fontSize = 10.sp,
-                        modifier = Modifier.padding(bottom = 4.dp)
-                    )
-                }
+                Text(
+                    text = message.timeStamp,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    fontSize = 10.sp,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
             }
         }
     }
@@ -217,9 +220,9 @@ fun ReceiverTextField(message: Message) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .wrapContentWidth(Alignment.Start)
     ) {
         Card(
+            elevation = CardDefaults.cardElevation(8.dp),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.secondaryContainer
@@ -230,8 +233,8 @@ fun ReceiverTextField(message: Message) {
                     .padding(10.dp)
                     .wrapContentWidth()
                     .fillMaxWidth(0.5f),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(2.dp)
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                verticalAlignment = Alignment.Bottom // Align items to bottom in Row
             ) {
                 Text(
                     modifier = Modifier
@@ -242,16 +245,14 @@ fun ReceiverTextField(message: Message) {
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onTertiaryContainer
                     ),
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Clip
                 )
-                Box(contentAlignment = Alignment.BottomEnd) {
-                    Text(
-                        text = message.timeStamp,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-                        fontSize = 10.sp,
-                        modifier = Modifier.padding(bottom = 4.dp)
-                    )
-                }
+                Text(
+                    text = message.timeStamp,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    fontSize = 10.sp,
+                    modifier = Modifier.padding(bottom = 4.dp)
+                )
             }
         }
     }

@@ -43,7 +43,7 @@ object BottomNavItemData{
             unselectedItem = Icons.Outlined.Email,
             hasNotification = true,
             badgeCount = 45,
-            route = InsteaScreens.Inbox.name
+            route = InsteaScreens.UserList.name
         ),
         BottomNavItem(
             title = "Profile",

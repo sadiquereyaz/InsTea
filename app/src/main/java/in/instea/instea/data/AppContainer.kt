@@ -27,8 +27,9 @@ interface AppContainer {
     val userRepository: UserRepository
     val scheduleRepository: ScheduleRepository
     val networkRepository: NetworkPostRepository
-    val localPostRepository:LocalPostRepository
-//    val userPreferenceRepository: UserPreferenceRepository
+    val localPostRepository: LocalPostRepository
+
+    //    val userPreferenceRepository: UserPreferenceRepository
     val academicRepository: AcademicRepository
     val netwrokChatRepository: NetwrokChatRepository
 }
@@ -40,7 +41,7 @@ val Context.dataStore by preferencesDataStore(name = CURRENT_USER)
 
 
 class AppDataContainer(
-    private val context: Context
+    private val context: Context,
 ) : AppContainer {
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val firebaseDatabase = FirebaseDatabase.getInstance()
@@ -72,10 +73,13 @@ class AppDataContainer(
         NetworkPostRepository(FirebaseDatabase.getInstance())
     }
     override val localPostRepository: LocalPostRepository by lazy {
-       LocalPostRepository(postDao = roomDatabase.postDao())
+        LocalPostRepository(postDao = roomDatabase.postDao())
     }
-    override val netwrokChatRepository: NetwrokChatRepository by lazy{
-      NetwrokChatRepository()
+    override val netwrokChatRepository: NetwrokChatRepository by lazy {
+        NetwrokChatRepository(
+            userRepository = NetworkUserRepository(firebaseDatabase, firebaseAuth)
+        )
+
     }
 
 

@@ -1,7 +1,6 @@
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.MoreVert
@@ -76,7 +74,8 @@ fun PostCard(
             break
         }
     }
-    Box(
+    var userName = user.username
+        Box(
         modifier = Modifier
             .padding(start = 3.dp, end = 3.dp, bottom = 0.dp)
             .background(MaterialTheme.colorScheme.background)
@@ -105,7 +104,10 @@ fun PostCard(
                     )
 
                     Column(modifier = Modifier.padding(start = 8.dp)) {
-                        Text(text = if (user.username != null) { user.username!! } else "", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+
+                        if(post.isAnonymous)
+                            userName = "UnderCover"
+                        Text(text = if (userName != null) { userName!! } else "", fontSize = 14.sp, fontWeight = FontWeight.Bold)
                         Text(
                             text = post.timestamp.format(),
                             fontSize = 12.sp,

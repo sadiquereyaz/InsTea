@@ -41,7 +41,7 @@ fun InsteaApp(
     val bottomBarItems = listOf(
         InsteaScreens.Feed,
         InsteaScreens.Schedule,
-        InsteaScreens.Inbox, //inbox
+        InsteaScreens.UserList, //inbox
         InsteaScreens.SelfProfile
     )
 

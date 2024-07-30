@@ -17,7 +17,7 @@ import `in`.instea.instea.data.datamodel.TimeConverters
 
 @Database(
     entities = [PostData::class, ScheduleModel::class, TaskAttendanceModel::class],
-    version = 10, exportSchema = false
+    version = 11, exportSchema = false
 )
 @TypeConverters(TimeConverters::class, AttendanceTypeConverter::class)
 abstract class InsteaDatabase : RoomDatabase() {

@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,7 +26,7 @@ import `in`.instea.instea.data.viewmodel.FeedViewModel
 @Composable
 fun PostList(feedViewModel: FeedViewModel,navController: NavController) {
     val posts = feedViewModel.posts.collectAsState(initial = emptyList()).value.reversed()
-    val userList = feedViewModel.fetchedUsers
+    val userList by feedViewModel.userList.collectAsState()
     if (feedViewModel.isLoading.value) {
         Column {
             repeat(8) {

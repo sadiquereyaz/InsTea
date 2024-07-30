@@ -15,10 +15,11 @@ class NetworkUserRepository(
     fun getUserById(userId: String): Flow<User> {
         // Implement your logic to fetch user by ID from Firebase
         val databaseReference = firebaseDatabase.reference
-            .child("user").child(userId)
+
         return flow {
-            val userSnapshot = databaseReference.get().await()
-            if (userSnapshot.exists()) {
+            val userSnapshot = databaseReference.child("user").child(userId).get().await()
+            Log.d("chatPartners", "getUserById: $userSnapshot")
+            if (userSnapshot != null) {
                 val userData = userSnapshot.getValue(User::class.java)
                 if (userData != null) {
                     emit(userData) // Emit the retrieved UserModel

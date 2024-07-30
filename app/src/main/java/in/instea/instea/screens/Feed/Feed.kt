@@ -183,13 +183,16 @@ fun FeedContent(feedViewModel: FeedViewModel = viewModel(factory = AppViewModelP
                         Icon(imageVector = Icons.Filled.Send,
                             contentDescription = "send",
                             modifier = Modifier.clickable {
-
+                                var isAnonyous = false
+                                if(selectedPostType == "Anonymous")
+                                    isAnonyous = true
                                 coroutine.launch {
                                     feedViewModel.insertPostsInDatabase(
                                         post = PostData(
                                             postid = "",
                                             postDescription = textState,
-                                            postedByUser = feedViewModel.currentuser
+                                            postedByUser = feedViewModel.currentuser,
+                                            isAnonymous = isAnonyous
 
                                         )
                                     )

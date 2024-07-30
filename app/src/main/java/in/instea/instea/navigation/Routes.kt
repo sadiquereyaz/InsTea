@@ -9,6 +9,7 @@ enum class InsteaScreens(
     Schedule("Schedule"),
     EditSchedule("Edit Schedule"),
     Inbox("Conversation"),
+    UserList("Start Conversation"),
     Attendance("Attendance"),
     SignIn("Sign In"),
     Signup("Signup"),

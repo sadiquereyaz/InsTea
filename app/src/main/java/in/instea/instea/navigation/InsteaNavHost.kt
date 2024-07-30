@@ -4,6 +4,7 @@ import EditPost
 import FEED
 import FeedContent
 import InboxScreen
+import UserListScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -55,6 +56,7 @@ fun InsteaNavHost(
 
         composable(route = InsteaScreens.Inbox.name+"/{userId}") {backStackEntry->
             val userId = backStackEntry.arguments?.getString("userId")
+
            InboxScreen(userId!!)
         }
         composable(route = InsteaScreens.Schedule.name) {
@@ -101,6 +103,9 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.EditPost.name+"/{postId}"){ backstackEntry->
             val post = backstackEntry.arguments?.getString("postId")
             EditPost(post!!)
+        }
+        composable(route = InsteaScreens.UserList.name) {
+          UserListScreen()
         }
 
     }

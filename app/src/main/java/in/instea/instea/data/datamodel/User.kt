@@ -13,7 +13,8 @@ data class User(
     val linkedinId: String? = null,
     val whatsappNo: String? = "",
     val hostel: String? = null,
-    val roomNo: String? = null
+    val roomNo: String? = null,
+    val chatPartners: List<String> = mutableListOf()
 )
 
 data class userUiState(

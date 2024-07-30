@@ -26,7 +26,8 @@ data class PostData(
     var userLikedCurrentPost: MutableList<String?> = mutableListOf(""),
     var userDislikedCurrentPost: MutableList<String?> = mutableListOf(""),
     var saved:Boolean = false,
-    var hasReports: Int = 0
+    var hasReports: Int = 0,
+    var isAnonymous : Boolean = false
 ) {
     constructor() : this("", null, null, "", mutableListOf(), null, "", DateAndHour(), mutableListOf(), mutableListOf(), false,0)
 }
