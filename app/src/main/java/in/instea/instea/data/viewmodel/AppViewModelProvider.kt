@@ -44,7 +44,8 @@ object AppViewModelProvider {
         initializer {
                 SignUpViewModel(
                     userRepository = insteaApplication().container.userRepository,
-                    academicRepository = insteaApplication().container.academicRepository
+                    academicRepository = insteaApplication().container.academicRepository,
+                    context = insteaApplication()
                 )
         }
 
@@ -64,7 +65,7 @@ object AppViewModelProvider {
         initializer {
             MoreViewModel(
                 savedStateHandle = this.createSavedStateHandle(),
-                scheduleRepository = insteaApplication().container.scheduleRepository,
+                scheduleRepository = insteaApplication().container.scheduleRepository
             )
         }
     }

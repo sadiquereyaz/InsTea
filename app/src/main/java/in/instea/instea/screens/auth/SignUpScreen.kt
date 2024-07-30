@@ -23,13 +23,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import `in`.instea.instea.composable.DropdownComposable
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.SignUpViewModel
@@ -48,6 +54,11 @@ fun SignUpScreen(
 //    val authState = viewModel.authState.collectAsState()
     val viewModel: SignUpViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val uiState by viewModel.uiState.collectAsState()
+
+    var user by remember { mutableStateOf(Firebase.auth.currentUser) }
+    val launcher = rememberFirebaseAuthLauncher(
+
+    )
 
     /*   LaunchedEffect(authState.value) {
            when (authState.value) {
@@ -200,10 +211,18 @@ fun SignUpScreen(
 
         ButtonComp(
             text = "Send OTP",
-            isLoading = uiState.isSendingOtp,
+            isLoading = uiState.isSignIngIn,
             onButtonClicked = {
                 coroutineScope.launch {
-                    viewModel.signUp()
+//                    viewModel.signIn(navController)
+                    viewModel.signInWithGoogle{result ->
+                        if (result) {
+                            // Sign-in successful, navigate to the next screen
+                        } else {
+                            // Handle sign-in failure
+                        }
+
+                    }
                 }
             },
             isEnabled = (uiState.email.isNotBlank() && uiState.username.isNotBlank() &&
@@ -218,8 +237,17 @@ fun SignUpScreen(
 //            enabled = false,
             onClick = {
                 coroutineScope.launch {
-                    navController.popBackStack()
-                    navController.navigate(InsteaScreens.SignIn.name)
+//                    navController.popBackStack()
+//                    navController.navigate(InsteaScreens.SignIn.name)
+                    viewModel.signInWithGoogle{result ->
+                        if (result) {
+                            // Sign-in successful, navigate to the next screen
+                            navController.navigate(InsteaScreens.SignIn.name)
+                        } else {
+                            // Handle sign-in failure
+                        }
+
+                    }
                 }
             },
         ) {

@@ -1,6 +1,8 @@
 package `in`.instea.instea.data.repo
 
+import android.content.ContentValues.TAG
 import android.util.Log
+import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import `in`.instea.instea.data.datamodel.User
@@ -80,7 +82,7 @@ class NetworkUserRepository(
             // Check for successful creation and get user ID
             val userId = result.user?.uid ?: return Result.failure(Exception("No UID"))
             val newUser = user.copy(userId = userId)
-            // Save user data to Firebase Realtime Database
+//             Save user data to Firebase Realtime Database
             firebaseDatabase.reference.child("user").child(userId).setValue(newUser).await()
             Result.success(null)
         } catch (e: Exception) {

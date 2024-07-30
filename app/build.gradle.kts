@@ -70,7 +70,12 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.firebase.database.ktx)
     implementation(libs.firebase.auth.ktx)
-    implementation(libs.androidx.compose.material)
+    // Also add the dependency for the Google Play services library and specify its version
+    implementation(libs.play.services.auth)
+    implementation( libs.androidx.credentials)
+    implementation (libs.androidx.credentials.play.services.auth)
+    implementation (libs.googleid)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

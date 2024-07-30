@@ -29,7 +29,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.ExperimentalWearMaterialApi
 import `in`.instea.instea.data.FeedViewModel
 
 @Composable
@@ -57,7 +56,6 @@ fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit) 
     }
 }
 
-@OptIn(ExperimentalWearMaterialApi::class)
 @Composable
 fun ShimmerEffect(modifier: Modifier = Modifier) {
     val shimmerColors = listOf(
