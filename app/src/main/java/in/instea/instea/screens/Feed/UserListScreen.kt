@@ -29,6 +29,7 @@ import `in`.instea.instea.data.viewmodel.FeedViewModel
         items(chatPartners) { chatPartner ->
 
             val user = userList.find { it.userId == chatPartner}
+            Log.d("UserList", "user: $user")
 
             if (user != null) {
                 UserListCard(chatPartner,user,userList)

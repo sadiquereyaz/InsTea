@@ -146,8 +146,8 @@ fun EditPost(postId:String) {
                             DropdownMenuItem(
                                 text = { Text(type) },
                                 onClick = {
-                                    selectedPostType = type // Update the selected post type
-                                    expanded = false // Close the dropdown menu
+                                    selectedPostType = type
+                                    expanded = false 
                                 }
                             )
                         }
@@ -186,9 +186,8 @@ fun EditPost(postId:String) {
                                     feedViewModel.updateVotes(
                                         post
                                     )
-
-
                                     textState = ""
+
                                 }
 
 

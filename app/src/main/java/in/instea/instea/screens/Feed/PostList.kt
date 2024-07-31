@@ -78,8 +78,9 @@ fun ShimmerGridItem(brush: Brush, modifier: Modifier = Modifier) {
     Row(
         modifier
             .fillMaxWidth()
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
     ) {
         Spacer(
             modifier = Modifier
@@ -87,12 +88,12 @@ fun ShimmerGridItem(brush: Brush, modifier: Modifier = Modifier) {
                 .clip(CircleShape)
                 .background(brush)
         )
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(3.dp))
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(
                 modifier = modifier
                     .height(12.dp)
-                    .fillMaxWidth(0.7f)
+                    .fillMaxWidth(0.4f)
                     .clip(RoundedCornerShape(10.dp))
                     .background(brush)
             )
@@ -103,6 +104,14 @@ fun ShimmerGridItem(brush: Brush, modifier: Modifier = Modifier) {
                 modifier = modifier
                     .height(12.dp)
                     .fillMaxWidth(0.6f)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(brush)
+            )
+            Spacer(modifier.height(1.dp))
+            Spacer(
+                modifier = modifier
+                    .height(12.dp)
+                    .fillMaxWidth(0.5f)
                     .clip(RoundedCornerShape(10.dp))
                     .background(brush)
             )

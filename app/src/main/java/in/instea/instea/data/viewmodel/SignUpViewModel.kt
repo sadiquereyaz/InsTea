@@ -20,6 +20,8 @@ class SignUpViewModel(
     private val academicRepository: AcademicRepository
 ) : ViewModel() {
 
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> get() = _isLoading
     private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
 
@@ -78,6 +80,7 @@ class SignUpViewModel(
     fun addItem(semester: String, department: String, university: String) {
         viewModelScope.launch {
             academicRepository.addClassDetail(semester, department, university)
+            _isLoading.value = false
         }
     }
 }

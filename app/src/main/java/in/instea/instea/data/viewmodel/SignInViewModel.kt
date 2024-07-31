@@ -14,7 +14,8 @@ import kotlinx.coroutines.launch
 class SignInViewModel(
     private val userRepository: UserRepository
 ) : ViewModel() {
-
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> get() = _isLoading
     private val _uiState = MutableStateFlow<SignInUiState>(SignInUiState.Idle)
     val uiState: StateFlow<SignInUiState> = _uiState
 
@@ -26,6 +27,7 @@ class SignInViewModel(
                 val userObj: Flow<User> = userRepository.getUserById(userId!!)
                 userRepository.upsertUserLocally(userObj.firstOrNull()!!)
             }
+            _isLoading.value = true
         }
     }
 }

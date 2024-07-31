@@ -29,6 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.LottieAnimationView
+import com.airbnb.lottie.LottieComposition
+import `in`.instea.instea.R
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.SignInUiState
 import `in`.instea.instea.data.viewmodel.SignInViewModel
@@ -48,6 +51,7 @@ fun SignInScreen(
     val signInUiState by viewModel.uiState.collectAsState()
     var email by rememberSaveable { mutableStateOf("mah@gmail.com") }
     var password by rememberSaveable { mutableStateOf("ssssss") }
+    val isLoading = viewModel.isLoading.value
 
     Column(
         modifier = Modifier
