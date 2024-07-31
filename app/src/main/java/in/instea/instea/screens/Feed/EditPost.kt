@@ -178,6 +178,8 @@ fun EditPost(postId:String) {
                         Icon(imageVector = Icons.Filled.Send,
                             contentDescription = "send",
                             modifier = Modifier.clickable {
+                                if(textState != post.postDescription)
+                                    post.edited = true
                                 textState.replace(" +".toRegex()," ")
                                 coroutine.launch {
                                     post.postDescription = textState

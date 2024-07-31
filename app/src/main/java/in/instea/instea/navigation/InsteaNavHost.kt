@@ -85,8 +85,9 @@ fun InsteaNavHost(
                 navigateToEditProfile = { navController.navigate(InsteaScreens.EditProfile.name) }
             )
         }
-        composable(route = InsteaScreens.OtherProfile.name) {
-            OtherProfileScreen()
+        composable(route = InsteaScreens.OtherProfile.name+"/{userId}") {backStackEntry->
+            val userId = backStackEntry.arguments?.getString("userId")
+            OtherProfileScreen(userId = userId!!, navController = navController)
         }
         composable(route = InsteaScreens.EditProfile.name) {
             EditProfileScreen(

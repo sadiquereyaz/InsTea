@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -20,7 +21,9 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
@@ -78,15 +81,15 @@ fun InboxScreen(
         chatViewModel.chatUiState.collectAsState(initial = emptyList()).value // Observe the flow directly
 
     var textState by remember { mutableStateOf("") }
-
+    val scrollState = rememberScrollState()
     LaunchedEffect(senderRoom, receiverRoom) {
         chatViewModel.getChats(senderRoom, receiverRoom)
     }
 
 
-    Surface(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
         ) {
 
             LazyColumn(
@@ -105,6 +108,7 @@ fun InboxScreen(
 
             Row(
                 modifier = Modifier
+
                     .fillMaxWidth()
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -163,7 +167,7 @@ fun InboxScreen(
             }
         }
     }
-}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -259,120 +263,7 @@ fun ReceiverTextField(message: Message) {
 }
 
 
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun SenderTextField(message: Message) {
-//    Column(
-//        horizontalAlignment = Alignment.End,
-//        modifier = Modifier
-//
-//            .fillMaxWidth()
-//            .padding(15.dp)
-//    ) {
-//        Card(
-//            shape = RoundedCornerShape(20.dp),
-//            colors = CardDefaults.cardColors(
-//                containerColor = MaterialTheme.colorScheme.primaryContainer
-//            ),
-//            modifier = Modifier.wrapContentSize(Alignment.TopEnd)
-//        ) {
-//            Row(verticalAlignment = Alignment.Bottom) {
-//                TextField(
-//                    modifier = Modifier
-//                        .padding(6.dp)
-//                        .widthIn(min = 50.dp, max = 200.dp),
-//                    maxLines = 6,
-//                    value = message.message,
-//                    onValueChange = {},
-//                    shape = RoundedCornerShape(16.dp),
-//                    colors = TextFieldDefaults.textFieldColors(
-//                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-//                        focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-//                        cursorColor = MaterialTheme.colorScheme.onPrimaryContainer,
-//                        focusedIndicatorColor = Color.Transparent,
-//                        unfocusedIndicatorColor = Color.Transparent,
-//                        disabledIndicatorColor = Color.Transparent,
-//                        unfocusedTextColor = MaterialTheme.colorScheme.onTertiaryContainer
-//                    ),
-//                    textStyle = TextStyle(
-//                        fontWeight = FontWeight.Bold,
-//                        color = MaterialTheme.colorScheme.onTertiaryContainer
-//                    )
-//                )
-//                Box(
-//                    contentAlignment = Alignment.BottomEnd,
-//                    modifier = Modifier.padding(end = 10.dp, bottom = 2.dp)
-//                ) {
-//                    Text(
-//                        text = TimeOfMessage().format(),
-//                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-//                        fontSize = 10.sp,
-//                        modifier = Modifier.padding(bottom = 4.dp, end = 4.dp)
-//                    )
-//                }
-//            }
-//        }
-//    }
-//
-//
-//}
-//
-//
-//@OptIn(ExperimentalMaterial3Api::class)
-//@Composable
-//fun ReceiverTextField(message: Message) {
-//
-//    Column(
-//        horizontalAlignment = Alignment.Start,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(15.dp)
-//    ) {
-//        Card(
-//            shape = RoundedCornerShape(20.dp),
-//            colors = CardDefaults.cardColors(
-//                containerColor = MaterialTheme.colorScheme.secondaryContainer
-//            )
-//
-//        ) {
-//            Row(verticalAlignment = Alignment.Bottom) {
-//                TextField(
-//                    modifier = Modifier
-//                        .padding(6.dp)
-//                        .widthIn(min = 50.dp, max = 200.dp),
-//                    maxLines = 6,
-//                    value = message.message,
-//                    onValueChange = {},
-//                    shape = RoundedCornerShape(16.dp),
-//                    colors = TextFieldDefaults.textFieldColors(
-//                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-//                        focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
-//                        cursorColor = MaterialTheme.colorScheme.onPrimaryContainer,
-//                        focusedIndicatorColor = Color.Transparent,
-//                        unfocusedIndicatorColor = Color.Transparent,
-//                        disabledIndicatorColor = Color.Transparent,
-//                        unfocusedTextColor = MaterialTheme.colorScheme.onTertiaryContainer
-//                    ),
-//                    textStyle = TextStyle(
-//                        fontWeight = FontWeight.Bold,
-//                        color = MaterialTheme.colorScheme.onTertiaryContainer
-//                    )
-//                )
-//                Box(
-//                    contentAlignment = Alignment.BottomEnd,
-//                    modifier = Modifier.padding(end = 10.dp, bottom = 2.dp)
-//                ) {
-//                    Text(
-//                        text = TimeOfMessage().format(),
-//                        color = MaterialTheme.colorScheme.onTertiaryContainer,
-//                        fontSize = 10.sp,
-//                        modifier = Modifier.padding(bottom = 4.dp, end = 4.dp)
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
+
 
 data class TimeOfMessage(
     var date: Date = Date(), // No-argument constructor required by Firebase

@@ -59,7 +59,7 @@ fun PostCard(
     post: PostData,
     feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavController,
-    userList: List<User>
+    userList: List<User>,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var showComments by remember { mutableStateOf(false) } // State for showing/hiding CommentCard
@@ -75,7 +75,7 @@ fun PostCard(
         }
     }
     var userName = user.username
-        Box(
+    Box(
         modifier = Modifier
             .padding(start = 3.dp, end = 3.dp, bottom = 0.dp)
             .background(MaterialTheme.colorScheme.background)
@@ -87,9 +87,11 @@ fun PostCard(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth().clickable {
-                    navController.navigate(InsteaScreens.Inbox.name+"/${if(user.userId != null) user.userId else " "}")
-                }
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        navController.navigate(InsteaScreens.OtherProfile.name + "/${if (user.userId != null) user.userId else " "}")
+                    }
             ) {
                 (if (post.profileImage != null) post.profileImage
                 else R.drawable.ic_launcher_foreground)?.let {
@@ -105,9 +107,13 @@ fun PostCard(
 
                     Column(modifier = Modifier.padding(start = 8.dp)) {
 
-                        if(post.isAnonymous)
+                        if (post.isAnonymous)
                             userName = "UnderCover"
-                        Text(text = if (userName != null) { userName!! } else "", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = if (userName != null) {
+                                userName!!
+                            } else "", fontSize = 14.sp, fontWeight = FontWeight.Bold
+                        )
                         Text(
                             text = post.timestamp.format(),
                             fontSize = 12.sp,
@@ -141,7 +147,7 @@ fun PostCard(
                                                 feedViewModel.DeletePost(post)
                                             }
                                             if (type == "Edit") {
-                                                navController.navigate(InsteaScreens.EditPost.name+"/${post.postid}")
+                                                navController.navigate(InsteaScreens.EditPost.name + "/${post.postid}")
                                             }
                                             expandDropdown = false // Close the dropdown menu
                                         }
@@ -164,10 +170,10 @@ fun PostCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             // Post Description
-            Column {
+            Column(horizontalAlignment = Alignment.Start) {
                 val displayText = if (isExpanded) post.postDescription!!
                 else post.postDescription?.take(100)
                 Text(text = displayText!!, modifier = Modifier.padding(2.dp))
@@ -176,6 +182,17 @@ fun PostCard(
                         Text(text = if (isExpanded) "Show Less" else "Read More", fontSize = 12.sp)
                     }
                 }
+                if (post.edited) {
+                    Text(
+                        text = "Edited",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Light,
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .align(Alignment.Start)
+                    )
+                }
+
             }
 
             // Post Image
@@ -247,7 +264,7 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
 
     Box(
         contentAlignment = Alignment.BottomEnd,
-        modifier = Modifier.padding(3.dp,end = 5.dp)
+        modifier = Modifier.padding(3.dp, end = 5.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
