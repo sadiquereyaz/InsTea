@@ -214,14 +214,7 @@ fun SignUpScreen(
             onButtonClicked = {
                 coroutineScope.launch {
 //                    viewModel.signIn(navController)
-                    viewModel.signInWithGoogle{result ->
-                        if (result) {
-                            // Sign-in successful, navigate to the next screen
-                        } else {
-                            // Handle sign-in failure
-                        }
 
-                    }
                 }
             },
             isEnabled = (uiState.email.isNotBlank() && uiState.username.isNotBlank() &&
@@ -238,15 +231,7 @@ fun SignUpScreen(
                 coroutineScope.launch {
 //                    navController.popBackStack()
 //                    navController.navigate(InsteaScreens.SignIn.name)
-                    viewModel.signInWithGoogle{result ->
-                        if (result) {
-                            // Sign-in successful, navigate to the next screen
-                            navController.navigate(InsteaScreens.SignIn.name)
-                        } else {
-                            // Handle sign-in failure
-                        }
 
-                    }
                 }
             },
         ) {

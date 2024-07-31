@@ -43,19 +43,19 @@ class SignUpViewModel(
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
 
 
-    private lateinit var googleSignInClient: GoogleSignInClient
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+//    private lateinit var googleSignInClient: GoogleSignInClient
+//    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     init {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(R.string.default_web_client_id)).requestEmail()
-            .build()
-        googleSignInClient = GoogleSignIn.getClient(context, gso)
+//        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+//            .requestIdToken(context.getString(R.string.default_web_client_id)).requestEmail()
+//            .build()
+//        googleSignInClient = GoogleSignIn.getClient(context, gso)
 
 //        getAllUniversity()
     }
 
-    fun signInWithGoogle(onResult: (Boolean) -> Unit) {
+   /* fun signInWithGoogle(onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             val signInIntent = googleSignInClient.signInIntent
 //            startActivity(context., signInIntent, null)
@@ -65,7 +65,7 @@ class SignUpViewModel(
                     errorMessage = signInIntent.toString()
                 )
             }
-            /*try {
+            *//*try {
                 val signInIntent = googleSignInClient.signInIntent
                 try {
                     val task = GoogleSignIn.getSignedInAccountFromIntent(signInIntent)
@@ -89,26 +89,26 @@ class SignUpViewModel(
                     )
                 }
                 onResult(false)
-            }*/
+            }*//*
         }
-    }
+    }*/
 
-    private suspend fun firebaseAuthWithGoogle(account: GoogleSignInAccount): Boolean {
+    /*private suspend fun firebaseAuthWithGoogle(account: GoogleSignInAccount): Boolean {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         return try {
             val authResult = auth.signInWithCredential(credential).await()
             val user = authResult.user
             if (user != null) {
                 // Update user information in your repository
-                /*  userRepository.updateUserWithGoogleInfo(
-                      User(
-                          username = user.displayName ?: "",
-                          email = user.email ?: "",
-                          university = _uiState.value.selectedUniversity,
-                          dept = _uiState.value.selectedDepartment,
-                          sem = _uiState.value.selectedSemester
-                      )
-                  )*/
+//                  userRepository.updateUserWithGoogleInfo(
+//                      User(
+//                          username = user.displayName ?: "",
+//                          email = user.email ?: "",
+//                          university = _uiState.value.selectedUniversity,
+//                          dept = _uiState.value.selectedDepartment,
+//                          sem = _uiState.value.selectedSemester
+//                      )
+//                  )
                 _uiState.update {
                     it.copy(
                         isSignIngIn = false,
@@ -129,7 +129,7 @@ class SignUpViewModel(
             false
         }
     }
-
+*/
     private fun getAllUniversity() {
         viewModelScope.launch {
             _uiState.update {
@@ -217,7 +217,7 @@ class SignUpViewModel(
         }
     }
 
-    fun signIn(navController: NavController) {
+ /*   fun signIn(navController: NavController) {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isSignIngIn = true)
@@ -251,11 +251,8 @@ class SignUpViewModel(
                 }
             )
         }
-    }
+    }*/
 
-    private fun signInWithGoogle(any: Any) {
-        TODO("Not yet implemented")
-    }
 
     fun addItem(semester: String, department: String, university: String) {
         viewModelScope.launch {
