@@ -1,39 +1,43 @@
 package `in`.instea.instea.data.viewmodel
 
 import android.content.Context
-import android.provider.Settings.Global.getString
-import androidx.core.content.ContextCompat.startActivity
+import android.util.Log
+import androidx.credentials.Credential
+import androidx.credentials.CustomCredential
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import `in`.instea.instea.R
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.AcademicRepository
+import `in`.instea.instea.data.repo.AccountService
 import `in`.instea.instea.data.repo.UserRepository
+import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.screens.auth.SignUpUiState
 import `in`.instea.instea.utility.Validator
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.internal.NoOpContinuation.context
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlin.coroutines.jvm.internal.CompletedContinuation.context
 
 class SignUpViewModel(
     private val userRepository: UserRepository,
     private val academicRepository: AcademicRepository,
-    context: Context
-) : ViewModel() {
+    context: Context,
+    private val accountService: AccountService
+) : InsteaAppViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
@@ -44,7 +48,8 @@ class SignUpViewModel(
 
     init {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(R.string.default_web_client_id)).requestEmail().build()
+            .requestIdToken(context.getString(R.string.default_web_client_id)).requestEmail()
+            .build()
         googleSignInClient = GoogleSignIn.getClient(context, gso)
 
 //        getAllUniversity()
@@ -53,7 +58,7 @@ class SignUpViewModel(
     fun signInWithGoogle(onResult: (Boolean) -> Unit) {
         viewModelScope.launch {
             val signInIntent = googleSignInClient.signInIntent
-            startActivity(context., signInIntent, null)
+//            startActivity(context., signInIntent, null)
             _uiState.update {
                 it.copy(
                     isSignIngIn = false,
@@ -291,4 +296,34 @@ class SignUpViewModel(
         }
     }
 
+    fun onSignUpWithGoogle(credential: Credential, openAndPopUp: (String, String) -> Unit) {
+        launchCatching {
+           /* if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                accountService.signInWithGoogle(googleIdTokenCredential.idToken)
+                openAndPopUp(InsteaScreens.SignIn.name, InsteaScreens.Signup.name)
+            } else {
+                Log.e(ERROR_TAG, UNEXPECTED_CREDENTIAL)
+            }*/
+                if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
+                    val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                    accountService.linkAccountWithGoogle(googleIdTokenCredential.idToken)
+                    openAndPopUp(InsteaScreens.SignIn.name, InsteaScreens.Signup.name)
+                } else {
+                    Log.e(ERROR_TAG, UNEXPECTED_CREDENTIAL)
+                }
+        }
+    }
+}
+const val ERROR_TAG = "NOTES APP ERROR"
+const val UNEXPECTED_CREDENTIAL = "Unexpected type of credential"
+
+open class InsteaAppViewModel : ViewModel() {
+    fun launchCatching(block: suspend CoroutineScope.() -> Unit) =
+        viewModelScope.launch(
+            CoroutineExceptionHandler { _, throwable ->
+                Log.d(ERROR_TAG, throwable.message.orEmpty())
+            },
+            block = block
+        )
 }

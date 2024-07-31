@@ -5,6 +5,8 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import `in`.instea.instea.data.repo.AcademicRepository
+import `in`.instea.instea.data.repo.AccountService
+import `in`.instea.instea.data.repo.AccountServiceImpl
 import `in`.instea.instea.data.repo.CombinedPostRepository
 import `in`.instea.instea.data.repo.CombinedUserRepository
 import `in`.instea.instea.data.repo.LocalPostRepository
@@ -28,6 +30,7 @@ interface AppContainer {
     val localPostRepository:LocalPostRepository
 //    val userPreferenceRepository: UserPreferenceRepository
     val academicRepository: AcademicRepository
+    val accountService: AccountService
 }
 
 private const val CURRENT_USER = "current_user"
@@ -71,6 +74,7 @@ class AppDataContainer(
     override val localPostRepository: LocalPostRepository by lazy {
        LocalPostRepository(postDao = roomDatabase.postDao())
     }
-
-
+    override val accountService: AccountService by lazy {
+        AccountServiceImpl()
+    }
 }

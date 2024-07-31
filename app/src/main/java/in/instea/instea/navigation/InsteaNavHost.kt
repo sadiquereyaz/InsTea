@@ -40,7 +40,13 @@ fun InsteaNavHost(
     ) {
         composable(route = InsteaScreens.Signup.name) {
             SignUpScreen(
-                navController = navController
+                navController = navController,
+                openAndPopUp = { route, popUp ->
+                    navController.navigate(route) {
+                        launchSingleTop = true
+                        popUpTo(popUp) { inclusive = true }
+                    }
+                }
             )
         }
         composable(route = InsteaScreens.SignIn.name) {

@@ -33,9 +33,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.firebase.auth.auth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import `in`.instea.instea.composable.AuthenticationButton
 import `in`.instea.instea.composable.DropdownComposable
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.SignUpViewModel
@@ -50,15 +50,14 @@ import kotlinx.coroutines.launch
 fun SignUpScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
+    openAndPopUp: (String, String) -> Unit,
 ) {
 //    val authState = viewModel.authState.collectAsState()
     val viewModel: SignUpViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val uiState by viewModel.uiState.collectAsState()
 
     var user by remember { mutableStateOf(Firebase.auth.currentUser) }
-    val launcher = rememberFirebaseAuthLauncher(
 
-    )
 
     /*   LaunchedEffect(authState.value) {
            when (authState.value) {
@@ -252,6 +251,10 @@ fun SignUpScreen(
             },
         ) {
             Text(text = "Already have account? SignIn")
+        }
+        
+        AuthenticationButton {credential ->
+            viewModel.onSignUpWithGoogle(credential, openAndPopUp)
         }
 
         // Signup screen error

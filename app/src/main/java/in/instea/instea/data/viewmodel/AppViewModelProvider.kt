@@ -45,7 +45,8 @@ object AppViewModelProvider {
                 SignUpViewModel(
                     userRepository = insteaApplication().container.userRepository,
                     academicRepository = insteaApplication().container.academicRepository,
-                    context = insteaApplication()
+                    context = insteaApplication(),
+                    accountService = insteaApplication().container.accountService
                 )
         }
 
