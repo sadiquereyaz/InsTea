@@ -161,25 +161,6 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp) // Custom spacing between elements
         ) {
-//            for reply
-//            Button(
-//                onClick = {
-//                    showComments = !showComments
-//                          onReplyClick(!showReply)},
-//                colors = ButtonDefaults.buttonColors(
-//                    containerColor = Color.Transparent,
-//                    contentColor = Color.Unspecified
-//                ),
-//                modifier = Modifier
-//                    .padding(0.dp)
-//                    .align(Alignment.CenterVertically)
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.chatbubble),
-//                    contentDescription = "",
-//                    modifier = Modifier.size(20.dp)
-//                )
-//            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -211,7 +192,7 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
 //                                feedViewModel.updateVotes(post)
                                 post.comments[commetIndex] = comment
                                 feedViewModel.updateVotes(post)
-
+                                isDownVoted.value = !isDownVoted.value
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
                                     comment.userDislikeComment.contains(feedViewModel.currentuser)
@@ -267,6 +248,7 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
 //                                feedViewModel.updateVotes(post)
                                 post.comments[commetIndex] = comment
                                 feedViewModel.updateVotes(post)
+                                isUpVoted.value = !isUpVoted.value
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
                                     comment.userDislikeComment.contains(feedViewModel.currentuser)
@@ -279,14 +261,14 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
 
                 )
                 Spacer(modifier = Modifier.width(20.dp).height(10.dp))
-//                Box(
-//                    modifier = Modifier.padding(end = 8.dp)
-//                ) {
-//                    Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
-//                val list = listOf("Report","Edit Comment")
-//
-//
-//                }
+                Box(
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
+                val list = listOf("Report","Edit Comment")
+
+
+                }
 
             }
         }

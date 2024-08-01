@@ -4,7 +4,7 @@ import EditPost
 import FEED
 import FeedContent
 import InboxScreen
-import UserListScreen
+import `in`.instea.instea.screens.Feed.UserListScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable

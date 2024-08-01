@@ -9,6 +9,7 @@ import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.AcademicRepository
 import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.auth.SignUpUiState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +21,7 @@ class SignUpViewModel(
     private val academicRepository: AcademicRepository
 ) : ViewModel() {
 
-    private val _isLoading = MutableStateFlow(true)
+    private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> get() = _isLoading
     private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
@@ -69,10 +70,38 @@ class SignUpViewModel(
 
     fun signUp(user: User, password: String, moveToSignIn: () -> Unit) {
         viewModelScope.launch {
+            _uiState.update { currenState->
+                currenState.copy(
+                    isLoading = true
+                )
+            }
+
             val result = userRepository.signUp(user, password)
             if (result.isSuccess) {
+
+                _uiState.update { currenState->
+                    currenState.copy(
+                        isSuccess = true
+                    )
+                }
                 moveToSignIn()
-            } else { //TODO: show toast message of failure
+                _uiState.update { currenState->
+                    currenState.copy(
+                        isLoading = false
+                    )
+                }
+            } else {
+                _uiState.update { currenState->
+                    currenState.copy(
+                        isLoading = false
+                    )
+                }
+                _uiState.update { currenState->
+                    currenState.copy(
+                        errorMessage  = result.exceptionOrNull()?.message
+                    )
+                }
+                Log.d(TAG, "signUp: ${result.exceptionOrNull()?.message}")
             }
         }
     }

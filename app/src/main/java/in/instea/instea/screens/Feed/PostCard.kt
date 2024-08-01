@@ -285,8 +285,9 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.chatbubble),
-                    contentDescription = "",
-                    modifier = Modifier.size(20.dp)
+                    contentDescription = "comment",
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
@@ -317,7 +318,7 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
                                 }
 
                                 feedViewModel.updateVotes(post)
-
+                                isDownVoted.value = !isDownVoted.value
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
                                     post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
@@ -379,6 +380,7 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
                                 feedViewModel.updateVotes(post)
 
                                 // Update the local state to reflect changes
+                                isUpVoted.value = !isUpVoted.value
                                 userDislikeCurrentPost =
                                     post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
                                 userlikeCurrentPost =
@@ -391,146 +393,3 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
         }
     }
 }
-
-//@Composable
-//fun UpAndDownVoteButtons(post: PostData) {
-//    val isUpVoted = rememberSaveable { mutableStateOf(false) }
-//    val isDownVoted = rememberSaveable { mutableStateOf(false) }
-//    val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
-//    val coroutineScope = rememberCoroutineScope()
-//    val showComments by remember {
-//        mutableStateOf(false)
-//    }
-//    var userDislikeCurrentPost by rememberSaveable {
-//        mutableStateOf(post.userDislikedCurrentPost.contains(feedViewModel.currentuser))
-//    }
-//    var userlikeCurrentPost by rememberSaveable {
-//        mutableStateOf(post.userLikedCurrentPost.contains(feedViewModel.currentuser))
-//    }
-//
-//    Box(
-//        contentAlignment = Alignment.BottomEnd,
-//        modifier = Modifier.padding(3.dp)
-//    ) {
-//        Row(
-//            verticalAlignment = Alignment.CenterVertically,
-//            horizontalArrangement = Arrangement.spacedBy(8.dp) // Custom spacing between elements
-//        ) {
-//
-//            Button(
-//                onClick = {
-//
-//                },
-//                colors = ButtonDefaults.buttonColors(
-//                    containerColor = Color.Transparent,
-//                    contentColor = Color.Unspecified
-//                ),
-//                modifier = Modifier
-//                    .padding(0.dp)
-//                    .align(Alignment.CenterVertically)
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.chatbubble),
-//                    contentDescription = "",
-//                    modifier = Modifier.size(20.dp)
-//                )
-//            }
-//
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.spacedBy(4.dp) // Custom spacing between button and text
-//            ) {
-//
-//                Icon(
-//                    painter = painterResource(id = if (userDislikeCurrentPost) R.drawable.arrowdownfilled else R.drawable.arrowdownoutline),
-//                    contentDescription = "Downvote",
-//                    modifier = Modifier
-//                        .height(16.dp)
-//                        .clickable {
-//                            isDownVoted.value = !isDownVoted.value
-//                            if (isDownVoted.value) {
-//                                isUpVoted.value = false
-//                            }
-//
-//                            coroutineScope.launch {
-//                                if (!userlikeCurrentPost && userDislikeCurrentPost) {
-//                                    post.userDislikedCurrentPost.remove(feedViewModel.currentuser)
-//                                } else if (userlikeCurrentPost && !userDislikeCurrentPost) {
-//                                    post.userLikedCurrentPost.remove(feedViewModel.currentuser)
-//                                    post.userDislikedCurrentPost.add(feedViewModel.currentuser)
-//                                } else {
-//                                    post.userDislikedCurrentPost.add(feedViewModel.currentuser)
-//                                }
-//
-//                                feedViewModel.updateVotes(post)
-//
-//                                // Update the local state to reflect changes
-//                                userDislikeCurrentPost =
-//                                    post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
-//                                userlikeCurrentPost =
-//                                    post.userLikedCurrentPost.contains(feedViewModel.currentuser)
-//                            }
-//                        },
-//                    tint = (if (userDislikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
-//
-//                )
-//                Text(text = "D", fontSize = 10.sp, modifier = Modifier.padding(0.dp))
-//
-//            }
-//
-//            Spacer(
-//                modifier = Modifier
-//                    .width(1.dp)
-//                    .height(16.dp)
-//                    .background(Color.Black)
-//                    .align(Alignment.CenterVertically)
-//            )
-//
-//            Row(
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.spacedBy(4.dp) // Custom spacing between button and text
-//            ) {
-//
-//                Text(text = "U", fontSize = 10.sp, modifier = Modifier.padding(0.dp))
-//                Icon(
-//                    painter = painterResource(id = if (userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
-//                    contentDescription = "Upvote",
-//                    modifier = Modifier
-//                        .height(16.dp)
-//                        .clickable {
-//                            isUpVoted.value = !isUpVoted.value
-//
-//                            if (isUpVoted.value) {
-//                                isDownVoted.value = false
-//                            }
-//
-//                            coroutineScope.launch {
-//                                if (userlikeCurrentPost && !userDislikeCurrentPost) {
-//                                    post.userLikedCurrentPost.remove(feedViewModel.currentuser)
-//                                } else if (!userlikeCurrentPost && userDislikeCurrentPost) {
-//                                    post.userDislikedCurrentPost.remove(feedViewModel.currentuser)
-//                                    post.userLikedCurrentPost.add(feedViewModel.currentuser)
-//                                } else {
-//                                    post.userLikedCurrentPost.add(feedViewModel.currentuser)
-//                                }
-//
-//                                feedViewModel.updateVotes(post)
-//
-//                                // Update the local state to reflect changes
-//                                userDislikeCurrentPost =
-//                                    post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
-//                                userlikeCurrentPost =
-//                                    post.userLikedCurrentPost.contains(feedViewModel.currentuser)
-//                            }
-//                        },
-//                    tint = (if (userlikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
-//
-//
-//                )
-//
-//
-//            }
-//        }
-//    }
-//    CommentCard(post = post)
-//}

@@ -90,5 +90,5 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.datastore.preferences)    // data store
     implementation("androidx.constraintlayout:constraintlayout:2.2.0-alpha13")
-    implementation ("com.airbnb.android:lottie:6.4.1")
+    implementation ("com.airbnb.android:lottie-compose:6.4.1")
 }

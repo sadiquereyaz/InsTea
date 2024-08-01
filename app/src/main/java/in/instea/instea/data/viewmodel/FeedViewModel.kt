@@ -110,10 +110,14 @@ class FeedViewModel(
         }
     }
 
-    fun updateVotes(post: PostData) {
-        Log.d("posts", "updateVotes: $post")
+    fun updateVotes(updatePost: PostData) {
+        Log.d("posts", "updateVotes: $updatePost")
         viewModelScope.launch {
-            postRepository.updateUpAndDownVote(post)
+            val updatedPosts = _posts.value.map { post ->
+                if (post.postid == updatePost.postid) updatePost else post
+            }
+            _posts.value = updatedPosts
+            postRepository.updateUpAndDownVote(updatePost)
         }
     }
 

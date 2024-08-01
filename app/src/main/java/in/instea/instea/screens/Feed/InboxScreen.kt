@@ -84,7 +84,7 @@ fun InboxScreen(
         chatViewModel.chatUiState.collectAsState(initial = emptyList()).value // Observe the flow directly
 
     var textState by remember { mutableStateOf("") }
-    val scrollState = rememberScrollState()
+    val scrollState = rememberScrollState(0)
     LaunchedEffect(senderRoom, receiverRoom) {
         chatViewModel.getChats(senderRoom, receiverRoom)
     }
@@ -92,6 +92,7 @@ fun InboxScreen(
 
         Column(
             modifier = Modifier
+
                   .fillMaxSize()
         ) {
 

@@ -9,5 +9,6 @@ data class SignUpUiState(
     var semesterList: List<String> = emptyList(),
     var isLoading: Boolean = false,
     var errorMessage: String? = null,
-    var isSuccess: Boolean = false
+    var isSuccess: Boolean = false,
+    var idle: Boolean = false
 )
