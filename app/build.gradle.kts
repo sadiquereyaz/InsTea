@@ -64,18 +64,29 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.crashlytics.buildtools)
+
     implementation(libs.firebase.database)
-    implementation(libs.androidx.runtime.livedata)
     implementation(libs.firebase.database.ktx)
-    implementation(libs.firebase.auth.ktx)
-    // Also add the dependency for the Google Play services library and specify its version
+    implementation(platform(libs.firebase.bom))
+//    implementation("com.google.firebase:firebase-auth")
+    implementation(libs.google.firebase.auth)
+
+//    implementation("com.google.android.gms:play-services-auth:21.2.0")
     implementation(libs.play.services.auth)
+
+//    implementation("androidx.credentials:credentials:1.2.2")
+//    implementation(libs.androidx.credentials.v122)
     implementation( libs.androidx.credentials)
-    implementation (libs.androidx.credentials.play.services.auth)
+
+//    implementation("androidx.credentials:credentials-play-services-auth:1.2.2")
+    implementation(libs.androidx.credentials.play.services.auth.v122)
+//    implementation(libs.androidx.credentials.play.services.auth)
+
+//    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+//    implementation(libs.googleid.v111)
     implementation (libs.googleid)
 
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

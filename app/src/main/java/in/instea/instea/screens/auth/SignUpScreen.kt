@@ -239,7 +239,9 @@ fun SignUpScreen(
         }
         
         AuthenticationButton {credential ->
-            viewModel.onSignUpWithGoogle(credential, openAndPopUp)
+            coroutineScope.launch {
+                viewModel.onSignUpWithGoogle(credential, openAndPopUp)
+            }
         }
 
         // Signup screen error

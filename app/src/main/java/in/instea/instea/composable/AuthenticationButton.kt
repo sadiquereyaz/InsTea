@@ -3,6 +3,7 @@ package `in`.instea.instea.composable
 import android.util.Log
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -19,6 +20,7 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import `in`.instea.instea.R
+import `in`.instea.instea.data.viewmodel.ERROR_TAG
 import kotlinx.coroutines.launch
 
 @Composable
@@ -43,13 +45,23 @@ fun AuthenticationButton(
 
             coroutineScope.launch {
                 try {
+                    Log.d(ERROR_TAG, "Requesting credential...")
                     val result = credentialManager.getCredential(
                         request = request,
                         context = context
                     )
+                    Log.d(ERROR_TAG, "Credential received successfully.")
                     onGetCredentialResponse(result.credential)
                 } catch (e: GetCredentialException) {
-                    Log.d("ERROR_TAG", e.message.orEmpty())
+                    Log.d(ERROR_TAG, "Failed to get credential: ${e.message}")
+                    Log.d(ERROR_TAG, "Cause: ${e.cause}")
+                    Log.d(ERROR_TAG, "Exception Class: ${e::class.java}")
+                    Log.d(ERROR_TAG, "Stack Trace: ${Log.getStackTraceString(e)}")
+                } catch (e: Exception) {
+                    Log.d(ERROR_TAG, "Unexpected error: ${e.message}")
+                    Log.d(ERROR_TAG, "Cause: ${e.cause}")
+                    Log.d(ERROR_TAG, "Exception Class: ${e::class.java}")
+                    Log.d(ERROR_TAG, "Stack Trace: ${Log.getStackTraceString(e)}")
                 }
             }
         },
@@ -60,7 +72,7 @@ fun AuthenticationButton(
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp).size(24.dp),
             contentDescription = "Google logo"
         )
 
