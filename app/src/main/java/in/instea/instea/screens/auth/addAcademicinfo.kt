@@ -20,7 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
-import `in`.instea.instea.data.viewmodel.SignUpViewModel
+import `in`.instea.instea.data.viewmodel.UserInfoViewModel
 import `in`.instea.instea.screens.auth.composable.ButtonComp
 import `in`.instea.instea.screens.auth.composable.CustomTextField
 
@@ -30,7 +30,7 @@ fun AddInfo(
     modifier: Modifier = Modifier
         .fillMaxSize()
 ) {
-    val viewModel: SignUpViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    val viewModel: UserInfoViewModel = viewModel(factory = AppViewModelProvider.Factory)
     var university by rememberSaveable { mutableStateOf("") }
     var department by rememberSaveable { mutableStateOf("") }
     var semester by rememberSaveable { mutableStateOf("") }

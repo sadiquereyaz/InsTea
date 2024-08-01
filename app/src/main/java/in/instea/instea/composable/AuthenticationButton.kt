@@ -1,17 +1,22 @@
 package `in`.instea.instea.composable
 
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.credentials.Credential
@@ -31,8 +36,7 @@ fun AuthenticationButton(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val credentialManager = CredentialManager.create(context)
-
-    Button(
+    OutlinedButton(
         onClick = {
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(false)
@@ -68,18 +72,26 @@ fun AuthenticationButton(
 //        colors = ButtonDefaults.buttonColors(containerColor = Purple40),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp, 0.dp)
+            .padding(36.dp, 0.dp)
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            modifier = Modifier.padding(horizontal = 16.dp).size(24.dp),
-            contentDescription = "Google logo"
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.google),
+                modifier = Modifier
+                    .size(24.dp),
+                contentDescription = "Google logo",
+                tint = Color.Unspecified
+            )
 
-        Text(
-            text = "Sign In With Google",
-            fontSize = 16.sp,
-            modifier = Modifier.padding(0.dp, 6.dp)
-        )
+            Text(
+                text = "Identify Me!",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+            )
+        }
     }
+
 }

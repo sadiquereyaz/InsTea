@@ -1,8 +1,6 @@
 package `in`.instea.instea.data.repo
 
-import android.content.ContentValues.TAG
 import android.util.Log
-import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import `in`.instea.instea.data.datamodel.User
@@ -74,16 +72,16 @@ class NetworkUserRepository(
     }
 
     // sign up
-    suspend fun signUp(user: User, password: String): Result<String?> {
+    suspend fun insertUserToFirebase(user: User): Result<String?> {
         return try {
-            val result = firebaseAuth.createUserWithEmailAndPassword(
-                user.email ?: "noemailrecieved@networkrepo.com", password
-            ).await()
-            // Check for successful creation and get user ID
-            val userId = result.user?.uid ?: return Result.failure(Exception("No UID"))
-            val newUser = user.copy(userId = userId)
+            /*   val result = firebaseAuth.createUserWithEmailAndPassword(
+                   user.email ?: "noemailrecieved@networkrepo.com", password
+               ).await()
+               // Check for successful creation and get user ID*/
+            /*   val userId = result.user?.uid ?: return Result.failure(Exception("No UID"))
+               val newUser = user.copy(userId = userId)*/
 //             Save user data to Firebase Realtime Database
-            firebaseDatabase.reference.child("user").child(userId).setValue(newUser).await()
+            firebaseDatabase.reference.child("user").child(user.userId!!).setValue(user).await()
             Result.success(null)
         } catch (e: Exception) {
             Result.failure(e)

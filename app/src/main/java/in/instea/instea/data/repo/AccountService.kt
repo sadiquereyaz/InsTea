@@ -15,8 +15,10 @@ import kotlinx.coroutines.tasks.await
 interface AccountService {
     val currentUser: Flow<User?>
     val currentUserId: String
+    val currentEmail: String
     fun hasUser(): Boolean
     fun getUserProfile(): User
+    suspend fun isUserProfileComplete(): Boolean
     suspend fun updateDisplayName(newDisplayName: String)
     suspend fun signInWithGoogle(idToken: String)
     suspend fun signOut()
@@ -37,6 +39,8 @@ class AccountServiceImpl() : AccountService {
 
     override val currentUserId: String
         get() = Firebase.auth.currentUser?.uid.orEmpty()
+    override val currentEmail: String
+        get() = Firebase.auth.currentUser?.email.orEmpty()
 
     override fun hasUser(): Boolean {
         return Firebase.auth.currentUser != null
@@ -44,6 +48,10 @@ class AccountServiceImpl() : AccountService {
 
     override fun getUserProfile(): User {
         return Firebase.auth.currentUser.toInsteaUser()
+    }
+    override suspend fun isUserProfileComplete(): Boolean {
+        val user = Firebase.auth.currentUser
+        return user != null && !user.displayName.isNullOrEmpty()
     }
 
     override suspend fun updateDisplayName(newDisplayName: String) {
@@ -69,9 +77,7 @@ class AccountServiceImpl() : AccountService {
     private fun FirebaseUser?.toInsteaUser(): User {
         return if (this == null) User() else User(
             userId = this.uid,
-            email = this.email ?: "",
-            provider = this.providerId,
-            username = this.displayName ?: ""
+            email = this.email ?: ""
         )
     }
 }

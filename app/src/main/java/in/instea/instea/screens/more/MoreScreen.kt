@@ -42,12 +42,14 @@ import `in`.instea.instea.screens.more.composable.AccountComp
 import `in`.instea.instea.screens.more.composable.AttendanceComp
 import `in`.instea.instea.screens.more.composable.Developers
 import `in`.instea.instea.screens.more.composable.report
-object MoreDestination: NavigationDestinations{
+
+object MoreDestination : NavigationDestinations {
     override val route: String = InsteaScreens.More.name
     override val title: String = InsteaScreens.More.title
     const val INDEX_ARG = "expandedIndex"
     val routeWithArg = "${route}/{$INDEX_ARG}"
 }
+
 @Composable
 fun MoreScreen(
     modifier: Modifier = Modifier,
@@ -56,7 +58,8 @@ fun MoreScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var expandedIndex by remember { mutableStateOf(uiState.expandedIndex) }
-    val items =listOf("Developers", "Attendance Record", "All Task", "Classmates", "Account", "Report")
+    val items =
+        listOf("Developers", "Attendance Record", "All Task", "Classmates", "Account", "Report")
 
     LazyColumn(
         modifier = modifier
@@ -70,7 +73,8 @@ fun MoreScreen(
                 navController = navController,
                 title = items[index],
                 isExpanded = (index == expandedIndex),
-                onExpandChange = { expandedIndex = if (expandedIndex == index) null else index })
+                onExpandChange = { expandedIndex = if (expandedIndex == index) null else index }
+            )
         }
     }
 }
@@ -154,7 +158,7 @@ fun ExpandableItem(
                         AccountComp(
                             navigateToSignIn = {
                                 navController.popBackStack()
-                                navController.navigate(InsteaScreens.Signup.name)
+                                navController.navigate(InsteaScreens.UserInfo.name)
                             }
                         )
                     }

@@ -2,7 +2,6 @@ package `in`.instea.instea.navigation
 
 import FEED
 import FeedContent
-import `in`.instea.instea.screens.more.MoreScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -16,9 +15,10 @@ import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfileScreen
 import `in`.instea.instea.screens.InboxScreen
 import `in`.instea.instea.screens.auth.AddInfo
-import `in`.instea.instea.screens.auth.SignInScreen
-import `in`.instea.instea.screens.auth.SignUpScreen
+import `in`.instea.instea.screens.auth.AuthenticationScreen
+import `in`.instea.instea.screens.auth.UserInfoScreen
 import `in`.instea.instea.screens.more.MoreDestination
+import `in`.instea.instea.screens.more.MoreScreen
 import `in`.instea.instea.screens.profile.ProfileDestination
 import `in`.instea.instea.screens.profile.ProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleDestination
@@ -30,17 +30,22 @@ import `in`.instea.instea.screens.schedule.ScheduleScreen
 fun InsteaNavHost(
     navController: NavHostController,
     contentPadding: PaddingValues,
+    appState: InsteaAppState = InsteaAppState(navController),
 //    scheduleViewModel: ScheduleViewModel
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Signup.name,
+        startDestination = InsteaScreens.Authenticate.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
-        composable(route = InsteaScreens.Signup.name) {
-            SignUpScreen(
+        composable(route = InsteaScreens.UserInfo.name) {
+            UserInfoScreen(
                 navController = navController,
+            )
+        }
+        composable(route = InsteaScreens.Authenticate.name) {
+            AuthenticationScreen(
                 openAndPopUp = { route, popUp ->
                     navController.navigate(route) {
                         launchSingleTop = true
@@ -49,12 +54,9 @@ fun InsteaNavHost(
                 }
             )
         }
-        composable(route = InsteaScreens.SignIn.name) {
-            SignInScreen(navController = navController)
-        }
         composable(route = InsteaScreens.Feed.name) {
             FEED(
-                navigateToProfile = {userId-> navController.navigate("${ProfileDestination.route}/${userId}") }
+                navigateToProfile = { userId -> navController.navigate("${ProfileDestination.route}/${userId}") }
             )
         }
         composable(route = InsteaScreens.Inbox.name) {
@@ -121,11 +123,11 @@ fun InsteaNavHost(
         }
         composable(
             route = MoreDestination.routeWithArg,
-            arguments = listOf(navArgument(MoreDestination.INDEX_ARG){
+            arguments = listOf(navArgument(MoreDestination.INDEX_ARG) {
                 type = NavType.IntType
             })
         ) {
-            MoreScreen(navController=navController)
+            MoreScreen(navController = navController)
         }
     }
 }

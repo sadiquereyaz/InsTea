@@ -3,6 +3,7 @@ package `in`.instea.instea.data.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.instea.instea.data.repo.AccountService
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreUiState
@@ -14,7 +15,8 @@ import java.time.LocalDate
 
 class MoreViewModel(
     savedStateHandle: SavedStateHandle,
-    private val scheduleRepository: ScheduleRepository
+    private val scheduleRepository: ScheduleRepository,
+    private val accountService: AccountService
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MoreUiState())
     val uiState: StateFlow<MoreUiState> = _uiState
@@ -42,5 +44,11 @@ class MoreViewModel(
                 )
             }
         }
+    }
+    suspend fun onSignOutClick(){
+        accountService.signOut()
+    }
+    suspend fun onDeleteAccountClick(){
+        accountService.deleteAccount()
     }
 }
