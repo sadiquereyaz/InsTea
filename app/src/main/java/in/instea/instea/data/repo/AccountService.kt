@@ -1,6 +1,6 @@
 package `in`.instea.instea.data.repo
+
 import com.google.firebase.Firebase
-import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
@@ -18,20 +18,18 @@ interface AccountService {
     fun hasUser(): Boolean
     fun getUserProfile(): User
     suspend fun updateDisplayName(newDisplayName: String)
-    suspend fun linkAccountWithGoogle(idToken: String)
-    suspend fun linkAccountWithEmail(email: String, password: String)
     suspend fun signInWithGoogle(idToken: String)
-    suspend fun signInWithEmail(email: String, password: String)
     suspend fun signOut()
     suspend fun deleteAccount()
 }
 
 class AccountServiceImpl() : AccountService {
+
     override val currentUser: Flow<User?>
         get() = callbackFlow {
             val listener =
                 FirebaseAuth.AuthStateListener { auth ->
-                    this.trySend(auth.currentUser.toNotesUser())
+                    this.trySend(auth.currentUser.toInsteaUser())
                 }
             Firebase.auth.addAuthStateListener(listener)
             awaitClose { Firebase.auth.removeAuthStateListener(listener) }
@@ -45,34 +43,19 @@ class AccountServiceImpl() : AccountService {
     }
 
     override fun getUserProfile(): User {
-        return Firebase.auth.currentUser.toNotesUser()
+        return Firebase.auth.currentUser.toInsteaUser()
     }
 
     override suspend fun updateDisplayName(newDisplayName: String) {
         val profileUpdates = userProfileChangeRequest {
             displayName = newDisplayName
         }
-
         Firebase.auth.currentUser!!.updateProfile(profileUpdates).await()
-    }
-
-    override suspend fun linkAccountWithGoogle(idToken: String) {
-        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-        Firebase.auth.currentUser!!.linkWithCredential(firebaseCredential).await()
-    }
-
-    override suspend fun linkAccountWithEmail(email: String, password: String) {
-        val credential = EmailAuthProvider.getCredential(email, password)
-        Firebase.auth.currentUser!!.linkWithCredential(credential).await()
     }
 
     override suspend fun signInWithGoogle(idToken: String) {
         val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
         Firebase.auth.signInWithCredential(firebaseCredential).await()
-    }
-
-    override suspend fun signInWithEmail(email: String, password: String) {
-        Firebase.auth.signInWithEmailAndPassword(email, password).await()
     }
 
     override suspend fun signOut() {
@@ -83,7 +66,7 @@ class AccountServiceImpl() : AccountService {
         Firebase.auth.currentUser!!.delete().await()
     }
 
-    private fun FirebaseUser?.toNotesUser(): User {
+    private fun FirebaseUser?.toInsteaUser(): User {
         return if (this == null) User() else User(
             userId = this.uid,
             email = this.email ?: "",

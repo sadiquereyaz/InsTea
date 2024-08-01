@@ -297,7 +297,7 @@ class SignUpViewModel(
         launchCatching {
                 if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                     val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
-                    accountService.linkAccountWithGoogle(googleIdTokenCredential.idToken)
+                    accountService.signInWithGoogle(googleIdTokenCredential.idToken)
                     openAndPopUp(InsteaScreens.SignIn.name, InsteaScreens.Signup.name)
                 } else {
                     Log.e(ERROR_TAG, UNEXPECTED_CREDENTIAL)
