@@ -1,27 +1,17 @@
 package `in`.instea.instea.ui
 
+import EditPost
 import PostCard
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,12 +19,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import `in`.instea.instea.data.FeedViewModel
+import androidx.navigation.NavController
+import androidx.wear.compose.material.ExperimentalWearMaterialApi
+import `in`.instea.instea.data.viewmodel.FeedViewModel
 
 @Composable
 fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit) {
     val posts = feedViewModel.posts.collectAsState(initial = emptyList()).value.reversed()
-
+    val userList by feedViewModel.userList.collectAsState()
     if (feedViewModel.isLoading.value) {
         Column {
             repeat(8) {
@@ -49,11 +41,15 @@ fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit) 
             items(posts) { post ->
                 PostCard(
                     post = post,
-                    navigateToProfile = { navigateToProfile(post.postedByUser ?: "") }
+                    navigateToProfile = { navigateToProfile(post.postedByUser ?: "") },
+                    userList = userList
                 )
             }
         }
-    }
+
+            }
+        }
+
 }
 
 @Composable
@@ -87,8 +83,9 @@ fun ShimmerGridItem(brush: Brush, modifier: Modifier = Modifier) {
     Row(
         modifier
             .fillMaxWidth()
-            .padding(10.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
     ) {
         Spacer(
             modifier = Modifier
@@ -96,24 +93,30 @@ fun ShimmerGridItem(brush: Brush, modifier: Modifier = Modifier) {
                 .clip(CircleShape)
                 .background(brush)
         )
-        Spacer(modifier = Modifier.width(10.dp))
+        Spacer(modifier = Modifier.width(3.dp))
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(
                 modifier = modifier
                     .height(12.dp)
-                    .fillMaxWidth(0.7f)
+                    .fillMaxWidth(0.4f)
                     .clip(RoundedCornerShape(10.dp))
                     .background(brush)
             )
-            Spacer(
-                modifier = modifier
-                    .height(3.dp)
-                    .fillMaxWidth()
-            )
+            Spacer(modifier = modifier
+                .height(3.dp)
+                .fillMaxWidth())
             Spacer(
                 modifier = modifier
                     .height(12.dp)
                     .fillMaxWidth(0.6f)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(brush)
+            )
+            Spacer(modifier.height(1.dp))
+            Spacer(
+                modifier = modifier
+                    .height(12.dp)
+                    .fillMaxWidth(0.5f)
                     .clip(RoundedCornerShape(10.dp))
                     .background(brush)
             )

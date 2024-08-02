@@ -1,5 +1,3 @@
-//import `in`.instea.instea.composable.InsteaTopAppBar
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
@@ -18,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.BottomNavigationBar
 import `in`.instea.instea.composable.InsteaTopAppBar
 import `in`.instea.instea.data.BottomNavItemData
+import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.navigation.InsteaNavHost
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.screens.more.MoreDestination
@@ -45,7 +44,7 @@ fun InsteaApp(
     val bottomBarItems = listOf(
         InsteaScreens.Feed,
         InsteaScreens.Schedule,
-        InsteaScreens.Inbox, //inbox
+        InsteaScreens.UserList, //inbox
         InsteaScreens.SelfProfile
     )
 
@@ -73,8 +72,7 @@ fun InsteaApp(
             }
         }
     ) { contentPadding ->
-            InsteaNavHost(navController, contentPadding)
-
+        InsteaNavHost(navController, contentPadding)
     }
 }
 

@@ -9,12 +9,14 @@ enum class InsteaScreens(
     Schedule("Schedule"),
     EditSchedule("Edit Schedule"),
     Inbox("Conversation"),
+    UserList("Start Conversation"),
     Attendance("Attendance"),
-    Authenticate("Sign In"),
-    UserInfo("Signup"),
+    Authenticate("Welcome"),
+    UserInfo("User Info"),
     Forget("Forget"),
     Guidelines("Guidelines"),
     Addpost("Add Post"),
     AddAcademicInfo("Add Academic Info"),
     More("More"),
+    EditPost("Edit")
 }

@@ -32,7 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
-import `in`.instea.instea.data.FeedViewModel
+import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.Replies
@@ -45,7 +45,7 @@ fun ReplyList(
     comment: Comments,
     feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),
 
-) {
+    ) {
     var textstate by remember { mutableStateOf("") }
 
     LazyColumn(

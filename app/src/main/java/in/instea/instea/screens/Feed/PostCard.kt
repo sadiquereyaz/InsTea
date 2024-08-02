@@ -1,5 +1,4 @@
-//import `in`.instea.instea.screens.Feed.CommentList
-
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,12 +15,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -36,26 +40,54 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.play.integrity.internal.o
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import `in`.instea.instea.R
 import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+//import `in`.instea.instea.screens.Feed.CommentList
+import `in`.instea.instea.screens.profile.OtherProfileScreen
+
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.math.abs
+import kotlin.math.log
 
 @Composable
 fun PostCard(
     post: PostData,
     navigateToProfile: () -> Unit,
     feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    navController: NavController,
+    userList: List<User>,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var showComments by remember { mutableStateOf(false) } // State for showing/hiding CommentCard
+    var expandDropdown by remember { mutableStateOf(false) }
+    val moreList = listOf("Report", "Delete", "Edit")
+    var user: User = User()
 
+    Log.d("PostCard", "userlist: $userList")
+    for (u in userList) {
+        if (u.userId == post.postedByUser) {
+            user = u
+            break
+        }
+    }
+    var userName = user.username
     Box(
         modifier = Modifier
             .padding(start = 3.dp, end = 3.dp, bottom = 0.dp)
@@ -68,7 +100,11 @@ fun PostCard(
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        navController.navigate(InsteaScreens.OtherProfile.name + "/${if (user.userId != null) user.userId else " "}")
+                    }
             ) {
                 (if (post.profileImage != null) post.profileImage
                 else R.drawable.ic_launcher_foreground)?.let {
@@ -82,11 +118,15 @@ fun PostCard(
                         contentDescription = "Profile"
                     )
 
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .clickable { navigateToProfile() }) {
-                        Text(text = "name", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                    Column(modifier = Modifier.padding(start = 8.dp)) {
+
+                        if (post.isAnonymous)
+                            userName = "UnderCover"
+                        Text(
+                            text = if (userName != null) {
+                                userName!!
+                            } else "", fontSize = 14.sp, fontWeight = FontWeight.Bold
+                        )
                         Text(
                             text = post.timestamp.format(),
                             fontSize = 12.sp,
@@ -94,22 +134,59 @@ fun PostCard(
                         )
                     }
 
-                    Spacer(modifier = Modifier.weight(1f)) // This pushes the Box to the end
+                Spacer(modifier = Modifier.weight(1f)) // This pushes the Box to the end
 
                     Box(
                         modifier = Modifier.padding(end = 8.dp),
                         contentAlignment = Alignment.TopEnd
                     ) {
-                        Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
+                        IconButton(onClick = { expandDropdown = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = "More")
+                        }
+
+                        DropdownMenu(
+                            modifier = Modifier.height(100.dp),
+                            expanded = expandDropdown,
+                            onDismissRequest = { expandDropdown = false }) {
+                            moreList.forEach { type ->
+                                if (
+                                    feedViewModel.currentuser == post.postedByUser
+                                    && type != "Report"
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text(type) },
+                                        onClick = {
+                                            if (type == "Delete") {
+                                                feedViewModel.DeletePost(post)
+                                            }
+                                            if (type == "Edit") {
+                                                navController.navigate(InsteaScreens.EditPost.name + "/${post.postid}")
+                                            }
+                                            expandDropdown = false // Close the dropdown menu
+                                        }
+                                    )
+
+                                } else if (
+                                    feedViewModel.currentuser != post.postedByUser &&
+                                    type != "Edit" && type != "Delete"
+                                ) {
+                                    DropdownMenuItem(
+                                        text = { Text(type) },
+                                        onClick = {
+                                            expandDropdown = false // Close the dropdown menu
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
 
-
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             // Post Description
-            Column {
+            Column(horizontalAlignment = Alignment.Start) {
                 val displayText = if (isExpanded) post.postDescription!!
                 else post.postDescription?.take(100)
                 Text(text = displayText!!, modifier = Modifier.padding(2.dp))
@@ -118,6 +195,17 @@ fun PostCard(
                         Text(text = if (isExpanded) "Show Less" else "Read More", fontSize = 12.sp)
                     }
                 }
+                if (post.edited) {
+                    Text(
+                        text = "Edited",
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Light,
+                        modifier = Modifier
+                            .padding(2.dp)
+                            .align(Alignment.Start)
+                    )
+                }
+
             }
 
             // Post Image
@@ -190,7 +278,7 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
 
     Box(
         contentAlignment = Alignment.BottomEnd,
-        modifier = Modifier.padding(3.dp)
+        modifier = Modifier.padding(3.dp, end = 5.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -211,8 +299,9 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.chatbubble),
-                    contentDescription = "",
-                    modifier = Modifier.size(20.dp)
+                    contentDescription = "comment",
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onBackground
                 )
             }
 
@@ -243,7 +332,7 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
                                 }
 
                                 feedViewModel.updateVotes(post)
-
+                                isDownVoted.value = !isDownVoted.value
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
                                     post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
@@ -305,6 +394,7 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
                                 feedViewModel.updateVotes(post)
 
                                 // Update the local state to reflect changes
+                                isUpVoted.value = !isUpVoted.value
                                 userDislikeCurrentPost =
                                     post.userDislikedCurrentPost.contains(feedViewModel.currentuser)
                                 userlikeCurrentPost =

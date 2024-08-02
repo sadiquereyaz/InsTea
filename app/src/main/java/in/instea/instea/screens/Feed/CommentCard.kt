@@ -1,4 +1,3 @@
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,11 +13,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -40,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
-import `in`.instea.instea.data.FeedViewModel
+import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
@@ -115,10 +112,8 @@ fun CommentCard(comment:Comments,post: PostData){
                 Spacer(modifier = Modifier.height(12.dp))
 
 
-                Column {
 
-                }
-
+                Spacer(modifier = Modifier.weight(1f))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -166,25 +161,6 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp) // Custom spacing between elements
         ) {
-//            for reply
-            Button(
-                onClick = {
-                    showComments = !showComments
-                          onReplyClick(!showReply)},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Unspecified
-                ),
-                modifier = Modifier
-                    .padding(0.dp)
-                    .align(Alignment.CenterVertically)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.chatbubble),
-                    contentDescription = "",
-                    modifier = Modifier.size(20.dp)
-                )
-            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -216,7 +192,7 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
 //                                feedViewModel.updateVotes(post)
                                 post.comments[commetIndex] = comment
                                 feedViewModel.updateVotes(post)
-
+                                isDownVoted.value = !isDownVoted.value
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
                                     comment.userDislikeComment.contains(feedViewModel.currentuser)
@@ -272,6 +248,7 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
 //                                feedViewModel.updateVotes(post)
                                 post.comments[commetIndex] = comment
                                 feedViewModel.updateVotes(post)
+                                isUpVoted.value = !isUpVoted.value
                                 // Update the local state to reflect changes
                                 userDislikeCurrentPost =
                                     comment.userDislikeComment.contains(feedViewModel.currentuser)

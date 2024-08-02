@@ -14,4 +14,9 @@ data class User(
     val whatsappNo: String? = "",
     val hostel: String? = null,
     val roomNo: String? = null,
+    val chatPartners: List<String> = mutableListOf()
+)
+
+data class userUiState(
+    val userlist: List<User> = mutableListOf()
 )

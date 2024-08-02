@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -22,17 +23,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.OtherProfileUiState
 import `in`.instea.instea.data.viewmodel.OtherProfileViewModel
+import `in`.instea.instea.navigation.InsteaScreens
 import kotlinx.coroutines.launch
 
 @Composable
 fun OtherProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: OtherProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    userId: String = ""
+    userId: String,
+    navController: NavController,
 ) {
     when (val otherProfileUiState = viewModel.otherProfileUiState.collectAsState().value) {
         is OtherProfileUiState.Success -> {
@@ -59,6 +63,10 @@ fun OtherProfileScreen(
                         onSubUserNameClick = { },
                         iconButtonData = Pair(Icons.Default.Email, "Conversation")
                     )
+                    Button(onClick = {
+                        navController.navigate(InsteaScreens.Inbox.name+"/${userData.userId}")}) {
+
+                    }
                     Divider(modifier = Modifier.padding(16.dp))
 
                     // Academic detail
