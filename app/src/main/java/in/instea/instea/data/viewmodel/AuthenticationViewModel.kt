@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.AccountService
 import `in`.instea.instea.data.repo.UserRepository
@@ -43,7 +45,26 @@ class AuthenticationViewModel(
             if (credential is CustomCredential && credential.type == TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                 val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
                 accountService.signInWithGoogle(googleIdTokenCredential.idToken)
-                openAndPopUp(InsteaScreens.UserInfo.name, InsteaScreens.Authenticate.name)
+                Log.d("UID_auth_vm", Firebase.auth.currentUser?.uid ?: "can't get uid after authentication")
+                val result = userRepository.isUserIdAvailable(Firebase.auth.currentUser!!.uid)
+                result.onSuccess { successMsg ->
+                    if (successMsg.isNullOrBlank()) {
+                        //uid not present in realtime
+                        accountService.updateDisplayName("")
+                        openAndPopUp(
+                            InsteaScreens.UserInfo.name,
+                            InsteaScreens.Authenticate.name
+                        )
+                    } else {
+                        openAndPopUp(
+                            InsteaScreens.Feed.name,
+                            InsteaScreens.Authenticate.name
+                        )
+                    }
+                }.onFailure {
+                    Log.d("UID_FETCH ERROR", it.localizedMessage ?: "error while checking user info")
+                    // TODO show toast message
+                }
             } else {
                 Log.e(ERROR_TAG, UNEXPECTED_CREDENTIAL)
             }
@@ -54,7 +75,7 @@ class AuthenticationViewModel(
         if (accountService.hasUser()) {
             launchCatching {
                 if (accountService.isUserProfileComplete()) {
-                    openAndPopUp(InsteaScreens.Feed.name, InsteaScreens.Authenticate.name)
+                    openAndPopUp(InsteaScreens.SelfProfile.name, InsteaScreens.Authenticate.name)
                 } else {
                     openAndPopUp(InsteaScreens.UserInfo.name, InsteaScreens.Authenticate.name)
                 }
@@ -63,7 +84,7 @@ class AuthenticationViewModel(
     }
 }
 
-const val ERROR_TAG = "NOTES APP ERROR"
+const val ERROR_TAG = "INSTEA APP ERROR"
 const val UNEXPECTED_CREDENTIAL = "Unexpected type of credential"
 
 open class InsteaAppViewModel : ViewModel() {

@@ -25,13 +25,10 @@ import `in`.instea.instea.screens.schedule.EditScheduleDestination
 import `in`.instea.instea.screens.schedule.EditScheduleScreen
 import `in`.instea.instea.screens.schedule.ScheduleScreen
 
-
 @Composable
 fun InsteaNavHost(
     navController: NavHostController,
     contentPadding: PaddingValues,
-    appState: InsteaAppState = InsteaAppState(navController),
-//    scheduleViewModel: ScheduleViewModel
 ) {
     NavHost(
         navController = navController,
@@ -47,10 +44,10 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Authenticate.name) {
             AuthenticationScreen(
                 openAndPopUp = { route, popUp ->
-                    navController.navigate(route) {
-                        launchSingleTop = true
-                        popUpTo(popUp) { inclusive = true }
-                    }
+                     navController.navigate(route) {
+//                    launchSingleTop = true
+                    popUpTo(popUp) { inclusive = true }
+                }
                 }
             )
         }
@@ -127,7 +124,9 @@ fun InsteaNavHost(
                 type = NavType.IntType
             })
         ) {
-            MoreScreen(navController = navController)
+            MoreScreen(
+                navController = navController
+            )
         }
     }
 }

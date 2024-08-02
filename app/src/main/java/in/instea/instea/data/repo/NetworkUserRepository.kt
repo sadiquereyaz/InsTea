@@ -104,4 +104,24 @@ class NetworkUserRepository(
             Result.failure(e)
         }
     }
+
+    suspend fun isUserIdAvailable(uid: String): Result<String?> {
+        return try {
+            val snapshot = firebaseDatabase.reference.child("user")
+//                .orderByChild("username")
+                .child(uid)
+                .get()
+                .await()
+            if (snapshot.exists()) {
+                Log.d("SNAPSHOT OF UID", snapshot.toString())
+                Result.success("User info is available to this uid")
+            } else {
+                Log.d("UID_NREPO = null", "snapshot not exist of id $uid")
+                Result.success(null)
+            }
+        } catch (e: Exception) {
+            Log.d("UID_FETCH ERROR = null", e.localizedMessage ?: "unknown error")
+            Result.failure(e)
+        }
+    }
 }

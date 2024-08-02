@@ -15,19 +15,20 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import `in`.instea.instea.data.viewmodel.AuthViewModel
 
 @Composable
 fun AccountComp(
     modifier: Modifier = Modifier,
-    navigateToSignIn: () -> Unit
+    navigateToAuth: () -> Unit,
+    logout: () -> Unit,
+    deleteAccount: () -> Unit
 ) {
     Box(modifier = Modifier.padding(10.dp)) {
         Column {
             // sign out
             TextButton(onClick = {
-                AuthViewModel().signOut()
-                navigateToSignIn()
+                logout()
+                navigateToAuth()
             }) {
                 Text(text = "Sign Out")
                 Spacer(modifier = Modifier.weight(1f))
@@ -37,7 +38,10 @@ fun AccountComp(
                     modifier = Modifier.size(20.dp)
                 )
             }
-            TextButton(onClick = { /*TODO*/ }) {
+            TextButton(onClick = {
+                deleteAccount()
+                navigateToAuth()
+            }) {
                 Text(text = "Delete Account", color = MaterialTheme.colorScheme.error)
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(

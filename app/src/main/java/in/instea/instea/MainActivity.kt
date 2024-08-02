@@ -13,8 +13,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             InsTeaTheme {
-//                val scheduleViewModel: ScheduleViewModel = viewModel()
-                InsteaApp(/*scheduleViewModel = scheduleViewModel*/)
+                InsteaApp()
             }
         }
     }

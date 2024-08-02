@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +43,7 @@ import `in`.instea.instea.screens.more.composable.AccountComp
 import `in`.instea.instea.screens.more.composable.AttendanceComp
 import `in`.instea.instea.screens.more.composable.Developers
 import `in`.instea.instea.screens.more.composable.report
+import kotlinx.coroutines.launch
 
 object MoreDestination : NavigationDestinations {
     override val route: String = InsteaScreens.More.name
@@ -54,7 +56,7 @@ object MoreDestination : NavigationDestinations {
 fun MoreScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: MoreViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: MoreViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var expandedIndex by remember { mutableStateOf(uiState.expandedIndex) }
@@ -87,8 +89,9 @@ fun ExpandableItem(
     modifier: Modifier = Modifier,
     uiState: MoreUiState,
     viewModel: MoreViewModel,
-    navController: NavHostController
+    navController: NavHostController,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -156,9 +159,19 @@ fun ExpandableItem(
 
                     "Account" -> {
                         AccountComp(
-                            navigateToSignIn = {
+                            navigateToAuth = {
                                 navController.popBackStack()
-                                navController.navigate(InsteaScreens.UserInfo.name)
+                                navController.navigate(InsteaScreens.Authenticate.name)
+                            },
+                            logout = {
+                                coroutineScope.launch {
+                                    viewModel.onSignOutClick()
+                                }
+                            },
+                            deleteAccount = {
+                                coroutineScope.launch {
+                                    viewModel.onDeleteAccountClick()
+                                }
                             }
                         )
                     }
