@@ -273,7 +273,7 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
     val isDownVoted = rememberSaveable { mutableStateOf(false) }
     val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val coroutineScope = rememberCoroutineScope()
-
+    Log.d("currentuser", "UpAndDownVoteButtons: ${feedViewModel.currentuser}")
     var userDislikeCurrentPost by rememberSaveable {
         mutableStateOf(post.userDislikedCurrentPost.contains(feedViewModel.currentuser))
     }
