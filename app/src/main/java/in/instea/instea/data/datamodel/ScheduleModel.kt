@@ -5,6 +5,8 @@ import androidx.compose.material.icons.filled.AddTask
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -12,22 +14,26 @@ import androidx.room.TypeConverter
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-enum class AttendanceType(val icon: ImageVector, val title: String) {
+enum class AttendanceType(val icon: ImageVector, val title: String, val tint: Color?) {
     Present(
         title = "Present",
-        icon = Icons.Default.CheckCircle
+        icon = Icons.Default.CheckCircle,
+        tint = Color(0xFF00BB00)
     ),
     Absent(
         title = "Absent",
-        icon = Icons.Default.RemoveCircle
+        icon = Icons.Default.RemoveCircle,
+        tint = Color(0xFFFF3333)
     ),
     Cancelled(
         title = "Cancelled",
-        icon = Icons.Default.Warning
+        icon = Icons.Default.Warning,
+        tint = Color(0xFFFFBE3B)
     ),
     MarkAttendance(
         title = "Attendance",
-        icon = Icons.Default.AddTask
+        icon = Icons.Default.AddTask,
+        tint = null
     ),
 }
 
@@ -45,16 +51,14 @@ data class TaskModel(
     val reminderBefore: String = "24:00",
     val task: String = "Assignment submit on monday"
 )
+data class SubjectAttendanceSummaryModel(
+    val subject: String,
+    val totalClasses: Int,
+    val attendedClasses: Int,
+    val absentClasses: Int,
+    val percentage: Float? = 89f,    //
+)
 
-/*@Entity(tableName = "schedule")
-data class SubjectModel(
-    var subjectName: String,
-    var task: String = "Add Task",
-    var attendanceType: AttendanceType = AttendanceType.Absent,
-    var startTime: String,
-    var endTime: String,
-    var reminder: ReminderModel = ReminderModel()
-)*/
 
 @Entity(tableName = "schedule")
 data class ScheduleModel(
@@ -83,10 +87,11 @@ class TimeConverters {
     }
 }
 
-@Entity(tableName = "taskAttendance")
+@Entity(
+    tableName = "taskAttendance",
+    primaryKeys = ["scheduleId", "timestamp"]   //composite key
+)
 data class TaskAttendanceModel(
-    @PrimaryKey(autoGenerate = true)
-    val taskId: Int = 0,
     val scheduleId: Int, // Foreign key referencing ScheduleModel
     val timestamp: Int, // Timestamp to track the date
     var attendance: AttendanceType? = null,  // Task or note for the class on the specific date
@@ -99,13 +104,12 @@ data class CombinedScheduleTaskModel(
     val startTime: LocalTime,
     val endTime: LocalTime,
     val day: String,
-    val dailyReminder: Boolean,
-    val taskId: Int,
-    val timestamp: Long?,
-    val subject: String?,
+    val dailyReminder: Boolean? = false,
+    val timestamp: Int? = null,
+    val subject: String? = null,
     val attendance: AttendanceType? = AttendanceType.MarkAttendance,
-    var task: String?,
-    val taskReminder: Boolean?
+    var task: String? = null,
+    val taskReminder: Boolean? = false
 )
 
 

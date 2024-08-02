@@ -1,5 +1,7 @@
 package `in`.instea.instea.screens.profile
 
+import PostCard
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,11 +15,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Divider
@@ -39,31 +43,43 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
+import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
-import `in`.instea.instea.data.viewmodel.SelfProfileViewModel
+import `in`.instea.instea.data.viewmodel.ProfileViewModel
+import `in`.instea.instea.navigation.InsteaScreens
+import `in`.instea.instea.navigation.NavigationDestinations
+import `in`.instea.instea.screens.schedule.EditScheduleDestination.ID_ARG
 import kotlinx.coroutines.launch
 
+
+object ProfileDestination : NavigationDestinations {
+    override val route: String = InsteaScreens.OtherProfile.name
+    override val title: String = InsteaScreens.Feed.title
+    const val USERID_ARG = "userIdArg"
+    val routeWithArg = "${route}/{$USERID_ARG}"
+}
+
 @Composable
-fun SelfProfileScreen(
+fun ProfileScreen(
     modifier: Modifier = Modifier,
-    viewModel: SelfProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    navigateToEditProfile: () -> Unit
+    viewModel: ProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    onSubUsernameClick: () -> Unit,
+    navigateToDevelopers: () -> Unit,
 ) {
-    val uiState by viewModel.profileUiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    // Trigger data refresh when this composable is first composed or recomposed
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -78,7 +94,11 @@ fun SelfProfileScreen(
                 modifier = Modifier
                     .align(Alignment.Start)
                     .padding(horizontal = 16.dp),
-                onSubUserNameClick = navigateToEditProfile
+                iconButtonData = if (uiState.isSelfProfile) Pair(
+                    Icons.Default.Edit,
+                    "Edit Profile"
+                ) else Pair(Icons.Default.ChatBubble, "Inbox"),
+                onSubUserNameClick = onSubUsernameClick
             )
             Divider(modifier = Modifier.padding(16.dp))
 
@@ -109,7 +129,7 @@ fun SelfProfileScreen(
                     bottom = 20.dp
                 ),
                 user = userData,
-                socialList = viewModel.getAllSocialList(),
+                socialList = uiState.socialList,
                 openSocialLink = { link ->
                     coroutineScope.launch {
                         viewModel.handleSocialItemClick(link, context)
@@ -140,7 +160,7 @@ fun SelfProfileScreen(
                 Text(
                     text = "Jamians", // Make Jamians clickable
                     modifier = Modifier
-                        .clickable { /* Handle click on Jamians */ },
+                        .clickable { navigateToDevelopers() },
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
@@ -155,7 +175,11 @@ private fun PersonalizedFeed(uiState: ProfileUiState) {
     val savedPosts = uiState.savedPosts ?: emptyList()
     val myPosts = uiState.savedPosts ?: emptyList()
 
-    val tabs = listOf("Saved (${savedPosts.size})", "My Posts (${myPosts.size})")
+    val tabs = mutableListOf("Profile Posts (${myPosts.size})")
+    val showOtherTab = uiState.isSelfProfile
+    if (showOtherTab) {
+        tabs.add("Saved (${savedPosts.size})")
+    }
 
     TabRow(selectedTabIndex = selectedTabIndex) {
         tabs.forEachIndexed { index, title ->
@@ -167,21 +191,20 @@ private fun PersonalizedFeed(uiState: ProfileUiState) {
         }
     }
     when (selectedTabIndex) {
-        0 -> {
-//            TabItem(postList = savedPosts, noPostText = "No Saved Post")
+        0-> {
+            TabItem(postList = myPosts)
+        }
+        1-> {
+            TabItem(postList = savedPosts, noPostText = "No Saved Post")
         }
 
-        1 -> {
-//            TabItem(postList = myPosts)
-        }
     }
 }
 
-/*
 @Composable
 fun TabItem(
     modifier: Modifier = Modifier,
-   postList: List<PostData>,
+    postList: List<PostData>,
     noPostText: String = "No Post Made"
 ) {
     if (postList.isEmpty()) {
@@ -192,17 +215,13 @@ fun TabItem(
         )
     } else {
         LazyColumn {
-//            items(postList) { post ->
-                PostCard(
-//                    name = post.name,
-//                    location = post.location,
-//                    content = post.postDescription
-                )
+            items(postList) { post ->
+//                PostCard(post, {})
             }
         }
     }
 }
-*/
+
 @Composable
 fun SocialLink(
     modifier: Modifier,
@@ -216,10 +235,11 @@ fun SocialLink(
     ) {
         items(socialList) { item ->
             val title = item.title
+            Log.d("TITLE", "SocialLink: $title")
             if (title.isNotEmpty())
                 SocialItem(
                     title = title,
-                    onSocialItemClicked = { openSocialLink(item.linkHead+title) },
+                    onSocialItemClicked = { openSocialLink(item.linkHead + title) },
                     icon = item.icon
                 )
         }
@@ -343,8 +363,8 @@ fun UserTitle(
                 modifier = Modifier,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // instea points
-                Text(
+                // TODO instea points
+                /*Text(
                     modifier = Modifier.padding(end = 8.dp),
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -356,7 +376,7 @@ fun UserTitle(
                     fontSize = 18.sp,
                     color = MaterialTheme.colorScheme.primary
 //                    fontWeight = FontWeight.Bold
-                )
+                )*/
 
                 //sub username button
                 Row(
@@ -369,12 +389,12 @@ fun UserTitle(
                         modifier = Modifier.size(18.dp),
                         imageVector = iconButtonData.first,
                         contentDescription = "subUserName icon",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = MaterialTheme.colorScheme.primary,
                     )
                     Text(
                         text = iconButtonData.second, modifier = Modifier.padding(start = 4.dp),
 //                        textDecoration = TextDecoration.Underline,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
             }

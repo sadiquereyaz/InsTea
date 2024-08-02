@@ -20,10 +20,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,9 +41,16 @@ fun AttendanceComposable(
     onAttendanceClick: (AttendanceType) -> Unit,
     scheduleObj: CombinedScheduleTaskModel
 ) {
+    val roomAttendance = scheduleObj.attendance
+    var attendance by rememberSaveable { mutableStateOf(roomAttendance) }
+    LaunchedEffect(roomAttendance) {
+        attendance = roomAttendance
+    }
+/*    Log.d("ATTENDANCE_OBJ", scheduleObj.attendance.toString())
+    Log.d("ATTENDANCE_Mutable", attendance.toString())*/
     Box {
         var expanded by remember { mutableStateOf(false) }
-        var coroutineScope = rememberCoroutineScope()
+        val coroutineScope = rememberCoroutineScope()
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -54,19 +63,24 @@ fun AttendanceComposable(
                 modifier = Modifier
                     .clickable {
                         coroutineScope.launch {
+                            attendance = AttendanceType.Present
                             onAttendanceClick(AttendanceType.Present)
                         }
                     },
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // attendance icon
                 Icon(
-                    imageVector = scheduleObj.attendance?.icon ?: Icons.Default.AddTask,
+                    imageVector = attendance?.icon ?: Icons.Default.AddTask,
+                    tint = attendance?.tint ?: MaterialTheme.colorScheme.onBackground,
                     contentDescription = "attendance",
-                    modifier = Modifier
-                        .size(16.dp))
+                    modifier = Modifier.size(24.dp).padding(horizontal = 4.dp)
+                )
+
+                // attendance text
                 Text(
-                    modifier = Modifier.padding(start = 4.dp),
-                    text = scheduleObj.attendance?.title ?: AttendanceType.MarkAttendance.title,
+                    modifier = Modifier/*.padding(start = 4.dp)*/,
+                    text = attendance?.title ?: AttendanceType.MarkAttendance.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 12.sp
@@ -96,8 +110,11 @@ fun AttendanceComposable(
                 DropdownMenuItem(
                     text = { Text(text = option.title) },
                     onClick = {
-                        onAttendanceClick(option)
-                        expanded = false
+                        coroutineScope.launch {
+                            onAttendanceClick(option)
+                            attendance = option
+                            expanded = false
+                        }
                     }
                 )
             }

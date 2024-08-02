@@ -92,10 +92,10 @@ fun ExposedDropDown(
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.AddCircleOutline,
-                                contentDescription = "Add button"
+                                contentDescription = "Add Manually"
                             )
                         },
-                        text = { Text("Add New") },
+                        text = { Text("Add Manually") },
                         onClick = {
                             expanded = !expanded
                             readOnly = false

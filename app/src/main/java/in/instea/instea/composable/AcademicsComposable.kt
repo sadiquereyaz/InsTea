@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
@@ -38,10 +37,11 @@ fun AcademicsComposable(
             modifier = modifier,
             label = "University",
             options = universityList,
+            onOptionSelected = onUniversityChanged,
             leadingIcon = Icons.Default.AccountBalance,
             selectedOption = university,
-            onOptionSelected = onUniversityChanged,
-            onAddItemClicked = onAddItemClicked
+            onAddItemClicked = onAddItemClicked,
+            isLoadingOption = false
         )
         Spacer(modifier = Modifier.height(8.dp))
         // department and semester
@@ -53,22 +53,24 @@ fun AcademicsComposable(
             DropdownComposable(
                 modifier = Modifier.weight(3f),
                 label = "Department",
-                selectedOption = department,
-                leadingIcon = Icons.Default.School,
                 options = departmentList,
                 onOptionSelected = onDepartmentChanged,
+                leadingIcon = Icons.Default.School,
+                errorMessage = "Please select university first",
+                selectedOption = department,
                 onAddItemClicked = onAddItemClicked,
-                errorMessage = "Please select university first"
+                isLoadingOption = false
             )
             // semester
             DropdownComposable(
                 modifier = Modifier.weight(2.5f),
                 label = "Sem",
-                leadingIcon = Icons.Default.AutoGraph,
                 options = semesterList,
-                selectedOption = semester,
                 onOptionSelected = onSemesterChanged,
-                onAddItemClicked = onAddItemClicked
+                leadingIcon = Icons.Default.AutoGraph,
+                selectedOption = semester,
+                onAddItemClicked = onAddItemClicked,
+                isLoadingOption = false,
             )
         }
     }

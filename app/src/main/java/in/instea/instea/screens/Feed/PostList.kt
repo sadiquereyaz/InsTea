@@ -1,6 +1,5 @@
 package `in`.instea.instea.ui
 
-import EditPost
 import PostCard
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
@@ -19,15 +18,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.wear.compose.material.ExperimentalWearMaterialApi
+import androidx.navigation.NavHostController
 import `in`.instea.instea.data.viewmodel.FeedViewModel
 
 @Composable
-fun PostList(feedViewModel: FeedViewModel,navController: NavController) {
+fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit, navController : NavHostController) {
     val posts = feedViewModel.posts.collectAsState(initial = emptyList()).value.reversed()
     val userList by feedViewModel.userList.collectAsState()
-    if (feedViewModel.isLoading.value) {
+    if (/*feedViewModel.isLoading.value*/ false) {
         Column {
             repeat(8) {
                 ShimmerEffect()
@@ -38,15 +36,19 @@ fun PostList(feedViewModel: FeedViewModel,navController: NavController) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(8.dp)
         ) {
-            items(posts) { post -> PostCard(post = post, navController=navController, userList = userList)
-            }
-
+            items(posts) { post ->
+                PostCard(
+                    post = post,
+                    navigateToProfile = { navigateToProfile(post.postedByUser ?: "") },
+                    userList = userList,
+                    navController = navController
+                )
             }
         }
-
+    }
 }
 
-@OptIn(ExperimentalWearMaterialApi::class)
+
 @Composable
 fun ShimmerEffect(modifier: Modifier = Modifier) {
     val shimmerColors = listOf(
@@ -97,9 +99,11 @@ fun ShimmerGridItem(brush: Brush, modifier: Modifier = Modifier) {
                     .clip(RoundedCornerShape(10.dp))
                     .background(brush)
             )
-            Spacer(modifier = modifier
-                .height(3.dp)
-                .fillMaxWidth())
+            Spacer(
+                modifier = modifier
+                    .height(3.dp)
+                    .fillMaxWidth()
+            )
             Spacer(
                 modifier = modifier
                     .height(12.dp)

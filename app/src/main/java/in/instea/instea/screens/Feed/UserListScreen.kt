@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.wear.compose.material.Text
 import `in`.instea.instea.R
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
@@ -30,7 +30,7 @@ fun UserListScreen(feedViewModel: FeedViewModel = viewModel(factory = AppViewMod
         items(chatPartners) { chatPartner ->
 
             val user = userList.find { it.userId == chatPartner }
-            Log.d("UserList", "user: $user")
+//            Log.d("UserList", "user: $user")
 
             if (user != null) {
                 UserListCard( user)
@@ -41,7 +41,7 @@ fun UserListScreen(feedViewModel: FeedViewModel = viewModel(factory = AppViewMod
 
 @Composable
 fun UserListCard( user: User) {
-    Log.d("UserList", "`in`.instea.instea.screens.Feed.UserListCard: ${user}")
+//    Log.d("UserList", "`in`.instea.instea.screens.Feed.UserListCard: ${user}")
     Card(elevation = CardDefaults.cardElevation(15.dp)) {
         Column(horizontalAlignment = Alignment.Start) {
             Text(text = user.username ?: "Unknown User")

@@ -1,10 +1,15 @@
 package `in`.instea.instea.composable
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,6 +24,10 @@ fun TaskAttendance(
     upsertTask: (String) -> Unit,
 
     ) {
+   // Log.d("TASK_EACH", scheduleObj.task.toString())   //correct
+    /*var attendance by rememberSaveable { mutableStateOf(scheduleObj.attendance) }
+    Log.d("ATTENDANCE_OBJ", scheduleObj.attendance.toString())
+    Log.d("ATTENDANCE_Muta", attendance.toString())*/
     var openBottomSheet1 = openBottomSheet
     Row(
         modifier = Modifier
@@ -30,8 +39,8 @@ fun TaskAttendance(
         // task button
         TaskComposable(
             modifier = Modifier.weight(1f),
-            scheduleObj=scheduleObj,
-            upsertTask = {upsertTask(it)}
+            scheduleObj = scheduleObj,
+            upsertTask = upsertTask
         )
         //attendance
         AttendanceComposable(onAttendanceClick, scheduleObj)

@@ -32,25 +32,21 @@ fun ForgetScreen(
         }
         CustomTextField(
             value = emailState.value,
-            onValueChange = {emailState.value=it},
+            onValueChange = { emailState.value = it },
             leadingIcon = Icons.Default.Email,
             keyboardType = KeyboardType.Email,
             label = "Email Id",
-            errorText = "Invalid Email"
-            )
-
-
-        ButtonComp(text = "Reset Password",
-                   onButtonClicked = {
-                viewModel.resetPassword(emailState.value)
-
-                navController.navigate("Login")
-
-
-            }
+            errorMessage = "Invalid Email"
         )
 
-    }
 
+        ButtonComp(
+            text = "Reset Password",
+            onButtonClicked = {
+                viewModel.resetPassword(emailState.value)
+                navController.navigate("Login")
+            }
+        )
+    }
 }
 

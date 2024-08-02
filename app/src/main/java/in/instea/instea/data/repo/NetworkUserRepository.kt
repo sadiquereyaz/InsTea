@@ -73,16 +73,55 @@ class NetworkUserRepository(
     }
 
     // sign up
-    suspend fun signUp(user: User,password: String): Result<String> {
+    suspend fun insertUserToFirebase(user: User): Result<String?> {
         return try {
-            val result = firebaseAuth.createUserWithEmailAndPassword(
-                user.email!! , password ?: "networkPassword"
-            ).await()
-            val userId = result.user?.uid ?: return Result.failure(Exception("No UID"))
-            val newUser = user.copy(userId = userId)
-            firebaseDatabase.reference.child("user").child(userId).setValue(newUser).await()
-            Result.success(userId)
+            /*   val result = firebaseAuth.createUserWithEmailAndPassword(
+                   user.email ?: "noemailrecieved@networkrepo.com", password
+               ).await()
+               // Check for successful creation and get user ID*/
+            /*   val userId = result.user?.uid ?: return Result.failure(Exception("No UID"))
+               val newUser = user.copy(userId = userId)*/
+//             Save user data to Firebase Realtime Database
+            firebaseDatabase.reference.child("user").child(user.userId!!).setValue(user).await()
+            Result.success(null)
         } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun isUserNameAvailable(username: String): Result<String?> {
+        return try {
+            val snapshot = firebaseDatabase.reference.child("user")
+                .orderByChild("username")
+                .equalTo(username)
+                .get()
+                .await()
+            if (snapshot.exists()) {
+                Result.success("Username taken")
+            } else {
+                Result.success(null)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun isUserIdAvailable(uid: String): Result<String?> {
+        return try {
+            val snapshot = firebaseDatabase.reference.child("user")
+//                .orderByChild("username")
+                .child(uid)
+                .get()
+                .await()
+            if (snapshot.exists()) {
+                Log.d("SNAPSHOT OF UID", snapshot.toString())
+                Result.success("User info is available to this uid")
+            } else {
+                Log.d("UID_NREPO = null", "snapshot not exist of id $uid")
+                Result.success(null)
+            }
+        } catch (e: Exception) {
+            Log.d("UID_FETCH ERROR = null", e.localizedMessage ?: "unknown error")
             Result.failure(e)
         }
     }

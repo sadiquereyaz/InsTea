@@ -20,10 +20,13 @@ import kotlinx.coroutines.tasks.await
 
 interface PostRepository {
     fun getAllSavedPostsStream(): Flow<List<PostData>>
+    fun getAllProfilePostsStream(): Flow<List<PostData>>
     suspend fun insertItem(post: PostData)
     suspend fun updateUpAndDownVote(post: PostData)
-    suspend fun UpdateComment(post:PostData)
+    suspend fun updateComment(post: PostData)
+    fun getPostsByUser(userId: String): Flow<List<PostData>>
     suspend fun Delete(post:PostData)
+    suspend fun UpdateComment(post:PostData)
 }
 
 class CombinedPostRepository(
@@ -34,6 +37,13 @@ class CombinedPostRepository(
         // Emit local data immediately
         emitAll(localPostRepository.getAllSavedPostsStream())
 
+        // Then emit network data and update local database
+        networkPostRepository.getAllSavedPostsStream().collect { networkPosts ->
+            emit(networkPosts)
+            networkPosts.forEach { localPostRepository.insertItem(it) }
+        }
+    }
+    override fun getAllProfilePostsStream(): Flow<List<PostData>> = flow {
         // Then emit network data and update local database
         networkPostRepository.getAllSavedPostsStream().collect { networkPosts ->
             emit(networkPosts)
@@ -54,6 +64,10 @@ class CombinedPostRepository(
 
     }
 
+    override suspend fun updateComment(post: PostData) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun UpdateComment(post: PostData) {
         TODO("Not yet implemented")
     }
@@ -61,18 +75,33 @@ class CombinedPostRepository(
     override suspend fun Delete(post: PostData) {
         TODO("Not yet implemented")
     }
+    override fun getPostsByUser(userId: String): Flow<List<PostData>> = flow {
+        networkPostRepository.getProfilePosts(userId)
+    }
 
 
 }
 
 class LocalPostRepository(
     private val postDao: PostDao,
-) : PostRepository {
+): PostRepository {
 
     override fun getAllSavedPostsStream(): Flow<List<PostData>> = postDao.getAllSavedPosts()
+    override fun getAllProfilePostsStream(): Flow<List<PostData>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun insertItem(post: PostData) = postDao.insertPost(post)
 
     override suspend fun updateUpAndDownVote(post: PostData) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateComment(post: PostData) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPostsByUser(userId: String): Flow<List<PostData>> {
         TODO("Not yet implemented")
     }
 
@@ -115,6 +144,10 @@ class NetworkPostRepository(
         awaitClose { databaseReference.removeEventListener(postListener) }
     }
 
+    override fun getAllProfilePostsStream(): Flow<List<PostData>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun insertItem(post: PostData) {
         val newPostRef = databaseReference.push()
         post.postid = newPostRef.key.toString()
@@ -140,6 +173,14 @@ class NetworkPostRepository(
         }
     }
 
+    override suspend fun updateComment(post: PostData) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPostsByUser(userId: String): Flow<List<PostData>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun UpdateComment(post: PostData) {
 
     }
@@ -159,6 +200,10 @@ class NetworkPostRepository(
         } catch (e: Exception) {
             Log.e("DeletePost", "Error deleting post: ${e.message}")
         }
+    }
+
+    fun getProfilePosts(userId: String) {
+        // todo: fetch from firebase
     }
 }
 

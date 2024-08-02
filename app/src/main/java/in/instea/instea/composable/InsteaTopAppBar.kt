@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Percent
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +25,7 @@ import androidx.navigation.NavHostController
 import `in`.instea.instea.R
 import `in`.instea.instea.data.viewmodel.AuthViewModel
 import `in`.instea.instea.navigation.InsteaScreens
+import `in`.instea.instea.screens.more.MoreDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,6 +35,7 @@ fun InsteaTopAppBar(
     currentScreen: InsteaScreens,
     canNavigateBack: Boolean,
     navigateBack: () -> Unit,
+    moveToAttendanceSummary: (Int?)->Unit,
     moveToSelfProfile: () -> Unit,
     moveToOtherProfile: () -> Unit,
     navController: NavHostController,
@@ -79,24 +82,25 @@ fun InsteaTopAppBar(
                     )
                 }
             } else if (currentScreen == InsteaScreens.Schedule) {
-                IconButton(onClick = { navController.navigate(InsteaScreens.Attendance.name) }) {
-                    Icon(imageVector = Icons.Default.DateRange, contentDescription = "Attendance")
+                IconButton(
+                    onClick = { moveToAttendanceSummary(1) }
+                ) {
+                    Icon(imageVector = Icons.Default.Percent, contentDescription = "Attendance")
                 }
             } else if (currentScreen == InsteaScreens.SelfProfile) {
                 IconButton(onClick = {
-                    AuthViewModel().signOut()
-                    navController.navigate(InsteaScreens.More.name)
+                     moveToAttendanceSummary(-1)
                 }) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.more),
                         contentDescription = "Edit Profile"
                     )
                 }
-            } else if (currentScreen == InsteaScreens.EditProfile) {
+            } /*else if (currentScreen == InsteaScreens.More) {
                 IconButton(onClick = { navController.navigate(InsteaScreens.EditProfile.name) }) {
                     Icon(imageVector = Icons.Default.Check, contentDescription = "Edit Profile")
                 }
-            }
+            }*/
         }
     )
 }

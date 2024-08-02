@@ -23,12 +23,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.ExposedDropDown
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
+import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.EditScheduleViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.navigation.NavigationDestinations
+import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import `in`.instea.instea.screens.auth.composable.ButtonComp
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 object EditScheduleDestination : NavigationDestinations {
@@ -43,7 +47,7 @@ object EditScheduleDestination : NavigationDestinations {
 fun EditScheduleScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    viewModel: EditScheduleViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: EditScheduleViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutine = rememberCoroutineScope()
@@ -130,7 +134,9 @@ fun EditScheduleScreen(
                 text = uiState.editScreenType.positiveButtonText,
                 onButtonClicked = {
                     coroutine.launch {
-                        if (viewModel.saveSchedule()) navController.popBackStack()
+                        if (viewModel.saveSchedule()) {
+                            navController.popBackStack()
+                        }
                     }
                 }
             )

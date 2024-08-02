@@ -21,7 +21,7 @@ import `in`.instea.instea.screens.schedule.ScheduleUiState
 
 @Composable
 fun CalendarComposable(
-    scheduleUiState: ScheduleUiState,
+    uiState: ScheduleUiState,
     listState: LazyListState,
     onDateClick: (Int) -> Unit
 ) {
@@ -34,7 +34,7 @@ fun CalendarComposable(
             modifier = Modifier.size(24.dp)
         )
         Text(
-            text = "${scheduleUiState.selectedMonth}, ${scheduleUiState.selectedYear}",
+            text = "${uiState.selectedMonth}, ${uiState.selectedYear}",
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
             modifier = Modifier.padding(start = 2.dp)
@@ -43,14 +43,15 @@ fun CalendarComposable(
     //day date
     DayDate(
         listState,
-        scheduleUiState,
-        onDateSelect = { onDateClick(it) })
+        uiState,
+        onDateSelect = onDateClick
+    )
 }
 
 @Composable
 private fun DayDate(
     listState: LazyListState,
-    scheduleUiState: ScheduleUiState,
+    uiState: ScheduleUiState,
     onDateSelect: (Int) -> Unit
 ) {
     LazyRow(
@@ -60,7 +61,7 @@ private fun DayDate(
             .padding(top = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(32.dp)
     ) {
-        val list = scheduleUiState.dayDateList
+        val list = uiState.dayDateList
         items(list.size) { index ->
             DayDateLayout(
                 onDateClick = { onDateSelect(index) },
@@ -68,7 +69,7 @@ private fun DayDate(
                 day = list[index].day,
                 date = list[index].date,
                 currentDate = index == 15,
-                isSelected = index == scheduleUiState.selectedDateIndex
+                isSelected = index == uiState.selectedDateIndex
             )
         }
     }

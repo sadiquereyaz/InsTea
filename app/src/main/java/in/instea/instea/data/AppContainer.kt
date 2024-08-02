@@ -7,6 +7,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import `in`.instea.instea.data.dao.PostDao
 import `in`.instea.instea.data.repo.AcademicRepository
+import `in`.instea.instea.data.repo.AccountService
+import `in`.instea.instea.data.repo.AccountServiceImpl
 import `in`.instea.instea.data.repo.CombinedPostRepository
 import `in`.instea.instea.data.repo.CombinedUserRepository
 import `in`.instea.instea.data.repo.LocalPostRepository
@@ -31,6 +33,7 @@ interface AppContainer {
 
     //    val userPreferenceRepository: UserPreferenceRepository
     val academicRepository: AcademicRepository
+    val accountService: AccountService
     val netwrokChatRepository: NetwrokChatRepository
 }
 
@@ -41,7 +44,7 @@ val Context.dataStore by preferencesDataStore(name = CURRENT_USER)
 
 
 class AppDataContainer(
-    private val context: Context,
+    private val context: Context
 ) : AppContainer {
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val firebaseDatabase = FirebaseDatabase.getInstance()
@@ -74,6 +77,9 @@ class AppDataContainer(
     }
     override val localPostRepository: LocalPostRepository by lazy {
         LocalPostRepository(postDao = roomDatabase.postDao())
+    }
+    override val accountService: AccountService by lazy {
+        AccountServiceImpl()
     }
     override val netwrokChatRepository: NetwrokChatRepository by lazy {
         NetwrokChatRepository(

@@ -1,6 +1,7 @@
 package `in`.instea.instea.screens.auth.composable
 
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
@@ -24,9 +25,10 @@ fun CustomTextField(
     leadingIcon: ImageVector? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     capitalization: KeyboardCapitalization = KeyboardCapitalization.None,
-    errorText: String = "Invalid input",
-    isError: Boolean = false,
-    label: String = "textFieldLabel"
+    errorMessage: String? = null,
+    isError: Boolean = errorMessage != null,
+    label: String = "textFieldLabel",
+    supportingText: String? = null,
 ) {
     OutlinedTextField(
         modifier = modifier
@@ -42,7 +44,7 @@ fun CustomTextField(
         ),
         leadingIcon = {
             if (leadingIcon != null) {
-                Icon(imageVector = leadingIcon, contentDescription = "icon",/* modifier = Modfier*/)
+                Icon(imageVector = leadingIcon, contentDescription = "icon"/* modifier = Modfier*/)
             }
         },
         label = { Text(text = label) },
@@ -55,15 +57,23 @@ fun CustomTextField(
             unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
         ),
         supportingText = {
-            // Display error text if the input is not valid
             if (isError) {
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = errorText,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    text = errorMessage ?: "",
                     color = MaterialTheme.colorScheme.error
                 )
-            }
+            } else if (supportingText != null) (
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        text = supportingText,
+                        color = MaterialTheme.colorScheme.outline
+                    )
+                    )
         }
-
     )
 }

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "677962216839",
+    "firebase_url": "https://insteacompose-default-rtdb.firebaseio.com",
     "project_id": "insteacompose",
     "storage_bucket": "insteacompose.appspot.com"
   },
@@ -12,7 +13,20 @@
           "package_name": "in.instea.instea"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "677962216839-9n4e2ehkes3fqckq4u59ed5faqtlens3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.instea.instea",
+            "certificate_hash": "1a0e1a37593bdcb7e43fbb3867864437b2d046a4"
+          }
+        },
+        {
+          "client_id": "677962216839-2vc83k2bp8j719m4t1ofn72g02ct3onh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAX7IkqJK0blDbpeV9nYHfk27u0xe3rPWw"
@@ -20,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "677962216839-0cl6ear157h6l6b7fba0d36foij6p6tf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

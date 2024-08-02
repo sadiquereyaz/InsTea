@@ -12,7 +12,8 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         // Initializer for ProfileViewModel
         initializer {
-                SelfProfileViewModel(
+                ProfileViewModel(
+                    savedStateHandle = this.createSavedStateHandle(),
                     postRepository = insteaApplication().container.postRepository,
                     userRepository =insteaApplication().container.userRepository
                 )
@@ -36,14 +37,16 @@ object AppViewModelProvider {
                 )
         }
         initializer {
-                SignInViewModel(
-                    userRepository = insteaApplication().container.userRepository
+                AuthenticationViewModel(
+                    userRepository = insteaApplication().container.userRepository,
+                    accountService = insteaApplication().container.accountService
                 )
         }
         initializer {
-                SignUpViewModel(
+                UserInfoViewModel(
                     userRepository = insteaApplication().container.userRepository,
-                    academicRepository = insteaApplication().container.academicRepository
+                    academicRepository = insteaApplication().container.academicRepository,
+                    accountService = insteaApplication().container.accountService
                 )
         }
 
@@ -57,7 +60,14 @@ object AppViewModelProvider {
         initializer {
             EditScheduleViewModel(
                 savedStateHandle = this.createSavedStateHandle(),
-                scheduleRepository = insteaApplication().container.scheduleRepository
+                scheduleRepository = insteaApplication().container.scheduleRepository,
+            )
+        }
+        initializer {
+            MoreViewModel(
+                savedStateHandle = this.createSavedStateHandle(),
+                scheduleRepository = insteaApplication().container.scheduleRepository,
+                accountService = insteaApplication().container.accountService
             )
         }
         initializer {

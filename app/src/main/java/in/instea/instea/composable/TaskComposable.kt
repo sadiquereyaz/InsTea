@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.List
@@ -20,46 +21,62 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import kotlinx.coroutines.launch
+import org.jetbrains.annotations.Nls
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskComposable(
     modifier: Modifier = Modifier,
     scheduleObj: CombinedScheduleTaskModel,
-    upsertTask:(String)->Unit
+    upsertTask: (String) -> Unit
 ) {
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
-    var skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
+    val skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
     val bottomSheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
+    val roomTask = scheduleObj.task
+    var task by rememberSaveable { mutableStateOf(roomTask) }
+    LaunchedEffect(roomTask) {
+        task = roomTask
+    }
+
+    /*var attendance by rememberSaveable { mutableStateOf(scheduleObj.attendance) }
+    Log.d("ATTENDANCE_OBJ", scheduleObj.attendance.toString())
+    Log.d("ATTENDANCE_Mut", attendance.toString())*/
     Row(
         modifier = modifier
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 8.dp)
+            .clip(shape = RoundedCornerShape(50))
             .clickable {
                 openBottomSheet = true
-            }, verticalAlignment = Alignment.CenterVertically
+            }
+            .padding(horizontal = 8.dp, vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
+
         Icon(
             imageVector = Icons.Default.List,
             contentDescription = "task",
             modifier = Modifier.size(16.dp),
         )
         Text(
-            text = scheduleObj.task ?: "Add Task",
+            text = task ?: "Add Task",
             fontSize = 12.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
@@ -76,7 +93,7 @@ fun TaskComposable(
             var remindBefore12Hours by rememberSaveable { mutableStateOf(true) }
             var remindBefore24Hours by rememberSaveable { mutableStateOf(false) }
 
-            var task by remember { mutableStateOf(scheduleObj.task ?:"") }
+//            var task by remember { mutableStateOf(scheduleObj.task ?:"") }
 
             // Reminder Switch
             Column {
@@ -129,7 +146,7 @@ fun TaskComposable(
                         value = task ?: "",
                         onValueChange = {
                             task = it
-                            scheduleObj.task = it
+//                            scheduleObj.task = it
                         },
                         modifier = Modifier
                             .weight(1f)
@@ -138,14 +155,17 @@ fun TaskComposable(
                                 start = 16.dp,
                                 bottom = 16.dp
                             ),
-                        label = { Text("Task") }
+                        label = { Text("Task") },
+                        keyboardOptions = KeyboardOptions(
+                            capitalization = KeyboardCapitalization.Sentences
+                        )
                     )
                     Button(
                         modifier = Modifier
                             .padding(start = 8.dp, end = 16.dp, top = 24.dp),
                         shape = RoundedCornerShape(8),
                         onClick = {
-                            upsertTask(task)
+                            task?.let { upsertTask(it) }
                             scope.launch { bottomSheetState.hide() }
                                 .invokeOnCompletion {
                                     if (!bottomSheetState.isVisible) {

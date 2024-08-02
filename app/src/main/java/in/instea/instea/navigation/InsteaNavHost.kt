@@ -18,10 +18,12 @@ import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.EditProfileScreen
 
 import `in`.instea.instea.screens.auth.AddInfo
-import `in`.instea.instea.screens.auth.SignInScreen
-import `in`.instea.instea.screens.auth.SignUpScreen
-import `in`.instea.instea.screens.profile.OtherProfileScreen
-import `in`.instea.instea.screens.profile.SelfProfileScreen
+import `in`.instea.instea.screens.auth.AuthenticationScreen
+import `in`.instea.instea.screens.auth.UserInfoScreen
+import `in`.instea.instea.screens.more.MoreDestination
+import `in`.instea.instea.screens.more.MoreScreen
+import `in`.instea.instea.screens.profile.ProfileDestination
+import `in`.instea.instea.screens.profile.ProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleDestination
 import `in`.instea.instea.screens.schedule.EditScheduleScreen
 import `in`.instea.instea.screens.schedule.ScheduleScreen
@@ -35,22 +37,29 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Signup.name,
+        startDestination = InsteaScreens.Authenticate.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
-        composable(route = InsteaScreens.Signup.name) {
-            SignUpScreen(
-                navController = navController
+        composable(route = InsteaScreens.UserInfo.name) {
+            UserInfoScreen(
+                navController = navController,
             )
         }
-        composable(route = InsteaScreens.SignIn.name) {
-            SignInScreen(navController = navController)
+        composable(route = InsteaScreens.Authenticate.name) {
+            AuthenticationScreen(
+                openAndPopUp = { route, popUp ->
+                     navController.navigate(route) {
+//                    launchSingleTop = true
+                    popUpTo(popUp) { inclusive = true }
+                }
+                }
+            )
         }
         composable(route = InsteaScreens.Feed.name) {
             FEED(
+                navigateToProfile = { userId -> navController.navigate("${ProfileDestination.route}/${userId}") },
                 navController = navController
-//                            navigateToOtherProfile = { navController.navigate("${InsteaScreens.OtherProfile.name}/${it}") }
             )
         }
 
@@ -80,14 +89,31 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Attendance.name) {
             AttendanceScreen(navController = navController)
         }
+        // self profile
         composable(route = InsteaScreens.SelfProfile.name) {
-            SelfProfileScreen(
-                navigateToEditProfile = { navController.navigate(InsteaScreens.EditProfile.name) }
+            ProfileScreen(
+                onSubUsernameClick = {
+                    navController.navigate(InsteaScreens.EditProfile.name)
+                },
+                navigateToDevelopers = {
+                    navController.navigate("${MoreDestination.route}/${0}")
+                }
             )
         }
-        composable(route = InsteaScreens.OtherProfile.name+"/{userId}") {backStackEntry->
-            val userId = backStackEntry.arguments?.getString("userId")
-            OtherProfileScreen(userId = userId!!, navController = navController)
+        //OtherProfileScreen
+        composable(
+            route = ProfileDestination.routeWithArg,
+            arguments = listOf(navArgument(ProfileDestination.USERID_ARG) {
+                type = NavType.StringType
+            })
+        ) {
+//            OtherProfileScreen()
+            ProfileScreen(
+                onSubUsernameClick = { navController.navigate(InsteaScreens.Inbox.name) },
+                navigateToDevelopers = {
+                    navController.navigate("${MoreDestination.route}/${0}")
+                }
+            )
         }
         composable(route = InsteaScreens.EditProfile.name) {
             EditProfileScreen(
@@ -100,6 +126,16 @@ fun InsteaNavHost(
         }
         composable(route = InsteaScreens.AddAcademicInfo.name) {
             AddInfo(navController = navController)
+        }
+        composable(
+            route = MoreDestination.routeWithArg,
+            arguments = listOf(navArgument(MoreDestination.INDEX_ARG) {
+                type = NavType.IntType
+            })
+        ) {
+            MoreScreen(
+                navController = navController
+            )
         }
         composable(route = InsteaScreens.EditPost.name+"/{postId}"){ backstackEntry->
             val post = backstackEntry.arguments?.getString("postId")

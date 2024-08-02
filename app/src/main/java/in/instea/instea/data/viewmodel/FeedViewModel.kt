@@ -1,3 +1,4 @@
+
 package `in`.instea.instea.data.viewmodel
 
 
@@ -53,7 +54,7 @@ class FeedViewModel(
     init {
         viewModelScope.launch {
             fetchPosts()
-           fetchUserData()
+            fetchUserData()
             val currentUser = fetchedUsers.find { it.email == mAuth.currentUser?.email }
 
             if (currentUser != null) {
@@ -144,11 +145,10 @@ class FeedViewModel(
 
         } catch (e: Exception) {
             // Handle errors appropriately (e.g., log the error)
-           _userList.value= emptyList()// Return an empty list in case of error
+            _userList.value= emptyList()// Return an empty list in case of error
         }
         Log.d("userlist", "fetchUserData: ${userList}")
 
     }
 
 }
-

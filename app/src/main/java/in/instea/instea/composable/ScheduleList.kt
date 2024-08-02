@@ -1,5 +1,6 @@
 package `in`.instea.instea.composable
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,31 +15,28 @@ import `in`.instea.instea.screens.schedule.ScheduleUiState
 fun ScheduleList(
     navigateToEditSchedule: (Int) -> Unit = {},
     scheduleUiState: ScheduleUiState,
-    onAttendanceClick: (Int, Int, AttendanceType) -> Unit,
-    upsertTask: (Int, Int, String) -> Unit,
+    onAttendanceClick: (Int, AttendanceType) -> Unit,
+    upsertTask: (Int, String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 16.dp)
     ) {
-        items(items = scheduleUiState.classList, key = { it.scheduleId }) { scheduleModel ->
+//        Log.d("LIST", scheduleUiState.scheduleList.toString() ) // correct list
+        items(items = scheduleUiState.scheduleList) { scheduleModel ->
+//            Log.d("CURRENT_TASK", "subject name: ${scheduleModel.subject} \ntask: ${scheduleModel.task}")
             ScheduleItem(
-                scheduleModel = scheduleModel,
+                scheduleObj = scheduleModel,
                 onEditClick = { navigateToEditSchedule(scheduleModel.scheduleId) },
                 onAttendanceClick = { attendanceType ->
-                    onAttendanceClick(
-                        scheduleModel.taskId,
-                        scheduleModel.scheduleId,
-                        attendanceType
-                    )
+                    onAttendanceClick(scheduleModel.scheduleId, attendanceType)
                 },
-                upsertTask = {
+                upsertTask = {task->
 //                    Log.d("ATT", scheduleModel.taskId.toString())
                     upsertTask(
-                        scheduleModel.taskId,
                         scheduleModel.scheduleId,
-                        scheduleModel.task ?: ""
+                        task
                     )
                 },
                 repeatReminderSwitchAction = { subName, repeat ->

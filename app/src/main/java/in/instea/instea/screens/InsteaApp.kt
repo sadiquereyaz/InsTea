@@ -5,18 +5,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.BottomNavigationBar
 import `in`.instea.instea.composable.InsteaTopAppBar
-//import `in`.instea.instea.composable.InsteaTopAppBar
 import `in`.instea.instea.data.BottomNavItemData
-import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.navigation.InsteaNavHost
+import `in`.instea.instea.navigation.InsteaScreens
+import `in`.instea.instea.screens.more.MoreDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -58,10 +60,9 @@ fun InsteaApp(
                 navigateBack = { navController.navigateUp() },
                 moveToSelfProfile = { navController.navigate(InsteaScreens.SelfProfile.name) },
                 moveToOtherProfile = { navController.navigate(InsteaScreens.OtherProfile.name) },
+                moveToAttendanceSummary = { index -> navController.navigate("${MoreDestination.route}/${index}") },
                 navController = navController,
-                onAddButtonClicked = {
-                 navController.navigate(InsteaScreens.Addpost.name)
-                }
+                onAddButtonClicked = { navController.navigate(InsteaScreens.Addpost.name) }
             )
         },
         bottomBar = {
