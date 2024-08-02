@@ -58,7 +58,8 @@ fun InsteaNavHost(
         }
         composable(route = InsteaScreens.Feed.name) {
             FEED(
-                navigateToProfile = { userId -> navController.navigate("${ProfileDestination.route}/${userId}") }
+                navigateToProfile = { userId -> navController.navigate("${ProfileDestination.route}/${userId}") },
+                navController = navController
             )
         }
 

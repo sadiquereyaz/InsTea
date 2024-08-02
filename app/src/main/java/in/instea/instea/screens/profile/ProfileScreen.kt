@@ -216,7 +216,7 @@ fun TabItem(
     } else {
         LazyColumn {
             items(postList) { post ->
-                PostCard(post, {})
+//                PostCard(post, {})
             }
         }
     }

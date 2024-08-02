@@ -26,6 +26,7 @@ interface PostRepository {
     suspend fun updateComment(post: PostData)
     fun getPostsByUser(userId: String): Flow<List<PostData>>
     suspend fun Delete(post:PostData)
+    suspend fun UpdateComment(post:PostData)
 }
 
 class CombinedPostRepository(
@@ -63,6 +64,10 @@ class CombinedPostRepository(
 
     }
 
+    override suspend fun updateComment(post: PostData) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun UpdateComment(post: PostData) {
         TODO("Not yet implemented")
     }
@@ -82,9 +87,21 @@ class LocalPostRepository(
 ): PostRepository {
 
     override fun getAllSavedPostsStream(): Flow<List<PostData>> = postDao.getAllSavedPosts()
+    override fun getAllProfilePostsStream(): Flow<List<PostData>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun insertItem(post: PostData) = postDao.insertPost(post)
 
     override suspend fun updateUpAndDownVote(post: PostData) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateComment(post: PostData) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPostsByUser(userId: String): Flow<List<PostData>> {
         TODO("Not yet implemented")
     }
 
@@ -127,6 +144,10 @@ class NetworkPostRepository(
         awaitClose { databaseReference.removeEventListener(postListener) }
     }
 
+    override fun getAllProfilePostsStream(): Flow<List<PostData>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun insertItem(post: PostData) {
         val newPostRef = databaseReference.push()
         post.postid = newPostRef.key.toString()
@@ -150,6 +171,14 @@ class NetworkPostRepository(
             }
 
         }
+    }
+
+    override suspend fun updateComment(post: PostData) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPostsByUser(userId: String): Flow<List<PostData>> {
+        TODO("Not yet implemented")
     }
 
     override suspend fun UpdateComment(post: PostData) {

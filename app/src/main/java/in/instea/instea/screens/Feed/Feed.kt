@@ -45,10 +45,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import `in`.instea.instea.R
-import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.ui.PostList
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -61,11 +62,12 @@ import java.util.Locale
 @Composable
 fun FEED(
     navigateToProfile: (String)->Unit,
+    navController: NavHostController,
     feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val user by feedViewModel.user.collectAsState()
 
-  PostList(feedViewModel, navigateToProfile)
+  PostList(feedViewModel, navigateToProfile, navController = navController)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

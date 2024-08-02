@@ -49,13 +49,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.google.android.play.integrity.internal.o
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import `in`.instea.instea.R
-import `in`.instea.instea.data.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
+import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.data.viewmodel.FeedViewModel
+import `in`.instea.instea.navigation.InsteaScreens
 //import `in`.instea.instea.screens.Feed.CommentList
 import `in`.instea.instea.screens.profile.OtherProfileScreen
 
@@ -71,8 +74,8 @@ fun PostCard(
     post: PostData,
     navigateToProfile: () -> Unit,
     feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    navController: NavController,
     userList: List<User>,
+    navController: NavController
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var showComments by remember { mutableStateOf(false) } // State for showing/hiding CommentCard
@@ -103,7 +106,9 @@ fun PostCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        navController.navigate(InsteaScreens.OtherProfile.name + "/${if (user.userId != null) user.userId else " "}")
+//                        navController.navigate(InsteaScreens.OtherProfile.name + "/${if (user.userId != null) user.userId else " "}")
+                        navigateToProfile()
+
                     }
             ) {
                 (if (post.profileImage != null) post.profileImage
@@ -157,7 +162,7 @@ fun PostCard(
                                         text = { Text(type) },
                                         onClick = {
                                             if (type == "Delete") {
-                                                feedViewModel.DeletePost(post)
+//                                                feedViewModel.DeletePost(post)
                                             }
                                             if (type == "Edit") {
                                                 navController.navigate(InsteaScreens.EditPost.name + "/${post.postid}")
