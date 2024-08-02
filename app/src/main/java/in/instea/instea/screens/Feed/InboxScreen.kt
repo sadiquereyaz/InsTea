@@ -89,7 +89,6 @@ fun InboxScreen(
         chatViewModel.getChats(senderRoom, receiverRoom)
     }
 
-
         Column(
             modifier = Modifier
 
@@ -100,9 +99,9 @@ fun InboxScreen(
                 modifier = Modifier
                     .weight(1f)
                     .padding(8.dp)
-                    .imePadding()
+
             ) {
-                items(chatList) { message -> // Access messages from chatList.chatstate
+                items(chatList) { message ->
                     if (message.senderId == feedViewModel.currentuser) {
                         SenderTextField(message)
                     } else {
