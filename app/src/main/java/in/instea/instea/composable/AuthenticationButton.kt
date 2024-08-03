@@ -25,13 +25,16 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import `in`.instea.instea.R
+import `in`.instea.instea.data.viewmodel.AuthenticationViewModel
 import `in`.instea.instea.data.viewmodel.ERROR_TAG
 import kotlinx.coroutines.launch
 
 @Composable
 fun AuthenticationButton(
 //    buttonText: Int,
-    onGetCredentialResponse: (Credential) -> Unit
+    onClicked: (Boolean) -> Unit = {},
+    onGetCredentialResponse: (Credential) -> Unit,
+    authenticationError: (String) -> Unit
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -50,22 +53,28 @@ fun AuthenticationButton(
             coroutineScope.launch {
                 try {
                     Log.d(ERROR_TAG, "Requesting credential...")
+                    onClicked(true)
                     val result = credentialManager.getCredential(
                         request = request,
                         context = context
                     )
                     Log.d(ERROR_TAG, "Credential received successfully.")
                     onGetCredentialResponse(result.credential)
+//                    onClicked(false)
                 } catch (e: GetCredentialException) {
+//                    viewModel.onSignUpError(e.message ?: "SignUp failed")
                     Log.d(ERROR_TAG, "Failed to get credential: ${e.message}")
                     Log.d(ERROR_TAG, "Cause: ${e.cause}")
                     Log.d(ERROR_TAG, "Exception Class: ${e::class.java}")
                     Log.d(ERROR_TAG, "Stack Trace: ${Log.getStackTraceString(e)}")
+//                    onClicked(false)
                 } catch (e: Exception) {
+                    authenticationError("Unexpected error: ${e.cause}")
                     Log.d(ERROR_TAG, "Unexpected error: ${e.message}")
                     Log.d(ERROR_TAG, "Cause: ${e.cause}")
                     Log.d(ERROR_TAG, "Exception Class: ${e::class.java}")
                     Log.d(ERROR_TAG, "Stack Trace: ${Log.getStackTraceString(e)}")
+//                    onClicked(false)
                 }
             }
         },
@@ -93,5 +102,4 @@ fun AuthenticationButton(
             )
         }
     }
-
 }

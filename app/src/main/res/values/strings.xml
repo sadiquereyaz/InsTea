@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">InsTea</string>
+    <string name="default_bio">Hey there! Instea is really great App :)</string>
 </resources>

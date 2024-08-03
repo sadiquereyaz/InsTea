@@ -1,6 +1,5 @@
 package `in`.instea.instea.screens.profile
 
-import PostCard
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -43,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -57,7 +57,6 @@ import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.ProfileViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.navigation.NavigationDestinations
-import `in`.instea.instea.screens.schedule.EditScheduleDestination.ID_ARG
 import kotlinx.coroutines.launch
 
 
@@ -113,7 +112,7 @@ fun ProfileScreen(
 
             //about
             Text(
-                text = userData?.about ?: "",
+                text = userData?.about ?: stringResource(id = R.string.default_bio),
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth(),
@@ -122,12 +121,14 @@ fun ProfileScreen(
 
             //social link
             SocialLink(
-                modifier = Modifier.padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 20.dp,
-                    bottom = 20.dp
-                ),
+                modifier = Modifier
+                    .padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 20.dp,
+                        bottom = 20.dp
+                    )
+                    .fillMaxWidth(),
                 user = userData,
                 socialList = uiState.socialList,
                 openSocialLink = { link ->
@@ -191,10 +192,11 @@ private fun PersonalizedFeed(uiState: ProfileUiState) {
         }
     }
     when (selectedTabIndex) {
-        0-> {
+        0 -> {
             TabItem(postList = myPosts)
         }
-        1-> {
+
+        1 -> {
             TabItem(postList = savedPosts, noPostText = "No Saved Post")
         }
 
@@ -235,7 +237,7 @@ fun SocialLink(
     ) {
         items(socialList) { item ->
             val title = item.title
-            Log.d("TITLE", "SocialLink: $title")
+//            Log.d("TITLE", "SocialLink: $title")
             if (title.isNotEmpty())
                 SocialItem(
                     title = title,
