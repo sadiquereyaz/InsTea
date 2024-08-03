@@ -201,7 +201,7 @@ fun SenderTextField(message: Message) {
         Column(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Bottom,
-           modifier= Modifier
+            modifier= Modifier
                .widthIn(min = 60.dp,max =(screenWidth/2))
 
                .background(senderLight)

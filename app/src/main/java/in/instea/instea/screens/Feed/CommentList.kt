@@ -70,12 +70,7 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
                         .size(30.dp)
                         .align(Alignment.CenterVertically)
                 )
-                Card(
-                    modifier = Modifier
-                        .background(MaterialTheme.colorScheme.secondaryContainer)
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(20.dp)
-                ) {
+
                     OutlinedTextField(
                         value = textstate,
                         onValueChange = { textstate = it },
@@ -86,6 +81,7 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
                             focusedBorderColor = Color.Transparent,
                             unfocusedBorderColor = Color.Transparent
                         ),
+                        shape = RoundedCornerShape(20.dp),
                         placeholder = { Text(text = "Add a comment...") },
                         trailingIcon = {
                             if (textstate.isNotEmpty()) {
@@ -109,7 +105,7 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
                         }
                     )
 
-                }
+
             }
         }
         if (comments.isEmpty()) {
