@@ -5,9 +5,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+//import androidx.compose.foundation.layout.FlowRowScopeInstance.weight
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -50,9 +52,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.modifier.ModifierLocalReadScope
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -60,6 +64,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.toColorInt
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
 import `in`.instea.instea.data.datamodel.DateAndHour
@@ -89,183 +94,200 @@ fun InboxScreen(
         chatViewModel.getChats(senderRoom, receiverRoom)
     }
 
-        Column(
+    Column(
+        modifier = Modifier
+
+            .fillMaxSize()
+    ) {
+
+        LazyColumn(
             modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(8.dp)
 
-                  .fillMaxSize()
         ) {
-
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp)
-
-            ) {
-                items(chatList) { message ->
-                    if (message.senderId == feedViewModel.currentuser) {
-                        SenderTextField(message)
-                    } else {
-                        ReceiverTextField(message)
-                    }
-                }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextField(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(6.dp), // TextField takes available space
-                    value = textState,
-                    onValueChange = { textState = it },
-                    placeholder = { Text("Enter message") },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                    ),
-                    shape = RoundedCornerShape(50.dp),
-                    textStyle = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                )
-
-                Card(
-
-                    modifier = Modifier
-                        .size(50.dp)
-                        .padding(6.dp),
-                    shape = RoundedCornerShape(100.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(1.dp)
-                            .clickable {
-                                textState = reduceMultipleSpaces(textState)
-                                chatViewModel.insertMessages(
-                                    message = Message(
-                                        message = textState,
-                                        senderId = feedViewModel.currentuser!!,
-                                    ),
-                                    receiverRoom = userId + feedViewModel.currentuser,
-                                    senderRoom = feedViewModel.currentuser + userId
-                                )
-                                Log.d("rooms", "InboxScreen: $senderRoom , $receiverRoom")
-                                textState = ""
-                            },
-                        imageVector = Icons.Filled.Send,
-                        contentDescription = "Send",
-                        tint = Color.White
-                    )
+            items(chatList) { message ->
+                if (message.senderId == feedViewModel.currentuser) {
+                    SenderTextField(message)
+                } else {
+                    ReceiverTextField(message)
                 }
             }
         }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(6.dp),
+                value = textState,
+                onValueChange = { textState = it },
+                placeholder = { Text("Enter message") },
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                ),
+                shape = RoundedCornerShape(50.dp),
+                textStyle = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            )
+
+            Card(
+
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(6.dp),
+                shape = RoundedCornerShape(100.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primary
+                )
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .padding(1.dp)
+                        .clickable {
+                            val currentTimeStamp = System.currentTimeMillis()
+                            textState = reduceMultipleSpaces(textState)
+                            chatViewModel.insertMessages(
+                                message = Message(
+                                    message = textState,
+                                    senderId = feedViewModel.currentuser!!,
+                                    timeStamp = DateAndHour()
+                                ),
+                                receiverRoom = userId + feedViewModel.currentuser,
+                                senderRoom = feedViewModel.currentuser + userId
+                            )
+                            Log.d("rooms", "InboxScreen: $senderRoom , $receiverRoom")
+                            textState = ""
+                        },
+                    imageVector = Icons.Filled.Send,
+                    contentDescription = "Send",
+                    tint = Color.White
+                )
+            }
+        }
     }
+}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SenderTextField(message: Message) {
-    Column(
-        horizontalAlignment = Alignment.End,
+    val senderLight = Color("#2FCC59".toColorInt())
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(15.dp)
+            .wrapContentSize(Alignment.BottomEnd)
+            .padding(5.dp, end = 10.dp)
+           ,
+        contentAlignment = Alignment.CenterEnd
     ) {
-        Card(
-            elevation = CardDefaults.cardElevation(8.dp),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            ),
-            modifier = Modifier.wrapContentSize(Alignment.TopEnd)
+        Surface(
+            shape = RoundedCornerShape(10.dp), // Apply rounded corners
+            color = senderLight, // Set the background color
+            modifier = Modifier.padding(4.dp) // Add padding around the content
+        ){
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.Bottom,
+           modifier= Modifier
+               .widthIn(min = 60.dp,max =(screenWidth/2))
+
+               .background(senderLight)
         ) {
-            Row(
+            Text(
                 modifier = Modifier
-                    .padding(10.dp)
-                    .wrapContentWidth()
-                    .fillMaxWidth(0.5f),
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                verticalAlignment = Alignment.Bottom // Align items to bottom in Row
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .weight(1f),
-                    text = message.message,
-                    style = TextStyle(
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer
-                    ),
-                    overflow = TextOverflow.Clip
-                )
-                Text(
-                    text = message.timeStamp,
+                    .align(Alignment.Start)
+                    .padding(start = 8.dp, end = 10.dp, top = 8.dp)
+                ,
+                text = message.message,
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    fontSize = 10.sp,
-                    modifier = Modifier.padding(bottom = 4.dp)
+
+                ),
+
+                overflow = TextOverflow.Clip
+            )
+
+            Text(
+                text = message.timeStamp.formateForMessage(),
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                fontSize = 8.sp,
+                modifier = Modifier.align(Alignment.End).padding(start=8.dp,bottom = 2.dp,end=4.dp)
+
                 )
-            }
-        }
+        }}
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReceiverTextField(message: Message) {
-    Column(
-        horizontalAlignment = Alignment.Start,
+    var receiver = remember {
+        mutableStateOf(Color("#278EFF".toColorInt()))
+    }
+//    val receiverDark = Color("#26252A".toColorInt())
+    if(isSystemInDarkTheme()){
+        receiver.value = Color("#26252A".toColorInt())
+    }
+
+    Box(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(15.dp)
+            .fillMaxWidth(0.5f)
+            .wrapContentSize(Alignment.BottomStart)
+            .padding(5.dp, end = 10.dp)
+        ,
+        contentAlignment = Alignment.CenterStart
     ) {
-        Card(
-            elevation = CardDefaults.cardElevation(8.dp),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.secondaryContainer
-            )
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(10.dp)
-                    .wrapContentWidth()
-                    .fillMaxWidth(0.5f),
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                verticalAlignment = Alignment.Bottom // Align items to bottom in Row
+        Surface(
+            shape = RoundedCornerShape(10.dp),
+            color = receiver.value,
+            modifier = Modifier.padding(4.dp)
+            ){
+            Column(
+                horizontalAlignment = Alignment.Start,
+                verticalArrangement = Arrangement.Bottom,
+                modifier= Modifier
+                    .widthIn(min = 60.dp)
+                    .background(receiver.value)
             ) {
                 Text(
                     modifier = Modifier
-                        .padding(5.dp)
-                        .weight(1f),
+                        .align(Alignment.Start)
+                        .padding(start = 4.dp, end = 10.dp, top = 5.dp)
+                    ,
                     text = message.message,
                     style = TextStyle(
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer
-                    ),
+                        color = MaterialTheme.colorScheme.onTertiaryContainer,
+
+                        ),
+
                     overflow = TextOverflow.Clip
                 )
+
                 Text(
-                    text = message.timeStamp,
+                    text = message.timeStamp.formateForMessage(),
                     color = MaterialTheme.colorScheme.onTertiaryContainer,
-                    fontSize = 10.sp,
-                    modifier = Modifier.padding(bottom = 4.dp)
+                    fontSize = 8.sp,
+                    modifier = Modifier.align(Alignment.End).padding(start = 8.dp,bottom = 2.dp,end=4.dp)
+
                 )
-            }
-        }
+            }}
     }
 }
-
-
 
 
 data class TimeOfMessage(
@@ -275,6 +297,5 @@ data class TimeOfMessage(
         val dateFormat = SimpleDateFormat("HH:MM", Locale.getDefault())
         return dateFormat.format(this.date)
     }
-
 
 }

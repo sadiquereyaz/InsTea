@@ -44,11 +44,11 @@ import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import kotlinx.coroutines.launch
 
 @Composable
-fun CommentCard(comment:Comments,post: PostData){
+fun CommentCard(comment: Comments, post: PostData) {
     var isExpanded by remember {
         mutableStateOf(false)
     }
-    var showReply by remember{ mutableStateOf(false) }
+    var showReply by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -120,8 +120,7 @@ fun CommentCard(comment:Comments,post: PostData){
                     modifier = Modifier.fillMaxWidth()
                 ) {
 
-                    UpAndDownVoteButtonsForComment(comment,post,showReply){
-                        isVisible->
+                    UpAndDownVoteButtonsForComment(comment, post, showReply) { isVisible ->
                         showReply = isVisible
                     }
 
@@ -132,13 +131,18 @@ fun CommentCard(comment:Comments,post: PostData){
         }
 
     }
-    if(showReply){
-        ReplyList(post = post,comment = comment)
+    if (showReply) {
+        ReplyList(post = post, comment = comment)
     }
 }
 
 @Composable
-fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: Boolean, onReplyClick: (Boolean) -> Unit) {
+fun UpAndDownVoteButtonsForComment(
+    comment: Comments,
+    post: PostData,
+    showReply: Boolean,
+    onReplyClick: (Boolean) -> Unit,
+) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }
     val isDownVoted = rememberSaveable { mutableStateOf(false) }
     val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -173,37 +177,43 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
                     modifier = Modifier
                         .height(16.dp)
                         .clickable {
-                            isDownVoted.value = !isDownVoted.value
-                            if (isDownVoted.value) {
-                                isUpVoted.value = false
-                            }
-
-                            coroutineScope.launch {
-                                if (!userlikeCurrentPost && userDislikeCurrentPost) {
-                                    comment.userDislikeComment.remove(feedViewModel.currentuser)
-                                } else if (userlikeCurrentPost && !userDislikeCurrentPost) {
-                                    comment.userLikedComment.remove(feedViewModel.currentuser)
-                                    comment.userDislikeComment.add(feedViewModel.currentuser!!)
-                                } else {
-                                    comment.userDislikeComment.add(feedViewModel.currentuser!!)
+                            if (feedViewModel.currentuser != comment.commentByUser) {
+                                isDownVoted.value = !isDownVoted.value
+                                if (isDownVoted.value) {
+                                    isUpVoted.value = false
                                 }
 
-                                val commetIndex = post.comments.indexOf(comment)
+                                coroutineScope.launch {
+                                    if (!userlikeCurrentPost && userDislikeCurrentPost) {
+                                        comment.userDislikeComment.remove(feedViewModel.currentuser)
+                                    } else if (userlikeCurrentPost && !userDislikeCurrentPost) {
+                                        comment.userLikedComment.remove(feedViewModel.currentuser)
+                                        comment.userDislikeComment.add(feedViewModel.currentuser!!)
+                                    } else {
+                                        comment.userDislikeComment.add(feedViewModel.currentuser!!)
+                                    }
+
+                                    val commetIndex = post.comments.indexOf(comment)
 //                                feedViewModel.updateVotes(post)
-                                post.comments[commetIndex] = comment
-                                feedViewModel.updateVotes(post)
-                                isDownVoted.value = !isDownVoted.value
-                                // Update the local state to reflect changes
-                                userDislikeCurrentPost =
-                                    comment.userDislikeComment.contains(feedViewModel.currentuser)
-                                userlikeCurrentPost =
-                                    comment.userLikedComment.contains(feedViewModel.currentuser)
+                                    post.comments[commetIndex] = comment
+                                    feedViewModel.updateVotes(post)
+                                    isDownVoted.value = !isDownVoted.value
+                                    // Update the local state to reflect changes
+                                    userDislikeCurrentPost =
+                                        comment.userDislikeComment.contains(feedViewModel.currentuser)
+                                    userlikeCurrentPost =
+                                        comment.userLikedComment.contains(feedViewModel.currentuser)
+                                }
                             }
                         },
                     tint = (if (userDislikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
 
                 )
-                Text(text = comment.userDislikeComment.size.toString(), fontSize = 10.sp, modifier = Modifier.padding(0.dp))
+                Text(
+                    text = comment.userDislikeComment.size.toString(),
+                    fontSize = 10.sp,
+                    modifier = Modifier.padding(0.dp)
+                )
 
             }
 
@@ -220,52 +230,60 @@ fun UpAndDownVoteButtonsForComment(comment: Comments,post: PostData,showReply: B
                 horizontalArrangement = Arrangement.spacedBy(4.dp) // Custom spacing between button and text
             ) {
 
-                Text(text = comment.userLikedComment.size.toString(), fontSize = 10.sp, modifier = Modifier.padding(0.dp))
+                Text(
+                    text = comment.userLikedComment.size.toString(),
+                    fontSize = 10.sp,
+                    modifier = Modifier.padding(0.dp)
+                )
                 Icon(
                     painter = painterResource(id = if (userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
                     contentDescription = "Upvote",
                     modifier = Modifier
                         .height(16.dp)
                         .clickable {
-                            isUpVoted.value = !isUpVoted.value
+                            if (feedViewModel.currentuser != comment.commentByUser) {
+                                isUpVoted.value = !isUpVoted.value
 
-                            if (isUpVoted.value) {
-                                isDownVoted.value = false
-                            }
-
-                            coroutineScope.launch {
-                                if (userlikeCurrentPost && !userDislikeCurrentPost) {
-                                    comment.userLikedComment.remove(feedViewModel.currentuser)
-                                } else if (!userlikeCurrentPost && userDislikeCurrentPost) {
-                                    comment.userDislikeComment.remove(feedViewModel.currentuser)
-                                    comment.userLikedComment.add(feedViewModel.currentuser!!)
-                                } else {
-                                    comment.userLikedComment.add(feedViewModel.currentuser!!)
+                                if (isUpVoted.value) {
+                                    isDownVoted.value = false
                                 }
 
+                                coroutineScope.launch {
+                                    if (userlikeCurrentPost && !userDislikeCurrentPost) {
+                                        comment.userLikedComment.remove(feedViewModel.currentuser)
+                                    } else if (!userlikeCurrentPost && userDislikeCurrentPost) {
+                                        comment.userDislikeComment.remove(feedViewModel.currentuser)
+                                        comment.userLikedComment.add(feedViewModel.currentuser!!)
+                                    } else {
+                                        comment.userLikedComment.add(feedViewModel.currentuser!!)
+                                    }
+
 //                                feedViewModel.updateVotes(post)
-                                val commetIndex = post.comments.indexOf(comment)
+                                    val commetIndex = post.comments.indexOf(comment)
 //                                feedViewModel.updateVotes(post)
-                                post.comments[commetIndex] = comment
-                                feedViewModel.updateVotes(post)
-                                isUpVoted.value = !isUpVoted.value
-                                // Update the local state to reflect changes
-                                userDislikeCurrentPost =
-                                    comment.userDislikeComment.contains(feedViewModel.currentuser)
-                                userlikeCurrentPost =
-                                    comment.userLikedComment.contains(feedViewModel.currentuser)
+                                    post.comments[commetIndex] = comment
+                                    feedViewModel.updateVotes(post)
+                                    isUpVoted.value = !isUpVoted.value
+                                    // Update the local state to reflect changes
+                                    userDislikeCurrentPost =
+                                        comment.userDislikeComment.contains(feedViewModel.currentuser)
+                                    userlikeCurrentPost =
+                                        comment.userLikedComment.contains(feedViewModel.currentuser)
+                                }
                             }
                         },
                     tint = (if (userlikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
 
 
                 )
-                Spacer(modifier = Modifier.width(20.dp).height(10.dp))
+                Spacer(modifier = Modifier
+                    .width(20.dp)
+                    .height(10.dp))
                 Box(
                     modifier = Modifier.padding(end = 8.dp)
                 ) {
                     Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
-                val list = listOf("Report","Edit Comment")
+                    val list = listOf("Report", "Edit Comment")
 
 
                 }

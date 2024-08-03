@@ -1,9 +1,10 @@
+import `in`.instea.instea.data.datamodel.DateAndHour
 
 data class Message(
     val message:String,
-    val timeStamp: String = TimeOfMessage().format(),
+    val timeStamp: DateAndHour,
     val senderId: String
 ){
-    constructor(): this("",TimeOfMessage() .format(),"")
+    constructor(): this("",DateAndHour() ,"")
 }
 

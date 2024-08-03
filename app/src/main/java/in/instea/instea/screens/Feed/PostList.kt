@@ -39,7 +39,7 @@ fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit, 
             items(posts) { post ->
                 PostCard(
                     post = post,
-                    navigateToProfile = { navigateToProfile(post.postedByUser ?: "") },
+//                    navigateToProfile = { navigateToProfile(post.postedByUser ?: "") },
                     userList = userList,
                     navController = navController
                 )

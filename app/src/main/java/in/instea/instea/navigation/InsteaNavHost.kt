@@ -49,10 +49,10 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Authenticate.name) {
             AuthenticationScreen(
                 openAndPopUp = { route, popUp ->
-                     navController.navigate(route) {
+                    navController.navigate(route) {
 //                    launchSingleTop = true
-                    popUpTo(popUp) { inclusive = true }
-                }
+                        popUpTo(popUp) { inclusive = true }
+                    }
                 }
             )
         }
@@ -63,10 +63,9 @@ fun InsteaNavHost(
             )
         }
 
-        composable(route = InsteaScreens.Inbox.name+"/{userId}") {backStackEntry->
+        composable(route = InsteaScreens.Inbox.name + "/{userId}") { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId")
-
-           InboxScreen(userId!!)
+            InboxScreen(userId!!)
         }
         composable(route = InsteaScreens.Schedule.name) {
             ScheduleScreen(
@@ -118,8 +117,8 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.EditProfile.name) {
             EditProfileScreen(
                 navigateToAddAcademics = { navController.navigate(InsteaScreens.AddAcademicInfo.name) },
-                navigateBack={navController.popBackStack()}
-                )
+                navigateBack = { navController.popBackStack() }
+            )
         }
         composable(route = InsteaScreens.Addpost.name) {
             FeedContent()
@@ -137,12 +136,12 @@ fun InsteaNavHost(
                 navController = navController
             )
         }
-        composable(route = InsteaScreens.EditPost.name+"/{postId}"){ backstackEntry->
+        composable(route = InsteaScreens.EditPost.name + "/{postId}") { backstackEntry ->
             val post = backstackEntry.arguments?.getString("postId")
             EditPost(post!!)
         }
         composable(route = InsteaScreens.UserList.name) {
-          UserListScreen()
+            UserListScreen()
         }
 
     }
