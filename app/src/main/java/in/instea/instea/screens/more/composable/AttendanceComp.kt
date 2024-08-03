@@ -40,8 +40,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.AttendanceType
@@ -153,7 +156,16 @@ fun AttendanceComp(
                     attendedClasses = present,
                     absentClasses = absent
                 )
-            )
+            ) else {
+                Text(
+                    text = "Oops! No Attendance Marked in this Month",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp, 32.dp),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
         }
         itemsIndexed(attendanceList) { index, item ->
             /* if (index != 0) */Divider()
@@ -220,7 +232,8 @@ fun AttendanceItem(
             Box(
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
-                    .width(2.dp)
+                    .width(4.dp)
+                    .clip(shape = RoundedCornerShape(topStartPercent = 100, topEndPercent = 0, bottomStartPercent = 100, bottomEndPercent = 0))
                     .background(color = color)
                     .height(h)
             )
@@ -312,9 +325,9 @@ fun AttendanceItemPreview() {
 }*/
 
 @Composable
+@Preview
 fun AttendanceCompPreview() {
-    AttendanceComp(
-        uiState = MoreUiState(),
-//        expanded = true // Force dropdown open
+    AttendanceItem(
+        item = SubjectAttendanceSummaryModel(subject = "Maths", attendedClasses = 25, absentClasses = 5, totalClasses = 30)
     )
 }

@@ -1,5 +1,6 @@
 package `in`.instea.instea.data.repo
 
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -21,8 +22,8 @@ interface AccountService {
     suspend fun isUserProfileComplete(): Boolean
     suspend fun updateDisplayName(newDisplayName: String)
     suspend fun signInWithGoogle(idToken: String)
-    suspend fun signOut()
-    suspend fun deleteAccount()
+    suspend fun signOut(): Result<String?>
+    suspend fun deleteAccount(): Result<String?>
 }
 
 class AccountServiceImpl() : AccountService {
@@ -49,6 +50,7 @@ class AccountServiceImpl() : AccountService {
     override fun getUserProfile(): User {
         return Firebase.auth.currentUser.toInsteaUser()
     }
+
     override suspend fun isUserProfileComplete(): Boolean {
         val user = Firebase.auth.currentUser
         return user != null && !user.displayName.isNullOrEmpty()
@@ -66,12 +68,23 @@ class AccountServiceImpl() : AccountService {
         Firebase.auth.signInWithCredential(firebaseCredential).await()
     }
 
-    override suspend fun signOut() {
-        Firebase.auth.signOut()
+    override suspend fun signOut(): Result<String?> {
+        return try {
+            Firebase.auth.signOut()
+            Result.success(null)
+        } catch (e: Exception) {
+            Log.d("ACCOUNT_SERVICE", e.message?: "Error while signing out")
+            Result.failure(e)
+        }
     }
 
-    override suspend fun deleteAccount() {
-        Firebase.auth.currentUser!!.delete().await()
+    override suspend fun deleteAccount(): Result<String?> {
+        return try {
+            Firebase.auth.currentUser!!.delete().await()
+            Result.success(null)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     private fun FirebaseUser?.toInsteaUser(): User {

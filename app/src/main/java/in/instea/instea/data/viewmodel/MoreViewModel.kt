@@ -1,6 +1,7 @@
 package `in`.instea.instea.data.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -53,6 +54,7 @@ class MoreViewModel(
 
     fun onSignOutClick() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             try {
                 clearDatabase(context)
                 userRepository.clearUser()      //deleting user form datastore
@@ -60,26 +62,61 @@ class MoreViewModel(
                 _uiState.update { it.copy(moveToAuth = true) }
             } catch (e: Exception) {
                 // Handle error
-                _uiState.update { it.copy(moveToAuth = false) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.localizedMessage,
+                        moveToAuth = false
+                    )
+                }
+                showSnackBar()
             }
         }
     }
 
     fun onDeleteAccountClick() {
         viewModelScope.launch {
-//        clearDatabase(context)
-//        userRepository.clearUser()      //deleting user form datastore
-//            userRepository.deleteUserDetails(accountService.currentUserId)      //deleting user from realtime db
-//            accountService.deleteAccount()
-
+            _uiState.update { it.copy(isLoading = true) }
             try {
-                clearDatabase(context)
-                accountService.deleteAccount()
-                _uiState.update { it.copy(moveToAuth = true) }
+                val deleteResult = accountService.deleteAccount()
+                deleteResult.onSuccess {
+                    clearDatabase(context)
+                    _uiState.update {
+                        it.copy(
+                            moveToAuth = true,
+//                            isLoading = false,
+//                            errorMessage = "Account deleted successfully"
+                        )
+                    }
+//                    showSnackBar()
+                }.onFailure { failureMsg ->
+                    Log.d("MORE_VM", "failed result of deleting account: $failureMsg")
+                    _uiState.update {
+                        it.copy(
+                            moveToAuth = false,
+                            isLoading = false,
+                            errorMessage = failureMsg.message
+                                ?: "Error while deleting your account"
+                        )
+                    }
+                    showSnackBar()
+                }
             } catch (e: Exception) {
                 // Handle error
-                _uiState.update { it.copy(moveToAuth = false) }
+                Log.d("MORE_VM", "outer exception executed with error ${e.localizedMessage}")
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = e.localizedMessage,
+                        moveToAuth = false
+                    )
+                }
+                showSnackBar()
             }
         }
+    }
+
+    private fun showSnackBar() {
+        _uiState.value.showSnackBar = !_uiState.value.showSnackBar
     }
 }
