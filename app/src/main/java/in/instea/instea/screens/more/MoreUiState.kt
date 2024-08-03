@@ -7,5 +7,6 @@ data class MoreUiState (
     val taskList: List<String> = emptyList(),
     val attendanceSummaries: List<SubjectAttendanceSummaryModel> = emptyList(),
     val selectedTimestamp: LocalDate = LocalDate.now(),
-    var expandedIndex: Int? = null
+    var expandedIndex: Int? = null,
+    var moveToAuth: Boolean = false
 )

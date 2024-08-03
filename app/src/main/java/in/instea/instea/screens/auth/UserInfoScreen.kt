@@ -1,5 +1,6 @@
 package `in`.instea.instea.screens.auth
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,12 +22,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import `in`.instea.instea.composable.DropdownComposable
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.UserInfoViewModel
@@ -39,30 +41,20 @@ import kotlinx.coroutines.launch
 @Composable
 fun UserInfoScreen(
     modifier: Modifier = Modifier,
-    navController: NavController,
+    openAndPopUp: (String) -> Unit,
+    onAddClick: () -> Unit,
+    viewModel: UserInfoViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-//    val authState = viewModel.authState.collectAsState()
-    val viewModel: UserInfoViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val uiState by viewModel.uiState.collectAsState()
+    val isBackButtonEnabled = remember { mutableStateOf(true) }
 
-    /*   LaunchedEffect(authState.value) {
-           when (authState.value) {
-               is AuthState.authenticated -> navController.navigate(
-                   InsteaScreens.Feed.name
-               )
-
-               is AuthState.authenticated -> navController.navigate(
-                   InsteaScreens.Signup.name
-               )
-               else -> Unit
-           }
-       }*/
-
+    BackHandler(enabled = isBackButtonEnabled.value) {
+        // Your logic when back button is pressed
+        openAndPopUp(InsteaScreens.Authenticate.name)
+    }
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
-            navController.navigate(InsteaScreens.Feed.name) {
-                popUpTo(InsteaScreens.Authenticate.name) { inclusive = true }
-            }
+            openAndPopUp(InsteaScreens.Feed.name)
         }
     }
     val scrollState = rememberScrollState(0) // Remember the scroll state
@@ -109,7 +101,7 @@ fun UserInfoScreen(
                 isError = uiState.universityErrorMessage != null,
                 errorMessage = uiState.universityErrorMessage,
                 selectedOption = uiState.selectedUniversity,
-                onAddItemClicked = { navController.navigate(InsteaScreens.AddAcademicInfo.name) },
+                onAddItemClicked = onAddClick,
                 isLoadingOption = uiState.isUniversityLoading,
 //                isEnabled = !uiState.isUniversityLoading,
                 isExpandable = uiState.universityExpandable
@@ -136,9 +128,7 @@ fun UserInfoScreen(
                     isError = uiState.departmentErrorMessage != null,
                     errorMessage = uiState.departmentErrorMessage ?: "",
                     selectedOption = uiState.selectedDepartment ?: "",
-                    onAddItemClicked = {
-                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
-                    },
+                    onAddItemClicked = onAddClick,
                     isEnabled = uiState.selectedUniversity != null,
                     isLoadingOption = uiState.isDepartmentLoading,
                     isExpandable = uiState.departmentExpandable
@@ -153,9 +143,7 @@ fun UserInfoScreen(
                     },
                     leadingIcon = Icons.Default.AutoGraph,
                     selectedOption = uiState.selectedSemester ?: "",
-                    onAddItemClicked = {
-                        navController.navigate(InsteaScreens.AddAcademicInfo.name)
-                    },
+                    onAddItemClicked = onAddClick,
                     isEnabled = uiState.selectedDepartment != null,
                     isLoadingOption = uiState.isSemesterLoading,
                     isExpandable = uiState.semesterExpandable
@@ -173,9 +161,9 @@ fun UserInfoScreen(
                 }
             },
             isEnabled = (uiState.username.isNotBlank() &&
-                     uiState.selectedSemester != null &&
+                    uiState.selectedSemester != null &&
                     uiState.usernameErrorMessage == null &&
-                     uiState.errorMessage == null
+                    uiState.errorMessage == null
                     )
         )
 

@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -21,14 +22,19 @@ fun AccountComp(
     modifier: Modifier = Modifier,
     navigateToAuth: () -> Unit,
     logout: () -> Unit,
-    deleteAccount: () -> Unit
+    deleteAccount: () -> Unit,
+    isAccountDeleted: Boolean
 ) {
-    Box(modifier = Modifier.padding(10.dp)) {
+    LaunchedEffect(isAccountDeleted) {
+        if(isAccountDeleted)
+        navigateToAuth()
+    }
+    Box(modifier = modifier.padding(10.dp)) {
         Column {
             // sign out
             TextButton(onClick = {
                 logout()
-                navigateToAuth()
+//                navigateToAuth()
             }) {
                 Text(text = "Sign Out")
                 Spacer(modifier = Modifier.weight(1f))
@@ -40,7 +46,7 @@ fun AccountComp(
             }
             TextButton(onClick = {
                 deleteAccount()
-                navigateToAuth()
+//                navigateToAuth()
             }) {
                 Text(text = "Delete Account", color = MaterialTheme.colorScheme.error)
                 Spacer(modifier = Modifier.weight(1f))

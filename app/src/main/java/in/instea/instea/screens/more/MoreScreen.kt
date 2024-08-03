@@ -43,7 +43,6 @@ import `in`.instea.instea.screens.more.composable.AccountComp
 import `in`.instea.instea.screens.more.composable.AttendanceComp
 import `in`.instea.instea.screens.more.composable.Developers
 import `in`.instea.instea.screens.more.composable.report
-import kotlinx.coroutines.launch
 
 object MoreDestination : NavigationDestinations {
     override val route: String = InsteaScreens.More.name
@@ -160,19 +159,17 @@ fun ExpandableItem(
                     "Account" -> {
                         AccountComp(
                             navigateToAuth = {
-                                navController.popBackStack()
-                                navController.navigate(InsteaScreens.Authenticate.name)
+                                navController.navigate(InsteaScreens.Authenticate.name) {
+                                    popUpTo(0) { inclusive = true }
+                                }
                             },
                             logout = {
-                                coroutineScope.launch {
                                     viewModel.onSignOutClick()
-                                }
                             },
                             deleteAccount = {
-                                coroutineScope.launch {
                                     viewModel.onDeleteAccountClick()
-                                }
-                            }
+                            },
+                            isAccountDeleted = uiState.moveToAuth
                         )
                     }
 

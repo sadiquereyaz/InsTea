@@ -11,11 +11,11 @@ interface UserRepository {
     fun getUserById(userId: String): Flow<User>
     suspend fun upsertUserLocally(user: User)
     suspend fun upsertUserToFirebase(user: User)
-    suspend fun signIn(email: String, password: String): Result<String>
-    suspend fun signUp(user: User): Result<String?>
+    suspend fun insertUser(user: User): Result<String?>
     suspend fun clearUser()
     suspend fun isUserNameAvailable(username: String): Result<String?>
     suspend fun isUserIdAvailable(uid: String): Result<String?>
+    suspend fun deleteUserDetails(currentUserId: String)
 }
 
 class CombinedUserRepository(
@@ -31,7 +31,7 @@ class CombinedUserRepository(
         localUserRepository.getCurrentUser()
             .combine(networkUserRepository.getUserById(userId)) { localUser, networkUser ->
                 when {
-                    localUser?.userId == userId -> localUser
+                    localUser.userId == userId -> localUser
                     networkUser != null -> networkUser
                     else -> User(userId = "userIdNotAvailable", email = "User not found")
                 }
@@ -43,7 +43,7 @@ class CombinedUserRepository(
 
 
     override suspend fun upsertUserLocally(user: User) {
-        localUserRepository.upsertUser(user)
+        localUserRepository.upsertUserToDatastore(user)
         //insert in firebase as well
 //        networkUserRepository.updateUser(user)
     }
@@ -60,16 +60,17 @@ class CombinedUserRepository(
         return networkUserRepository.isUserIdAvailable(uid)
     }
 
+    override suspend fun deleteUserDetails(currentUserId: String) {
+        networkUserRepository.deleteUser(currentUserId)
+    }
+
     override suspend fun upsertUserToFirebase(user: User) {
 //        TODO("check for the non existence of email")
         networkUserRepository.updateUser(user = user)
     }
 
-    override suspend fun signIn(email: String, password: String): Result<String> {
-        return networkUserRepository.signIn(email, password)
-    }
-
-    override suspend fun signUp(user: User): Result<String?> {
+    override suspend fun insertUser(user: User): Result<String?> {
+        localUserRepository.upsertUserToDatastore(user)
         return networkUserRepository.insertUserToFirebase(user)
     }
 }

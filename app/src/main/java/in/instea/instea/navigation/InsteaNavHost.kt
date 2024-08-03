@@ -4,7 +4,6 @@ import EditPost
 import FEED
 import FeedContent
 import InboxScreen
-import `in`.instea.instea.screens.Feed.UserListScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -15,13 +14,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
-import `in`.instea.instea.screens.EditProfileScreen
-
+import `in`.instea.instea.screens.Feed.UserListScreen
 import `in`.instea.instea.screens.auth.AddInfo
 import `in`.instea.instea.screens.auth.AuthenticationScreen
 import `in`.instea.instea.screens.auth.UserInfoScreen
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreScreen
+import `in`.instea.instea.screens.profile.EditProfileScreen
 import `in`.instea.instea.screens.profile.ProfileDestination
 import `in`.instea.instea.screens.profile.ProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleDestination
@@ -41,18 +40,27 @@ fun InsteaNavHost(
         modifier = Modifier
             .padding(contentPadding)
     ) {
-        composable(route = InsteaScreens.UserInfo.name) {
-            UserInfoScreen(
-                navController = navController,
-            )
-        }
         composable(route = InsteaScreens.Authenticate.name) {
             AuthenticationScreen(
-                openAndPopUp = { route, popUp ->
-                     navController.navigate(route) {
-//                    launchSingleTop = true
-                    popUpTo(popUp) { inclusive = true }
+                navigateToFeed = {
+                    navController.navigate(InsteaScreens.Feed.name) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                navigateToUserInfo = {
+                    navController.navigate(InsteaScreens.UserInfo.name)
                 }
+            )
+        }
+        composable(route = InsteaScreens.UserInfo.name) {
+            UserInfoScreen(
+                openAndPopUp = { route ->
+                    navController.navigate(route) {
+                        popUpTo(0) { inclusive = true }
+                    }
+                },
+                onAddClick = {
+                    navController.navigate(InsteaScreens.AddAcademicInfo.name)
                 }
             )
         }
@@ -63,10 +71,10 @@ fun InsteaNavHost(
             )
         }
 
-        composable(route = InsteaScreens.Inbox.name+"/{userId}") {backStackEntry->
+        composable(route = InsteaScreens.Inbox.name + "/{userId}") { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId")
 
-           InboxScreen(userId!!)
+            InboxScreen(userId!!)
         }
         composable(route = InsteaScreens.Schedule.name) {
             ScheduleScreen(
@@ -118,8 +126,8 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.EditProfile.name) {
             EditProfileScreen(
                 navigateToAddAcademics = { navController.navigate(InsteaScreens.AddAcademicInfo.name) },
-                navigateBack={navController.popBackStack()}
-                )
+                navigateBack = { navController.popBackStack() }
+            )
         }
         composable(route = InsteaScreens.Addpost.name) {
             FeedContent()
@@ -137,12 +145,12 @@ fun InsteaNavHost(
                 navController = navController
             )
         }
-        composable(route = InsteaScreens.EditPost.name+"/{postId}"){ backstackEntry->
+        composable(route = InsteaScreens.EditPost.name + "/{postId}") { backstackEntry ->
             val post = backstackEntry.arguments?.getString("postId")
             EditPost(post!!)
         }
         composable(route = InsteaScreens.UserList.name) {
-          UserListScreen()
+            UserListScreen()
         }
 
     }

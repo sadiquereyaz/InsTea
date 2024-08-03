@@ -80,7 +80,6 @@ class FeedViewModel(
 
     private fun fetchPosts() {
         viewModelScope.launch {
-
             if (NetworkUtils.isNetworkAvailable(context)) {
                 postRepository.getAllSavedPostsStream().collect { posts ->
                     _posts.update { posts }
@@ -92,7 +91,6 @@ class FeedViewModel(
                     _isLoading.update { false }
                 }
             }
-
         }
     }
 

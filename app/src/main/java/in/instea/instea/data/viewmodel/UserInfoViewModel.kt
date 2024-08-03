@@ -23,7 +23,6 @@ class UserInfoViewModel(
     private val _uiState = MutableStateFlow(UserInfoUiState())
     val uiState: StateFlow<UserInfoUiState> = _uiState.asStateFlow()
 
-
 //    private lateinit var googleSignInClient: GoogleSignInClient
 //    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
@@ -124,7 +123,7 @@ class UserInfoViewModel(
                 it.copy(isSignIngIn = true)
             }
             val values = _uiState.value
-            val result: Result<String?> = userRepository.signUp(
+            val result: Result<String?> = userRepository.insertUser(
                 user = User(
                     userId = accountService.currentUserId,
                     username = values.username,

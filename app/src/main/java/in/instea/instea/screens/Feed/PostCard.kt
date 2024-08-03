@@ -83,7 +83,7 @@ fun PostCard(
     val moreList = listOf("Report", "Delete", "Edit")
     var user: User = User()
 
-    Log.d("PostCard", "userlist: $userList")
+//    Log.d("PostCard", "userlist: $userList")
     for (u in userList) {
         if (u.userId == post.postedByUser) {
             user = u

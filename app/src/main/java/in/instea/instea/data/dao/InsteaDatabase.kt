@@ -14,6 +14,8 @@ import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 import `in`.instea.instea.data.datamodel.TimeConverters
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Database(
     entities = [PostData::class, ScheduleModel::class, TaskAttendanceModel::class],
@@ -36,6 +38,11 @@ abstract class InsteaDatabase : RoomDatabase() {
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
+            }
+        }
+        suspend fun clearDatabase(context: Context) {
+            withContext(Dispatchers.IO) {
+                getDatabase(context).clearAllTables()
             }
         }
     }

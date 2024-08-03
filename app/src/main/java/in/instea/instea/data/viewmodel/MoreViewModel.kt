@@ -1,10 +1,13 @@
 package `in`.instea.instea.data.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.instea.instea.data.InsteaDatabase.Companion.clearDatabase
 import `in`.instea.instea.data.repo.AccountService
 import `in`.instea.instea.data.repo.ScheduleRepository
+import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +19,9 @@ import java.time.LocalDate
 class MoreViewModel(
     savedStateHandle: SavedStateHandle,
     private val scheduleRepository: ScheduleRepository,
-    private val accountService: AccountService
+    private val userRepository: UserRepository,
+    private val accountService: AccountService,
+    private val context: Context
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MoreUiState())
     val uiState: StateFlow<MoreUiState> = _uiState
@@ -24,10 +29,10 @@ class MoreViewModel(
 
     init {
         viewModelScope.launch {
-            if (argIndex==-1 ) argIndex = null
+            if (argIndex == -1) argIndex = null
             _uiState.update { it.copy(expandedIndex = argIndex) }
         }
-            onTimestampSelected(_uiState.value.selectedTimestamp)
+        onTimestampSelected(_uiState.value.selectedTimestamp)
     }
 
     fun onTimestampSelected(selectedDate: LocalDate) {
@@ -45,10 +50,36 @@ class MoreViewModel(
             }
         }
     }
-    suspend fun onSignOutClick(){
-        accountService.signOut()
+
+    fun onSignOutClick() {
+        viewModelScope.launch {
+            try {
+                clearDatabase(context)
+                userRepository.clearUser()      //deleting user form datastore
+                accountService.signOut()
+                _uiState.update { it.copy(moveToAuth = true) }
+            } catch (e: Exception) {
+                // Handle error
+                _uiState.update { it.copy(moveToAuth = false) }
+            }
+        }
     }
-    suspend fun onDeleteAccountClick(){
-        accountService.deleteAccount()
+
+    fun onDeleteAccountClick() {
+        viewModelScope.launch {
+//        clearDatabase(context)
+//        userRepository.clearUser()      //deleting user form datastore
+//            userRepository.deleteUserDetails(accountService.currentUserId)      //deleting user from realtime db
+//            accountService.deleteAccount()
+
+            try {
+                clearDatabase(context)
+                accountService.deleteAccount()
+                _uiState.update { it.copy(moveToAuth = true) }
+            } catch (e: Exception) {
+                // Handle error
+                _uiState.update { it.copy(moveToAuth = false) }
+            }
+        }
     }
 }

@@ -55,33 +55,20 @@ class NetworkUserRepository(
         }
     }
 
-    suspend fun deleteUser(user: User) {
-
-    }
-
-    //sign in
-    suspend fun signIn(email: String, password: String): Result<String> {
-        return try {
-            val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-            val userId = result.user?.uid ?: "No UID"
-//            Log.d("USER_ID", userId)
-            Result.success(userId)
+    suspend fun deleteUser(uid: String) {
+        try {
+            // Delete user data from Firebase Realtime Database
+            firebaseDatabase.reference.child("user").child(uid).removeValue().await()
+            firebaseAuth.currentUser!!.delete().await()
         } catch (e: Exception) {
-            Log.e("NetworkUserRepository", "Sign-in error", e)
-            Result.failure(e)
+            Log.e("NetworkUserRepository", "Error deleting user", e)
+            throw e
         }
     }
 
     // sign up
     suspend fun insertUserToFirebase(user: User): Result<String?> {
         return try {
-            /*   val result = firebaseAuth.createUserWithEmailAndPassword(
-                   user.email ?: "noemailrecieved@networkrepo.com", password
-               ).await()
-               // Check for successful creation and get user ID*/
-            /*   val userId = result.user?.uid ?: return Result.failure(Exception("No UID"))
-               val newUser = user.copy(userId = userId)*/
-//             Save user data to Firebase Realtime Database
             firebaseDatabase.reference.child("user").child(user.userId!!).setValue(user).await()
             Result.success(null)
         } catch (e: Exception) {

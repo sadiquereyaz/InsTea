@@ -53,7 +53,7 @@ fun DropdownComposable(
     var expandable by remember { mutableStateOf(isExpandable) }
     var count by remember{ mutableIntStateOf(0) }
 
-    Log.d("IN LOADING", "$label loading: $isLoadingOption")
+//    Log.d("IN LOADING", "$label loading: $isLoadingOption")
 //    Log.d("IN EXPANDABLE", "$label loading: $expandable")
 
     LaunchedEffect(isExpandable) {

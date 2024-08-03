@@ -1,4 +1,4 @@
-package `in`.instea.instea.screens
+package `in`.instea.instea.screens.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,7 +42,6 @@ import `in`.instea.instea.data.DataSource.platforms
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.EditProfileViewModel
 import `in`.instea.instea.screens.auth.composable.CustomTextField
-import `in`.instea.instea.screens.profile.EditProfileUiState
 import kotlinx.coroutines.launch
 
 @Composable
