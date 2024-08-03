@@ -34,14 +34,13 @@ fun AuthenticationButton(
 //    buttonText: Int,
     onClicked: (Boolean) -> Unit = {},
     onGetCredentialResponse: (Credential) -> Unit,
-    viewModel: AuthenticationViewModel
+    authenticationError: (String) -> Unit
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val credentialManager = CredentialManager.create(context)
     OutlinedButton(
         onClick = {
-            onClicked(true)
             val googleIdOption = GetGoogleIdOption.Builder()
                 .setFilterByAuthorizedAccounts(false)
                 .setServerClientId(context.getString(R.string.default_web_client_id))
@@ -54,6 +53,7 @@ fun AuthenticationButton(
             coroutineScope.launch {
                 try {
                     Log.d(ERROR_TAG, "Requesting credential...")
+                    onClicked(true)
                     val result = credentialManager.getCredential(
                         request = request,
                         context = context
@@ -69,7 +69,7 @@ fun AuthenticationButton(
                     Log.d(ERROR_TAG, "Stack Trace: ${Log.getStackTraceString(e)}")
 //                    onClicked(false)
                 } catch (e: Exception) {
-                    viewModel.onSignUpError("Unexpected error: ${e.cause}")
+                    authenticationError("Unexpected error: ${e.cause}")
                     Log.d(ERROR_TAG, "Unexpected error: ${e.message}")
                     Log.d(ERROR_TAG, "Cause: ${e.cause}")
                     Log.d(ERROR_TAG, "Exception Class: ${e::class.java}")

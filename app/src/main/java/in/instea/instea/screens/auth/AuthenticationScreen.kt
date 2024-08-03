@@ -1,7 +1,6 @@
 package `in`.instea.instea.screens.auth
 
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -34,9 +35,7 @@ fun AuthenticationScreen(
     navigateToUserInfo: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
-//    LaunchedEffect(NetworkUtils.isNetworkAvailable(LocalContext.current)) {
-//        viewModel.onSignUpError("No internet connection")
-//    }
+    var isAuthenticating = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.onAppStart()
@@ -48,12 +47,14 @@ fun AuthenticationScreen(
     ) {
         when (uiState) {
             is AuthUiState.Idle -> {
-                AuthenticationButton(
-                    viewModel = viewModel,
-                    onGetCredentialResponse = { credential ->
-                        viewModel.onSignUpWithGoogle(credential)
-                    },
-                )
+                Column {
+                    AuthenticationButton(
+                        authenticationError = { viewModel.onSignUpError(it) },
+                        onGetCredentialResponse = { credential ->
+                            viewModel.onSignUpWithGoogle(credential)
+                        },
+                    )
+                }
             }
 
             is AuthUiState.Loading -> {
