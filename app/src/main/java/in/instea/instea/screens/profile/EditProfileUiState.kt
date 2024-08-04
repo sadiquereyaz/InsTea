@@ -5,13 +5,13 @@ data class EditProfileUiState(
     var username: String = "",
     var usernameErrorMessage: String? = null,
 
-    var university: String = "",
+    var selectedUniversity: String = "",
     val universityList: List<String> = emptyList(),
 
-    var department: String = "",
+    var selectedDepartment: String = "",
     val departmentList: List<String> = emptyList(),
 
-    var semester: String = "",
+    var selectedSemester: String = "",
     val semesterList: List<String> = emptyList(),
 
     var email: String ="",

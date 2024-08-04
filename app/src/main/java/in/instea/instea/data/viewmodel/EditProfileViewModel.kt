@@ -35,9 +35,9 @@ class EditProfileViewModel(
                 _uiState.update { currState ->
                     currState.copy(
                         username = user.username ?: "",
-                        university = user.university ?: "",
-                        department = user.dept ?: "",
-                        semester = user.sem ?: "",
+                        selectedUniversity = user.university ?: "",
+                        selectedDepartment = user.dept ?: "",
+                        selectedSemester = user.sem ?: "",
                         email = user.email ?: "",
                         instagram = user.instaId ?: "",
                         linkedin = user.linkedinId ?: "",
@@ -64,10 +64,10 @@ class EditProfileViewModel(
         viewModelScope.launch {
             academicRepository.getAllDepartment(university).collect { result ->
                 _uiState.value = _uiState.value.copy(
-                    university = university,
+                    selectedUniversity = university,
                     departmentList = result.stringList,
-                    department = "",
-                    semester = ""
+                    selectedDepartment = "",
+                    selectedSemester = ""
                 )
             }
         }
@@ -76,10 +76,10 @@ class EditProfileViewModel(
     fun onDepartmentChanged(department: String) {
         viewModelScope.launch {
             academicRepository.getAllSemester(
-                department = department, university = _uiState.value.university
+                department = department, university = _uiState.value.selectedUniversity
             ).collect { result ->
                 _uiState.value = _uiState.value.copy(
-                    semesterList = result.stringList, department = department, semester = ""
+                    semesterList = result.stringList, selectedDepartment = department, selectedSemester = ""
                 )
             }
         }
@@ -88,7 +88,7 @@ class EditProfileViewModel(
     fun onSemesterChanged(semester: String) {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(
-                semester = semester
+                selectedSemester = semester
             )
         }
     }
@@ -122,9 +122,9 @@ class EditProfileViewModel(
             val user = User(
                 userId = userId,
                 username = uiStateValue.username,
-                university = uiStateValue.university,
-                dept = uiStateValue.department,
-                sem = uiStateValue.semester,
+                university = uiStateValue.selectedUniversity,
+                dept = uiStateValue.selectedDepartment,
+                sem = uiStateValue.selectedSemester,
                 instaId = uiStateValue.instagram,
                 linkedinId = uiStateValue.linkedin,
                 whatsappNo = uiStateValue.whatsappNo,

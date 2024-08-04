@@ -30,7 +30,7 @@ data class ProfileUiState(
     var isPostLoading: Boolean = true,
     var postErrorMessage: String? = null,
     var errorMessage: String? = null,
-    var showSnackBar: Boolean = false
+    var showSnackBar: Boolean = false,
 )
 
 data class SocialModel (

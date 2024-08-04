@@ -87,15 +87,15 @@ fun EditProfileScreen(
         // academics detail
         AcademicsComposable(
             modifier = Modifier.fillMaxWidth(),
-            university = uiState.university,
+            university = uiState.selectedUniversity,
             universityList = uiState.universityList,
             onUniversityChanged = {
                 coroutineScope.launch { viewModel.onUniversityChanged(it) }
             },
-            department = uiState.department,
+            department = uiState.selectedDepartment,
             departmentList = uiState.departmentList,
             onDepartmentChanged = { viewModel.onDepartmentChanged(it) },
-            semester = uiState.semester,
+            semester = uiState.selectedSemester,
             semesterList = uiState.semesterList,
             onSemesterChanged = { viewModel.onSemesterChanged(it) },
             onAddItemClicked = navigateToAddAcademics
@@ -219,7 +219,8 @@ fun AboutComp(
     viewModel: EditProfileViewModel
 ) {
     OutlinedTextField(
-        modifier = modifier,
+        modifier = Modifier
+            .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         value = uiState.about,
         minLines = 3,

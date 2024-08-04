@@ -1,7 +1,10 @@
 package `in`.instea.instea.data.viewmodel
 
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.AcademicRepository
 import `in`.instea.instea.data.repo.AccountService
@@ -23,11 +26,58 @@ class UserInfoViewModel(
     private val _uiState = MutableStateFlow(UserInfoUiState())
     val uiState: StateFlow<UserInfoUiState> = _uiState.asStateFlow()
 
-//    private lateinit var googleSignInClient: GoogleSignInClient
-//    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val currentUserRef = Firebase.auth.currentUser!!
+    val isUserInfoScreen = currentUserRef.displayName.isNullOrBlank()
 
     init {
+        if (!isUserInfoScreen) {
+            fetchInitialInfo()
+        }
         getAllUniversity()
+    }
+
+    private fun fetchInitialInfo() {
+        viewModelScope.launch {
+            userRepository.getUserById(currentUserRef.uid).collect { user ->
+                _uiState.update { currState ->
+                    currState.copy(
+                        username = user.username ?: "",
+                        selectedUniversity = user.university ?: "",
+                        selectedDepartment = user.dept ?: "",
+                        selectedSemester = user.sem ?: "",
+                        email = user.email ?: "",
+                        instagram = user.instaId ?: "",
+                        linkedin = user.linkedinId ?: "",
+                        whatsappNo = user.whatsappNo ?: "",
+                        about = user.about ?: "",
+                    )
+                }
+            }
+        }
+    }
+
+    fun onAboutChanged(about: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                about = about,
+                aboutError = if (about.length > 120) "Maximum 120 characters are allowed!" else null
+            )
+        }
+    }
+
+    fun onWhatsappNoChanged(no: String) {
+        _uiState.value = _uiState.value.copy(
+            whatsappNo = no.trim(),
+            whatsappError = Validator.validateWhatsapp(no)
+        )
+    }
+
+    fun onInstagramChanged(ig: String) {
+        _uiState.value = _uiState.value.copy(instagram = ig, instagramError = Validator.validateInstagram(ig))
+    }
+
+    fun onLinkedInChanged(it: String) {
+        _uiState.value = _uiState.value.copy(linkedin = it, linkedInError = Validator.validateInstagram(it))
     }
 
     private fun getAllUniversity() {
@@ -120,7 +170,7 @@ class UserInfoViewModel(
     fun signIn() {
         viewModelScope.launch {
             _uiState.update {
-                it.copy(isSignIngIn = true)
+                it.copy(isLoading = true)
             }
             val values = _uiState.value
             val result: Result<String?> = userRepository.insertUser(
@@ -130,28 +180,35 @@ class UserInfoViewModel(
                     email = accountService.currentEmail,
                     university = values.selectedUniversity,
                     dept = values.selectedDepartment,
-                    sem = values.selectedSemester
+                    sem = values.selectedSemester,
+                    instaId = values.instagram,
+                    linkedinId = values.linkedin,
+                    whatsappNo = values.whatsappNo,
+                    about = values.about
                 ),
             )
             result.fold(
                 onSuccess = {
                     accountService.updateDisplayName(values.username)
                     _uiState.update {
-                        it.copy(isSuccess = true, isSignIngIn = false)
+                        it.copy(isSuccess = true, isLoading = false)
                     }
                 },
                 onFailure = { e ->
                     _uiState.update {
                         it.copy(
-                            isSignIngIn = false,
+                            isLoading = false,
                             errorMessage = e.message
                         )
                     }
+                    showSnackBar()
                 }
             )
         }
     }
-
+    private fun showSnackBar() {
+        _uiState.value.showSnackBar = !_uiState.value.showSnackBar
+    }
     fun addItem(semester: String, department: String, university: String) {
         viewModelScope.launch {
             academicRepository.addClassDetail(semester, department, university)

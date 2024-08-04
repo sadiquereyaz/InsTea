@@ -10,13 +10,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalance
 import androidx.compose.material.icons.filled.AutoGraph
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.Whatsapp
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,38 +31,50 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import `in`.instea.instea.R
 import `in`.instea.instea.composable.DropdownComposable
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.UserInfoViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.screens.auth.composable.ButtonComp
 import `in`.instea.instea.screens.auth.composable.CustomTextField
-import `in`.instea.instea.screens.auth.composable.HeadingText
 import kotlinx.coroutines.launch
 
 @Composable
 fun UserInfoScreen(
     modifier: Modifier = Modifier,
-    openAndPopUp: (String) -> Unit,
+    openAndPopUp: () -> Unit,
     onAddClick: () -> Unit,
-    viewModel: UserInfoViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    viewModel: UserInfoViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    snackBarHostState: SnackbarHostState
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val isBackButtonEnabled = remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(uiState.showSnackBar) {
+        coroutineScope.launch {
+            val message = uiState.errorMessage
+            if (message != null) {
+                snackBarHostState.showSnackbar(message = message)
+            }
+        }
+    }
     BackHandler(enabled = isBackButtonEnabled.value) {
         // Your logic when back button is pressed
-        openAndPopUp(InsteaScreens.Authenticate.name)
+        openAndPopUp()
     }
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
-            openAndPopUp(InsteaScreens.Feed.name)
+            openAndPopUp()
         }
     }
     val scrollState = rememberScrollState(0) // Remember the scroll state
-    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = modifier
@@ -67,9 +83,9 @@ fun UserInfoScreen(
             .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(50.dp))
-        HeadingText(value = "A little more")
-        Spacer(modifier = Modifier.height(30.dp))
+//        Spacer(modifier = Modifier.height(50.dp))
+//        HeadingText(value = "A little more")
+//        Spacer(modifier = Modifier.height(30.dp))
         // Academic Composable
         Column(
             modifier = Modifier,
@@ -150,11 +166,67 @@ fun UserInfoScreen(
                 )
             }
         }
-        Spacer(modifier = Modifier.height(14.dp))
+        if (!viewModel.isUserInfoScreen) {
+            // about
+            OutlinedTextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp),
+                value = uiState.about,
+                label = { Text(text = "About") },
+                minLines = 3,
+                onValueChange = { it ->
+                    viewModel.onAboutChanged(about = it)
+                },
+                supportingText = {
+                    val error = uiState.aboutError
+                    if (!error.isNullOrBlank()) {
+                        Text(
+                            text = error
+                        )
+                    }
+                },
+            )
+
+            // whatsapp
+            CustomTextField(
+                value = uiState.whatsappNo,
+                onValueChange = {
+                    viewModel.onWhatsappNoChanged(it)
+                },
+                label = "Whatsapp (+91)",
+                leadingIcon = Icons.Default.Whatsapp,
+                keyboardType = KeyboardType.Phone,
+                errorMessage = uiState.whatsappError,
+            )
+            // instagram
+            CustomTextField(
+                value = uiState.instagram,
+                onValueChange = {
+                    viewModel.onInstagramChanged(it)
+                },
+                label = "Instagram username",
+                leadingIcon = ImageVector.vectorResource(id = R.drawable.insta),
+                errorMessage = uiState.instagramError,
+
+                )
+            // linkedIn
+            CustomTextField(
+                value = uiState.linkedin,
+                onValueChange = {
+                    viewModel.onLinkedInChanged(it)
+                },
+                label = "Linkedin username",
+                leadingIcon = ImageVector.vectorResource(id = R.drawable.linked),
+                errorMessage = uiState.linkedInError,
+
+                )
+            Spacer(modifier = Modifier.height(24.dp))
+        }
 
         ButtonComp(
-            text = "Let's Go",
-            isLoading = uiState.isSignIngIn,
+            text = "Save",
+            isLoading = uiState.isLoading,
             onButtonClicked = {
                 coroutineScope.launch {
                     viewModel.signIn()
@@ -163,10 +235,11 @@ fun UserInfoScreen(
             isEnabled = (uiState.username.isNotBlank() &&
                     uiState.selectedSemester != null &&
                     uiState.usernameErrorMessage == null &&
-                    uiState.errorMessage == null
+                    uiState.errorMessage == null && uiState.linkedInError == null &&
+                    uiState.whatsappError == null && uiState.aboutError == null
+//                    && uiState. == null && uiState.Error == null
                     )
         )
-
         // Signup screen error
         if (uiState.errorMessage != null) {
             Spacer(modifier = Modifier.height(16.dp))

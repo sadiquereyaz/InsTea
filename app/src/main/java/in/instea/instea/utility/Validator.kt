@@ -29,6 +29,15 @@ object Validator {
             else -> null
         }
     }
+    fun validateInstagram(ig: String): String? {
+        return when {
+//            username.isEmpty() -> "Username cannot be empty"
+            ig.length > 20 -> "Maximum 15 characters are allowed"
+            ig.any { it.isWhitespace() } -> "Should not contain spaces"
+            ig.any { it.isUpperCase()} -> "Only lowercase letters are allowed"
+            else -> null
+        }
+    }
 
     fun validateEmail(email: String): String? {
         return when {
@@ -36,6 +45,15 @@ object Validator {
             email.length > 25 -> "Character length exceeded"
             email.any { it.isWhitespace() } -> "Should not contain spaces"
 //            !(email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[a-zA-Z]{2,4}$".toRegex()))  -> "Invalid email format"
+            else -> null
+        }
+    }
+
+    fun validateWhatsapp(no: String ):String?  {
+        return when {
+            no.length > 10 -> "Only 10 integers are allowed"
+            no.any { !it.isDigit() } -> "Invalid"
+
             else -> null
         }
     }

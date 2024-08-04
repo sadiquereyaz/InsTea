@@ -21,7 +21,6 @@ import `in`.instea.instea.screens.auth.AuthenticationScreen
 import `in`.instea.instea.screens.auth.UserInfoScreen
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreScreen
-import `in`.instea.instea.screens.profile.EditProfileScreen
 import `in`.instea.instea.screens.profile.ProfileDestination
 import `in`.instea.instea.screens.profile.ProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleDestination
@@ -56,14 +55,15 @@ fun InsteaNavHost(
         }
         composable(route = InsteaScreens.UserInfo.name) {
             UserInfoScreen(
-                openAndPopUp = { route ->
-                    navController.navigate(route) {
+                openAndPopUp = {
+                    navController.navigate(InsteaScreens.Feed.name) {
                         popUpTo(0) { inclusive = true }
                     }
                 },
                 onAddClick = {
                     navController.navigate(InsteaScreens.AddAcademicInfo.name)
-                }
+                },
+                snackBarHostState = snackBarHostState,
             )
         }
         composable(route = InsteaScreens.Feed.name) {
@@ -128,9 +128,18 @@ fun InsteaNavHost(
             )
         }
         composable(route = InsteaScreens.EditProfile.name) {
-            EditProfileScreen(
+            /*EditProfileScreen(
                 navigateToAddAcademics = { navController.navigate(InsteaScreens.AddAcademicInfo.name) },
                 navigateBack = { navController.popBackStack() }
+            )*/
+            UserInfoScreen(
+                openAndPopUp = {
+                    navController.navigateUp()
+                },
+                onAddClick = {
+                    navController.navigate(InsteaScreens.AddAcademicInfo.name)
+                },
+                snackBarHostState = snackBarHostState
             )
         }
         composable(route = InsteaScreens.Addpost.name) {
@@ -157,7 +166,6 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.UserList.name) {
             UserListScreen()
         }
-
     }
 }
 

@@ -27,10 +27,21 @@ data class UserInfoUiState(
     var semesterExpandable: Boolean = false,
     var selectedSemester: String? = null,
 
+    var email: String ="",
+    var instagram: String = "",
+    var linkedin: String = "",
+    var whatsappNo: String = "",
+    var about: String = "",
+    var aboutError:String? = null,
+    var whatsappError:String? = null,
+    var instagramError:String? = null,
+    var linkedInError:String? = null,
 
-    var isSignIngIn: Boolean = false,
-    var errorMessage: String? = null,
+
+    var isLoading: Boolean = false,
     var isSuccess: Boolean = false,
+    var errorMessage: String? = null,
+    var showSnackBar: Boolean = false,
 
     var isButtonEnabled: Boolean = username.isNotBlank()
 )

@@ -31,6 +31,8 @@ fun CustomTextField(
     supportingText: String? = null,
     readOnly:Boolean = false,
     enable:Boolean = true,
+    maxLines:Int = 3,
+    minLines:Int = 1,
 ) {
     OutlinedTextField(
         modifier = modifier
@@ -55,6 +57,8 @@ fun CustomTextField(
         isError = isError,
         readOnly = readOnly,
         enabled = enable,
+        minLines = minLines,
+        maxLines = maxLines,
         colors = OutlinedTextFieldDefaults.colors(
             cursorColor = MaterialTheme.colorScheme.primary,
             focusedBorderColor = MaterialTheme.colorScheme.primary,
