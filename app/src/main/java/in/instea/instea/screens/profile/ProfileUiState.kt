@@ -21,11 +21,16 @@ import `in`.instea.instea.data.datamodel.User
 //    object Loading : ProfileUiState
 //}
 data class ProfileUiState(
-    var isSelfProfile: Boolean = true,
+    var isSelfProfile: Boolean = false,
     var savedPosts: List<PostData>? = listOf(), //savedPost can be null
     var profilePosts: List<PostData>? = listOf(), //savedPost can be null
     var userData: User? = User(),     //userDate can be null
-    var socialList: List<SocialModel> = listOf()
+    var socialList: List<SocialModel> = listOf(),
+    var isLoading: Boolean = false,
+    var isPostLoading: Boolean = true,
+    var postErrorMessage: String? = null,
+    var errorMessage: String? = null,
+    var showSnackBar: Boolean = false
 )
 
 data class SocialModel (

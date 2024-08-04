@@ -38,14 +38,14 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = /*InsteaScreens.Authenticate.name*/"${MoreDestination.route}/${4}",
+        startDestination = InsteaScreens.Authenticate.name  /*"${MoreDestination.route}/${4}"*/,
         modifier = Modifier
             .padding(contentPadding)
     ) {
         composable(route = InsteaScreens.Authenticate.name) {
             AuthenticationScreen(
                 navigateToFeed = {
-                    navController.navigate(/*InsteaScreens.Feed.name*/"${MoreDestination.route}/${4}") {
+                    navController.navigate(InsteaScreens.SelfProfile.name/*"${MoreDestination.route}/${4}"*/) {
                         popUpTo(0) { inclusive = true }
                     }
                 },
@@ -107,7 +107,8 @@ fun InsteaNavHost(
                 },
                 navigateToDevelopers = {
                     navController.navigate("${MoreDestination.route}/${0}")
-                }
+                },
+                snackBarHostState = snackBarHostState
             )
         }
         //OtherProfileScreen
@@ -122,7 +123,8 @@ fun InsteaNavHost(
                 onSubUsernameClick = { navController.navigate(InsteaScreens.Inbox.name) },
                 navigateToDevelopers = {
                     navController.navigate("${MoreDestination.route}/${0}")
-                }
+                },
+                snackBarHostState = snackBarHostState
             )
         }
         composable(route = InsteaScreens.EditProfile.name) {
