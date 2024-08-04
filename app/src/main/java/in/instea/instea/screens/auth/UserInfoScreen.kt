@@ -57,7 +57,7 @@ fun UserInfoScreen(
             openAndPopUp(InsteaScreens.Feed.name)
         }
     }
-    val scrollState = rememberScrollState(0) // Remember the scroll state
+    val scrollState = rememberScrollState(0)
     val coroutineScope = rememberCoroutineScope()
 
     Column(
