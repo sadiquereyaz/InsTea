@@ -2,13 +2,18 @@ package `in`.instea.instea.screens.profile
 
 data class EditProfileUiState(
 //    var user: User = User(),
-    var username: String? = "",
+    var username: String = "",
+    var usernameErrorMessage: String? = null,
+
     var university: String = "",
     val universityList: List<String> = emptyList(),
+
     var department: String = "",
     val departmentList: List<String> = emptyList(),
+
     var semester: String = "",
     val semesterList: List<String> = emptyList(),
+
     var email: String ="",
     var instagram: String = "",
     var linkedin: String = "",

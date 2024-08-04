@@ -22,11 +22,14 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -55,22 +58,32 @@ fun EditProfileScreen(
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     Column(
-        modifier = modifier.verticalScroll(scrollState).imePadding()
+        modifier = modifier
+            .verticalScroll(scrollState)
+            .imePadding()
             .fillMaxSize()
             .padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         //username
+        //username
         CustomTextField(
-            value = uiState.username ?: "",
+            modifier = Modifier,
+            value = uiState.username,
             onValueChange = {
-                viewModel.onUsernameChanged(it)
+                coroutineScope.launch {
+                    viewModel.onUsernameChanged(it.trim())
+                }
             },
+            leadingIcon = Icons.Default.Person,
             label = "Username",
-            leadingIcon = Icons.Default.Person
+            errorMessage = uiState.usernameErrorMessage,
         )
+
         // about
-        AboutComp(modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp), uiState = uiState, viewModel = viewModel)
+        AboutComp(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp), uiState = uiState, viewModel = viewModel)
         // academics detail
         AcademicsComposable(
             modifier = Modifier.fillMaxWidth(),
@@ -123,7 +136,8 @@ fun EditProfileScreen(
                     navigateBack()
                     viewModel.saveUserDetails()
                 }
-            }
+            },
+            isActive = uiState.usernameErrorMessage.isNullOrBlank()
         )
     }
 }
@@ -131,8 +145,13 @@ fun EditProfileScreen(
 @Composable
 private fun Buttons(
     onCancelButtonClicked: () -> Unit,
-    onSaveButtonClicked: () -> Unit
+    onSaveButtonClicked: () -> Unit,
+    isActive: Boolean = false
 ) {
+    var isEnabled by remember{ mutableStateOf(isActive) }
+    LaunchedEffect(isActive) {
+        isEnabled = isActive
+    }
     Row {
         OutlinedButton(
             onClick = onCancelButtonClicked,
@@ -143,7 +162,8 @@ private fun Buttons(
         Spacer(modifier = Modifier.width(16.dp))
         Button(
             onClick = onSaveButtonClicked,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            enabled = isEnabled
         ) {
             Text(text = "Save")
         }

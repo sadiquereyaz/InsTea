@@ -14,6 +14,7 @@ import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.AccountService
 import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.auth.AuthUiState
+import `in`.instea.instea.utility.NetworkUtils
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

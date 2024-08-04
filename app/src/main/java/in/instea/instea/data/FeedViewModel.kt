@@ -15,7 +15,7 @@
 //import `in`.instea.instea.data.datamodel.User
 //import `in`.instea.instea.data.repo.LocalPostRepository
 //import `in`.instea.instea.data.repo.NetworkPostRepository
-//import `in`.instea.instea.data.viewmodel.NetworkUtils
+//import `in`.instea.instea.utility.NetworkUtils
 //
 //import kotlinx.coroutines.flow.MutableStateFlow
 //import kotlinx.coroutines.flow.StateFlow

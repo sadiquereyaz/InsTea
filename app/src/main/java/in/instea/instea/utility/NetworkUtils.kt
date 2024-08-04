@@ -1,4 +1,4 @@
-package `in`.instea.instea.data.viewmodel
+package `in`.instea.instea.utility
 
 import android.content.Context
 import android.net.ConnectivityManager

@@ -19,6 +19,7 @@ import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.profile.ProfileDestination
 import `in`.instea.instea.screens.profile.ProfileUiState
 import `in`.instea.instea.screens.profile.SocialModel
+import `in`.instea.instea.utility.NetworkUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -41,9 +42,6 @@ class ProfileViewModel(
 
     init {
         fetchInitialData()
-//        checkProfileType()
-        getUserData()
-//        getAllProfilePost()
     }
 
     private fun fetchInitialData() {
@@ -90,13 +88,6 @@ class ProfileViewModel(
             }
         }
     }
-
-    private fun getUserData() {
-        viewModelScope.launch {
-
-        }
-    }
-
     private fun showSnackBar(
     ) {
         _uiState.value.showSnackBar = !_uiState.value.showSnackBar

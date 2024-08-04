@@ -41,10 +41,11 @@ class LocalUserRepository(
                 throw it
         }
         .map { preferences ->
+            val bio = preferences[USER_ABOUT]
             User(
                 userId = preferences[USER_ID] ?: "",
                 username = preferences[USER_NAME] ?: "",
-                about = preferences[USER_ABOUT] ?: "Hey there I'm using InsTea!",
+                about = if(bio.isNullOrBlank()) null else bio,
                 email = preferences[USER_EMAIL] ?: "",
                 linkedinId = preferences[USER_LINKEDIN] ?: "",
                 instaId = preferences[USER_INSTAGRAM] ?: "",

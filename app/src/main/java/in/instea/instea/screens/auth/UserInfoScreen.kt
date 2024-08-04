@@ -80,7 +80,7 @@ fun UserInfoScreen(
                 value = uiState.username,
                 onValueChange = {
                     coroutineScope.launch {
-                        viewModel.onUserNameChanged(it.trim())
+                        viewModel.onUsernameChanged(it.trim())
                     }
                 },
                 leadingIcon = Icons.Default.Person,

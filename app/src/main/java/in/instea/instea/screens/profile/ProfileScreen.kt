@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.ChatBubble
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
@@ -96,7 +97,8 @@ fun ProfileScreen(
             // when data is loaded without error message
             Column(
                 modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 //user detail
                 val userData = uiState.userData
@@ -111,7 +113,7 @@ fun ProfileScreen(
                     ) else Pair(Icons.Default.ChatBubble, "Inbox"),
                     onSubUserNameClick = onSubUsernameClick
                 )
-                Divider(modifier = Modifier.padding(16.dp))
+                HorizontalDivider(modifier = Modifier/*.padding(16.dp)*/)
 
                 // academic detail
                 AcademicDetails(
@@ -120,8 +122,7 @@ fun ProfileScreen(
                         .padding(horizontal = 16.dp)
                         .align(Alignment.Start)
                 )
-                Divider(modifier = Modifier.padding(16.dp))
-
+                HorizontalDivider(modifier = Modifier/*.padding(horizontal = 16.dp)*/)
                 //about
                 Text(
                     text = userData?.about ?: stringResource(id = R.string.default_bio),
@@ -136,8 +137,8 @@ fun ProfileScreen(
                         .padding(
                             start = 16.dp,
                             end = 16.dp,
-                            top = 20.dp,
-                            bottom = 20.dp
+//                            top = 16.dp,
+//                            bottom = 20.dp
                         )
                         .fillMaxWidth(),
                     user = userData,

@@ -5,11 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import `in`.instea.instea.data.DataSource.departments
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.repo.AcademicRepository
 import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.profile.EditProfileUiState
+import `in`.instea.instea.utility.Validator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -27,11 +27,6 @@ class EditProfileViewModel(
     init {
         fetchInitialInfo()
     }
-
-    fun onUsernameChanged(userName: String) {
-        _uiState.value = _uiState.value.copy(username = userName)
-    }
-
 
     private fun fetchInitialInfo() {
         getUniversities()
@@ -98,25 +93,27 @@ class EditProfileViewModel(
         }
     }
 
+    fun onUsernameChanged(username: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(username = username.trim(), usernameErrorMessage = Validator.validateUsername(username))
+        }
+    }
     fun onAboutChanged(about: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(about = about)
+            _uiState.value = _uiState.value.copy(about = about.trim())
         }
     }
 
     fun onWhatsappNoChanged(no: String) {
-        _uiState.value = _uiState.value.copy(whatsappNo = no)
-
+        _uiState.value = _uiState.value.copy(whatsappNo = no.trim())
     }
 
     fun onInstagramChanged(ig: String) {
-        _uiState.value = _uiState.value.copy(instagram = ig)
-
+        _uiState.value = _uiState.value.copy(instagram = ig.trim())
     }
 
     fun onLinkedInChanged(it: String) {
-        _uiState.value = _uiState.value.copy(linkedin = it)
-
+        _uiState.value = _uiState.value.copy(linkedin = it.trim())
     }
 
     fun saveUserDetails() {

@@ -158,7 +158,7 @@ class UserInfoViewModel(
         }
     }
 
-    fun onUserNameChanged(username: String) {
+    fun onUsernameChanged(username: String) {
         viewModelScope.launch {
             _uiState.update { it.copy(username = username) }
             var usernameErrorMsg: String? =

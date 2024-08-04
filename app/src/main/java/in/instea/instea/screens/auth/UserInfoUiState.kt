@@ -4,8 +4,8 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 data class UserInfoUiState(
-//    var username: String = Firebase.auth.currentUser!!.displayName ?: "",
-    var username: String = "",
+    var username: String = Firebase.auth.currentUser!!.displayName ?: "",
+//    var username: String = "",
     var usernameErrorMessage: String? = null,
 
     var universityList: List<String> = emptyList(),

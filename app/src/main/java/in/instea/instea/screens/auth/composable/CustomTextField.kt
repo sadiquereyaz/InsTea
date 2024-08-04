@@ -29,6 +29,8 @@ fun CustomTextField(
     isError: Boolean = errorMessage != null,
     label: String = "textFieldLabel",
     supportingText: String? = null,
+    readOnly:Boolean = false,
+    enable:Boolean = true,
 ) {
     OutlinedTextField(
         modifier = modifier
@@ -51,6 +53,8 @@ fun CustomTextField(
         shape = RoundedCornerShape(8.dp),
         singleLine = true,
         isError = isError,
+        readOnly = readOnly,
+        enabled = enable,
         colors = OutlinedTextFieldDefaults.colors(
             cursorColor = MaterialTheme.colorScheme.primary,
             focusedBorderColor = MaterialTheme.colorScheme.primary,
