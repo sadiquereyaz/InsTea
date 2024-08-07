@@ -2,6 +2,7 @@ import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -34,9 +35,11 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -293,7 +296,8 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp) // Custom spacing between elements
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.padding(8.dp)// Custom spacing between elements
         ) {
 
             Button(
@@ -308,8 +312,10 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
 
                 ),
                 modifier = Modifier
-                    .indication(indication = rememberRipple(bounded = true,
-                        color = Color.LightGray), interactionSource = remember {
+                    .indication(indication = rememberRipple(
+                        bounded = true,
+                        color = Color.LightGray
+                    ), interactionSource = remember {
                         MutableInteractionSource()
                     })
                     .align(Alignment.CenterVertically)
@@ -323,7 +329,9 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
             }
 
             Card(
-                modifier = Modifier.wrapContentWidth(),
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .padding(8.dp),
                 shape = RoundedCornerShape(20.dp),
                 elevation = CardDefaults.cardElevation(1.dp),
                 border = BorderStroke(
@@ -341,8 +349,8 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.padding(2.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -384,17 +392,33 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
                                     }
                                 },
                             tint = (if (userDislikeCurrentPost) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground)
+
                         )
                         Text(
                             text = (post.userDislikedCurrentPost.size - 1).toString(),
-                            fontSize = 10.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(0.dp)
                         )
                     }
 
 
-
+                    Box(
+                        modifier = Modifier
+                            .width(1.dp)
+                            .height(16.dp)
+                            .border(
+                                border = BorderStroke(
+                                    1.dp,
+                                    brush = Brush.linearGradient(
+                                        listOf(
+                                            MaterialTheme.colorScheme.primary,
+                                            MaterialTheme.colorScheme.primaryContainer
+                                        )
+                                    )
+                                )
+                            )
+                    )
 
 
                     Row(
@@ -404,7 +428,7 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
 
                         Text(
                             text = (post.userLikedCurrentPost.size - 1).toString(),
-                            fontSize = 10.sp,
+                            fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(0.dp)
                         )
