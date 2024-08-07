@@ -45,6 +45,7 @@ import `in`.instea.instea.data.DataSource.platforms
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.EditProfileViewModel
 import `in`.instea.instea.screens.auth.composable.CustomTextField
+import `in`.instea.instea.screens.schedule.AddSubjectPopup
 import kotlinx.coroutines.launch
 
 @Composable
@@ -219,7 +220,7 @@ fun AboutComp(
     viewModel: EditProfileViewModel
 ) {
     OutlinedTextField(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         shape = RoundedCornerShape(8.dp),
         value = uiState.about,
@@ -255,7 +256,16 @@ fun EditText(
         ),
 //        supportingText = if (isEmpty) "must contains a value" else ""
     )
-
+    AddSubjectPopup(
+        showPopup = showPopUp,
+        onDismiss = { showPopUp = false },
+        onSave = { newSubject ->
+            // Handle saving the new subject
+            viewModel.onSubjectSelected(newSubject)
+            showPopUp = false
+        },
+        textFieldCount = 3
+    )
 }
 
 

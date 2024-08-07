@@ -68,11 +68,11 @@ fun ScheduleScreen(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(top = 24.dp)
         ) {
-            IconTextBtn(
+           /* IconTextBtn(
                 onClick = {viewModel.onDateClick(uiState.selectedDateIndex) },
                 btnText = "Refresh",
                 btnIcon = Icons.Default.Refresh
-            )
+            )*/
 
             Spacer(modifier = Modifier.weight(1f))
 

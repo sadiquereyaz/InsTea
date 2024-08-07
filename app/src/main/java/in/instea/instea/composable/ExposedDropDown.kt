@@ -1,5 +1,6 @@
 package `in`.instea.instea.composable
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,9 +13,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,10 +36,21 @@ fun ExposedDropDown(
     options: List<String> = listOf("opt 1", "opt 2", "opt 3"),
     addButton: Boolean = true,
     label: String = "",
-    onOptionSelect: (String) -> Unit
+    onOptionSelect: (String) -> Unit,
+    errorMessage: String? = null,
+//    readOnly: Boolean = true,
+    onAddClick: () -> Unit = {},
+    isError: Boolean = !errorMessage.isNullOrBlank(),
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var readOnly by remember { mutableStateOf(true) }
+//    var readOnly by remember { mutableStateOf(true) }
+
+  /*  LaunchedEffect(readOnly) {
+        Log.d("EXPOSED_DD_LE", "readonly changed uistate: $readOnly")
+        if (!readOnly) {
+            editable = true
+        }
+    }*/
 
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         ExposedDropdownMenuBox(
@@ -51,17 +65,13 @@ fun ExposedDropDown(
                 onValueChange = {
                     onOptionSelect(it)
                 },
-                /*supportingText = {
-                    if (!readOnly) {
-                        Text(text = "Enter Value")
-                    } else if
-                                   (textFieldValue.isBlank()) {
-                        Text(
-                            text = "There must be some value"
-                        )
+                isError = isError,
+                supportingText = {
+                    if (isError) {
+                        Text(text = "Enter Value", color = MaterialTheme.colorScheme.error)
                     }
-                },*/
-                readOnly = readOnly,
+                },
+                readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 shape = RoundedCornerShape(8.dp),
                 singleLine = true,
@@ -98,7 +108,8 @@ fun ExposedDropDown(
                         text = { Text("Add Manually") },
                         onClick = {
                             expanded = !expanded
-                            readOnly = false
+//                            readOnly = false
+                            onAddClick()
                         }
                     )
                 }

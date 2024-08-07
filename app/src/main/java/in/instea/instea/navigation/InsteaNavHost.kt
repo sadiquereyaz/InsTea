@@ -37,7 +37,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Authenticate.name  /*"${MoreDestination.route}/${4}"*/,
+        startDestination = InsteaScreens.Schedule.name  /*"${MoreDestination.route}/${4}"*/,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -93,7 +93,12 @@ fun InsteaNavHost(
             )
         ) {
             EditScheduleScreen(
-                navController = navController
+                moveBackAndRefresh = {
+                    navController.navigate(InsteaScreens.Schedule.name) {
+                        popUpTo(InsteaScreens.Schedule.name) { inclusive = true }
+                    }
+                },
+                snackBarHostState = snackBarHostState
             )
         }
         composable(route = InsteaScreens.Attendance.name) {

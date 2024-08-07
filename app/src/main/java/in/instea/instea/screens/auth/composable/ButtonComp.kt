@@ -28,11 +28,15 @@ fun ButtonComp(
     text: String,
     onButtonClicked: () -> Unit,
     isEnabled: Boolean = true,
-    isLoading: Boolean = true
+    isLoading: Boolean = false
 ) {
     var showLoader by remember { mutableStateOf(false) }
     LaunchedEffect(isLoading) {
         showLoader = isLoading
+    }
+    var isActive by remember { mutableStateOf(isEnabled) }
+    LaunchedEffect(isEnabled) {
+        isActive = isEnabled
     }
     if (!showLoader) {
         Button(
@@ -43,7 +47,7 @@ fun ButtonComp(
                 .fillMaxWidth(),
             contentPadding = PaddingValues(),
             shape = RoundedCornerShape(50),
-            enabled = isEnabled
+            enabled = isActive
         ) {
             Box(
                 contentAlignment = Alignment.Center,
