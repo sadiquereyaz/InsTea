@@ -5,6 +5,6 @@ data class Message(
     val timeStamp: DateAndHour,
     val senderId: String
 ){
-    constructor(): this("",DateAndHour() ,"")
+    constructor(message: String, senderId: String) : this("",DateAndHour() ,"")
 }
 

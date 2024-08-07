@@ -118,7 +118,7 @@ fun InsteaNavHost(
         ) {
 //            OtherProfileScreen()
             ProfileScreen(
-                onSubUsernameClick = { navController.navigate(InsteaScreens.Inbox.name) },
+                onSubUsernameClick = {uid-> navController.navigate(InsteaScreens.Inbox.name+"/$uid") },
                 navigateToDevelopers = {
                     navController.navigate("${MoreDestination.route}/${0}")
                 },

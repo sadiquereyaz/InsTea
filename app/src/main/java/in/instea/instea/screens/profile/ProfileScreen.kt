@@ -1,5 +1,6 @@
 package `in`.instea.instea.screens.profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -73,7 +74,7 @@ object ProfileDestination : NavigationDestinations {
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    onSubUsernameClick: () -> Unit,
+    onSubUsernameClick: (String) -> Unit,
     navigateToDevelopers: () -> Unit,
     snackBarHostState: SnackbarHostState,
 ) {
@@ -109,7 +110,7 @@ fun ProfileScreen(
                         Icons.Default.Edit,
                         "Edit Profile"
                     ) else Pair(Icons.Default.ChatBubble, "Inbox"),
-                    onSubUserNameClick = onSubUsernameClick
+                    onSubUserNameClick = { onSubUsernameClick(userData!!.userId!!) }
                 )
                 Divider(modifier = Modifier.padding(16.dp))
 

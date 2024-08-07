@@ -101,8 +101,8 @@ fun PostCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-//                        navController.navigate(InsteaScreens.OtherProfile.name + "/${if (user.userId != null) user.userId else " "}")
-                        navController.navigate(InsteaScreens.Inbox.name+"/${post.postedByUser}")
+                        navController.navigate(InsteaScreens.OtherProfile.name + "/${if (user.userId != null) user.userId else " "}")
+//                        navController.navigate(InsteaScreens.Inbox.name+"/${post.postedByUser}")
                     }
             ) {
                 (if (post.profileImage != null) post.profileImage
