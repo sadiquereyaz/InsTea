@@ -7,6 +7,7 @@ import InboxScreen
 import `in`.instea.instea.screens.Feed.UserListScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -31,18 +32,19 @@ import `in`.instea.instea.screens.schedule.ScheduleScreen
 fun InsteaNavHost(
     navController: NavHostController,
     contentPadding: PaddingValues,
+    snackBarHostState: SnackbarHostState,
 //    scheduleViewModel: ScheduleViewModel
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Authenticate.name,
+        startDestination = InsteaScreens.Authenticate.name  /*"${MoreDestination.route}/${4}"*/,
         modifier = Modifier
             .padding(contentPadding)
     ) {
         composable(route = InsteaScreens.Authenticate.name) {
             AuthenticationScreen(
                 navigateToFeed = {
-                    navController.navigate(InsteaScreens.Feed.name) {
+                    navController.navigate(InsteaScreens.SelfProfile.name/*"${MoreDestination.route}/${4}"*/) {
                         popUpTo(0) { inclusive = true }
                     }
                 },
@@ -103,7 +105,8 @@ fun InsteaNavHost(
                 },
                 navigateToDevelopers = {
                     navController.navigate("${MoreDestination.route}/${0}")
-                }
+                },
+                snackBarHostState = snackBarHostState
             )
         }
         //OtherProfileScreen
@@ -118,7 +121,8 @@ fun InsteaNavHost(
                 onSubUsernameClick = { navController.navigate(InsteaScreens.Inbox.name) },
                 navigateToDevelopers = {
                     navController.navigate("${MoreDestination.route}/${0}")
-                }
+                },
+                snackBarHostState = snackBarHostState
             )
         }
         composable(route = InsteaScreens.EditProfile.name) {
@@ -140,7 +144,8 @@ fun InsteaNavHost(
             })
         ) {
             MoreScreen(
-                navController = navController
+                navController = navController,
+                snackBarHostState = snackBarHostState
             )
         }
         composable(route = InsteaScreens.EditPost.name+"/{postId}"){ backstackEntry->

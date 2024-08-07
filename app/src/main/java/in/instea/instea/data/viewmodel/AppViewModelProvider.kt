@@ -15,7 +15,8 @@ object AppViewModelProvider {
                 ProfileViewModel(
                     savedStateHandle = this.createSavedStateHandle(),
                     postRepository = insteaApplication().container.postRepository,
-                    userRepository =insteaApplication().container.userRepository
+                    userRepository =insteaApplication().container.userRepository,
+                    context  = insteaApplication()
                 )
         }
         initializer {

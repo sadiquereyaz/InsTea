@@ -19,7 +19,6 @@ import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.profile.ProfileDestination
 import `in`.instea.instea.screens.profile.ProfileUiState
 import `in`.instea.instea.screens.profile.SocialModel
-import `in`.instea.instea.screens.schedule.EditScheduleDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -28,10 +27,12 @@ import kotlinx.coroutines.launch
 class ProfileViewModel(
     savedStateHandle: SavedStateHandle,
     private val postRepository: PostRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val context: Context
 ) : ViewModel() {
     private val currentUserId = Firebase.auth.currentUser?.uid.toString()
-//    private val argUserId = "XjyI0mZ4XbXb6paiz11QFjMQuYJ2"
+
+    //    private val argUserId = "XjyI0mZ4XbXb6paiz11QFjMQuYJ2"
 //    private val argUserId =currentUserId
     private val argUserId: String = savedStateHandle[ProfileDestination.USERID_ARG] ?: currentUserId
 
@@ -48,10 +49,18 @@ class ProfileViewModel(
     private fun fetchInitialData() {
         viewModelScope.launch {
             val myProfile = argUserId == currentUserId
-            _uiState.update { currState ->
-                currState.copy(
-                    isSelfProfile = myProfile
+            val isInternetAvailable = NetworkUtils.isNetworkAvailable(context)
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    isPostLoading = true
                 )
+            }
+            userRepository.getUserById(argUserId).collect { user ->
+                _uiState.update { currState ->
+                    currState.copy(userData = user, isSelfProfile = myProfile, isLoading = false)
+                }
+                getAllSocialList(user)
             }
             if (myProfile) {
                 postRepository.getAllSavedPostsStream().collect { posts ->
@@ -59,11 +68,24 @@ class ProfileViewModel(
                         currState.copy(savedPosts = posts)
                     }
                 }
+            }else if (isInternetAvailable && _uiState.value.errorMessage.isNullOrBlank()) {
+                // other profile data
+                _uiState.update { it.copy(isLoading = false) }
+            }else{
+                // no internet available
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage =  "Please connect to the internet"
+                    )
+                }
+                showSnackBar()
             }
+
             //TODO: get profile posts
             postRepository.getPostsByUser(argUserId).collect { posts ->
                 _uiState.update { currState ->
-                    currState.copy(profilePosts = posts)
+                    currState.copy(profilePosts = posts, isPostLoading = false)
                 }
             }
         }
@@ -71,13 +93,13 @@ class ProfileViewModel(
 
     private fun getUserData() {
         viewModelScope.launch {
-            userRepository.getUserById(argUserId).collect { user ->
-                _uiState.update { currState ->
-                    currState.copy(userData = user)
-                }
-                getAllSocialList(user)
-            }
+
         }
+    }
+
+    private fun showSnackBar(
+    ) {
+        _uiState.value.showSnackBar = !_uiState.value.showSnackBar
     }
 
     /* private suspend fun getAllProfilePost() {

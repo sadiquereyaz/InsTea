@@ -1,6 +1,7 @@
 package `in`.instea.instea.screens.more
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,8 +19,10 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import `in`.`in`.instea.instea.screens.more.composable.AllTask
 import `in`.`in`.instea.instea.screens.more.composable.classmates
+import `in`.instea.instea.composable.Loader
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.MoreViewModel
 import `in`.instea.instea.navigation.InsteaScreens
@@ -43,6 +47,7 @@ import `in`.instea.instea.screens.more.composable.AccountComp
 import `in`.instea.instea.screens.more.composable.AttendanceComp
 import `in`.instea.instea.screens.more.composable.Developers
 import `in`.instea.instea.screens.more.composable.report
+import kotlinx.coroutines.launch
 
 object MoreDestination : NavigationDestinations {
     override val route: String = InsteaScreens.More.name
@@ -56,26 +61,49 @@ fun MoreScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: MoreViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    snackBarHostState: SnackbarHostState,
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val coroutineScope = rememberCoroutineScope()
     var expandedIndex by remember { mutableStateOf(uiState.expandedIndex) }
     val items =
-        listOf("Developers", "Attendance Record", "All Task", "Classmates", "Account", "Report")
+        listOf("Developers", "Attendance Record", "All Task", "Classmates", "Account", "Report/Feedback")
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp)
-    ) {
-        items(items.size) { index ->
-            ExpandableItem(
-                uiState = uiState,
-                viewModel = viewModel,
-                navController = navController,
-                title = items[index],
-                isExpanded = (index == expandedIndex),
-                onExpandChange = { expandedIndex = if (expandedIndex == index) null else index }
-            )
+    if (uiState.moveToAuth)
+        navController.navigate(InsteaScreens.Authenticate.name) {
+            popUpTo(0) { inclusive = true }
+        }
+
+    LaunchedEffect(uiState.showSnackBar) {
+        coroutineScope.launch {
+            val message = uiState.errorMessage
+            if (message != null) {
+                snackBarHostState.showSnackbar(message = message)
+            }
+        }
+    }
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        if (!uiState.isLoading) {
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp)
+            ) {
+                items(items.size) { index ->
+                    ExpandableItem(
+                        uiState = uiState,
+                        viewModel = viewModel,
+                        navController = navController,
+                        title = items[index],
+                        isExpanded = (index == expandedIndex),
+                        onExpandChange = {
+                            expandedIndex = if (expandedIndex == index) null else index
+                        }
+                    )
+                }
+            }
+        } else {
+            Loader(modifier = Modifier.fillMaxSize())
         }
     }
 }
@@ -100,7 +128,6 @@ fun ExpandableItem(
                 color = MaterialTheme.colorScheme.outlineVariant,
                 shape = RoundedCornerShape(12.dp)
             )
-
 //            verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Row(
@@ -158,18 +185,12 @@ fun ExpandableItem(
 
                     "Account" -> {
                         AccountComp(
-                            navigateToAuth = {
-                                navController.navigate(InsteaScreens.Authenticate.name) {
-                                    popUpTo(0) { inclusive = true }
-                                }
-                            },
                             logout = {
-                                    viewModel.onSignOutClick()
+                                viewModel.onSignOutClick()
                             },
                             deleteAccount = {
-                                    viewModel.onDeleteAccountClick()
+                                viewModel.onDeleteAccountClick()
                             },
-                            isAccountDeleted = uiState.moveToAuth
                         )
                     }
 

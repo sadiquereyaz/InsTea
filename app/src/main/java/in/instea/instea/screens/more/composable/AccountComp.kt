@@ -20,15 +20,9 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AccountComp(
     modifier: Modifier = Modifier,
-    navigateToAuth: () -> Unit,
     logout: () -> Unit,
     deleteAccount: () -> Unit,
-    isAccountDeleted: Boolean
 ) {
-    LaunchedEffect(isAccountDeleted) {
-        if(isAccountDeleted)
-        navigateToAuth()
-    }
     Box(modifier = modifier.padding(10.dp)) {
         Column {
             // sign out

@@ -8,5 +8,8 @@ data class MoreUiState (
     val attendanceSummaries: List<SubjectAttendanceSummaryModel> = emptyList(),
     val selectedTimestamp: LocalDate = LocalDate.now(),
     var expandedIndex: Int? = null,
-    var moveToAuth: Boolean = false
+    var isLoading: Boolean = false,
+    var moveToAuth: Boolean = false,
+    var errorMessage: String? = null,
+    var showSnackBar: Boolean = false
 )

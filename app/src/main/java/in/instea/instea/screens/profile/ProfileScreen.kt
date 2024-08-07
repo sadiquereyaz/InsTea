@@ -1,6 +1,5 @@
 package `in`.instea.instea.screens.profile
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,10 +25,12 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
+import `in`.instea.instea.composable.Loader
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
@@ -73,98 +75,122 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = viewModel(factory = AppViewModelProvider.Factory),
     onSubUsernameClick: () -> Unit,
     navigateToDevelopers: () -> Unit,
+    snackBarHostState: SnackbarHostState,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     // Trigger data refresh when this composable is first composed or recomposed
-
+    LaunchedEffect(uiState.showSnackBar) {
+        coroutineScope.launch {
+            val message = uiState.errorMessage
+            if (message != null) {
+                snackBarHostState.showSnackbar(message = message)
+            }
+        }
+    }
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            //user detail
-            val userData = uiState.userData
-            UserTitle(
-                userData = userData,
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .padding(horizontal = 16.dp),
-                iconButtonData = if (uiState.isSelfProfile) Pair(
-                    Icons.Default.Edit,
-                    "Edit Profile"
-                ) else Pair(Icons.Default.ChatBubble, "Inbox"),
-                onSubUserNameClick = onSubUsernameClick
-            )
-            Divider(modifier = Modifier.padding(16.dp))
-
-            // academic detail
-            AcademicDetails(
-                userData = userData,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .align(Alignment.Start)
-            )
-            Divider(modifier = Modifier.padding(16.dp))
-
-            //about
-            Text(
-                text = userData?.about ?: stringResource(id = R.string.default_bio),
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Start
-            )
-
-            //social link
-            SocialLink(
-                modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 20.dp,
-                        bottom = 20.dp
-                    )
-                    .fillMaxWidth(),
-                user = userData,
-                socialList = uiState.socialList,
-                openSocialLink = { link ->
-                    coroutineScope.launch {
-                        viewModel.handleSocialItemClick(link, context)
-                    }
-                }
-            )
-            // FEED tabs
-            PersonalizedFeed(uiState = uiState)
-            Spacer(modifier = Modifier.weight(1f))
-        }
-        // developer
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.BottomCenter)
-                .background(MaterialTheme.colorScheme.background),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            Row(
-                modifier = Modifier
-                    .padding(vertical = 4.dp),
-                verticalAlignment = Alignment.CenterVertically
+        if (!uiState.isLoading && uiState.errorMessage.isNullOrBlank()) {
+            // when data is loaded without error message
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(
-                    modifier = Modifier,
-                    text = "Made With ❤️ by ",
-                )
-                Text(
-                    text = "Jamians", // Make Jamians clickable
+                //user detail
+                val userData = uiState.userData
+                UserTitle(
+                    userData = userData,
                     modifier = Modifier
-                        .clickable { navigateToDevelopers() },
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+                        .align(Alignment.Start)
+                        .padding(horizontal = 16.dp),
+                    iconButtonData = if (uiState.isSelfProfile) Pair(
+                        Icons.Default.Edit,
+                        "Edit Profile"
+                    ) else Pair(Icons.Default.ChatBubble, "Inbox"),
+                    onSubUserNameClick = onSubUsernameClick
                 )
+                Divider(modifier = Modifier.padding(16.dp))
+
+                // academic detail
+                AcademicDetails(
+                    userData = userData,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .align(Alignment.Start)
+                )
+                Divider(modifier = Modifier.padding(16.dp))
+
+                //about
+                Text(
+                    text = userData?.about ?: stringResource(id = R.string.default_bio),
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Start
+                )
+                //social link
+                SocialLink(
+                    modifier = Modifier
+                        .padding(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 20.dp,
+                            bottom = 20.dp
+                        )
+                        .fillMaxWidth(),
+                    user = userData,
+                    socialList = uiState.socialList,
+                    openSocialLink = { link ->
+                        coroutineScope.launch {
+                            viewModel.handleSocialItemClick(link, context)
+                        }
+                    }
+                )
+                // FEED tabs
+                PersonalizedFeed(uiState = uiState)
+                Spacer(modifier = Modifier.weight(1f))
+            }
+            // developer
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .background(MaterialTheme.colorScheme.background),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        modifier = Modifier,
+                        text = "Made With ❤️ by ",
+                    )
+                    Text(
+                        text = "Jamians", // Make Jamians clickable
+                        modifier = Modifier
+                            .clickable { navigateToDevelopers() },
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        } else if (!uiState.errorMessage.isNullOrBlank()) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = uiState.errorMessage ?: "An error occur while loading profile data.",
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }else{
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+               Loader()
             }
         }
     }

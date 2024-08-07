@@ -1,5 +1,7 @@
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,7 +12,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.BottomNavigationBar
@@ -46,7 +47,7 @@ fun InsteaApp(
         InsteaScreens.UserList, //inbox
         InsteaScreens.SelfProfile
     )
-
+    val snackBarHostState = remember { SnackbarHostState() }
     Scaffold(
 //        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         modifier = Modifier,
@@ -69,9 +70,10 @@ fun InsteaApp(
             if (bottomBarItems.contains(currentScreen)) {
                 BottomNavigationBar(selectedItemIndex, navController)
             }
-        }
+        },
+        snackbarHost ={ SnackbarHost(hostState = snackBarHostState)}
     ) { contentPadding ->
-        InsteaNavHost(navController, contentPadding)
+        InsteaNavHost(navController, contentPadding, snackBarHostState = snackBarHostState)
     }
 }
 
