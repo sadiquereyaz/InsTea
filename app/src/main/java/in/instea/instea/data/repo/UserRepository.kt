@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 
-interface UserRepository {
+interface  UserRepository {
     fun getCurrentUserId(): Flow<String>
     fun getUserById(userId: String): Flow<User>
     suspend fun upsertUserLocally(user: User)
@@ -63,5 +63,10 @@ class CombinedUserRepository(
     override suspend fun signUp(user: User, password: String): Result<String> {
         return networkUserRepository.signUp(user, password)
     }
+
+//    override suspend fun getclassmates(): List<User>{
+//        val userId=getCurrentUserId()
+//        return networkUserRepository.getClassmates(userId)
+//    }
 }
 

@@ -1,6 +1,5 @@
 package `in`.instea.instea.screens.more
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,7 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import `in`.`in`.instea.instea.screens.more.composable.AllTask
-import `in`.`in`.instea.instea.screens.more.composable.classmates
+import `in`.`in`.instea.instea.screens.more.composable.classmateList
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.MoreViewModel
 import `in`.instea.instea.navigation.InsteaScreens
@@ -152,15 +151,16 @@ fun ExpandableItem(
                     }
 
                     "Classmates" -> {
-                        classmates()
+                        classmateList()
                     }
 
                     "Account" -> {
                         AccountComp(
-                            navigateToSignIn = {
-                                navController.popBackStack()
-                                navController.navigate(InsteaScreens.Signup.name)
-                            }
+                            navigateToSignIn = { navController.navigate(InsteaScreens.SignIn.name){
+                                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                                }
+                            },
+                            deleteAccount = {}
                         )
                     }
 

@@ -20,7 +20,8 @@ import `in`.instea.instea.data.viewmodel.AuthViewModel
 @Composable
 fun AccountComp(
     modifier: Modifier = Modifier,
-    navigateToSignIn: () -> Unit
+    navigateToSignIn: () -> Unit,
+    deleteAccount: () -> Unit
 ) {
     Box(modifier = Modifier.padding(10.dp)) {
         Column {
@@ -37,7 +38,10 @@ fun AccountComp(
                     modifier = Modifier.size(20.dp)
                 )
             }
-            TextButton(onClick = { /*TODO*/ }) {
+            //Delete Account
+            TextButton(onClick = { /*TODO*/
+
+            }) {
                 Text(text = "Delete Account", color = MaterialTheme.colorScheme.error)
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(

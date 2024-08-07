@@ -63,7 +63,8 @@ class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRe
     override suspend fun getAllTasks(): List<taskModel> =scheduleDao.getAllTask()
     override suspend fun deleteTaskbyId(scheduleId: Int,timeStamp: Int)
         { scheduleDao.clearTaskById(scheduleId, timeStamp)
-            Log.d("repository", "repo delete task clicked  ")}
+
+            Log.d("repository", "repo delete task clicked $scheduleId $timeStamp ")}
 
 
 }

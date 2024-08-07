@@ -60,7 +60,7 @@ interface ScheduleDao {
     @Query("SELECT task,timestamp,scheduleId FROM taskAttendance Where task is NOT NULL ORDER BY timestamp")
     suspend fun getAllTask():List<taskModel>
 
-    @Query("UPDATE taskAttendance SET task = NULL WHERE timestamp = :timestamp AND scheduleId = :scheduleId")
+    @Query("UPDATE taskAttendance SET task = null WHERE timestamp = :timestamp AND scheduleId = :scheduleId")
     suspend fun clearTaskById(timestamp: Int, scheduleId: Int)
 
     @Query("SELECT * FROM schedule WHERE scheduleId = :id")

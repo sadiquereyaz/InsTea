@@ -4,11 +4,9 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.`in`.instea.instea.screens.more.composable.taskModel
-import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
-import `in`.instea.instea.data.datamodel.TaskModel
 import `in`.instea.instea.data.repo.ScheduleRepository
+import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +17,8 @@ import java.time.LocalDate
 
 class MoreViewModel(
     savedStateHandle: SavedStateHandle,
-    private val scheduleRepository: ScheduleRepository
+    private val scheduleRepository: ScheduleRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MoreUiState())
     val uiState: StateFlow<MoreUiState> = _uiState
@@ -70,8 +69,15 @@ class MoreViewModel(
     fun onDeleteTaskClicked(taskModel: taskModel){
         viewModelScope.launch {
             scheduleRepository.deleteTaskbyId(taskModel.scheduleId,taskModel.timestamp)
-            Log.d("View Model", "VIew Model delete task clicked  ")
+            Log.d("View Model", "View Model delete task clicked  ")
         }
         getAllTask()
     }
+    fun getClassmatesList(){
+        viewModelScope.launch {
+
+        }
+    }
 }
+
+

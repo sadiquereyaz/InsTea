@@ -65,6 +65,7 @@ object AppViewModelProvider {
             MoreViewModel(
                 savedStateHandle = this.createSavedStateHandle(),
                 scheduleRepository = insteaApplication().container.scheduleRepository,
+                userRepository = insteaApplication().container.userRepository
             )
         }
     }
