@@ -11,20 +11,20 @@ data class UserInfoUiState(
     var universityList: List<String> = emptyList(),
     var isUniversityLoading: Boolean = true,
     var universityErrorMessage: String? = null,
-    var universityExpandable: Boolean = false,
+//    var universityExpandable: Boolean = false,
     var selectedUniversity: String? = null,
 
     var departmentList: List<String> = emptyList(),
     var isDepartmentLoading: Boolean = false,
     var departmentErrorMessage: String? = null,
-    var departmentExpandable: Boolean = false,
+//    var departmentExpandable: Boolean = false,
     var selectedDepartment: String? = null,
 
 
-    var semesterList: List<String> = emptyList(),
+    var semesterList: List<String> = listOf("I", "II", "III", "IV", "V", "VI", "VII", "VIII"),
     var isSemesterLoading: Boolean = false,
     var semesterErrorMessage: String? = null,
-    var semesterExpandable: Boolean = false,
+//    var semesterExpandable: Boolean = true,
     var selectedSemester: String? = null,
 
     var email: String ="",

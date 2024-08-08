@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -27,19 +29,28 @@ import `in`.instea.instea.composable.AuthenticationButton
 import `in`.instea.instea.composable.Loader
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.AuthenticationViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun AuthenticationScreen(
     navigateToFeed: () -> Unit,
     viewModel: AuthenticationViewModel = viewModel(factory = AppViewModelProvider.Factory),
-    navigateToUserInfo: () -> Unit
+    navigateToUserInfo: () -> Unit,
+    snackBarHostState: SnackbarHostState
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var isAuthenticating = remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         viewModel.onAppStart()
     }
+   /* LaunchedEffect(uiState.showSnackBar) {
+        coroutineScope.launch {
+            if ((uiState as AuthUiState.Idle).showSnackBar) {
+                snackBarHostState.showSnackbar((uiState as AuthUiState.Idle).snackBarMsg)
+            }
+        }
+    }*/
     Box(
         modifier = Modifier
             .fillMaxSize(),
@@ -49,6 +60,12 @@ fun AuthenticationScreen(
             is AuthUiState.Idle -> {
                 Column {
                     AuthenticationButton(
+                        onClicked = {
+//                            viewModel.showSnackBar()
+                            coroutineScope.launch {
+                                snackBarHostState.showSnackbar("Please wait...")
+                            }
+                        },
                         authenticationError = { viewModel.onSignUpError(it) },
                         onGetCredentialResponse = { credential ->
                             viewModel.onSignUpWithGoogle(credential)

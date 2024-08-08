@@ -3,6 +3,8 @@ package `in`.instea.instea.utility
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 object NetworkUtils {
     fun isNetworkAvailable(context: Context): Boolean {
@@ -15,4 +17,23 @@ object NetworkUtils {
             else -> false
         }
     }
+    fun isNetworkAvailableFlow(context: Context): Flow<Boolean> {
+        return flow {
+            while (true) {
+                val connectivityManager =
+                    context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                val network = connectivityManager.activeNetwork
+                val isAvailable = network != null && connectivityManager.getNetworkCapabilities(network)?.hasCapability(
+                    NetworkCapabilities.NET_CAPABILITY_INTERNET
+                ) ?: false
+                emit(isAvailable)
+                kotlinx.coroutines.delay(1000) // Check every 1 second
+            }
+        }
+    }
+    // utilisation
+   /* NetworkUtils.isNetworkAvailableFlow(context).collect { isAvailable ->
+        if(!isAvailable)
+            _uiState.value = AuthUiState.Error("${isAvailable} no network",isAvailable)
+    }*/
 }

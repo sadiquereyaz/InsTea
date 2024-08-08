@@ -169,8 +169,7 @@ fun EditScheduleScreen(
             // Handle saving the new subject
             viewModel.onSubjectSelected(newSubject)
             showPopUp = false
-        },
-        textFieldCount = 1
+        }
     )
 }
 

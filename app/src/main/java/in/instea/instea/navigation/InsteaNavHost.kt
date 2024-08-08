@@ -16,7 +16,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.Feed.UserListScreen
-import `in`.instea.instea.screens.auth.AddInfo
 import `in`.instea.instea.screens.auth.AuthenticationScreen
 import `in`.instea.instea.screens.auth.UserInfoScreen
 import `in`.instea.instea.screens.more.MoreDestination
@@ -37,7 +36,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Schedule.name  /*"${MoreDestination.route}/${4}"*/,
+        startDestination = InsteaScreens.Authenticate.name  /*"${MoreDestination.route}/${4}"*/,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -50,7 +49,8 @@ fun InsteaNavHost(
                 },
                 navigateToUserInfo = {
                     navController.navigate(InsteaScreens.UserInfo.name)
-                }
+                },
+                snackBarHostState = snackBarHostState
             )
         }
         composable(route = InsteaScreens.UserInfo.name) {
@@ -59,9 +59,6 @@ fun InsteaNavHost(
                     navController.navigate(InsteaScreens.Feed.name) {
                         popUpTo(0) { inclusive = true }
                     }
-                },
-                onAddClick = {
-                    navController.navigate(InsteaScreens.AddAcademicInfo.name)
                 },
                 snackBarHostState = snackBarHostState,
             )
@@ -141,17 +138,11 @@ fun InsteaNavHost(
                 openAndPopUp = {
                     navController.navigateUp()
                 },
-                onAddClick = {
-                    navController.navigate(InsteaScreens.AddAcademicInfo.name)
-                },
                 snackBarHostState = snackBarHostState
             )
         }
         composable(route = InsteaScreens.Addpost.name) {
             FeedContent()
-        }
-        composable(route = InsteaScreens.AddAcademicInfo.name) {
-            AddInfo(navController = navController)
         }
         composable(
             route = MoreDestination.routeWithArg,

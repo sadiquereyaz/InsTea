@@ -25,14 +25,13 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import `in`.instea.instea.R
-import `in`.instea.instea.data.viewmodel.AuthenticationViewModel
 import `in`.instea.instea.data.viewmodel.ERROR_TAG
 import kotlinx.coroutines.launch
 
 @Composable
 fun AuthenticationButton(
 //    buttonText: Int,
-    onClicked: (Boolean) -> Unit = {},
+    onClicked: () -> Unit = {},
     onGetCredentialResponse: (Credential) -> Unit,
     authenticationError: (String) -> Unit
 ) {
@@ -53,7 +52,7 @@ fun AuthenticationButton(
             coroutineScope.launch {
                 try {
                     Log.d(ERROR_TAG, "Requesting credential...")
-                    onClicked(true)
+                    onClicked()
                     val result = credentialManager.getCredential(
                         request = request,
                         context = context

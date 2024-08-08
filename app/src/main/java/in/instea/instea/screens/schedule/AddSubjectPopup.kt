@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -20,6 +21,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
@@ -28,10 +31,6 @@ fun AddSubjectPopup(
     showPopup: Boolean,
     onDismiss: () -> Unit,
     onSave: (String) -> Unit,
-    textFieldCount: Int,
-    onChange1: (String) -> Unit = {},
-    onChange2: (String) -> Unit = {},
-    onChange3: (String) -> Unit = {},
 ) {
     var subjectName by remember { mutableStateOf("") }
 
@@ -51,33 +50,21 @@ fun AddSubjectPopup(
                         text = "Add New Subject",
                         style = MaterialTheme.typography.titleLarge,
                     )
+                    Text(
+                        text = "Don't add duplicate subjects, since your attendance will be calculated based on this subject name.",
+//                        style = MaterialTheme.typography.labelSmall,
+                        fontStyle = FontStyle.Italic,
+                        color = MaterialTheme.colorScheme.error
+                    )
 
                         OutlinedTextField(
                             value = subjectName,
                             onValueChange = { subjectName = it },
                             label = { Text("Subject Name") },
                             singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words)
                         )
-
-                    if (textFieldCount > 1) {
-                        OutlinedTextField(
-                            value = subjectName,
-                            onValueChange = { subjectName = it },
-                            label = { Text("Subject Name") },
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                    if (textFieldCount > 2) {
-                        OutlinedTextField(
-                            value = subjectName,
-                            onValueChange = { subjectName = it },
-                            label = { Text("Subject Name") },
-                            singleLine = true,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -90,7 +77,7 @@ fun AddSubjectPopup(
                         Button(
                             modifier = Modifier,
                             onClick = {
-                                onSave(subjectName)
+                                onSave(subjectName.trim())
                                 onDismiss()
                             },
                             enabled = subjectName.isNotBlank(),

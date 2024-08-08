@@ -77,17 +77,20 @@ class AuthenticationViewModel(
             } else if (!NetworkUtils.isNetworkAvailable(context = context)) {
                 onSignUpError("Please connect to the internet!")
             } else {
-                _uiState.value = AuthUiState.Idle
+                _uiState.value = AuthUiState.Idle()
             }
         }
     }
 
     fun resetState() {
-        _uiState.value = AuthUiState.Idle
+        _uiState.value = AuthUiState.Idle()
     }
 
     fun onSignUpError(message: String) {
         _uiState.value = AuthUiState.Error(message = message)
+    }
+    fun showSnackBar() {
+        _uiState.value = AuthUiState.Idle(showSnackBar = true)
     }
 }
 

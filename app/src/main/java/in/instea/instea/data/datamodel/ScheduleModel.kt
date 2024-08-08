@@ -40,17 +40,6 @@ enum class AttendanceType(val icon: ImageVector, val title: String, val tint: Co
 data class DayDateModel(
     val day: String, val date: String
 )
-
-data class ReminderModel(
-    val repeat: Boolean = false,
-    val remindBefore12: Boolean = false,
-    val remindBefore24: Boolean = false,
-)
-
-data class TaskModel(
-    val reminderBefore: String = "24:00",
-    val task: String = "Assignment submit on monday"
-)
 data class SubjectAttendanceSummaryModel(
     val subject: String,
     val totalClasses: Int,
@@ -58,8 +47,6 @@ data class SubjectAttendanceSummaryModel(
     val absentClasses: Int,
     val percentage: Float? = 89f,    //
 )
-
-
 @Entity(tableName = "schedule")
 data class ScheduleModel(
     @PrimaryKey(autoGenerate = true)

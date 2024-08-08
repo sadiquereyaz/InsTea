@@ -47,7 +47,8 @@ fun DropdownComposable(
     onAddItemClicked: () -> Unit = {},
     isEnabled: Boolean = true,
     isLoadingOption: Boolean,
-    isExpandable: Boolean = true
+    isExpandable: Boolean = true,
+    showAddBtn:Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
     var expandable by remember { mutableStateOf(isExpandable) }
@@ -56,8 +57,9 @@ fun DropdownComposable(
 //    Log.d("IN LOADING", "$label loading: $isLoadingOption")
 //    Log.d("IN EXPANDABLE", "$label loading: $expandable")
 
-    LaunchedEffect(isExpandable) {
-        expandable = isExpandable
+    LaunchedEffect(options) {
+        if (options.isNotEmpty())
+        expandable = true
     }
     Box(
         modifier = modifier,
@@ -126,6 +128,7 @@ fun DropdownComposable(
                         }
                     )
                 }
+                if(showAddBtn)
                 DropdownMenuItem(
                     leadingIcon = {
                         Icon(
@@ -134,7 +137,8 @@ fun DropdownComposable(
                         )
                     },
                     text = { Text("Add New") },
-                    onClick = { onAddItemClicked() }
+                    onClick = { onAddItemClicked()
+                    expanded = false}
                 )
             }
         }

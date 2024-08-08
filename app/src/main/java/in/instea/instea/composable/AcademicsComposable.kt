@@ -65,12 +65,13 @@ fun AcademicsComposable(
             DropdownComposable(
                 modifier = Modifier.weight(2.5f),
                 label = "Sem",
-                options = semesterList,
+                options = listOf("I", "II", "III","IV", "V", "VI", "VII", "VIII"),
                 onOptionSelected = onSemesterChanged,
                 leadingIcon = Icons.Default.AutoGraph,
                 selectedOption = semester,
                 onAddItemClicked = onAddItemClicked,
                 isLoadingOption = false,
+                showAddBtn = false
             )
         }
     }
