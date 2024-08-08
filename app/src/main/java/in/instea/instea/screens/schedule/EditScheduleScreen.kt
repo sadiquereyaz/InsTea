@@ -167,8 +167,10 @@ fun EditScheduleScreen(
         onDismiss = { showPopUp = false },
         onSave = { newSubject ->
             // Handle saving the new subject
-            viewModel.onSubjectSelected(newSubject)
-            showPopUp = false
+            coroutineScope.launch{
+                viewModel.addSubject(newSubject.trim())
+                showPopUp = false
+            }
         }
     )
 }

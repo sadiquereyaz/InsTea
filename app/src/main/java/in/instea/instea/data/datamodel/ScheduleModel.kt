@@ -86,6 +86,13 @@ data class TaskAttendanceModel(
     val taskReminder: Boolean? = null
 )
 
+@Entity(tableName = "subject_table")
+data class SubjectModel(
+    @PrimaryKey(autoGenerate = true)
+    val subjectId: Int = 0, // Foreign key referencing ScheduleModel
+    val subject: String
+)
+
 data class CombinedScheduleTaskModel(
     val scheduleId: Int,
     val startTime: LocalTime,

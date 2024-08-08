@@ -5,7 +5,9 @@ import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.SubjectAttendanceSummaryModel
+import `in`.instea.instea.data.datamodel.SubjectModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
+import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {
 
@@ -18,6 +20,8 @@ interface ScheduleRepository {
     suspend fun getAllScheduleByDay(day: String): List<ScheduleModel>
     suspend fun deleteScheduleById(id: Int)
     suspend fun getSubjectAttendanceSummary(timestamp: Int): List<SubjectAttendanceSummaryModel>
+    suspend fun upsertSubject(sub: String)
+    suspend fun getAllSubjectFlow(): Flow<List<String>>
 }
 
 class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRepository {
@@ -53,8 +57,9 @@ class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRe
 
     override suspend fun getScheduleById(id: Int): ScheduleModel = scheduleDao.getScheduleById(id)
     override suspend fun getAllSubjects(): List<String> = scheduleDao.getAllSubject()
+    override suspend fun getAllSubjectFlow(): Flow<List<String>> = scheduleDao.getAllSubjectFlow()
     override suspend fun getAllScheduleByDay(day: String): List<ScheduleModel> = scheduleDao.getAllScheduleByDay(day)
     override suspend fun deleteScheduleById(id: Int) = scheduleDao.deleteById(id)
     override suspend fun getSubjectAttendanceSummary(timestamp: Int): List<SubjectAttendanceSummaryModel> = scheduleDao.getSubjectAttendanceSummary(startOfTimestamp = timestamp)
-
+    override suspend fun upsertSubject(sub: String) = scheduleDao.upsertSchedule(subject = SubjectModel(0, sub))
 }

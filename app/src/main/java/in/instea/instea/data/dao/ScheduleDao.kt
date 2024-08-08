@@ -9,12 +9,17 @@ import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.SubjectAttendanceSummaryModel
+import `in`.instea.instea.data.datamodel.SubjectModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ScheduleDao {
     @Query("SELECT * FROM taskAttendance WHERE scheduleId = :scheduleId AND timestamp = :timestamp")
-    suspend fun checkTaskAttendanceRowExistence(scheduleId: Int, timestamp: Int): TaskAttendanceModel?
+    suspend fun checkTaskAttendanceRowExistence(
+        scheduleId: Int,
+        timestamp: Int
+    ): TaskAttendanceModel?
 
     @Upsert
     suspend fun upsertSchedule(scheduleModel: ScheduleModel)
@@ -22,16 +27,15 @@ interface ScheduleDao {
     // insert a new task/attendance row
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTaskAttendance(taskAttendanceObj: TaskAttendanceModel): Long
+
     // update task
     @Query("UPDATE taskAttendance SET task = :task  WHERE scheduleId = :scheduleId AND timestamp = :timestamp")
     suspend fun updateTask(task: String, scheduleId: Int, timestamp: Int)
+
     // update attendance
     @Query("UPDATE taskAttendance SET attendance = :attendance WHERE scheduleId = :scheduleId AND timestamp = :timestamp")
     suspend fun updateAttendance(attendance: AttendanceType, scheduleId: Int, timestamp: Int)
 
-    // subject list
-    @Query("SELECT DISTINCT subject FROM schedule")
-    suspend fun getAllSubject(): List<String>
 
     // for conflict checking
     @Query("SELECT * FROM schedule WHERE day = :day ORDER BY startTime")
@@ -45,7 +49,10 @@ interface ScheduleDao {
         WHERE s.day = :selectedDay ORDER BY s.startTime
     """
     )
-    suspend fun getScheduleAndTaskList(selectedDay: String, selectedDate: Int): List<CombinedScheduleTaskModel>
+    suspend fun getScheduleAndTaskList(
+        selectedDay: String,
+        selectedDate: Int
+    ): List<CombinedScheduleTaskModel>
 
     @Query("SELECT * FROM schedule WHERE scheduleId = :id")
     suspend fun getScheduleById(id: Int): ScheduleModel
@@ -53,7 +60,8 @@ interface ScheduleDao {
     @Query("DELETE FROM schedule WHERE scheduleId = :id")
     suspend fun deleteById(id: Int)
 
-    @Query("""
+    @Query(
+        """
         SELECT 
             s.subject,
             COUNT(*) AS totalClasses,
@@ -67,9 +75,20 @@ interface ScheduleDao {
             t.timestamp BETWEEN :startOfTimestamp AND :endOfTimestamp
         GROUP BY 
             s.subject
-    """)
+    """
+    )
     suspend fun getSubjectAttendanceSummary(
         startOfTimestamp: Int,
-        endOfTimestamp: Int =  startOfTimestamp+32
+        endOfTimestamp: Int = startOfTimestamp + 32
     ): List<SubjectAttendanceSummaryModel>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsertSchedule(subject: SubjectModel)
+
+    // subject list
+    @Query("SELECT Distinct subject FROM subject_table")
+    fun getAllSubjectFlow(): Flow<List<String>>
+
+    @Query("SELECT DISTINCT subject FROM schedule")
+    suspend fun getAllSubject(): List<String>
 }

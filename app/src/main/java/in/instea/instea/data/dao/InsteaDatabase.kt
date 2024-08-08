@@ -12,14 +12,15 @@ import `in`.instea.instea.data.dao.ScheduleDao
 import `in`.instea.instea.data.datamodel.AttendanceTypeConverter
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.ScheduleModel
+import `in`.instea.instea.data.datamodel.SubjectModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 import `in`.instea.instea.data.datamodel.TimeConverters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Database(
-    entities = [PostData::class, ScheduleModel::class, TaskAttendanceModel::class],
-    version = 21, exportSchema = false
+    entities = [PostData::class, ScheduleModel::class, TaskAttendanceModel::class, SubjectModel::class],
+    version = 22, exportSchema = false
 )
 @TypeConverters(TimeConverters::class, AttendanceTypeConverter::class)
 abstract class InsteaDatabase : RoomDatabase() {

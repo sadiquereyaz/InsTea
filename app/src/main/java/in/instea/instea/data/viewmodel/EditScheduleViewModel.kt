@@ -33,7 +33,6 @@ class EditScheduleViewModel(
         viewModelScope.launch {
 //            _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val subjects = scheduleRepository.getAllSubjects()
                 if (scheduleId != 0) {
                     val scheduleDetail = scheduleRepository.getScheduleById(scheduleId)
                     _uiState.update {
@@ -51,14 +50,15 @@ class EditScheduleViewModel(
                         )
                     }
                 }
-                _uiState.value = _uiState.value.copy(
-                    subjectList = subjects,
+                scheduleRepository.getAllSubjectFlow().collect { subjects ->
+                    _uiState.value = _uiState.value.copy(
+                        subjectList = subjects,
 //                    selectedSubject = day,
-                    selectedDay = day,
-                    scheduleId = scheduleId,
-                    isLoading = false
-                )
-
+                        selectedDay = day,
+                        scheduleId = scheduleId,
+                        isLoading = false
+                    )
+                }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(isLoading = false, errorMessage = e.message)
             }
@@ -66,16 +66,12 @@ class EditScheduleViewModel(
     }
 
     fun onSubjectSelected(subject: String) {
-        /*_uiState.value = _uiState.value.copy(
-            selectedSubject = subject,
-            subjectError = if (subject.length > 18) "Length exceeded" else null
-        )*/
-        _uiState.update {
-            it.copy(
-                selectedSubject = subject,
-                subjectError = if (subject.length > 18) "Length exceeded" else null
-            )
-        }
+         _uiState.update { it.copy(selectedSubject = subject) }
+    }
+
+    suspend fun addSubject(subject: String) {
+        _uiState.value.selectedSubject = subject
+        scheduleRepository.upsertSubject(subject)
     }
 
     fun onDaySelected(day: String) {

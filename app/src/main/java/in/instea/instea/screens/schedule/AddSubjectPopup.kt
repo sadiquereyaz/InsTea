@@ -33,6 +33,7 @@ fun AddSubjectPopup(
     onSave: (String) -> Unit,
 ) {
     var subjectName by remember { mutableStateOf("") }
+    var isError by remember { mutableStateOf(false) }
 
     if (showPopup) {
         Dialog(onDismissRequest = onDismiss) {
@@ -51,20 +52,32 @@ fun AddSubjectPopup(
                         style = MaterialTheme.typography.titleLarge,
                     )
                     Text(
-                        text = "Don't add duplicate subjects, since your attendance will be calculated based on this subject name.",
+                        text = "Don't add same subject by different name, since your attendance will be calculated based on this subject name.",
 //                        style = MaterialTheme.typography.labelSmall,
                         fontStyle = FontStyle.Italic,
-                        color = MaterialTheme.colorScheme.error
+                        color = MaterialTheme.colorScheme.tertiary
                     )
 
+                    Column() {
                         OutlinedTextField(
                             value = subjectName,
-                            onValueChange = { subjectName = it },
+                            onValueChange = {
+                                subjectName = it
+                                isError = it.length > 16
+                            },
                             label = { Text("Subject Name") },
                             singleLine = true,
                             modifier = Modifier.fillMaxWidth(),
                             keyboardOptions = KeyboardOptions.Default.copy(capitalization = KeyboardCapitalization.Words)
                         )
+                        if (isError) {
+                            Text(
+                                text = "Limit Exceeded",
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.padding(start = 4.dp, top = 4.dp)
+                            )
+                        }
+                    }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -80,7 +93,7 @@ fun AddSubjectPopup(
                                 onSave(subjectName.trim())
                                 onDismiss()
                             },
-                            enabled = subjectName.isNotBlank(),
+                            enabled = subjectName.isNotBlank() && !isError,
                         ) {
                             Text("Save")
                         }
