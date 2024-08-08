@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.DayDateModel
-import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.schedule.ScheduleUiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -109,7 +108,7 @@ class ScheduleViewModel(
     suspend fun upsertTask(scheduleId: Int, task: String) {
         scheduleRepository.upsertTask(
             task = task,
-            scheduleId = scheduleId,
+            subjectId = scheduleId,
             timeStamp = _uiState.value.timestamp
         )
     }

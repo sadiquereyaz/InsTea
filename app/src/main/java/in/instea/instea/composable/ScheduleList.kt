@@ -1,6 +1,5 @@
 package `in`.instea.instea.composable
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,14 +27,14 @@ fun ScheduleList(
 //            Log.d("CURRENT_TASK", "subject name: ${scheduleModel.subject} \ntask: ${scheduleModel.task}")
             ScheduleItem(
                 scheduleObj = scheduleModel,
-                onEditClick = { navigateToEditSchedule(scheduleModel.scheduleId) },
+                onEditClick = { navigateToEditSchedule(scheduleModel.subjectId) },
                 onAttendanceClick = { attendanceType ->
-                    onAttendanceClick(scheduleModel.scheduleId, attendanceType)
+                    onAttendanceClick(scheduleModel.subjectId, attendanceType)
                 },
                 upsertTask = {task->
 //                    Log.d("ATT", scheduleModel.taskId.toString())
                     upsertTask(
-                        scheduleModel.scheduleId,
+                        scheduleModel.subjectId,
                         task
                     )
                 },
