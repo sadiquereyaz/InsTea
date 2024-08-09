@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.`in`.instea.instea.screens.more.composable.taskModel
 import `in`.instea.instea.data.InsteaDatabase.Companion.clearDatabase
 import `in`.instea.instea.data.repo.AccountService
 import `in`.instea.instea.data.repo.ScheduleRepository
@@ -34,6 +35,7 @@ class MoreViewModel(
             _uiState.update { it.copy(expandedIndex = argIndex) }
         }
         onTimestampSelected(_uiState.value.selectedTimestamp)
+        getAllTask()
     }
 
     fun onTimestampSelected(selectedDate: LocalDate) {
@@ -50,6 +52,24 @@ class MoreViewModel(
                 )
             }
         }
+    }
+    fun getAllTask(){
+        viewModelScope.launch {
+            val tasks=scheduleRepository.getAllTasks()
+            _uiState.update {
+                it.copy(
+                    taskList = tasks
+                )
+            }
+        }
+
+    }
+    fun onDeleteTaskClicked(taskModel: taskModel){
+        viewModelScope.launch {
+            scheduleRepository.deleteTaskbyId(taskModel.scheduleId,taskModel.timestamp)
+            Log.d("View Model", "VIew Model delete task clicked  ")
+        }
+        getAllTask()
     }
 
     fun onSignOutClick() {

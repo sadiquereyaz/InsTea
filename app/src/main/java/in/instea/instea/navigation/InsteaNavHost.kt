@@ -1,6 +1,5 @@
 package `in`.instea.instea.navigation
 
-import EditPost
 import FEED
 import FeedContent
 import InboxScreen
@@ -31,12 +30,11 @@ import `in`.instea.instea.screens.schedule.ScheduleScreen
 fun InsteaNavHost(
     navController: NavHostController,
     contentPadding: PaddingValues,
-    snackBarHostState: SnackbarHostState,
 //    scheduleViewModel: ScheduleViewModel
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Schedule.name  /*"${MoreDestination.route}/${4}"*/,
+        startDestination = InsteaScreens.Schedule.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -143,6 +141,9 @@ fun InsteaNavHost(
         }
         composable(route = InsteaScreens.Addpost.name) {
             FeedContent()
+        }
+        composable(route = InsteaScreens.AddAcademicInfo.name) {
+            AddInfo(navController = navController)
         }
         composable(
             route = MoreDestination.routeWithArg,

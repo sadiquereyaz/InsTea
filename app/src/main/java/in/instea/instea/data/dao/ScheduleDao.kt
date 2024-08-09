@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
+import `in`.`in`.instea.instea.screens.more.composable.taskModel
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
@@ -28,15 +29,16 @@ interface ScheduleDao {
     // insert a new task/attendance row
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTaskAttendance(taskAttendanceObj: TaskAttendanceModel): Long
-
     // update task
-    @Query("UPDATE taskAttendance SET task = :task  WHERE subjectId = :scheduleId AND timestamp = :timestamp")
+    @Query("UPDATE taskAttendance SET task = :task  WHERE scheduleId = :scheduleId AND timestamp = :timestamp")
     suspend fun updateTask(task: String, scheduleId: Int, timestamp: Int)
-
     // update attendance
-    @Query("UPDATE taskAttendance SET attendance = :attendance WHERE subjectId = :scheduleId AND timestamp = :timestamp")
+    @Query("UPDATE taskAttendance SET attendance = :attendance WHERE scheduleId = :scheduleId AND timestamp = :timestamp")
     suspend fun updateAttendance(attendance: AttendanceType, scheduleId: Int, timestamp: Int)
 
+    // subject list
+    @Query("SELECT DISTINCT subject FROM schedule")
+    suspend fun getAllSubject(): List<String>
 
     // for conflict checking
     @Query("SELECT * FROM schedule WHERE day = :day ORDER BY startTime")
@@ -56,6 +58,13 @@ interface ScheduleDao {
         selectedDay: String,
         selectedDate: Int
     ): List<CombinedScheduleTaskModel>
+
+    @Query("SELECT task,timestamp,scheduleId FROM taskAttendance Where task is NOT NULL ORDER BY timestamp")
+    suspend fun getAllTask():List<taskModel>
+
+    @Query("UPDATE taskAttendance SET task = NULL WHERE timestamp = :timestamp AND scheduleId = :scheduleId")
+    suspend fun clearTaskById(timestamp: Int, scheduleId: Int)
+
 
     @Query("SELECT * FROM schedule WHERE subjectId = :id")
     suspend fun getScheduleById(id: Int): ScheduleModel

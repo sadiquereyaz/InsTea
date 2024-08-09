@@ -1,5 +1,6 @@
 package `in`.instea.instea.screens.more
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -176,7 +177,11 @@ fun ExpandableItem(
                     }
 
                     "All Task" -> {
-                        AllTask()
+                        AllTask(uiState=uiState,
+                            onDeleteTask = {task->
+                                viewModel.onDeleteTaskClicked(task)
+
+                            })
                     }
 
                     "Classmates" -> {

@@ -1,5 +1,7 @@
 package `in`.instea.instea.data.repo
 
+import android.util.Log
+import `in`.`in`.instea.instea.screens.more.composable.taskModel
 import `in`.instea.instea.data.dao.ScheduleDao
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
@@ -22,6 +24,8 @@ interface ScheduleRepository {
     suspend fun getSubjectAttendanceSummary(timestamp: Int): List<SubjectAttendanceSummaryModel>
     suspend fun upsertSubject(sub: String)
     suspend fun getAllSubjectFlow(): Flow<List<SubjectModel>>
+    suspend fun getAllTasks():List<taskModel>
+    suspend fun deleteTaskbyId(scheduleId: Int,timeStamp: Int,)
 }
 
 class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRepository {
@@ -65,4 +69,10 @@ class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRe
     override suspend fun deleteScheduleById(id: Int) = scheduleDao.deleteById(id)
     override suspend fun getSubjectAttendanceSummary(timestamp: Int): List<SubjectAttendanceSummaryModel> = scheduleDao.getSubjectAttendanceSummary(startOfTimestamp = timestamp)
     override suspend fun upsertSubject(sub: String) = scheduleDao.upsertSubject(SubjectModel(subject = sub))
+    override suspend fun getAllTasks(): List<taskModel> =scheduleDao.getAllTask()
+    override suspend fun deleteTaskbyId(scheduleId: Int,timeStamp: Int)
+        { scheduleDao.clearTaskById(scheduleId, timeStamp)
+            Log.d("repository", "repo delete task clicked  ")}
+
+
 }
