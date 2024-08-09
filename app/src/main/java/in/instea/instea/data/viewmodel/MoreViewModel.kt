@@ -1,16 +1,19 @@
 package `in`.instea.instea.data.viewmodel
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.`in`.instea.instea.screens.more.composable.taskModel
+import `in`.instea.instea.R
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -26,11 +29,12 @@ class MoreViewModel(
 
     init {
         viewModelScope.launch {
-            if (argIndex==-1 ) argIndex = null
+            if (argIndex == -1) argIndex = null
             _uiState.update { it.copy(expandedIndex = argIndex) }
         }
-            onTimestampSelected(_uiState.value.selectedTimestamp)
-            getAllTask()
+        onTimestampSelected(_uiState.value.selectedTimestamp)
+        getAllTask()
+        getClassmatesList()
     }
 
     fun onTimestampSelected(selectedDate: LocalDate) {
@@ -55,29 +59,47 @@ class MoreViewModel(
     }
 
 
-    fun getAllTask(){
-            viewModelScope.launch {
-                val tasks=scheduleRepository.getAllTasks()
-                _uiState.update {
-                    it.copy(
-                        taskList = tasks
-                    )
-                }
+    fun getAllTask() {
+        viewModelScope.launch {
+            val tasks = scheduleRepository.getAllTasks()
+            _uiState.update {
+                it.copy(
+                    taskList = tasks
+                )
             }
+        }
 
     }
-    fun onDeleteTaskClicked(taskModel: taskModel){
+
+    fun onDeleteTaskClicked(taskModel: taskModel) {
         viewModelScope.launch {
-            scheduleRepository.deleteTaskbyId(taskModel.scheduleId,taskModel.timestamp)
+            scheduleRepository.deleteTaskbyId(taskModel.scheduleId, taskModel.timestamp)
             Log.d("View Model", "View Model delete task clicked  ")
         }
         getAllTask()
     }
-    fun getClassmatesList(){
-        viewModelScope.launch {
 
+    fun getClassmatesList() {
+        viewModelScope.launch {
+            val classmates = userRepository.getclassmates()
+            Log.d(TAG, "getClassmatesList: $classmates")
+            _uiState.update {
+                it.copy(
+                    classmateList = classmates
+                )
+            }
         }
     }
 }
+
+data class classmate(
+    val userId: String = "",
+    val profilepic: Int = R.drawable.dp,
+    val name: String = ""
+
+)
+
+
+
 
 

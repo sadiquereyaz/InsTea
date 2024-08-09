@@ -2,6 +2,7 @@ package `in`.instea.instea.data.repo
 
 import android.util.Log
 import `in`.instea.instea.data.datamodel.User
+import `in`.instea.instea.data.viewmodel.classmate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -15,6 +16,7 @@ interface  UserRepository {
     suspend fun signIn(email: String, password: String): Result<String>
     suspend fun signUp(user: User, password: String): Result<String>
     suspend fun clearUser()
+    suspend fun getclassmates(): List<classmate>
 }
 
 class CombinedUserRepository(
@@ -64,9 +66,9 @@ class CombinedUserRepository(
         return networkUserRepository.signUp(user, password)
     }
 
-//    override suspend fun getclassmates(): List<User>{
-//        val userId=getCurrentUserId()
-//        return networkUserRepository.getClassmates(userId)
-//    }
+    override suspend fun getclassmates(): List<classmate>{
+        val userId=getCurrentUserId()
+        return networkUserRepository.getClassmates(userId.toString())
+    }
 }
 

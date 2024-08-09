@@ -42,12 +42,15 @@ import `in`.instea.instea.screens.more.composable.AccountComp
 import `in`.instea.instea.screens.more.composable.AttendanceComp
 import `in`.instea.instea.screens.more.composable.Developers
 import `in`.instea.instea.screens.more.composable.report
-object MoreDestination: NavigationDestinations{
+import `in`.instea.instea.screens.profile.ProfileDestination
+
+object MoreDestination : NavigationDestinations {
     override val route: String = InsteaScreens.More.name
     override val title: String = InsteaScreens.More.title
     const val INDEX_ARG = "expandedIndex"
     val routeWithArg = "${route}/{$INDEX_ARG}"
 }
+
 @Composable
 fun MoreScreen(
     modifier: Modifier = Modifier,
@@ -56,7 +59,8 @@ fun MoreScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var expandedIndex by remember { mutableStateOf(uiState.expandedIndex) }
-    val items =listOf("Developers", "Attendance Record", "All Task", "Classmates", "Account", "Report")
+    val items =
+        listOf("Developers", "Attendance Record", "All Task", "Classmates", "Account", "Report")
 
     LazyColumn(
         modifier = modifier
@@ -143,39 +147,45 @@ fun ExpandableItem(
                     }
 
                     "All Task" -> {
-                        AllTask(uiState=uiState,
-                            onDeleteTask = {task->
+                        AllTask(uiState = uiState,
+                            onDeleteTask = { task ->
                                 viewModel.onDeleteTaskClicked(task)
 
                             })
                     }
 
                     "Classmates" -> {
-                        classmateList()
-                    }
+                        classmateList(navigatetoOtherProfile = { userId ->
+                            navController.navigate("${ProfileDestination.route}/${userId}")},
+                            uiState = uiState)
 
-                    "Account" -> {
-                        AccountComp(
-                            navigateToSignIn = { navController.navigate(InsteaScreens.SignIn.name){
-                                    popUpTo(navController.graph.startDestinationId) { inclusive = true }
-                                }
-                            },
-                            deleteAccount = {}
-                        )
-                    }
+                        }
 
-                    "Report" -> {
-                        report()
+                            "Account" -> {
+                            AccountComp(
+                                navigateToSignIn = {
+                                    navController.navigate(InsteaScreens.SignIn.name) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            inclusive = true
+                                        }
+                                    }
+                                },
+                                deleteAccount = {}
+                            )
+                        }
+
+                        "Report" -> {
+                            report()
+                        }
                     }
                 }
             }
         }
     }
-}
 //}
 
-@Preview
-@Composable
-private fun morePrev() {
+    @Preview
+    @Composable
+    private fun morePrev() {
 //    MoreScreen()
-}
+    }

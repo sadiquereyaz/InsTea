@@ -1,9 +1,12 @@
 package `in`.instea.instea.data.repo
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import `in`.instea.instea.R
 import `in`.instea.instea.data.datamodel.User
+import `in`.instea.instea.data.viewmodel.classmate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -72,7 +75,7 @@ class NetworkUserRepository(
     }
 
     // sign up
-    suspend fun signUp(user: User,password: String): Result<String> {
+    suspend fun signUp(user: User, password: String): Result<String> {
         return try {
             val result = firebaseAuth.createUserWithEmailAndPassword(
                 user.email ?: "noemailrecieved@networkrepo.com", password ?: "networkPassword"
@@ -86,4 +89,55 @@ class NetworkUserRepository(
         }
     }
 
+    suspend fun getClassmates(userId: String): List<classmate> {
+        return try {
+
+            val userReference = firebaseDatabase.reference.child("user").child(userId)
+
+            // Get the user's university, department, and semester directly
+            val university =
+                userReference.child("university").get().await().getValue(String::class.java)
+            val dept = userReference.child("dept").get().await().getValue(String::class.java)
+            val sem = userReference.child("sem").get().await().getValue(String::class.java)
+
+            // Query the database for classmates with the same university, department, and semester
+            val query = firebaseDatabase.reference.child("user")
+                .orderByChild("university")
+                .equalTo(university)
+
+            val classmatesSnapshot = query.get().await()
+
+            classmatesSnapshot.children.mapNotNull { snapshot ->
+                val classmateDept = snapshot.child("dept").getValue(String::class.java)
+                val classmateSem = snapshot.child("sem").getValue(String::class.java)
+
+                if (classmateDept == dept && classmateSem == sem) {
+                    classmate(
+                        userId = snapshot.key ?: "",
+                        profilepic = R.drawable.dp,
+                        name = snapshot.child("name").getValue(String::class.java) ?: ""
+
+                    )
+
+                } else {
+                    null
+                }
+
+            }
+            /*val classmates = listOf(
+                classmate(
+                    userId = "CHX3jKEfytfRUld933ueCnlI5CP2",
+                    profilepic = R.drawable.dp,
+                    name = "Kashif"
+                )
+            )
+            return classmates*/
+
+        } catch (e: Exception) {
+            Log.e(TAG, "error getting classmates list : ${e.message}", )
+             emptyList()
+
+
+        }
+    }
 }

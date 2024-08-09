@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -25,13 +26,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Card
 import `in`.instea.instea.R
+import `in`.instea.instea.data.viewmodel.classmate
+import `in`.instea.instea.screens.more.MoreUiState
 import `in`.instea.instea.screens.more.composable.DeveloperItem
 import `in`.instea.instea.screens.profile.OtherProfileScreen
 
-@Preview
+
 @Composable
-fun classmateList(modifier: Modifier = Modifier) {
-    val classmates = listOf("")
+fun classmateList(
+    navigatetoOtherProfile: (String) -> Unit,
+    uiState: MoreUiState,
+    modifier: Modifier = Modifier
+) {
+    val classmates = uiState.classmateList
     Box(
         modifier = modifier.padding(16.dp)
     ) {
@@ -40,20 +47,22 @@ fun classmateList(modifier: Modifier = Modifier) {
                 .clip(RoundedCornerShape(8.dp)),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(classmates.size) { index ->
-                classmate()
+            items(classmates) { classmate ->
+                classmate(navigatetoOtherProfile, classmate)
             }
         }
     }
 }
 
-@Preview
+
 @Composable
-private fun classmate() {
-    Card(onClick = { /*TODO*/ }) {
-        Row (verticalAlignment = Alignment.CenterVertically){
+private fun classmate(navigatetoOtherProfile: (String) -> Unit, classmate: classmate) {
+    Card(onClick = {
+        navigatetoOtherProfile(classmate.userId)
+    }) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Image(
-                painter = painterResource(id = R.drawable.dp),
+                painter = painterResource(id = classmate.profilepic),
                 contentDescription = null,
                 modifier = Modifier
                     .clip(
@@ -64,7 +73,7 @@ private fun classmate() {
             Spacer(modifier = Modifier.width(10.dp))
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text ="Classmate",
+                text = classmate.name,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
