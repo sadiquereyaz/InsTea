@@ -56,6 +56,7 @@ data class ScheduleModel(
     val subjectId: Int,
     var startTime: LocalTime,
     var endTime: LocalTime,
+    var subject: String,
     var day: String = "",
     val dailyReminder: Boolean = false
 )

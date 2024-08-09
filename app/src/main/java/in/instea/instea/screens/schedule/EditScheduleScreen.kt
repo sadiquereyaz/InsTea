@@ -28,6 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import `in`.instea.instea.composable.ExposedDropDown
 import `in`.instea.instea.composable.Loader
+import `in`.instea.instea.data.datamodel.SubjectModel
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.EditScheduleViewModel
 import `in`.instea.instea.navigation.InsteaScreens
@@ -83,13 +84,13 @@ fun EditScheduleScreen(
                 // subject
                 ExposedDropDown(
                     value = uiState.selectedSubject,
-                    options = uiState.subjectList,
+                    options = uiState.subjectModelList,
                     label = "Subject",
-                    onOptionSelect = {
-                        viewModel.onSubjectSelected(it)
+                    onOptionSelect = { subject ->
+                        viewModel.onSubjectSelected(subject as SubjectModel)
                     },
                     errorMessage = uiState.subjectError,
-                    onAddClick = {showPopUp = true}
+                    onAddClick = { showPopUp = true }
                 )
                 // day
                 ExposedDropDown(
@@ -97,8 +98,8 @@ fun EditScheduleScreen(
                     options = uiState.dayList,
                     addButton = false,
                     label = "Day",
-                    onOptionSelect = {
-                        viewModel.onDaySelected(it)
+                    onOptionSelect = {option->
+                        viewModel.onDaySelected(option as String)
                     },
                     errorMessage = uiState.subjectError
                 )
@@ -167,7 +168,7 @@ fun EditScheduleScreen(
         onDismiss = { showPopUp = false },
         onSave = { newSubject ->
             // Handle saving the new subject
-            coroutineScope.launch{
+            coroutineScope.launch {
                 viewModel.addSubject(newSubject.trim())
                 showPopUp = false
             }

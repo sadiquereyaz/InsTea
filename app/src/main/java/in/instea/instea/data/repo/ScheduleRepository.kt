@@ -17,7 +17,7 @@ interface ScheduleRepository {
     suspend fun upsertSchedule(schedule: ScheduleModel)
     suspend fun getCurrentSchedule(id: Int, day: String): ScheduleModel
 //    suspend fun getAllSubjects(): List<String>
-    suspend fun getAllScheduleByDay(day: String): List<ScheduleModel>
+    suspend fun getAllScheduleByDay(day: String): List<ScheduleModel>       // for time conflict
     suspend fun deleteScheduleById(id: Int)
     suspend fun getSubjectAttendanceSummary(timestamp: Int): List<SubjectAttendanceSummaryModel>
     suspend fun upsertSubject(sub: String)
@@ -64,5 +64,5 @@ class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRe
     override suspend fun getAllScheduleByDay(day: String): List<ScheduleModel> = scheduleDao.getAllScheduleByDay(day)
     override suspend fun deleteScheduleById(id: Int) = scheduleDao.deleteById(id)
     override suspend fun getSubjectAttendanceSummary(timestamp: Int): List<SubjectAttendanceSummaryModel> = scheduleDao.getSubjectAttendanceSummary(startOfTimestamp = timestamp)
-    override suspend fun upsertSubject(sub: String) = scheduleDao.upsertSchedule(subject = SubjectModel( 0, sub))
+    override suspend fun upsertSubject(sub: String) = scheduleDao.upsertSubject(SubjectModel(subject = sub))
 }

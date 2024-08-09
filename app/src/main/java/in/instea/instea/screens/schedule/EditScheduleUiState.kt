@@ -1,13 +1,14 @@
 package `in`.instea.instea.screens.schedule
 
+import `in`.instea.instea.data.datamodel.SubjectModel
 import java.time.LocalTime
 
 data class EditScheduleUiState(
     var selectedDay: String = "",
     var startTime: LocalTime = LocalTime.now(),
     var endTime: LocalTime = startTime.plusHours(1),
-    val subjectList: List<String> = listOf(),
-    var scheduleId: Int = 0,
+    val subjectModelList: List<SubjectModel> = listOf(),
+    var subjectId: Int = 0,
 
     var selectedSubject: String = "",
     var subjectError: String? = null,

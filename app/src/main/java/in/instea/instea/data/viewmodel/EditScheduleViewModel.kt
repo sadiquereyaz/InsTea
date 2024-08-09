@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.ScheduleModel
+import `in`.instea.instea.data.datamodel.SubjectModel
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.screens.schedule.EditScheduleDestination
 import `in`.instea.instea.screens.schedule.EditScheduleUiState
@@ -38,6 +39,7 @@ class EditScheduleViewModel(
                     _uiState.update {
                         it.copy(
                             selectedSubject = scheduleDetail.subject,
+                            subjectId = subjectId,
 //                            selectedDay = day,
                             startTime = scheduleDetail.startTime,
                             endTime = scheduleDetail.endTime,
@@ -52,10 +54,10 @@ class EditScheduleViewModel(
                 }
                 scheduleRepository.getAllSubjectFlow().collect { subjects ->
                     _uiState.value = _uiState.value.copy(
-                        subjectList = subjects,
+                        subjectModelList = subjects,        //for dropdown
 //                    selectedSubject = day,
                         selectedDay = day,
-                        scheduleId = subjectId,
+                        subjectId = subjectId,
                         isLoading = false
                     )
                 }
@@ -65,8 +67,8 @@ class EditScheduleViewModel(
         }
     }
 
-    fun onSubjectSelected(subject: String) {
-        _uiState.update { it.copy(selectedSubject = subject) }
+    fun onSubjectSelected(subject: SubjectModel) {
+        _uiState.update { it.copy(selectedSubject = subject.subject, subjectId = subject.subjectId) }
     }
 
     suspend fun addSubject(subject: String) {
@@ -106,7 +108,8 @@ class EditScheduleViewModel(
             // no conflict
             scheduleRepository.upsertSchedule(
                 ScheduleModel(
-                    subjectId = subjectId,
+                    subjectId = uiStateValue.subjectId,
+                    subject =  uiStateValue.selectedSubject,
                     startTime = startTime,
                     endTime = endTime,
                     day = day

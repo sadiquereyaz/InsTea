@@ -63,33 +63,30 @@ interface ScheduleDao {
     @Query("DELETE FROM schedule WHERE subjectId = :id")
     suspend fun deleteById(id: Int)
 
-    @Query(
-        """
+   @Query(
+       """
     SELECT 
-        subj.subject,
-        COUNT(*) AS totalClasses,
+        subj.subject AS subject,
+        COUNT(t.attendance) AS totalClasses,
         SUM(CASE WHEN t.attendance = 0 THEN 1 ELSE 0 END) AS attendedClasses,
         SUM(CASE WHEN t.attendance = 1 THEN 1 ELSE 0 END) AS absentClasses
     FROM 
-        schedule s
-    LEFT JOIN 
-        taskAttendance t ON s.subjectId = t.subjectId
+        taskAttendance t
     INNER JOIN 
-        subject_table subj ON s.subjectId = subj.subjectId
+        subject_table subj ON t.subjectId = subj.subjectId
     WHERE 
         t.timestamp BETWEEN :startOfTimestamp AND :endOfTimestamp
     GROUP BY 
         subj.subject
     """
-    )
-    suspend fun getSubjectAttendanceSummary(
-        startOfTimestamp: Int,
-        endOfTimestamp: Int = startOfTimestamp + 32
-    ): List<SubjectAttendanceSummaryModel>
-
+   )
+   suspend fun getSubjectAttendanceSummary(
+       startOfTimestamp: Int,
+       endOfTimestamp: Int = startOfTimestamp + 32
+   ): List<SubjectAttendanceSummaryModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertSchedule(subject: SubjectModel)
+    suspend fun upsertSubject(subject: SubjectModel)
 
     // subject list
     @Query("SELECT * FROM subject_table")
