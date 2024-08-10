@@ -14,8 +14,8 @@ import `in`.instea.instea.screens.schedule.ScheduleUiState
 fun ScheduleList(
     navigateToEditSchedule: (Int) -> Unit = {},
     scheduleUiState: ScheduleUiState,
-    onAttendanceClick: (Int, AttendanceType) -> Unit,
-    upsertTask: (Int, String) -> Unit,
+    upsertAttendance: (Int, Int, AttendanceType) -> Unit,
+    upsertTask: (Int, Int, String?) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -27,16 +27,12 @@ fun ScheduleList(
 //            Log.d("CURRENT_TASK", "subject name: ${scheduleModel.subject} \ntask: ${scheduleModel.task}")
             ScheduleItem(
                 scheduleObj = scheduleModel,
-                onEditClick = { navigateToEditSchedule(scheduleModel.subjectId) },
+                onEditClick = { navigateToEditSchedule(scheduleModel.scheduleId) },
                 onAttendanceClick = { attendanceType ->
-                    onAttendanceClick(scheduleModel.subjectId, attendanceType)
+                    upsertAttendance(scheduleModel.scheduleId, scheduleModel.subjectId, attendanceType)
                 },
                 upsertTask = {task->
-//                    Log.d("ATT", scheduleModel.taskId.toString())
-                    upsertTask(
-                        scheduleModel.subjectId,
-                        task
-                    )
+                    upsertTask(scheduleModel.scheduleId, scheduleModel.subjectId, task)
                 },
                 repeatReminderSwitchAction = { subName, repeat ->
 //                        viewModel.modifySubjectInRepeatReminderList(

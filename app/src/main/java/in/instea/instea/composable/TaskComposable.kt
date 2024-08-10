@@ -43,7 +43,7 @@ import org.jetbrains.annotations.Nls
 fun TaskComposable(
     modifier: Modifier = Modifier,
     scheduleObj: CombinedScheduleTaskModel,
-    upsertTask: (String) -> Unit
+    upsertTask: (String?) -> Unit
 ) {
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     val skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
@@ -75,13 +75,15 @@ fun TaskComposable(
             contentDescription = "task",
             modifier = Modifier.size(16.dp),
         )
-        Text(
-            text = task ?: "Add Task",
-            fontSize = 12.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
-            modifier = Modifier.padding(start = 4.dp),
-        )
+        (if(!task.isNullOrBlank()) task else "Add Task")?.let {
+            Text(
+                text = it,
+                fontSize = 12.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
+                modifier = Modifier.padding(start = 4.dp),
+            )
+        }
     }
     //bottom sheet
     if (openBottomSheet) {
@@ -165,7 +167,7 @@ fun TaskComposable(
                             .padding(start = 8.dp, end = 16.dp, top = 24.dp),
                         shape = RoundedCornerShape(8),
                         onClick = {
-                            task?.let { upsertTask(it) }
+                           upsertTask(task)
                             scope.launch { bottomSheetState.hide() }
                                 .invokeOnCompletion {
                                     if (!bottomSheetState.isVisible) {

@@ -21,7 +21,7 @@ fun TaskAttendance(
     openBottomSheet: Boolean,
     scheduleObj: CombinedScheduleTaskModel,
     onAttendanceClick: (AttendanceType) -> Unit,
-    upsertTask: (String) -> Unit,
+    upsertTask: (String?) -> Unit,
 
     ) {
    // Log.d("TASK_EACH", scheduleObj.task.toString())   //correct

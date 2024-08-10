@@ -1,5 +1,6 @@
 package `in`.instea.instea.navigation
 
+import EditPost
 import FEED
 import FeedContent
 import InboxScreen
@@ -30,18 +31,18 @@ import `in`.instea.instea.screens.schedule.ScheduleScreen
 fun InsteaNavHost(
     navController: NavHostController,
     contentPadding: PaddingValues,
-//    scheduleViewModel: ScheduleViewModel
+    snackBarHostState: SnackbarHostState,
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Schedule.name,
+        startDestination = InsteaScreens.Authenticate.name,
         modifier = Modifier
             .padding(contentPadding)
     ) {
         composable(route = InsteaScreens.Authenticate.name) {
             AuthenticationScreen(
                 navigateToFeed = {
-                    navController.navigate(InsteaScreens.SelfProfile.name/*"${MoreDestination.route}/${4}"*/) {
+                    navController.navigate(InsteaScreens.Feed.name/*"${MoreDestination.route}/${4}"*/) {
                         popUpTo(0) { inclusive = true }
                     }
                 },
@@ -142,14 +143,9 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Addpost.name) {
             FeedContent()
         }
-        composable(route = InsteaScreens.AddAcademicInfo.name) {
-            AddInfo(navController = navController)
-        }
         composable(
             route = MoreDestination.routeWithArg,
-            arguments = listOf(navArgument(MoreDestination.INDEX_ARG) {
-                type = NavType.IntType
-            })
+            arguments = listOf(navArgument(MoreDestination.INDEX_ARG) { type = NavType.IntType })
         ) {
             MoreScreen(
                 navController = navController,

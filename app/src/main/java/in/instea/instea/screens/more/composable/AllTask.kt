@@ -1,4 +1,4 @@
-package `in`.`in`.instea.instea.screens.more.composable
+package `in`.instea.instea.screens.more.composable
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
@@ -11,35 +11,33 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import `in`.instea.instea.data.viewmodel.MoreViewModel
 import `in`.instea.instea.screens.more.MoreUiState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-data class taskModel(
+data class TaskModel(
     val task: String,
     val timestamp: Int,
-    val scheduleId: Int
+    val scheduleId: Int,
+    val subjectId: Int
 )
 
 @Composable
 fun AllTask(
     uiState: MoreUiState,
     modifier: Modifier = Modifier,
-    onDeleteTask:(taskModel)->Unit={}
+    onDeleteTask:(TaskModel)->Unit={}
 ) {
 //    val task =
 //        "This is the content of the task to be displayed in more screen along with the date and time when it was created"
@@ -50,17 +48,18 @@ fun AllTask(
         modifier = modifier/*.padding(vertical = 16.dp)*/
     ) {
         itemsIndexed(taskList) { index, item ->
+            if(item.task.isNotBlank())
             TaskItem(
                 task = item.task,
                 date = localDateFromTimestamp(item.timestamp),
                 ondeleteButtonClicked = {
                     onDeleteTask(item) })
             if (index != taskList.lastIndex)
-                Divider()
+                HorizontalDivider()
         }
         item {
-            Divider()
-            if (taskList.size == 0)
+//            Divider()
+            if (taskList.isEmpty())
                 Text(
                     text = "Oh! you've never saved any task!",
                     modifier = Modifier
@@ -123,7 +122,7 @@ private fun localDateFromTimestamp(timestamp: Int): String {
     val date = LocalDate.of(year, month, day)
 
     // Define the format you want the date to be returned in
-    val formatter = DateTimeFormatter.ofPattern("dd-MM-yy")
+    val formatter = DateTimeFormatter.ofPattern("dd/MM/yy")
 
     // Format the LocalDate to a string
     return date.format(formatter)

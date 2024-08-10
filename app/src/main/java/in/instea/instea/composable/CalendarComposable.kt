@@ -69,7 +69,7 @@ private fun DayDate(
                 day = list[index].day,
                 date = list[index].date,
                 currentDate = index == 15,
-                isSelected = index == uiState.selectedDateIndex
+                isSelected = index == uiState.selectedDateIndex,
             )
         }
     }

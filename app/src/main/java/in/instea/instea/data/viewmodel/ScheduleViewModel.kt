@@ -95,21 +95,23 @@ class ScheduleViewModel(
         return formattedDate.toInt() // convert formatted string to Long
     }
 
-    fun upsertAttendance(scheduleId: Int, attendance: AttendanceType) {
+    fun upsertAttendance(subjectId: Int, attendance: AttendanceType, scheduleId: Int) {
         viewModelScope.launch {
             scheduleRepository.upsertAttendance(
                 attendance = attendance,
-                scheduleId = scheduleId,
-                timeStamp = _uiState.value.timestamp
+                subjectId = subjectId,
+                timeStamp = _uiState.value.timestamp,
+                scheduleId = scheduleId
             )
         }
     }
 
-    suspend fun upsertTask(scheduleId: Int, task: String) {
+    suspend fun upsertTask(scheduleId: Int, subjectId: Int, task: String?) {
         scheduleRepository.upsertTask(
             task = task,
-            subjectId = scheduleId,
-            timeStamp = _uiState.value.timestamp
+            subjectId = subjectId,
+            timeStamp = _uiState.value.timestamp,
+            scheduleId = scheduleId
         )
     }
 

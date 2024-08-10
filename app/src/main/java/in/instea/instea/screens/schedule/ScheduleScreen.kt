@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,7 +28,6 @@ import `in`.instea.instea.composable.CalendarComposable
 import `in`.instea.instea.composable.ScheduleList
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -68,16 +66,9 @@ fun ScheduleScreen(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(top = 24.dp)
         ) {
-           /* IconTextBtn(
-                onClick = {viewModel.onDateClick(uiState.selectedDateIndex) },
-                btnText = "Refresh",
-                btnIcon = Icons.Default.Refresh
-            )*/
-
             Spacer(modifier = Modifier.weight(1f))
-
             IconTextBtn(
-                onClick = { navigateToEditSchedule(0, uiState.selectedDay) },
+                onClick = { navigateToEditSchedule(-1, uiState.selectedDay) },
                 btnIcon = Icons.Default.Add,
                 btnText = "Add",
             )
@@ -86,14 +77,22 @@ fun ScheduleScreen(
         // schedule list
         ScheduleList(
             scheduleUiState = uiState,
-            onAttendanceClick = { scheduleId: Int, attendance ->
+            upsertAttendance = { scheduleId: Int, subjectId: Int, attendance ->
                 coroutineScope.launch {
-                    viewModel.upsertAttendance(attendance = attendance, scheduleId = scheduleId)
+                    viewModel.upsertAttendance(
+                        subjectId = subjectId,
+                        attendance = attendance,
+                        scheduleId = scheduleId
+                    )
                 }
             },
-            upsertTask = { scheduleId: Int, task: String ->
+            upsertTask = { scheduleId: Int, subjectId: Int, task: String? ->
                 coroutineScope.launch {
-                    viewModel.upsertTask(scheduleId = scheduleId, task = task)
+                    viewModel.upsertTask(
+                        scheduleId = scheduleId,
+                        subjectId = subjectId,
+                        task = task
+                    )
                 }
             },
             navigateToEditSchedule = { scheduleId: Int ->

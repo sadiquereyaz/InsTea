@@ -5,13 +5,13 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import `in`.`in`.instea.instea.screens.more.composable.taskModel
-import `in`.instea.instea.data.InsteaDatabase.Companion.clearDatabase
+import `in`.instea.instea.data.dao.InsteaDatabase.Companion.clearDatabase
 import `in`.instea.instea.data.repo.AccountService
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreUiState
+import `in`.instea.instea.screens.more.composable.TaskModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -64,10 +64,10 @@ class MoreViewModel(
         }
 
     }
-    fun onDeleteTaskClicked(taskModel: taskModel){
+    fun onDeleteTaskClicked(taskModel: TaskModel){
         viewModelScope.launch {
-            scheduleRepository.deleteTaskbyId(taskModel.scheduleId,taskModel.timestamp)
-            Log.d("View Model", "VIew Model delete task clicked  ")
+            scheduleRepository.deleteTaskById(scheduleId = taskModel.scheduleId, timeStamp =  taskModel.timestamp, subjectId = taskModel.subjectId)
+            Log.d("View Model", "VIew Model delete task clicked ${taskModel.scheduleId} ${taskModel.subjectId} ")
         }
         getAllTask()
     }

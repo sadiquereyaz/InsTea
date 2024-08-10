@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +27,7 @@ fun DayDateLayout(
     modifier: Modifier = Modifier
 ) {
     val dateModifier = Modifier
-        .clip(RoundedCornerShape(50))
+        .clip(CircleShape)
         .then(
             if (isSelected) {
                 Modifier
@@ -37,7 +38,7 @@ fun DayDateLayout(
                     .border(
                         2.dp,
                         color = MaterialTheme.colorScheme.primary,
-                        shape = RoundedCornerShape(50)
+                        shape = CircleShape
                     )
                     .padding(4.dp)
             } else {

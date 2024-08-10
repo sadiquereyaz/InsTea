@@ -50,23 +50,25 @@ data class SubjectAttendanceSummaryModel(
 
 @Entity(
     tableName = "schedule",
-    primaryKeys = ["subjectId", "day"]
 )
 data class ScheduleModel(
+    @PrimaryKey(autoGenerate = true)
+    val scheduleId: Int = 0,
     val subjectId: Int,
+    val subject: String,
     var startTime: LocalTime,
     var endTime: LocalTime,
-    var subject: String,
     var day: String = "",
     val dailyReminder: Boolean = false
 )
 
 @Entity(
     tableName = "taskAttendance",
-    primaryKeys = ["subjectId", "timestamp"]   //composite key
+    primaryKeys = ["scheduleId", "subjectId", "timestamp"]
 )
 data class TaskAttendanceModel(
-    val subjectId: Int, // Foreign key referencing ScheduleModel
+    val scheduleId: Int,    // Foreign key referencing ScheduleModel
+    val subjectId: Int,
     val timestamp: Int, // Timestamp to track the date
     var attendance: AttendanceType? = null,  // Task or note for the class on the specific date
     var task: String? = null,  // Task or note for the class on the specific date
@@ -81,6 +83,7 @@ data class SubjectModel(
 )
 
 data class CombinedScheduleTaskModel(
+    val scheduleId: Int,
     val subjectId: Int,
     val startTime: LocalTime,
     val endTime: LocalTime,
@@ -92,7 +95,6 @@ data class CombinedScheduleTaskModel(
     var task: String? = null,
     val taskReminder: Boolean? = false
 )
-
 class TimeConverters {
     private val formatter = DateTimeFormatter.ISO_LOCAL_TIME
 

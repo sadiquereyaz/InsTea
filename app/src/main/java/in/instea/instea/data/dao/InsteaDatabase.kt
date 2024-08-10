@@ -1,4 +1,4 @@
-package `in`.instea.instea.data
+package `in`.instea.instea.data.dao
 
 //import `in`.instea.instea.data.datamodel.RoomPostModel
 //import `in`.instea.instea.data.datamodel.ScheduleModel
@@ -7,8 +7,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import `in`.instea.instea.data.dao.PostDao
-import `in`.instea.instea.data.dao.ScheduleDao
 import `in`.instea.instea.data.datamodel.AttendanceTypeConverter
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.ScheduleModel
@@ -20,7 +18,7 @@ import kotlinx.coroutines.withContext
 
 @Database(
     entities = [PostData::class, ScheduleModel::class, TaskAttendanceModel::class, SubjectModel::class],
-    version = 23, exportSchema = false
+    version = 30, exportSchema = false
 )
 @TypeConverters(TimeConverters::class, AttendanceTypeConverter::class)
 abstract class InsteaDatabase : RoomDatabase() {

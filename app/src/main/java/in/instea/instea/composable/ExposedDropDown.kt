@@ -33,13 +33,13 @@ fun ExposedDropDown(
     modifier: Modifier = Modifier,
     value: String = "value",
     options: List<Any> = listOf("opt 1", "opt 2", "opt 3"),
-    addButton: Boolean = true,
     label: String = "",
     onOptionSelect: (Any) -> Unit,
     errorMessage: String? = null,
 //    readOnly: Boolean = true,
     onAddClick: () -> Unit = {},
     isError: Boolean = !errorMessage.isNullOrBlank(),
+    addBtnTxt: String? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
 //    var readOnly by remember { mutableStateOf(true) }
@@ -107,15 +107,15 @@ fun ExposedDropDown(
                         )
                     }
                 }
-                if (addButton) {
+                if (addBtnTxt != null) {
                     DropdownMenuItem(
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.AddCircleOutline,
-                                contentDescription = "Add Manually"
+                                contentDescription = addBtnTxt
                             )
                         },
-                        text = { Text("Add Manually") },
+                        text = { Text(addBtnTxt) },
                         onClick = {
                             expanded = !expanded
 //                            readOnly = false

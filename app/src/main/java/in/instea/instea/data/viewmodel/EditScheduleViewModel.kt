@@ -23,8 +23,8 @@ class EditScheduleViewModel(
     val uiState: StateFlow<EditScheduleUiState> = _uiState
 
     //    private val currentSchedule: ScheduleModel = checkNotNull(savedStateHandle["scheduleModel"])
-    private val day: String = checkNotNull(savedStateHandle[EditScheduleDestination.DAY_ARG])
-    private val subjectId: Int = checkNotNull(savedStateHandle[EditScheduleDestination.ID_ARG])
+    private val argDay: String = checkNotNull(savedStateHandle[EditScheduleDestination.DAY_ARG])
+    private val argSchId: Int = checkNotNull(savedStateHandle[EditScheduleDestination.ID_ARG])
 
     init {
         fetchInitialInfo()
@@ -32,32 +32,35 @@ class EditScheduleViewModel(
 
     private fun fetchInitialInfo() {
         viewModelScope.launch {
-//            _uiState.value = _uiState.value.copy(isLoading = true)
+            _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                if (subjectId != 0) {
-                    val scheduleDetail = scheduleRepository.getCurrentSchedule(subjectId, day)
+                if (argSchId > -1) {
+                    // editable schedule
+                    val scheduleDetail = scheduleRepository.getScheduleById(argSchId)
                     _uiState.update {
                         it.copy(
                             selectedSubject = scheduleDetail.subject,
-                            subjectId = subjectId,
+                            scheduleId = argSchId,
+                            subjectId = scheduleDetail.subjectId,
+                            subject = scheduleDetail.subject,
 //                            selectedDay = day,
                             startTime = scheduleDetail.startTime,
                             endTime = scheduleDetail.endTime,
                         )
                     }
                 } else {
+                    // new schedule
                     _uiState.update {
                         it.copy(
                             editScreenType = EditScreenType.AddScheduleScreen
                         )
                     }
                 }
+                // default requirement
                 scheduleRepository.getAllSubjectFlow().collect { subjects ->
                     _uiState.value = _uiState.value.copy(
                         subjectModelList = subjects,        //for dropdown
-//                    selectedSubject = day,
-                        selectedDay = day,
-                        subjectId = subjectId,
+                        selectedDay = argDay,
                         isLoading = false
                     )
                 }
@@ -67,13 +70,17 @@ class EditScheduleViewModel(
         }
     }
 
-    fun onSubjectSelected(subject: SubjectModel) {
-        _uiState.update { it.copy(selectedSubject = subject.subject, subjectId = subject.subjectId) }
+    fun onSubjectSelected(sub: SubjectModel) {
+        _uiState.update { it.copy(selectedSubject = sub.subject, subjectId = sub.subjectId) }
     }
 
     suspend fun addSubject(subject: String) {
-        _uiState.value.selectedSubject = subject
-        scheduleRepository.upsertSubject(subject)
+        _uiState.update {
+            it.copy(
+                selectedSubject = subject,
+                subjectId = scheduleRepository.upsertSubject(subject).toInt()
+            )
+        }
     }
 
     fun onDaySelected(day: String) {
@@ -98,18 +105,19 @@ class EditScheduleViewModel(
             _uiState.update {
                 it.copy(
                     isLoading = false,
-                    subjectError = "Subject can't be black!"
+                    subjectError = "Subject can't be blank!"
                 )
             }
             return false
         }
-        val conflictError = checkTimeConflict(startTime, endTime, day, subjectId)
+        val conflictError = checkTimeConflict(startTime, endTime, day, uiStateValue.scheduleId)
         if (conflictError.isNullOrBlank()) {
             // no conflict
             scheduleRepository.upsertSchedule(
                 ScheduleModel(
+                    scheduleId = uiStateValue.scheduleId,
                     subjectId = uiStateValue.subjectId,
-                    subject =  uiStateValue.selectedSubject,
+                    subject = uiStateValue.selectedSubject,
                     startTime = startTime,
                     endTime = endTime,
                     day = day
@@ -119,7 +127,8 @@ class EditScheduleViewModel(
             return true
         } else {
             _uiState.value = _uiState.value.copy(
-                errorMessage = "Time Conflict with $conflictError on ${_uiState.value.selectedDay}",
+//                errorMessage = "Time Conflict with $conflictError on ${_uiState.value.selectedDay}",
+                errorMessage = conflictError,
                 isLoading = false
             )
             showSnackBar()
@@ -130,7 +139,10 @@ class EditScheduleViewModel(
     suspend fun onDeleteClick() {
         viewModelScope.launch {
             _uiState.value.isLoading = true
-            scheduleRepository.deleteScheduleById(id = subjectId)
+            scheduleRepository.deleteScheduleById(
+                uiState.value.scheduleId,
+                uiState.value.selectedDay
+            )
         }
     }
 
@@ -144,24 +156,20 @@ class EditScheduleViewModel(
         day: String,
         currentScheduleId: Int
     ): String? {
-        val daySchedulesList = scheduleRepository.getAllScheduleByDay(day)
         if (startTime >= endTime) return "Start time cannot be greater than or equal to end time"
-
+        val daySchedulesList = scheduleRepository.getAllScheduleByDay(day)
         val conflictingSchedule = daySchedulesList.firstOrNull { schedule ->
             val sT = startTime.plusMinutes(1)
             val eT = endTime.minusMinutes(1)
-//            Log.d("ID", schedule.scheduleId.toString())
             // Exclude the current schedule
-            schedule.subjectId != currentScheduleId &&
-                    ((sT in schedule.startTime..schedule.endTime) ||
-                            (eT in schedule.startTime..schedule.endTime) ||
-                            (sT <= schedule.startTime && endTime >= schedule.endTime))
+            schedule.scheduleId != currentScheduleId &&
+                    (
+                            (sT in schedule.startTime..schedule.endTime) ||
+                                    (eT in schedule.startTime..schedule.endTime) ||
+                                    (sT <= schedule.startTime && endTime >= schedule.endTime)
+                    )
         }
-        return conflictingSchedule?.subject
-    }
-
-    fun onAddClick() {
-//        _uiState.value.readOnly = false
-        _uiState.update { it.copy(readOnly = !_uiState.value.readOnly) }
+//        return conflictingSchedule?.subject
+        return if(conflictingSchedule == null) null else "Time Conflict with ${conflictingSchedule.subject} on $day"
     }
 }

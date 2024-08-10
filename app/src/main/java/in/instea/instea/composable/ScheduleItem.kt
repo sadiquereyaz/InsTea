@@ -60,7 +60,7 @@ fun ScheduleItem(
     onAttendanceClick: (AttendanceType) -> Unit,
     repeatReminderSwitchAction: (subject: String, repeat: Boolean) -> Unit,
     reminderOn: Boolean,
-    upsertTask: (String)->Unit
+    upsertTask: (String?)->Unit
 ) {
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     var skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
@@ -87,7 +87,8 @@ fun ScheduleItem(
             horizontalAlignment = Alignment.End
         ) {
             //time
-            Text(text = scheduleObj.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 14.sp)
+            Text(text = scheduleObj.timestamp.toString(), fontSize = 14.sp)
+//            Text(text = scheduleObj.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 14.sp)
             Text(text = scheduleObj.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 10.sp)
         }
         //bubble and vertical line
@@ -160,7 +161,7 @@ fun ScheduleItem(
                 Text(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
-                    text = scheduleObj.subject?:"",
+                    text = "${scheduleObj.subject}-${scheduleObj.scheduleId}",
                     fontWeight = FontWeight.Bold, fontSize = 20.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

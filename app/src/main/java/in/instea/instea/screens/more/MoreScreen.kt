@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import `in`.`in`.instea.instea.screens.more.composable.AllTask
 import `in`.`in`.instea.instea.screens.more.composable.classmates
 import `in`.instea.instea.composable.Loader
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
@@ -45,6 +44,7 @@ import `in`.instea.instea.data.viewmodel.MoreViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.navigation.NavigationDestinations
 import `in`.instea.instea.screens.more.composable.AccountComp
+import `in`.instea.instea.screens.more.composable.AllTask
 import `in`.instea.instea.screens.more.composable.AttendanceComp
 import `in`.instea.instea.screens.more.composable.Developers
 import `in`.instea.instea.screens.more.composable.report
@@ -180,7 +180,6 @@ fun ExpandableItem(
                         AllTask(uiState=uiState,
                             onDeleteTask = {task->
                                 viewModel.onDeleteTaskClicked(task)
-
                             })
                     }
 

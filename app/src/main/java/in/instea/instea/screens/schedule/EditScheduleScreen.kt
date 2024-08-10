@@ -90,13 +90,14 @@ fun EditScheduleScreen(
                         viewModel.onSubjectSelected(subject as SubjectModel)
                     },
                     errorMessage = uiState.subjectError,
-                    onAddClick = { showPopUp = true }
+                    onAddClick = { showPopUp = true },
+                    addBtnTxt = "Add New Subject"
                 )
                 // day
                 ExposedDropDown(
                     value = uiState.selectedDay,
                     options = uiState.dayList,
-                    addButton = false,
+//                    addButton = false,
                     label = "Day",
                     onOptionSelect = {option->
                         viewModel.onDaySelected(option as String)
@@ -158,7 +159,7 @@ fun EditScheduleScreen(
                             }
                         }
                     },
-                    isEnabled = uiState.selectedSubject.isNotBlank() && uiState.subjectError.isNullOrBlank() && uiState.errorMessage.isNullOrBlank()
+                    isEnabled = uiState.selectedSubject.isNotBlank() && uiState.subjectError.isNullOrBlank()/* && uiState.errorMessage.isNullOrBlank()*/
                 )
             }
         }

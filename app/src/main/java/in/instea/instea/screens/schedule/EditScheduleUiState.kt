@@ -9,6 +9,9 @@ data class EditScheduleUiState(
     var endTime: LocalTime = startTime.plusHours(1),
     val subjectModelList: List<SubjectModel> = listOf(),
     var subjectId: Int = 0,
+    var subject: String = "",
+
+    var scheduleId: Int = 0,
 
     var selectedSubject: String = "",
     var subjectError: String? = null,
