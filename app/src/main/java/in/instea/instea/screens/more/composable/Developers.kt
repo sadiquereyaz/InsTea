@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -21,10 +24,13 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +43,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Developers(modifier: Modifier = Modifier) {
 
@@ -58,25 +67,39 @@ fun Developers(modifier: Modifier = Modifier) {
             R.drawable.dp
         )
     )
-    Box(
-        modifier = modifier.padding(16.dp)
-    ){
-        LazyRow(
-            modifier = Modifier
-                .clip(RoundedCornerShape(8.dp)),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(developers.size) { index ->
-                DeveloperItem(developer = developers[index])
+
+
+
+    val listState = rememberLazyListState()
+    var currentDeveloperIndex by remember { mutableStateOf(0) }
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1500) // Adjust delay for time between item changes
+            coroutineScope.launch {
+                // Scroll to the next item
+                currentDeveloperIndex = (currentDeveloperIndex+1) % developers.size
+
             }
         }
+    }
+
+
+    Box(
+        modifier = modifier.padding(16.dp)
+    ) {
+
+
+                DeveloperItem(developer = developers[currentDeveloperIndex])
+
+
     }
 }
 
 data class DeveloperModel(
     val name: String,
     val userId: String,
-    val image: Int
+    val image: Int,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,12 +111,12 @@ fun DeveloperItem(developer: DeveloperModel) {
     Card(
         modifier = Modifier
             .height(height = 190.dp)
-            .width(width = 170.dp),
+            .fillMaxWidth(),
         onClick = {
             showDialog = true
         },
 
-    ) {
+        ) {
         Column(
             modifier = Modifier
 //                .padding(16.dp)

@@ -107,4 +107,7 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)    // data store
     implementation(libs.androidx.constraintlayout)
     implementation (libs.android.lottie.compose)
+//    for swiping
+    implementation ("me.saket.swipe:swipe:1.3.0")
+
 }

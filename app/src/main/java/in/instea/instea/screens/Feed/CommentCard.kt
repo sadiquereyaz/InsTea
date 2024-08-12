@@ -84,7 +84,8 @@ fun CommentCard(comment: Comments, post: PostData) {
                         Text(
                             text = "location",
                             fontSize = 14.sp,
-                            fontWeight = FontWeight.Light
+                            fontWeight = FontWeight.Light,
+
                         )
 
                         val displayText = if (isExpanded) comment.comment
@@ -113,11 +114,11 @@ fun CommentCard(comment: Comments, post: PostData) {
 
 
 
-                Spacer(modifier = Modifier.weight(1f))
+//                Spacer(modifier = Modifier.weight(1f))
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().padding(start = 30.dp)
                 ) {
 
                     UpAndDownVoteButtonsForComment(comment, post, showReply) { isVisible ->

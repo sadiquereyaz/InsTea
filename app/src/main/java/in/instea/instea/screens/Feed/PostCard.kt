@@ -1,9 +1,13 @@
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +26,10 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.ripple.rememberRipple
@@ -52,6 +59,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -64,9 +72,12 @@ import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.navigation.InsteaScreens
+import `in`.instea.instea.ui.theme.backgroundDark
 //import `in`.instea.instea.screens.Feed.CommentList
 
 import kotlinx.coroutines.launch
+import me.saket.swipe.SwipeAction
+import me.saket.swipe.SwipeableActionsBox
 
 @Composable
 fun PostCard(
@@ -74,6 +85,10 @@ fun PostCard(
     feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavController,
     userList: List<User>,
+    index: Int,
+    isVisible: Boolean,
+    onClose: () -> Unit,
+    onSwiped: () -> Unit,
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     var showComments by remember { mutableStateOf(false) } // State for showing/hiding CommentCard
@@ -89,194 +104,182 @@ fun PostCard(
         }
     }
     var userName = user.username
-    Box(
-        modifier = Modifier
-            .padding(start = 3.dp, end = 3.dp, bottom = 0.dp)
-            .background(MaterialTheme.colorScheme.background)
-    ) {
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(8.dp)
+    Box {
+        Box(
+            modifier = Modifier
+                .pointerInput(Unit) { detectTapGestures { if (isVisible) onClose() } }
+                .padding(start = 3.dp, end = 3.dp, bottom = 0.dp)
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        navController.navigate(InsteaScreens.OtherProfile.name + "/${if (user.userId != null) user.userId else " "}")
-//                        navController.navigate(InsteaScreens.Inbox.name+"/${post.postedByUser}")
-                    }
+
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(8.dp)
             ) {
-                (if (post.profileImage != null) post.profileImage
-                else R.drawable.ic_launcher_foreground)?.let {
-                    Image(
-                        painter = painterResource(id = it),
-                        modifier = Modifier
-                            .size(50.dp)
-                            .clip(CircleShape)
-                            .background(Color.Black)
-                            .clickable { /* Handle click */ },
-                        contentDescription = "Profile"
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .wrapContentHeight(),
-                        horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.Top
-                    ) {
-
-                        if (post.isAnonymous)
-                            userName = "UnderCover"
-                        Text(
-                            text = if (userName != null) {
-                                userName!!
-                            } else "",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-
-                            )
-
-                        Text(
-                            text = post.timestamp.format(),
-                            fontSize = 8.sp,
-                            fontWeight = FontWeight.Thin,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            navController.navigate(InsteaScreens.OtherProfile.name + "/${if (user.userId != null) user.userId else " "}")
+//                        navController.navigate(InsteaScreens.Inbox.name+"/${post.postedByUser}")
+                        }
+                ) {
+                    (if (post.profileImage != null) post.profileImage
+                    else R.drawable.ic_launcher_foreground)?.let {
+                        Image(
+                            painter = painterResource(id = it),
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape)
+                                .background(Color.Black)
+                                .clickable { /* Handle click */ },
+                            contentDescription = "Profile"
                         )
-                    }
 
-                    Spacer(modifier = Modifier.weight(1f)) // This pushes the Box to the end
+                        Column(
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .wrapContentHeight(),
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.Top
+                        ) {
 
-                    Box(
-                        modifier = Modifier.padding(end = 8.dp),
-                        contentAlignment = Alignment.TopEnd
-                    ) {
-                        IconButton(onClick = { expandDropdown = true }) {
-                            Icon(Icons.Default.MoreVert, contentDescription = "More")
+                            if (post.isAnonymous)
+                                userName = "UnderCover"
+                            Text(
+                                text = if (userName != null) {
+                                    userName!!
+                                } else "",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+
+                                )
+
+                            Text(
+                                text = post.timestamp.format(),
+                                fontSize = 8.sp,
+                                fontWeight = FontWeight.Thin,
+                            )
                         }
 
-                        DropdownMenu(
-                            modifier = Modifier.height(100.dp),
-                            expanded = expandDropdown,
-                            onDismissRequest = { expandDropdown = false }) {
-                            moreList.forEach { type ->
-                                if (
-                                    feedViewModel.currentuser == post.postedByUser
-                                    && type != "Report"
-                                ) {
-                                    DropdownMenuItem(
-                                        text = { Text(type) },
-                                        onClick = {
-                                            if (type == "Delete") {
-                                                feedViewModel.DeletePost(post)
-                                            }
-                                            if (type == "Edit") {
-                                                navController.navigate(InsteaScreens.EditPost.name + "/${post.postid}")
-                                            }
-                                            expandDropdown = false // Close the dropdown menu
-                                        }
-                                    )
+                        Spacer(modifier = Modifier.weight(1f)) // This pushes the Box to the end
 
-                                } else if (
-                                    feedViewModel.currentuser != post.postedByUser &&
-                                    type != "Edit" && type != "Delete"
-                                ) {
-                                    DropdownMenuItem(
-                                        text = { Text(type) },
-                                        onClick = {
-                                            expandDropdown = false // Close the dropdown menu
-                                        }
-                                    )
+                        Box(
+                            modifier = Modifier.padding(end = 8.dp),
+                            contentAlignment = Alignment.TopEnd
+                        ) {
+                            IconButton(onClick = { expandDropdown = true }) {
+                                Icon(Icons.Default.MoreVert, contentDescription = "More")
+                            }
+
+                            DropdownMenu(
+                                modifier = Modifier.height(100.dp),
+                                expanded = expandDropdown,
+                                onDismissRequest = { expandDropdown = false }) {
+                                moreList.forEach { type ->
+                                    if (
+                                        feedViewModel.currentuser == post.postedByUser
+                                        && type != "Report"
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text(type) },
+                                            onClick = {
+                                                if (type == "Delete") {
+                                                    feedViewModel.DeletePost(post)
+                                                }
+                                                if (type == "Edit") {
+                                                    navController.navigate(InsteaScreens.EditPost.name + "/${post.postid}")
+                                                }
+                                                expandDropdown = false // Close the dropdown menu
+                                            }
+                                        )
+
+                                    } else if (
+                                        feedViewModel.currentuser != post.postedByUser &&
+                                        type != "Edit" && type != "Delete"
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text(type) },
+                                            onClick = {
+                                                expandDropdown = false // Close the dropdown menu
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
 
-            // Post Description
-            Column(
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier.padding(8.dp)
-            ) {
-                val displayText = if (isExpanded) post.postDescription!!
-                else post.postDescription?.take(100)
-                Text(text = displayText!!, modifier = Modifier.padding(2.dp))
-                if (post.postDescription?.length!! > 100) {
-                    TextButton(onClick = { isExpanded = !isExpanded }) {
-                        Text(text = if (isExpanded) "Show Less" else "Read More", fontSize = 12.sp)
+                // Post Description
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    val displayText = if (isExpanded) post.postDescription!!
+                    else post.postDescription?.take(100)
+                    Text(text = displayText!!, modifier = Modifier.padding(2.dp))
+                    if (post.postDescription?.length!! > 100) {
+                        TextButton(onClick = { isExpanded = !isExpanded }) {
+                            Text(
+                                text = if (isExpanded) "Show Less" else "Read More",
+                                fontSize = 12.sp
+                            )
+                        }
                     }
+                    if (post.edited) {
+                        Text(
+                            text = "Edited",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Light,
+                            modifier = Modifier
+                                .padding(2.dp)
+                                .align(Alignment.Start)
+                        )
+                    }
+
                 }
-                if (post.edited) {
-                    Text(
-                        text = "Edited",
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Light,
-                        modifier = Modifier
-                            .padding(2.dp)
-                            .align(Alignment.Start)
+
+                // Post Image
+                if (post.postImage != null) {
+                    Image(
+                        painter = painterResource(id = post.postImage!!),
+                        contentDescription = "Post Image"
                     )
                 }
 
-            }
+                // Comment Button and Up/Down Vote Buttons
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
 
-            // Post Image
-            if (post.postImage != null) {
-                Image(
-                    painter = painterResource(id = post.postImage!!),
-                    contentDescription = "Post Image"
-                )
-            }
-
-            // Comment Button and Up/Down Vote Buttons
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
-                Box(contentAlignment = Alignment.BottomStart) {
-                    Button(
-                        onClick = {
-                            feedViewModel.inserLocal(post)
-                            post.saved = !post.saved
-                        },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Transparent,
-                            contentColor = Color.Unspecified
-                        ),
-                        modifier = Modifier.padding(0.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (post.saved) Icons.Filled.Bookmark else Icons.Outlined.Bookmark,
-                            contentDescription = "",
-                            modifier = Modifier.size(20.dp)
-                        )
+                    UpAndDownVoteButtons(post, showComments,isVisible = isVisible, onSwiped = onSwiped) { isVisible ->
+                        showComments = isVisible
                     }
+
                 }
 
-                UpAndDownVoteButtons(post, showComments) { isVisible ->
-                    showComments = isVisible
-                }
             }
-
         }
+
     }
     Divider(
         Modifier
             .height(1.dp)
             .fillMaxWidth()
     )
-    if (showComments) {
-        CommentList(post, feedViewModel)
-    }
+//    if (showComments) {
+//        CommentList(post, feedViewModel)
+//    }
 }
 
 
 @Composable
-fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: (Boolean) -> Unit) {
+fun UpAndDownVoteButtons(post: PostData, showComments: Boolean,isVisible: Boolean,onSwiped: () -> Unit, onCommentClick: (Boolean) -> Unit,) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }
     val isDownVoted = rememberSaveable { mutableStateOf(false) }
     val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -289,7 +292,60 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
         mutableStateOf(post.userLikedCurrentPost.contains(feedViewModel.currentuser))
     }
 
+    Box(contentAlignment = Alignment.BottomStart){
+        SwipeableActionsBox(
+            startActions = listOf(
+                SwipeAction(
+                    onSwipe = onSwiped,
+                    icon =  {
+                        Icon(painter = painterResource(id = R.drawable.chatbubble), contentDescription = null ,)
+                    },
+                    background = MaterialTheme.colorScheme.onBackground
+                )
+            ),
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(8.dp)
+        ) {
+           if(!isVisible) Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
+        else Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
 
+        }
+        androidx.compose.animation.AnimatedVisibility(
+            visible = isVisible,
+            enter = slideInHorizontally(
+                initialOffsetX = { -it }, // Slide in from the left
+
+            ),
+            exit = slideOutHorizontally(
+                targetOffsetX = { -it }, // Slide out to the right
+
+            )
+        ) {
+            CommentList(post = post, feedViewModel = feedViewModel)
+        }
+
+    }
+
+    Box(contentAlignment = Alignment.BottomStart) {
+        Button(
+            onClick = {
+                feedViewModel.inserLocal(post)
+                post.saved = !post.saved
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = Color.Unspecified
+            ),
+            modifier = Modifier.padding(0.dp)
+        ) {
+            Icon(
+                imageVector = if (post.saved) Icons.Filled.Bookmark else Icons.Outlined.Bookmark,
+                contentDescription = "",
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    }
     Box(
         contentAlignment = Alignment.BottomEnd,
         modifier = Modifier.padding(3.dp, end = 5.dp)
@@ -299,34 +355,34 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean, onCommentClick: 
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.padding(8.dp)// Custom spacing between elements
         ) {
-
-            Button(
-
-
-                onClick = {
-                    onCommentClick(!showComments) // Toggle comment visibility
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = Color.Unspecified
-
-                ),
-                modifier = Modifier
-                    .indication(indication = rememberRipple(
-                        bounded = true,
-                        color = Color.LightGray
-                    ), interactionSource = remember {
-                        MutableInteractionSource()
-                    })
-                    .align(Alignment.CenterVertically)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.chatbubble),
-                    contentDescription = "comment",
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+//
+//            Button(
+//
+//
+//                onClick = {
+//                    onCommentClick(!showComments) // Toggle comment visibility
+//                },
+//                colors = ButtonDefaults.buttonColors(
+//                    containerColor = Color.Transparent,
+//                    contentColor = Color.Unspecified
+//
+//                ),
+//                modifier = Modifier
+//                    .indication(indication = rememberRipple(
+//                        bounded = true,
+//                        color = Color.LightGray
+//                    ), interactionSource = remember {
+//                        MutableInteractionSource()
+//                    })
+//                    .align(Alignment.CenterVertically)
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.chatbubble),
+//                    contentDescription = "comment",
+//                    modifier = Modifier.size(20.dp),
+//                    tint = MaterialTheme.colorScheme.onBackground
+//                )
+//            }
 
             Card(
                 modifier = Modifier
