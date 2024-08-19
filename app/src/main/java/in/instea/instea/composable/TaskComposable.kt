@@ -54,9 +54,9 @@ fun TaskComposable(
         rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
     val roomTask = scheduleObj.task
     var task by rememberSaveable { mutableStateOf(roomTask) }
-    var isReminderOn by rememberSaveable { mutableStateOf(scheduleObj.taskReminderBefore > 0) }
+    var isReminderOn by rememberSaveable { mutableStateOf(/*scheduleObj.taskReminderBefore > 0*/false) }
     var isSwitchVisible by rememberSaveable { mutableStateOf(!task.isNullOrBlank()) }
-    var remindBefore by rememberSaveable { mutableIntStateOf(2) }
+    var remindBefore by rememberSaveable { mutableIntStateOf(18) }
 
     LaunchedEffect(roomTask) {
         task = roomTask

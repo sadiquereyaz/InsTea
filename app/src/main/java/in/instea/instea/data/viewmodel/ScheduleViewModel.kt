@@ -1,8 +1,10 @@
 package `in`.instea.instea.data.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.AttendanceType
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.DayDateModel
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.data.repo.TaskReminderRepository
@@ -123,14 +125,26 @@ class ScheduleViewModel(
             taskReminderBefore = taskReminderBefore
         )
     }
-
     fun scheduleReminder(
         task: String = "This is dummy task",
-        duration: Long = 5,
+        remindBefore: Int = 5,
         unit: TimeUnit = TimeUnit.SECONDS,       //TODO: change to hour
-        reminderKey: String
+        scheduleObj: CombinedScheduleTaskModel
     ) {
-        workManagerTaskRepository.scheduleTaskReminder(task, duration, unit, taskKey = reminderKey)
+        val reminderKey = "${scheduleObj.scheduleId}${scheduleObj.subjectId}${scheduleObj.timestamp}"
+        if (remindBefore !=0) {
+            workManagerTaskRepository.scheduleTaskReminder(
+                task,
+                remindBefore.toLong(),
+                unit,
+                taskKey = reminderKey,
+                scheduleObj
+            )
+        }else{
+            // cancel reminder
+            Log.d("CANCEL_REMINDER", "cancel reminder")
+            cancelReminder(reminderKey)
+        }
     }
 
     fun cancelReminder(

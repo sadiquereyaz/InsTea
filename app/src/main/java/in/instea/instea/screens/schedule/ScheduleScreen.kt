@@ -1,6 +1,5 @@
 package `in`.instea.instea.screens.schedule
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.composable.CalendarComposable
 import `in`.instea.instea.composable.ScheduleList
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import kotlinx.coroutines.launch
@@ -80,7 +80,7 @@ fun ScheduleScreen(
             navigateToEditSchedule = { scheduleId: Int ->
                 navigateToEditSchedule(scheduleId, uiState.selectedDay)
             },
-            scheduleUiState = uiState,
+            uiState = uiState,
             upsertAttendance = { scheduleId: Int, subjectId: Int, attendance ->
                 coroutineScope.launch {
                     viewModel.upsertAttendance(
@@ -100,18 +100,14 @@ fun ScheduleScreen(
                     )
                 }
             },
-            onScheduleReminder = { reminderKey: String, task: String?, hour: Int ->
-                if (hour != 0) {
+            onScheduleReminder = { scheduleModel: CombinedScheduleTaskModel, task: String?, hour: Int ->
+
                     viewModel.scheduleReminder(
                         task = task!!,
-                        duration = hour.toLong(),
-                        reminderKey = reminderKey
+                        remindBefore = hour,
+                        scheduleObj = scheduleModel
                     )
-                } else {
-                    // cancel reminder
-                    Log.d("CANCEL_REMINDER", "cancel reminder")
-                    viewModel.cancelReminder(reminderKey)
-                }
+
             },
         )
     }

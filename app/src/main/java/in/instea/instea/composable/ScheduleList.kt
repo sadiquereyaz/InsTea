@@ -1,6 +1,5 @@
 package `in`.instea.instea.composable
 
-import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -9,15 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import `in`.instea.instea.data.datamodel.AttendanceType
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.screens.schedule.ScheduleUiState
 
 @Composable
 fun ScheduleList(
     navigateToEditSchedule: (Int) -> Unit = {},
-    scheduleUiState: ScheduleUiState,
+    uiState: ScheduleUiState,
     upsertAttendance: (Int, Int, AttendanceType) -> Unit,
     upsertTask: (Int, Int, String?, Int) -> Unit,
-    onScheduleReminder: (String, String?, Int) -> Unit,
+    onScheduleReminder: (CombinedScheduleTaskModel, String?, Int) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -25,7 +25,7 @@ fun ScheduleList(
             .padding(top = 16.dp)
     ) {
 //        Log.d("LIST", scheduleUiState.scheduleList.toString() ) // correct list
-        items(items = scheduleUiState.scheduleList) { scheduleModel ->
+        items(items = uiState.scheduleList) { scheduleModel ->
 //            Log.d("CURRENT_TASK", "subject name: ${scheduleModel.subject} \ntask: ${scheduleModel.task}")
             ScheduleItem(
                 scheduleObj = scheduleModel,
@@ -34,9 +34,8 @@ fun ScheduleList(
                     upsertAttendance(scheduleModel.scheduleId, scheduleModel.subjectId, attendanceType)
                 },
                 upsertTask = {task, remindBefore->
-                    Log.d("SCHEDULE_LIST", "upsert executed $remindBefore")
                     upsertTask(scheduleModel.scheduleId, scheduleModel.subjectId, task, remindBefore)
-                    onScheduleReminder("${scheduleModel.scheduleId}${scheduleModel.subjectId}${scheduleModel.timestamp}", task, remindBefore)
+                    onScheduleReminder(scheduleModel.copy(timestamp = uiState.timestamp), task, remindBefore)
                 },
                 repeatReminderSwitchAction = { subName, repeat ->
 //                        viewModel.modifySubjectInRepeatReminderList(
