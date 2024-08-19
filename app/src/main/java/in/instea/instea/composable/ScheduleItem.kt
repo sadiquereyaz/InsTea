@@ -42,11 +42,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -60,7 +63,7 @@ fun ScheduleItem(
     onAttendanceClick: (AttendanceType) -> Unit,
     repeatReminderSwitchAction: (subject: String, repeat: Boolean) -> Unit,
     reminderOn: Boolean,
-    upsertTask: (String?)->Unit
+    upsertTask: (String?, Int)->Unit
 ) {
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     var skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
@@ -70,11 +73,11 @@ fun ScheduleItem(
 //    Log.d("TASK_EACH", scheduleModel.task.toString())     //correct
 
     var obj by remember { mutableStateOf(scheduleObj) }
-    Log.d("ATTENDANCE_OBJ", "ScheduleObj Attendance: ${scheduleObj.attendance} date: ${(scheduleObj.timestamp)?.rem(100)}")
-    Log.d("ATTENDANCE_Muta", "Local Attendance: ${scheduleObj.attendance} date: ${(obj.timestamp)?.rem(100)}")
+//    Log.d("ATTENDANCE_OBJ", "ScheduleObj Attendance: ${scheduleObj.attendance} date: ${(scheduleObj.timestamp)?.rem(100)}")
+//    Log.d("ATTENDANCE_Muta", "Local Attendance: ${scheduleObj.attendance} date: ${(obj.timestamp)?.rem(100)}")
 
     LaunchedEffect(scheduleObj.attendance) {
-        Log.d("ATTENDANCE_OBJ_UPDATE", "Updated scheduleObj: ${scheduleObj.attendance} date: ${(scheduleObj.timestamp)?.rem(100)}")
+//        Log.d("ATTENDANCE_OBJ_UPDATE", "Updated scheduleObj: ${scheduleObj.attendance} date: ${(scheduleObj.timestamp)?.rem(100)}")
         obj = scheduleObj
     }
 
@@ -87,8 +90,7 @@ fun ScheduleItem(
             horizontalAlignment = Alignment.End
         ) {
             //time
-            Text(text = scheduleObj.timestamp.toString(), fontSize = 14.sp)
-//            Text(text = scheduleObj.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 14.sp)
+            Text(text = scheduleObj.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 14.sp)
             Text(text = scheduleObj.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 10.sp)
         }
         //bubble and vertical line
@@ -161,7 +163,7 @@ fun ScheduleItem(
                 Text(
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
-                    text = "${scheduleObj.subject}-${scheduleObj.scheduleId}",
+                    text = "${scheduleObj.subject}",
                     fontWeight = FontWeight.Bold, fontSize = 20.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -225,8 +227,9 @@ fun ScheduleItem(
             }
         )
     }
+
     //bottom sheet
-    if (openBottomSheet) {
+    /*if (openBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { openBottomSheet = false },
             sheetState = bottomSheetState,
@@ -239,20 +242,22 @@ fun ScheduleItem(
 
             // Reminder Switch
             Column {
-                Switch(
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .padding(start = 16.dp),
-                    checked = isReminderOn,
-                    onCheckedChange = { isReminderOn = it },
-                    thumbContent = {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = null,
-                            modifier = Modifier.size(12.dp)
-                        )
-                    }
-                )
+                if (task != null){
+                    Switch(
+                        modifier = Modifier
+                            .align(Alignment.Start)
+                            .padding(start = 16.dp),
+                        checked = isReminderOn,
+                        onCheckedChange = { isReminderOn = it },
+                        thumbContent = {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = null,
+                                modifier = Modifier.size(12.dp)
+                            )
+                        }
+                    )
+                }
 
                 // Checkboxes (visible only if reminder is on)
                 if (isReminderOn) {
@@ -319,6 +324,33 @@ fun ScheduleItem(
                 }
             }
         }
-    }
+    }*/
 }
 
+@Preview(showBackground = true)
+@Composable
+fun PreviewScheduleItem() {
+
+    /*ScheduleItem(
+        scheduleObj = CombinedScheduleTaskModel(
+            scheduleId = 1,
+            subjectId = 101,
+            startTime = LocalTime.of(9, 0),  // 9:00 AM
+            endTime = LocalTime.of(10, 0),   // 10:00 AM
+            day = "Monday",
+            dailyReminder = true,
+            timestamp = 1234567890,
+            subject = "Mathematics",
+            attendance = AttendanceType.MarkAttendance,
+            task = "Complete Chapter 5",
+            taskReminder = true
+        ),
+        isBubbleFilled = true,
+        onReminderClick = { *//* Handle reminder click *//* },
+        onEditClick = { *//* Handle edit click *//* },
+        onAttendanceClick = { *//* Handle attendance click *//* },
+        repeatReminderSwitchAction = { subject, repeat -> *//* Handle reminder switch action *//* },
+        remin = true,
+        upsertTask = { *//* Handle upsert task *//* }
+    )*/
+}

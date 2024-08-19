@@ -107,4 +107,5 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)    // data store
     implementation(libs.androidx.constraintlayout)
     implementation (libs.android.lottie.compose)
+    implementation(libs.androidx.work.runtime.ktx)  //workManager
 }

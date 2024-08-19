@@ -14,7 +14,14 @@ import kotlinx.coroutines.flow.Flow
 interface ScheduleRepository {
 
     suspend fun getScheduleAndTaskList(day: String, timeStamp: Int): List<CombinedScheduleTaskModel>
-    suspend fun upsertTask(task: String?, subjectId: Int, timeStamp: Int, scheduleId: Int)
+    suspend fun upsertTask(
+        task: String?,
+        subjectId: Int,
+        timeStamp: Int,
+        scheduleId: Int,
+        taskReminderBefore: Int
+    )
+
     suspend fun upsertAttendance(
         attendance: AttendanceType,
         subjectId: Int,
@@ -42,22 +49,35 @@ class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRe
     ): List<CombinedScheduleTaskModel> =
         scheduleDao.getScheduleAndTaskList(selectedDay = day, selectedDate = timeStamp)
 
-    override suspend fun upsertTask(task: String?, subjectId: Int, timeStamp: Int, scheduleId: Int) {
-        if (scheduleDao.checkTaskAttendanceRowExistence(scheduleId = scheduleId, subjectId = subjectId, timestamp = timeStamp) == null) {
+    override suspend fun upsertTask(
+        task: String?,
+        subjectId: Int,
+        timeStamp: Int,
+        scheduleId: Int,
+        taskReminderBefore: Int
+    ) {
+        if (scheduleDao.checkTaskAttendanceRowExistence(
+                scheduleId = scheduleId,
+                subjectId = subjectId,
+                timestamp = timeStamp
+            ) == null
+        ) {
             scheduleDao.insertTaskAttendance(
                 TaskAttendanceModel(
                     task = task,
                     subjectId = subjectId,
+                    scheduleId = scheduleId,
                     timestamp = timeStamp,
-                    scheduleId = scheduleId
+                    taskReminderBefore = taskReminderBefore
                 )
             )
         } else {
             scheduleDao.updateTask(
                 task = task,
-                scheduleId = scheduleId,
                 subjectId = subjectId,
-                timestamp = timeStamp
+                scheduleId = scheduleId,
+                timestamp = timeStamp,
+                taskReminderBefore = taskReminderBefore
             )
         }
     }
@@ -68,7 +88,12 @@ class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRe
         timeStamp: Int,
         scheduleId: Int
     ) {
-        if (scheduleDao.checkTaskAttendanceRowExistence(scheduleId = scheduleId, subjectId = subjectId, timestamp = timeStamp) == null) {
+        if (scheduleDao.checkTaskAttendanceRowExistence(
+                scheduleId = scheduleId,
+                subjectId = subjectId,
+                timestamp = timeStamp
+            ) == null
+        ) {
             scheduleDao.insertTaskAttendance(
                 TaskAttendanceModel(
                     attendance = attendance,

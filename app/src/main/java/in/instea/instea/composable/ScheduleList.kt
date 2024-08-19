@@ -1,5 +1,6 @@
 package `in`.instea.instea.composable
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,7 +16,8 @@ fun ScheduleList(
     navigateToEditSchedule: (Int) -> Unit = {},
     scheduleUiState: ScheduleUiState,
     upsertAttendance: (Int, Int, AttendanceType) -> Unit,
-    upsertTask: (Int, Int, String?) -> Unit,
+    upsertTask: (Int, Int, String?, Int) -> Unit,
+    onScheduleReminder: (String, String?, Int) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -31,14 +33,17 @@ fun ScheduleList(
                 onAttendanceClick = { attendanceType ->
                     upsertAttendance(scheduleModel.scheduleId, scheduleModel.subjectId, attendanceType)
                 },
-                upsertTask = {task->
-                    upsertTask(scheduleModel.scheduleId, scheduleModel.subjectId, task)
+                upsertTask = {task, remindBefore->
+                    Log.d("SCHEDULE_LIST", "upsert executed $remindBefore")
+                    upsertTask(scheduleModel.scheduleId, scheduleModel.subjectId, task, remindBefore)
+                    onScheduleReminder("${scheduleModel.scheduleId}${scheduleModel.subjectId}${scheduleModel.timestamp}", task, remindBefore)
                 },
                 repeatReminderSwitchAction = { subName, repeat ->
 //                        viewModel.modifySubjectInRepeatReminderList(
 //                            subName,
 //                            repeat,
 //                        )
+//                    onScheduleReminder()
                 },
                 reminderOn = true
             )

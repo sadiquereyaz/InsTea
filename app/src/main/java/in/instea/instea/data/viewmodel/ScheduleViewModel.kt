@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.DayDateModel
 import `in`.instea.instea.data.repo.ScheduleRepository
+import `in`.instea.instea.data.repo.TaskReminderRepository
 import `in`.instea.instea.screens.schedule.ScheduleUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,9 +15,11 @@ import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 class ScheduleViewModel(
-    private val scheduleRepository: ScheduleRepository
+    private val scheduleRepository: ScheduleRepository,
+    private val workManagerTaskRepository: TaskReminderRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ScheduleUiState())
@@ -106,13 +109,33 @@ class ScheduleViewModel(
         }
     }
 
-    suspend fun upsertTask(scheduleId: Int, subjectId: Int, task: String?) {
+    suspend fun upsertTask(
+        scheduleId: Int,
+        subjectId: Int,
+        task: String?,
+        taskReminderBefore: Int
+    ) {
         scheduleRepository.upsertTask(
             task = task,
             subjectId = subjectId,
             timeStamp = _uiState.value.timestamp,
-            scheduleId = scheduleId
+            scheduleId = scheduleId,
+            taskReminderBefore = taskReminderBefore
         )
     }
 
+    fun scheduleReminder(
+        task: String = "This is dummy task",
+        duration: Long = 5,
+        unit: TimeUnit = TimeUnit.SECONDS,       //TODO: change to hour
+        reminderKey: String
+    ) {
+        workManagerTaskRepository.scheduleTaskReminder(task, duration, unit, taskKey = reminderKey)
+    }
+
+    fun cancelReminder(
+        reminderKey: String
+    ) {
+        workManagerTaskRepository.cancelReminder(reminderKey)
+    }
 }

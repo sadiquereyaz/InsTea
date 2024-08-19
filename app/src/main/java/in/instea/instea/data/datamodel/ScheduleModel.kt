@@ -59,7 +59,7 @@ data class ScheduleModel(
     var startTime: LocalTime,
     var endTime: LocalTime,
     var day: String = "",
-    val dailyReminder: Boolean = false
+    val dailyReminderBefore: Int = 0
 )
 
 @Entity(
@@ -72,7 +72,8 @@ data class TaskAttendanceModel(
     val timestamp: Int, // Timestamp to track the date
     var attendance: AttendanceType? = null,  // Task or note for the class on the specific date
     var task: String? = null,  // Task or note for the class on the specific date
-    val taskReminder: Boolean? = null
+    val taskReminderBefore: Int = 0,
+    val classReminderBefore: Int = 0
 )
 
 @Entity(tableName = "subject_table")
@@ -88,12 +89,13 @@ data class CombinedScheduleTaskModel(
     val startTime: LocalTime,
     val endTime: LocalTime,
     val day: String,
-    val dailyReminder: Boolean? = false,
     val timestamp: Int? = null,
     val subject: String? = null,
     val attendance: AttendanceType? = AttendanceType.MarkAttendance,
     var task: String? = null,
-    val taskReminder: Boolean? = false
+    val dailyReminderBefore: Int = 0,
+    val classReminderBefore: Int = 0,
+    val taskReminderBefore: Int = 0
 )
 class TimeConverters {
     private val formatter = DateTimeFormatter.ISO_LOCAL_TIME

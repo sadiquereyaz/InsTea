@@ -29,17 +29,25 @@ interface ScheduleDao {
     // insert a new task/attendance row
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTaskAttendance(taskAttendanceObj: TaskAttendanceModel): Long
+
     // update task
-    @Query("UPDATE taskAttendance SET task = :task  WHERE scheduleId = :scheduleId AND timestamp = :timestamp AND subjectId = :subjectId")
+    @Query("UPDATE taskAttendance SET task = :task, taskReminderBefore = :taskReminderBefore WHERE scheduleId = :scheduleId AND timestamp = :timestamp AND subjectId = :subjectId")
     suspend fun updateTask(
         task: String?,
         scheduleId: Int,
         subjectId: Int,
-        timestamp: Int
+        timestamp: Int,
+        taskReminderBefore: Int
     )
+
     // update attendance
     @Query("UPDATE taskAttendance SET attendance = :attendance WHERE scheduleId = :scheduleId AND subjectId = :subjectId AND timestamp = :timestamp")
-    suspend fun updateAttendance(attendance: AttendanceType, scheduleId: Int, subjectId: Int, timestamp: Int)
+    suspend fun updateAttendance(
+        attendance: AttendanceType,
+        scheduleId: Int,
+        subjectId: Int,
+        timestamp: Int
+    )
 
     // for conflict checking
     @Query("SELECT * FROM schedule WHERE day = :day ORDER BY startTime")
@@ -47,20 +55,23 @@ interface ScheduleDao {
 
     @Query(
         """
-    SELECT s.scheduleId, s.subjectId, s.startTime, s.endTime, s.day, s.dailyReminder, s.subject, 
-           t.timestamp, t.attendance, t.task, t.taskReminder
+    SELECT s.scheduleId, s.subjectId, s.startTime, s.endTime, s.day, s.dailyReminderBefore, s.subject, 
+           t.timestamp, t.attendance, t.task, t.taskReminderBefore, t.classReminderBefore
         FROM schedule s 
         LEFT JOIN taskAttendance t ON s.scheduleId = t.scheduleId AND s.subjectId = t.subjectId AND (t.timestamp = :selectedDate OR t.timestamp IS NULL)
         WHERE s.day = :selectedDay ORDER BY s.startTime
     """
     )
-    suspend fun getScheduleAndTaskList(selectedDay: String, selectedDate: Int): List<CombinedScheduleTaskModel>
+    suspend fun getScheduleAndTaskList(
+        selectedDay: String,
+        selectedDate: Int
+    ): List<CombinedScheduleTaskModel>
 
     @Query("SELECT task, timestamp, scheduleId, subjectId FROM taskAttendance Where task is NOT NULL ORDER BY timestamp")
-    suspend fun getAllTask():List<TaskModel>
+    suspend fun getAllTask(): List<TaskModel>
 
     @Query("UPDATE taskAttendance SET task = NULL WHERE timestamp = :timestamp AND scheduleId = :scheduleId AND subjectId = :subjectId")
-    suspend fun clearTask(scheduleId: Int, subjectId: Int,timestamp: Int)
+    suspend fun clearTask(scheduleId: Int, subjectId: Int, timestamp: Int)
 
     @Query("SELECT * FROM schedule WHERE scheduleId = :scheduleId")
     suspend fun getScheduleById(scheduleId: Int): ScheduleModel
@@ -68,8 +79,8 @@ interface ScheduleDao {
     @Query("DELETE FROM schedule WHERE scheduleId = :id AND day =:day")
     suspend fun deleteScheduleById(id: Int, day: String)
 
-   @Query(
-       """
+    @Query(
+        """
     SELECT 
         subj.subject AS subject,
         COUNT(t.attendance) AS totalClasses,
@@ -84,11 +95,11 @@ interface ScheduleDao {
     GROUP BY 
         subj.subject
     """
-   )
-   suspend fun getSubjectAttendanceSummary(
-       startOfTimestamp: Int,
-       endOfTimestamp: Int = startOfTimestamp + 32
-   ): List<SubjectAttendanceSummaryModel>
+    )
+    suspend fun getSubjectAttendanceSummary(
+        startOfTimestamp: Int,
+        endOfTimestamp: Int = startOfTimestamp + 32
+    ): List<SubjectAttendanceSummaryModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertSubject(subject: SubjectModel): Long
@@ -97,6 +108,6 @@ interface ScheduleDao {
     @Query("SELECT * FROM subject_table")
     fun getAllSubjectFlow(): Flow<List<SubjectModel>>
 
-   /* @Query("SELECT DISTINCT subject FROM schedule")
-    suspend fun getAllSubject(): List<String>*/
+    /* @Query("SELECT DISTINCT subject FROM schedule")
+     suspend fun getAllSubject(): List<String>*/
 }

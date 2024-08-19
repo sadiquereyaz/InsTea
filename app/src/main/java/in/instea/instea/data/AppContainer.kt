@@ -19,7 +19,9 @@ import `in`.instea.instea.data.repo.NetworkPostRepository
 import `in`.instea.instea.data.repo.NetworkUserRepository
 import `in`.instea.instea.data.repo.PostRepository
 import `in`.instea.instea.data.repo.ScheduleRepository
+import `in`.instea.instea.data.repo.TaskReminderRepository
 import `in`.instea.instea.data.repo.UserRepository
+import `in`.instea.instea.data.repo.WorkManagerTaskRepository
 
 /**
  * App container for Dependency injection.
@@ -30,8 +32,7 @@ interface AppContainer {
     val scheduleRepository: ScheduleRepository
     val networkRepository: NetworkPostRepository
     val localPostRepository: LocalPostRepository
-
-    //    val userPreferenceRepository: UserPreferenceRepository
+    val workManagerTaskRepository: TaskReminderRepository
     val academicRepository: AcademicRepository
     val accountService: AccountService
     val netwrokChatRepository: NetwrokChatRepository
@@ -69,6 +70,9 @@ class AppDataContainer(
     override val scheduleRepository: ScheduleRepository by lazy {
         LocalScheduleRepository(roomDatabase.classDao())
     }
+    override val workManagerTaskRepository: TaskReminderRepository by lazy {
+        WorkManagerTaskRepository(context)
+    }
     override val academicRepository: AcademicRepository by lazy {
         NetworkAcademicRepository(firebaseInstance = firebaseDatabase)
     }
@@ -87,6 +91,4 @@ class AppDataContainer(
         )
 
     }
-
-
 }

@@ -34,7 +34,8 @@ object AppViewModelProvider {
         }
         initializer {
                 ScheduleViewModel(
-                    scheduleRepository = insteaApplication().container.scheduleRepository
+                    scheduleRepository = insteaApplication().container.scheduleRepository,
+                    workManagerTaskRepository = insteaApplication().container.workManagerTaskRepository
                 )
         }
         initializer {

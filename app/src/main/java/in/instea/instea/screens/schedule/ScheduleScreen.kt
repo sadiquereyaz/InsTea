@@ -1,5 +1,6 @@
 package `in`.instea.instea.screens.schedule
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -76,6 +77,9 @@ fun ScheduleScreen(
 
         // schedule list
         ScheduleList(
+            navigateToEditSchedule = { scheduleId: Int ->
+                navigateToEditSchedule(scheduleId, uiState.selectedDay)
+            },
             scheduleUiState = uiState,
             upsertAttendance = { scheduleId: Int, subjectId: Int, attendance ->
                 coroutineScope.launch {
@@ -86,17 +90,28 @@ fun ScheduleScreen(
                     )
                 }
             },
-            upsertTask = { scheduleId: Int, subjectId: Int, task: String? ->
+            upsertTask = { scheduleId: Int, subjectId: Int, task: String?, taskReminder: Int ->
                 coroutineScope.launch {
                     viewModel.upsertTask(
                         scheduleId = scheduleId,
                         subjectId = subjectId,
-                        task = task
+                        task = task,
+                        taskReminderBefore = taskReminder
                     )
                 }
             },
-            navigateToEditSchedule = { scheduleId: Int ->
-                navigateToEditSchedule(scheduleId, uiState.selectedDay)
+            onScheduleReminder = { reminderKey: String, task: String?, hour: Int ->
+                if (hour != 0) {
+                    viewModel.scheduleReminder(
+                        task = task!!,
+                        duration = hour.toLong(),
+                        reminderKey = reminderKey
+                    )
+                } else {
+                    // cancel reminder
+                    Log.d("CANCEL_REMINDER", "cancel reminder")
+                    viewModel.cancelReminder(reminderKey)
+                }
             },
         )
     }

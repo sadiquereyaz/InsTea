@@ -40,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -125,7 +124,7 @@ fun AttendanceComp(
                     ) {
                         // Month selection
                         PickerRow(
-                            selectedDate = selectedDate.month.getDisplayName(
+                            displayText = selectedDate.month.getDisplayName(
                                 TextStyle.SHORT,
                                 Locale.getDefault()
                             ),
@@ -134,7 +133,7 @@ fun AttendanceComp(
 
                         // Year selection
                         PickerRow(
-                            selectedDate = selectedDate.year.toString(),
+                            displayText = selectedDate.year.toString(),
                             decrease = {
                                 selectedDate = selectedDate.minusYears(1)
                                 Log.d("click", selectedDate.year.toString())
@@ -175,12 +174,13 @@ fun AttendanceComp(
 }
 
 @Composable
-private fun PickerRow(selectedDate: String, increase: () -> Unit, decrease: () -> Unit) {
+fun PickerRow(displayText: String, increase: () -> Unit, decrease: () -> Unit, isMinusEnabled:Boolean = true) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         IconButton(
+            enabled  = isMinusEnabled,
             onClick = decrease,
             modifier = Modifier
                 .clip(shape = CircleShape)
@@ -192,7 +192,7 @@ private fun PickerRow(selectedDate: String, increase: () -> Unit, decrease: () -
                 tint = MaterialTheme.colorScheme.onPrimary
             )
         }
-        Text(selectedDate)
+        Text(displayText)
         IconButton(
             onClick = increase,
             modifier = Modifier
