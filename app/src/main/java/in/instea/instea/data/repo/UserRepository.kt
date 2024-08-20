@@ -5,6 +5,7 @@ import `in`.instea.instea.data.datamodel.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 
 interface UserRepository {
     fun getCurrentUserId(): Flow<String>
@@ -16,6 +17,7 @@ interface UserRepository {
     suspend fun isUserNameAvailable(username: String): Result<String?>
     suspend fun isUserIdAvailable(uid: String): Result<String?>
     suspend fun deleteUserDetails(currentUserId: String)
+    suspend fun getclassmates(): List<classmate>
 }
 
 class CombinedUserRepository(
@@ -72,6 +74,11 @@ class CombinedUserRepository(
     override suspend fun insertUser(user: User): Result<String?> {
         localUserRepository.upsertUserToDatastore(user)
         return networkUserRepository.insertUserToFirebase(user)
+    }
+
+    override suspend fun getclassmates(): List<classmate>{
+        val userId="CHX3jKEfytfRUld933ueCnlI5CP2"
+        return networkUserRepository.getClassmates(userId.toString())
     }
 }
 

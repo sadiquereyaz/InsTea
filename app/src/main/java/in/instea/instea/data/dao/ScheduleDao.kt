@@ -5,14 +5,12 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
+import `in`.`in`.instea.instea.screens.more.composable.taskModel
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.SubjectAttendanceSummaryModel
-import `in`.instea.instea.data.datamodel.SubjectModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
-import `in`.instea.instea.screens.more.composable.TaskModel
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ScheduleDao {

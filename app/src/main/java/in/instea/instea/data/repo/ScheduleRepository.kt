@@ -1,15 +1,13 @@
 package `in`.instea.instea.data.repo
 
 import android.util.Log
+import `in`.`in`.instea.instea.screens.more.composable.taskModel
 import `in`.instea.instea.data.dao.ScheduleDao
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.SubjectAttendanceSummaryModel
-import `in`.instea.instea.data.datamodel.SubjectModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
-import `in`.instea.instea.screens.more.composable.TaskModel
-import kotlinx.coroutines.flow.Flow
 
 interface ScheduleRepository {
 

@@ -1,17 +1,16 @@
 package `in`.instea.instea.data.viewmodel
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import `in`.instea.instea.data.dao.InsteaDatabase.Companion.clearDatabase
-import `in`.instea.instea.data.repo.AccountService
+import androidx.lifecycle.viewmodel.compose.viewModel
+import `in`.`in`.instea.instea.screens.more.composable.taskModel
+import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
+import `in`.instea.instea.data.datamodel.TaskModel
 import `in`.instea.instea.data.repo.ScheduleRepository
-import `in`.instea.instea.data.repo.UserRepository
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreUiState
-import `in`.instea.instea.screens.more.composable.TaskModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -24,6 +23,7 @@ class MoreViewModel(
     private val userRepository: UserRepository,
     private val accountService: AccountService,
     private val context: Context
+
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(MoreUiState())
     val uiState: StateFlow<MoreUiState> = _uiState
@@ -56,6 +56,25 @@ class MoreViewModel(
     fun getAllTask(){
         viewModelScope.launch {
             val tasks=scheduleRepository.getAllTasks()
+            _uiState.update {
+                it.copy(
+                    taskList = tasks
+                )
+            }
+        }
+
+    private fun timestamp(selectedDate: LocalDate): Int {
+        val month = selectedDate.monthValue.toString().padStart(2, '0')
+        val year = (selectedDate.year % 100).toString()
+        //            Log.d("loading", selectedDate.year.toString())
+        val timestamp = ("$year$month".toInt()) * 100
+        return timestamp
+    }
+
+
+    fun getAllTask() {
+        viewModelScope.launch {
+            val tasks = scheduleRepository.getAllTasks()
             _uiState.update {
                 it.copy(
                     taskList = tasks
@@ -139,4 +158,28 @@ class MoreViewModel(
     private fun showSnackBar() {
         _uiState.value.showSnackBar = !_uiState.value.showSnackBar
     }
+
+    fun getClassmatesList() {
+        viewModelScope.launch {
+            val classmates = userRepository.getclassmates()
+            Log.d(TAG, "getClassmatesList: $classmates")
+            _uiState.update {
+                it.copy(
+                    classmateList = classmates
+                )
+            }
+        }
+    }
 }
+
+data class classmate(
+    val userId: String = "",
+    val profilepic: Int = R.drawable.dp,
+    val name: String = ""
+
+)
+
+
+
+
+

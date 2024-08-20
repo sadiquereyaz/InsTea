@@ -15,11 +15,10 @@ class NetworkUserRepository(
     fun getUserById(userId: String): Flow<User> {
         // Implement your logic to fetch user by ID from Firebase
         val databaseReference = firebaseDatabase.reference
-
+            .child("user").child(userId)
         return flow {
-            val userSnapshot = databaseReference.child("user").child(userId).get().await()
-            Log.d("chatPartners", "getUserById: $userSnapshot")
-            if (userSnapshot != null) {
+            val userSnapshot = databaseReference.get().await()
+            if (userSnapshot.exists()) {
                 val userData = userSnapshot.getValue(User::class.java)
                 if (userData != null) {
                     emit(userData) // Emit the retrieved UserModel
@@ -72,6 +71,7 @@ class NetworkUserRepository(
             firebaseDatabase.reference.child("user").child(user.userId!!).setValue(user).await()
             Result.success(null)
         } catch (e: Exception) {
+            Log.e("NetworkUserRepository", "Sign-in error", e)
             Result.failure(e)
         }
     }
@@ -110,6 +110,56 @@ class NetworkUserRepository(
         } catch (e: Exception) {
             Log.d("UID_FETCH ERROR = null", e.localizedMessage ?: "unknown error")
             Result.failure(e)
+        }
+    }
+
+    suspend fun getClassmates(userId: String): List<classmate> {
+        return try {
+
+            val userReference = firebaseDatabase.reference.child("user").child(userId)
+
+            // Get the user's university, department, and semester directly
+            val university =
+                userReference.child("university").get().await().getValue(String::class.java)
+            val dept = userReference.child("dept").get().await().getValue(String::class.java)
+            val sem = userReference.child("sem").get().await().getValue(String::class.java)
+
+            // Query the database for classmates with the same university, department, and semester
+            val query = firebaseDatabase.reference.child("user")
+                .orderByChild("university").equalTo(university)
+
+
+            val classmatesSnapshot = query.get().await()
+
+            classmatesSnapshot.children.mapNotNull { snapshot ->
+                val classmateDept = snapshot.child("dept").getValue(String::class.java)
+                val classmateSem = snapshot.child("sem").getValue(String::class.java)
+
+                if (snapshot.key != userId && classmateDept==dept && classmateSem==sem) {
+                    classmate(
+                        userId = snapshot.key ?: "",
+                        profilepic = R.drawable.dp,
+                        name = snapshot.child("username").getValue(String::class.java) ?: ""
+                    )
+                } else {
+                    null
+                }
+
+            }
+            /*val classmates = listOf(
+                classmate(
+                    userId = "CHX3jKEfytfRUld933ueCnlI5CP2",
+                    profilepic = R.drawable.dp,
+                    name = "Kashif"
+                )
+            )
+            return classmates*/
+
+        } catch (e: Exception) {
+            Log.e(TAG, "error getting classmates list : ${e.message}", )
+             emptyList()
+
+
         }
     }
 }
