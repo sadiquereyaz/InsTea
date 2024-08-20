@@ -18,7 +18,7 @@ import kotlinx.coroutines.withContext
 
 @Database(
     entities = [PostData::class, ScheduleModel::class, TaskAttendanceModel::class, SubjectModel::class],
-    version = 32, exportSchema = false
+    version = 36, exportSchema = false
 )
 @TypeConverters(TimeConverters::class, AttendanceTypeConverter::class)
 abstract class InsteaDatabase : RoomDatabase() {

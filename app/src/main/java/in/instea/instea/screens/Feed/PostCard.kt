@@ -92,9 +92,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.navArgument
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
-import androidx.wear.compose.material.FractionalThreshold
 import androidx.wear.compose.material.rememberSwipeableState
-import androidx.wear.compose.material.swipeable
 import `in`.instea.instea.R
 import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
@@ -106,8 +104,6 @@ import `in`.instea.instea.ui.theme.onSurfaceDark
 //import `in`.instea.instea.screens.Feed.CommentList
 
 import kotlinx.coroutines.launch
-import me.saket.swipe.SwipeAction
-import me.saket.swipe.SwipeableActionsBox
 
 @Composable
 fun PostCard(
@@ -289,7 +285,7 @@ fun PostCard(
                             )
                             addStyle(
                                 style = SpanStyle(
-                                    color = Color.Green,
+                                    color = MaterialTheme.colorScheme.primary,
                                     textDecoration = TextDecoration.Underline
                                 ),
                                 start = matcher.start(),
@@ -391,7 +387,7 @@ fun PostCard(
 }
 
 
-@OptIn(ExperimentalWearMaterialApi::class)
+//@OptIn(ExperimentalWearMaterialApi::class)
 @Composable
 fun UpAndDownVoteButtons(
     post: PostData,
@@ -403,7 +399,7 @@ fun UpAndDownVoteButtons(
     val isDownVoted = rememberSaveable { mutableStateOf(false) }
     val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val coroutineScope = rememberCoroutineScope()
-    val swipeableState = rememberSwipeableState(initialValue = 0)
+//    val swipeableState = rememberSwipeableState(initialValue = 0)
     val swiped = remember { mutableStateOf(false) }
     // Obtain the current density to convert dp to px
 

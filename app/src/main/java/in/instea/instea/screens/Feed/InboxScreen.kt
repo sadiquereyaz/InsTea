@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import `in`.instea.instea.data.datamodel.DateAndHour
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.FeedViewModel
 
@@ -127,6 +128,7 @@ fun InboxScreen(
                                             chatViewModel.insertMessages(
                                                 message = Message(
                                                     message = textState,
+
                                                     senderId = feedViewModel.currentuser!!,
                                                 ),
                                                 receiverRoom = userId + feedViewModel.currentuser,

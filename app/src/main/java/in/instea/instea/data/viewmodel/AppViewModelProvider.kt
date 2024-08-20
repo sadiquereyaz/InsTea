@@ -1,12 +1,12 @@
 package `in`.instea.instea.data.viewmodel
 
+import ChatviewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import `in`.instea.instea.InsteaApplication
-import `in`.instea.instea.data.FeedViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -70,7 +70,6 @@ object AppViewModelProvider {
             MoreViewModel(
                 savedStateHandle = this.createSavedStateHandle(),
                 scheduleRepository = insteaApplication().container.scheduleRepository,
-                userRepository = insteaApplication().container.userRepository
                 userRepository = insteaApplication().container.userRepository,
                 accountService = insteaApplication().container.accountService,
                 context = insteaApplication()

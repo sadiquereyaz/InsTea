@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import `in`.instea.instea.data.viewmodel.FeedViewModel
-import me.saket.swipe.SwipeAction
 
 @Composable
 fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit, navController : NavHostController) {

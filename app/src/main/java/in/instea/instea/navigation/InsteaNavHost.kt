@@ -16,17 +16,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
-import `in`.instea.instea.screens.auth.AddInfo
+import `in`.instea.instea.screens.Feed.SearchScreen
+import `in`.instea.instea.screens.Feed.UserListScreen
 import `in`.instea.instea.screens.auth.AuthenticationScreen
 import `in`.instea.instea.screens.auth.UserInfoScreen
+import `in`.instea.instea.screens.auth.composable.signUp
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreScreen
-import `in`.instea.instea.screens.profile.EditProfileScreen
 import `in`.instea.instea.screens.profile.ProfileDestination
 import `in`.instea.instea.screens.profile.ProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleDestination
 import `in`.instea.instea.screens.schedule.EditScheduleScreen
 import `in`.instea.instea.screens.schedule.ScheduleScreen
+
 
 @Composable
 fun InsteaNavHost(
@@ -44,7 +46,7 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Authenticate.name) {
             AuthenticationScreen(
                 navigateToFeed = {
-                    navController.navigate(InsteaScreens.SelfProfile.name/*"${MoreDestination.route}/${4}"*/) {
+                    navController.navigate(InsteaScreens.Feed.name/*"${MoreDestination.route}/${4}"*/) {
                         popUpTo(0) { inclusive = true }
                     }
                 },
@@ -73,6 +75,7 @@ fun InsteaNavHost(
 
         composable(route = InsteaScreens.Inbox.name + "/{userId}") { backStackEntry ->
             val userId = backStackEntry.arguments?.getString("userId")
+
             InboxScreen(userId!!)
         }
         composable(route = InsteaScreens.Schedule.name) {
@@ -143,9 +146,6 @@ fun InsteaNavHost(
         }
         composable(route = InsteaScreens.Addpost.name) {
             FeedContent()
-        }
-        composable(route = InsteaScreens.AddAcademicInfo.name) {
-            AddInfo(navController = navController)
         }
         composable(
             route = MoreDestination.routeWithArg,

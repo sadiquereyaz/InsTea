@@ -2,6 +2,7 @@ package `in`.instea.instea.data.repo
 
 import android.util.Log
 import `in`.instea.instea.data.datamodel.User
+import `in`.instea.instea.data.viewmodel.classmate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -77,7 +78,8 @@ class CombinedUserRepository(
     }
 
     override suspend fun getclassmates(): List<classmate>{
-        val userId="CHX3jKEfytfRUld933ueCnlI5CP2"
+        val userId=getCurrentUserId()
+        Log.d("current user", "getclassmates: $userId")
         return networkUserRepository.getClassmates(userId.toString())
     }
 }

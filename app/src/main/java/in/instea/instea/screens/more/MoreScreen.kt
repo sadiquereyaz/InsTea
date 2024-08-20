@@ -2,6 +2,7 @@ package `in`.instea.instea.screens.more
 
 import android.util.Log
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,12 +20,15 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,16 +37,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import `in`.`in`.instea.instea.screens.more.composable.AllTask
-import `in`.`in`.instea.instea.screens.more.composable.classmates
+import `in`.`in`.instea.instea.screens.more.composable.classmateList
+import `in`.instea.instea.composable.Loader
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.MoreViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.navigation.NavigationDestinations
 import `in`.instea.instea.screens.more.composable.AccountComp
+import `in`.instea.instea.screens.more.composable.AllTask
 import `in`.instea.instea.screens.more.composable.AttendanceComp
 import `in`.instea.instea.screens.more.composable.Developers
 import `in`.instea.instea.screens.more.composable.report
+import `in`.instea.instea.screens.profile.ProfileDestination
+import kotlinx.coroutines.launch
+
 object MoreDestination: NavigationDestinations{
     override val route: String = InsteaScreens.More.name
     override val title: String = InsteaScreens.More.title
@@ -180,7 +188,7 @@ fun ExpandableItem(
                     "Classmates" -> {
                         classmateList(navigatetoOtherProfile = { userId ->
                             navController.navigate("${ProfileDestination.route}/${userId}")},
-                            uiState = uiState)
+                                      uiState = uiState)
 
                         }
 

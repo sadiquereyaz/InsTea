@@ -55,6 +55,13 @@ fun UserListScreen(feedViewModel: FeedViewModel = viewModel(factory = AppViewMod
     val chatPartners = currentUser?.chatPartners ?: emptyList()
     Log.d("UserList", "chatPartners: $chatPartners")
     LazyColumn {
+        if(chatPartners.isEmpty()){
+            item{
+
+
+            Text("No ChatPartners")}
+        }
+      else{
         items(chatPartners) { chatPartner ->
 
             val user = userList.find { it.userId == chatPartner }
@@ -63,7 +70,7 @@ fun UserListScreen(feedViewModel: FeedViewModel = viewModel(factory = AppViewMod
             if (user != null) {
                 UserListCard(user,navController)
             }
-        }
+        }}
     }
 }
 
