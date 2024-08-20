@@ -75,7 +75,10 @@ data class DateAndHour(
         val dateFormat = SimpleDateFormat("dd MMM yy", Locale.getDefault())
         return dateFormat.format(this.date)
     }
-
+    fun formateForMessage(): String {
+        val dateFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        return dateFormat.format(this.date)
+    }
     fun toTimestamp(): Long {
         return this.date.time
     }

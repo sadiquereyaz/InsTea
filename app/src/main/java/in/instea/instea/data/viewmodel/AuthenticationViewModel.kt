@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class AuthenticationViewModel(
@@ -31,6 +32,14 @@ class AuthenticationViewModel(
 
     private val _uiState = MutableStateFlow<AuthUiState>(AuthUiState.Loading)
     val uiState: StateFlow<AuthUiState> = _uiState
+    init {
+        viewModelScope.launch {
+            NetworkUtils.isNetworkAvailableFlow(context).collect { isAvailable ->
+                if(!isAvailable)
+                _uiState.value = AuthUiState.Error("${isAvailable} no network",isAvailable)
+            }
+        }
+    }
 
     fun onSignUpWithGoogle(credential: Credential) {
         launchCatching {
@@ -74,8 +83,6 @@ class AuthenticationViewModel(
         launchCatching {
             if (accountService.isUserProfileComplete()) {
                 _uiState.value = AuthUiState.Success(isNewUser = false) //navigate to feed
-            } else if (!NetworkUtils.isNetworkAvailable(context = context)) {
-                onSignUpError("Please connect to the internet!")
             } else {
                 _uiState.value = AuthUiState.Idle()
             }

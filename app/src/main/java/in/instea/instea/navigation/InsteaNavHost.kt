@@ -4,6 +4,7 @@ import EditPost
 import FEED
 import FeedContent
 import InboxScreen
+import `in`.instea.instea.screens.Feed.UserListScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
@@ -16,10 +17,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.Feed.UserListScreen
+import `in`.instea.instea.screens.auth.AddInfo
 import `in`.instea.instea.screens.auth.AuthenticationScreen
 import `in`.instea.instea.screens.auth.UserInfoScreen
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreScreen
+import `in`.instea.instea.screens.profile.EditProfileScreen
 import `in`.instea.instea.screens.profile.ProfileDestination
 import `in`.instea.instea.screens.profile.ProfileScreen
 import `in`.instea.instea.screens.schedule.EditScheduleDestination
@@ -32,10 +35,11 @@ fun InsteaNavHost(
     navController: NavHostController,
     contentPadding: PaddingValues,
     snackBarHostState: SnackbarHostState,
+//    scheduleViewModel: ScheduleViewModel
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Schedule.name,
+        startDestination = InsteaScreens.Authenticate.name  /*"${MoreDestination.route}/${4}"*/,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -121,7 +125,7 @@ fun InsteaNavHost(
         ) {
 //            OtherProfileScreen()
             ProfileScreen(
-                onSubUsernameClick = { navController.navigate(InsteaScreens.Inbox.name) },
+                onSubUsernameClick = {uid-> navController.navigate(InsteaScreens.Inbox.name+"/$uid") },
                 navigateToDevelopers = {
                     navController.navigate("${MoreDestination.route}/${0}")
                 },
@@ -145,20 +149,23 @@ fun InsteaNavHost(
         }
         composable(
             route = MoreDestination.routeWithArg,
-            arguments = listOf(navArgument(MoreDestination.INDEX_ARG) { type = NavType.IntType })
+            arguments = listOf(navArgument(MoreDestination.INDEX_ARG) {
+                type = NavType.IntType
+            })
         ) {
             MoreScreen(
                 navController = navController,
                 snackBarHostState = snackBarHostState
             )
         }
-        composable(route = InsteaScreens.EditPost.name + "/{postId}") { backstackEntry ->
+        composable(route = InsteaScreens.EditPost.name+"/{postId}"){ backstackEntry->
             val post = backstackEntry.arguments?.getString("postId")
             EditPost(post!!)
         }
         composable(route = InsteaScreens.UserList.name) {
-            UserListScreen()
+          UserListScreen()
         }
+
     }
 }
 

@@ -25,7 +25,7 @@ import `in`.instea.instea.data.viewmodel.FeedViewModel
 fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit, navController : NavHostController) {
     val posts = feedViewModel.posts.collectAsState(initial = emptyList()).value.reversed()
     val userList by feedViewModel.userList.collectAsState()
-    if (/*feedViewModel.isLoading.value*/ false) {
+    if (feedViewModel.isLoading.value) {
         Column {
             repeat(8) {
                 ShimmerEffect()
@@ -39,7 +39,7 @@ fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit, 
             items(posts) { post ->
                 PostCard(
                     post = post,
-                    navigateToProfile = { navigateToProfile(post.postedByUser ?: "") },
+//                    navigateToProfile = { navigateToProfile(post.postedByUser ?: "") },
                     userList = userList,
                     navController = navController
                 )
