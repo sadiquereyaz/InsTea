@@ -18,5 +18,7 @@ enum class InsteaScreens(
     Addpost("Add Post"),
     AddAcademicInfo("Add Academic Info"),
     More("More"),
-    EditPost("Edit")
+    EditPost("Edit"),
+    signup(":signup"),
+    Search("Wan'na Find Someone")
 }

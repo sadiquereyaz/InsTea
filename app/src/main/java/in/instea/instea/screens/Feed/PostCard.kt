@@ -1,4 +1,10 @@
+import android.content.Intent
+import android.net.Uri
+import android.text.method.LinkMovementMethod
+import android.text.util.Linkify
 import android.util.Log
+import android.util.Patterns
+import android.widget.TextView
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -7,6 +13,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,6 +23,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,14 +34,19 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowLeft
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -60,12 +74,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.text.util.LinkifyCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.navArgument
+import androidx.wear.compose.material.ExperimentalWearMaterialApi
+import androidx.wear.compose.material.FractionalThreshold
+import androidx.wear.compose.material.rememberSwipeableState
+import androidx.wear.compose.material.swipeable
 import `in`.instea.instea.R
 import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
@@ -73,6 +102,7 @@ import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.ui.theme.backgroundDark
+import `in`.instea.instea.ui.theme.onSurfaceDark
 //import `in`.instea.instea.screens.Feed.CommentList
 
 import kotlinx.coroutines.launch
@@ -93,8 +123,12 @@ fun PostCard(
     var isExpanded by remember { mutableStateOf(false) }
     var showComments by remember { mutableStateOf(false) } // State for showing/hiding CommentCard
     var expandDropdown by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
     val moreList = listOf("Report", "Delete", "Edit")
     var user: User = User()
+    val mContext = LocalContext.current
+//    val mCustomLinkifyText = remember { TextView(mContext) }
+
 
 //    Log.d("PostCard", "userlist: $userList")
     for (u in userList) {
@@ -130,13 +164,22 @@ fun PostCard(
                         Image(
                             painter = painterResource(id = it),
                             modifier = Modifier
+                                .padding(3.dp)
                                 .size(50.dp)
+                                .border(
+                                    width = 1.dp, brush = Brush.linearGradient(
+                                        listOf(
+                                            MaterialTheme.colorScheme.primary,
+                                            MaterialTheme.colorScheme.primaryContainer
+                                        )
+                                    ),
+                                    shape = CircleShape
+                                )
                                 .clip(CircleShape)
-                                .background(Color.Black)
-                                .clickable { /* Handle click */ },
+                                ,
                             contentDescription = "Profile"
                         )
-
+                        Spacer(modifier = Modifier.width(4.dp))
                         Column(
                             modifier = Modifier
                                 .padding(start = 8.dp)
@@ -186,7 +229,7 @@ fun PostCard(
                                             text = { Text(type) },
                                             onClick = {
                                                 if (type == "Delete") {
-                                                    feedViewModel.DeletePost(post)
+                                                    showDialog = true
                                                 }
                                                 if (type == "Edit") {
                                                     navController.navigate(InsteaScreens.EditPost.name + "/${post.postid}")
@@ -212,15 +255,73 @@ fun PostCard(
                     }
                 }
 
+                DeletePostAlertDialog(
+                    showDialog = showDialog,
+                    onDismiss = { showDialog = false },
+                    onConfirm = {
 
+                        feedViewModel.DeletePost(post)
+                        showDialog = false
+                    })
                 // Post Description
                 Column(
                     horizontalAlignment = Alignment.Start,
                     modifier = Modifier.padding(8.dp)
                 ) {
+
                     val displayText = if (isExpanded) post.postDescription!!
                     else post.postDescription?.take(100)
-                    Text(text = displayText!!, modifier = Modifier.padding(2.dp))
+                    val annotatedString = buildAnnotatedString {
+                        append(displayText)
+
+                        // Find all URLs in thetext
+                        val matcher = Patterns.WEB_URL.matcher(displayText)
+                        while (matcher.find()) {
+                            var url = matcher.group()
+                            if (!url.startsWith("https://") && !url.startsWith("http://")) {
+                                url = "https://$url"
+                            }
+                            addStringAnnotation(
+                                tag = "URL",
+                                annotation = url,
+                                start = matcher.start(),
+                                end = matcher.end()
+                            )
+                            addStyle(
+                                style = SpanStyle(
+                                    color = Color.Green,
+                                    textDecoration = TextDecoration.Underline
+                                ),
+                                start = matcher.start(),
+                                end = matcher.end()
+                            )
+                        }
+                    }
+                    ClickableText(
+                        text = annotatedString,
+                        onClick = { offset ->
+                            annotatedString.getStringAnnotations(
+                                tag = "URL",
+                                start = offset,
+                                end = offset
+                            )
+                                .firstOrNull()?.let { annotation ->
+                                    val intent =
+                                        Intent(Intent.ACTION_VIEW, Uri.parse(annotation.item))
+                                    startActivity(mContext, intent, null)
+                                }
+                        },
+                        style = TextStyle(color = MaterialTheme.colorScheme.onSecondaryContainer)
+                    )
+//                    AndroidView(factory = { mCustomLinkifyText }) { textView ->
+//                        textView.text = displayText
+//                        textView.textSize = 20F
+//
+//                        LinkifyCompat.addLinks(textView, Linkify.ALL)
+//                        textView.movementMethod = LinkMovementMethod.getInstance()
+//                    }
+
+
                     if (post.postDescription?.length!! > 100) {
                         TextButton(onClick = { isExpanded = !isExpanded }) {
                             Text(
@@ -257,9 +358,12 @@ fun PostCard(
                     modifier = Modifier.fillMaxWidth()
                 ) {
 
-                    UpAndDownVoteButtons(post, showComments,isVisible = isVisible, onSwiped = onSwiped) { isVisible ->
-                        showComments = isVisible
-                    }
+                    UpAndDownVoteButtons(
+                        post,
+                        isVisible = isVisible,
+                        onSwiped = onSwiped,
+                        navController = navController
+                    )
 
                 }
 
@@ -271,6 +375,15 @@ fun PostCard(
         Modifier
             .height(1.dp)
             .fillMaxWidth()
+            .border(
+                width = 1.dp, brush = Brush.linearGradient(
+                    listOf(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.primaryContainer
+                    )
+                ),
+                shape = RoundedCornerShape(20.dp)
+            )
     )
 //    if (showComments) {
 //        CommentList(post, feedViewModel)
@@ -278,12 +391,23 @@ fun PostCard(
 }
 
 
+@OptIn(ExperimentalWearMaterialApi::class)
 @Composable
-fun UpAndDownVoteButtons(post: PostData, showComments: Boolean,isVisible: Boolean,onSwiped: () -> Unit, onCommentClick: (Boolean) -> Unit,) {
+fun UpAndDownVoteButtons(
+    post: PostData,
+    isVisible: Boolean,
+    navController: NavController,
+    onSwiped: () -> Unit,
+) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }
     val isDownVoted = rememberSaveable { mutableStateOf(false) }
     val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val coroutineScope = rememberCoroutineScope()
+    val swipeableState = rememberSwipeableState(initialValue = 0)
+    val swiped = remember { mutableStateOf(false) }
+    // Obtain the current density to convert dp to px
+
+    var isOpen by remember { mutableStateOf(false) }
 
     var userDislikeCurrentPost by rememberSaveable {
         mutableStateOf(post.userDislikedCurrentPost.contains(feedViewModel.currentuser))
@@ -292,40 +416,63 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean,isVisible: Boolea
         mutableStateOf(post.userLikedCurrentPost.contains(feedViewModel.currentuser))
     }
 
-    Box(contentAlignment = Alignment.BottomStart){
-        SwipeableActionsBox(
-            startActions = listOf(
-                SwipeAction(
-                    onSwipe = onSwiped,
-                    icon =  {
-                        Icon(painter = painterResource(id = R.drawable.chatbubble), contentDescription = null ,)
-                    },
-                    background = MaterialTheme.colorScheme.onBackground
+        Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+            Box(
+                contentAlignment = Alignment.BottomStart,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .zIndex(1f)
+            ) {
+                Icon(
+                    imageVector = if(!isOpen) Icons.Filled.Comment else Icons.Default.ArrowForward,
+                    contentDescription = "",
+                    modifier = Modifier.clickable { isOpen = !isOpen },
+                    tint = MaterialTheme.colorScheme.primary
                 )
-            ),
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(8.dp)
-        ) {
-           if(!isVisible) Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
-        else Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null)
+            }
 
-        }
-        androidx.compose.animation.AnimatedVisibility(
-            visible = isVisible,
-            enter = slideInHorizontally(
-                initialOffsetX = { -it }, // Slide in from the left
-
-            ),
-            exit = slideOutHorizontally(
-                targetOffsetX = { -it }, // Slide out to the right
-
-            )
-        ) {
-            CommentList(post = post, feedViewModel = feedViewModel)
+            if(isOpen) {
+                CommentList(post = post, feedViewModel = feedViewModel, navController = navController)
+            }
         }
 
-    }
+
+//    Box(contentAlignment = Alignment.BottomStart){
+//        SwipeableActionsBox(
+//            startActions = listOf(
+//                SwipeAction(
+//                    onSwipe = onSwiped,
+//                    icon =  {
+//                        Icon(painter = painterResource(id = R.drawable.chatbubble), contentDescription = null ,)
+//                    },
+//                    background = MaterialTheme.colorScheme.onBackground
+//                )
+//            ),
+//            modifier = Modifier
+//                .align(Alignment.TopStart)
+//                .padding(8.dp)
+//        ) {
+//           if(!isVisible) Icon(imageVector = Icons.Default.ArrowForward, contentDescription = null)
+//        else Icon(imageVector = Icons.Default.ArrowBack, contentDescription = null,
+//            modifier = Modifier.clickable {  })
+//
+//        }
+//        androidx.compose.animation.AnimatedVisibility(
+//            visible = isVisible,
+//            enter = slideInHorizontally(
+//                initialOffsetX = { -it }, // Slide in from the left
+//
+//            ),
+//            exit = slideOutHorizontally(
+//                targetOffsetX = { -it }, // Slide out to the right
+//
+//            ),
+//            modifier = Modifier.fillMaxWidth()
+//        ) {
+//            CommentList(post = post, feedViewModel = feedViewModel, navController = navController)
+//        }
+//
+//    }
 
     Box(contentAlignment = Alignment.BottomStart) {
         Button(
@@ -400,8 +547,10 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean,isVisible: Boolea
                     )
                 ),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.Transparent
-                )
+                    containerColor = MaterialTheme.colorScheme.background,
+
+
+                    )
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -528,5 +677,43 @@ fun UpAndDownVoteButtons(post: PostData, showComments: Boolean,isVisible: Boolea
                 }
             }
         }
+    }
+
+
+}
+
+@Composable
+fun DeletePostAlertDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+) {
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text("Delete Post") },
+            text = { Text("Are you sure you want to delete this post?") },
+            confirmButton = {
+                Button(
+                    onClick = onConfirm, colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent
+                    )
+                ) {
+                    Text(
+                        "Confirm", color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            },
+            dismissButton = {
+                Button(
+                    onClick = onDismiss,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent
+                    )
+                ) {
+                    Text("Dismiss", color = MaterialTheme.colorScheme.primary)
+                }
+            }
+        )
     }
 }

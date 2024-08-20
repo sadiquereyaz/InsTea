@@ -15,7 +15,6 @@ import java.util.Locale
 data class PostData(
     @PrimaryKey
     var postid: String = "", // Initialize with an empty string
-    var department: String? = null,
     var profileImage: Int? = null,
     var postDescription: String? = "",
     @Ignore
@@ -30,7 +29,7 @@ data class PostData(
     var isAnonymous : Boolean = false,
     var edited : Boolean = false
 ) {
-    constructor() : this("", null, null, "", mutableListOf(), null, "", DateAndHour(), mutableListOf(), mutableListOf(), false,0)
+    constructor() : this("", null, "", mutableListOf(), null, "", DateAndHour(), mutableListOf(), mutableListOf(), false,0)
 }
 
 data class Comments(

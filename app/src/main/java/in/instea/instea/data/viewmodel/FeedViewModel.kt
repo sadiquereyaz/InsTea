@@ -7,6 +7,7 @@ import android.util.Log
 //import androidx.compose.ui.tooling.data.EmptyGroup.location
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.play.integrity.internal.i
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -50,6 +52,8 @@ class FeedViewModel(
     val userList: StateFlow<List<User>> get() = _userList
     private val _isLoading = MutableStateFlow(true)
     val isLoading: StateFlow<Boolean> get() = _isLoading
+    private val _usersByQuery = MutableStateFlow<List<User>>(emptyList())
+    val usersByQuery: StateFlow<List<User>> = _usersByQuery.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -127,6 +131,13 @@ class FeedViewModel(
         }
     }
 
+    fun SearchUser(query:String){
+        viewModelScope.launch {
+            postRepository.search(query){
+                _usersByQuery.value = it
+            }
+        }
+    }
     fun DeletePost(post: PostData) {
         viewModelScope.launch {
             postRepository.Delete(post)
@@ -148,5 +159,6 @@ class FeedViewModel(
         Log.d("userlist", "fetchUserData: ${userList}")
 
     }
+
 
 }

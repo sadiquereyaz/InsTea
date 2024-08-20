@@ -16,9 +16,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
+import `in`.instea.instea.screens.Feed.SearchScreen
 import `in`.instea.instea.screens.auth.AddInfo
 import `in`.instea.instea.screens.auth.AuthenticationScreen
 import `in`.instea.instea.screens.auth.UserInfoScreen
+import `in`.instea.instea.screens.auth.composable.signUp
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreScreen
 import `in`.instea.instea.screens.profile.EditProfileScreen
@@ -37,7 +39,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Feed.name  /*"${MoreDestination.route}/${4}"*/,
+        startDestination = InsteaScreens.Authenticate.name  /*"${MoreDestination.route}/${4}"*/,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -153,7 +155,14 @@ fun InsteaNavHost(
             EditPost(post!!)
         }
         composable(route = InsteaScreens.UserList.name) {
-          UserListScreen()
+          UserListScreen(navController = navController)
+        }
+        
+        composable(route = InsteaScreens.signup.name){
+            signUp(navController = navController)
+        }
+        composable(route = InsteaScreens.Search.name){
+            SearchScreen(navController = navController)
         }
 
     }

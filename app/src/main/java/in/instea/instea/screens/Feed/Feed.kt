@@ -1,3 +1,4 @@
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -38,6 +39,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -181,7 +183,7 @@ fun FeedContent(feedViewModel: FeedViewModel = viewModel(factory = AppViewModelP
                 textStyle = TextStyle(fontSize = 16.sp),
                 maxLines = 5,
                 trailingIcon = {
-                    if (textState.isNotEmpty()) {
+                    if (textState.isNotEmpty() || textState.length <= 200) {
                         Icon(imageVector = Icons.Filled.Send,
                             contentDescription = "send",
                             modifier = Modifier.clickable {
@@ -199,14 +201,15 @@ fun FeedContent(feedViewModel: FeedViewModel = viewModel(factory = AppViewModelP
                                         )
                                     )
 
-
                                     textState = ""
                                 }
 
-
-
                             }
                         )
+
+                    }
+                    else if(textState.length >= 200){
+                        Toast.makeText(LocalContext.current, "message must not exceed 200 letters", Toast.LENGTH_SHORT).show()
                     }
 
                 }

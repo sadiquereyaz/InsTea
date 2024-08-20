@@ -1,10 +1,13 @@
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -64,42 +67,46 @@ fun InboxScreen(
     }
 
 
-        Column(
+    Column(
+        modifier = Modifier
+
+            .fillMaxSize()
+    ) {
+
+        LazyColumn(
             modifier = Modifier
-
-                  .fillMaxSize()
+                .weight(1f)
+                .padding(8.dp)
+                .imePadding()
         ) {
-
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp)
-                    .imePadding()
-            ) {
-                items(chatList) { message -> // Access messages from chatList.chatstate
-                    if (message.senderId == feedViewModel.currentuser) {
-                        SenderTextField(message)
-                    } else {
-                        ReceiverTextField(message)
-                    }
+            items(chatList) { message -> // Access messages from chatList.chatstate
+                if (message.senderId == feedViewModel.currentuser) {
+                    SenderTextField(message)
+                } else {
+                    ReceiverTextField(message)
                 }
             }
+        }
 
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .align(Alignment.CenterStart)
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(6.dp), // TextField takes available space
+                        .padding(4.dp), // TextField takes available space
                     value = textState,
                     onValueChange = { textState = it },
                     placeholder = { Text("Enter message") },
                     colors = TextFieldDefaults.textFieldColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                        containerColor = MaterialTheme.colorScheme.onSecondary,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
                     ),
@@ -107,44 +114,81 @@ fun InboxScreen(
                     textStyle = TextStyle(
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
-                    )
+                    ),
+                    trailingIcon = {
+                        if (textState.isNotEmpty()) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(30.dp)
+                                    .padding(1.dp)
+                                    .clickable {
+                                        textState = reduceMultipleSpaces(textState)
+                                        if (textState.isNotEmpty()) {
+                                            chatViewModel.insertMessages(
+                                                message = Message(
+                                                    message = textState,
+                                                    senderId = feedViewModel.currentuser!!,
+                                                ),
+                                                receiverRoom = userId + feedViewModel.currentuser,
+                                                senderRoom = feedViewModel.currentuser + userId
+                                            )
+                                            Log.d(
+                                                "rooms",
+                                                "InboxScreen: $senderRoom , $receiverRoom"
+                                            )
+                                            textState = ""
+                                        }
+                                    },
+                                imageVector = Icons.Filled.Send,
+                                contentDescription = "Send",
+                                tint = Color.White
+                            )
+                        }
+                    }
                 )
 
-                Card(
 
-                    modifier = Modifier
-                        .size(50.dp)
-                        .padding(6.dp),
-                    shape = RoundedCornerShape(100.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Icon(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .padding(1.dp)
-                            .clickable {
-                                textState = reduceMultipleSpaces(textState)
-                                chatViewModel.insertMessages(
-                                    message = Message(
-                                        message = textState,
-                                        senderId = feedViewModel.currentuser!!,
-                                    ),
-                                    receiverRoom = userId + feedViewModel.currentuser,
-                                    senderRoom = feedViewModel.currentuser + userId
-                                )
-                                Log.d("rooms", "InboxScreen: $senderRoom , $receiverRoom")
-                                textState = ""
-                            },
-                        imageVector = Icons.Filled.Send,
-                        contentDescription = "Send",
-                        tint = Color.White
-                    )
-                }
             }
+//                Card(
+//
+//                    modifier = Modifier
+//                        .align(Alignment.CenterEnd)
+//
+//                        .size(50.dp)
+//                        .padding(4.dp),
+//                    shape = RoundedCornerShape(100.dp),
+//                    colors = CardDefaults.cardColors(
+//                        containerColor = MaterialTheme.colorScheme.primary
+//                    )
+//                ) {
+//                    Icon(
+//                        modifier = Modifier
+//                            .size(30.dp)
+//                            .align(Alignment.CenterHorizontally)
+//                            .padding(1.dp)
+//                            .clickable {
+//                                textState = reduceMultipleSpaces(textState)
+//                                if(textState.isNotEmpty()){
+//                                chatViewModel.insertMessages(
+//                                    message = Message(
+//                                        message = textState,
+//                                        senderId = feedViewModel.currentuser!!,
+//                                    ),
+//                                    receiverRoom = userId + feedViewModel.currentuser,
+//                                    senderRoom = feedViewModel.currentuser + userId
+//                                )
+//                                Log.d("rooms", "InboxScreen: $senderRoom , $receiverRoom")
+//                                textState = ""
+//                                }
+//                            },
+//                        imageVector = Icons.Filled.Send,
+//                        contentDescription = "Send",
+//                        tint = Color.White
+//                    )
+//                }
         }
     }
+}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -239,8 +283,6 @@ fun ReceiverTextField(message: Message) {
         }
     }
 }
-
-
 
 
 //data class TimeOfMessage(

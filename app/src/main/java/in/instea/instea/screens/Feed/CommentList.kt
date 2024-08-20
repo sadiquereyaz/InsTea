@@ -36,10 +36,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import `in`.instea.instea.R
 import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.Comments
@@ -47,13 +49,14 @@ import `in`.instea.instea.data.datamodel.PostData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
+fun CommentList(post: PostData, feedViewModel: FeedViewModel,navController: NavController) {
     var textstate by remember { mutableStateOf("") }
     var comments = remember{ mutableStateListOf<Comments>().apply { addAll(post.comments) }  }
 
     LazyColumn(
 
         horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.SpaceBetween,
         modifier = if(post.comments.isEmpty()) Modifier
             .wrapContentSize()
             .heightIn(max = 200.dp)
@@ -62,15 +65,19 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
         else Modifier
             .wrapContentHeight()
             .fillMaxWidth()
+            .padding(0.dp)
             .heightIn(max = 500.dp)
-            .border(1.dp, Color.Black, RoundedCornerShape(20.dp)),
+            .border(1.dp, brush = Brush.linearGradient(listOf(
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.primaryContainer
+            )), RoundedCornerShape(15.dp)),
 
     ) {
         item {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.padding(start=5.dp,top = 28.dp, bottom = 8.dp)
+                modifier = Modifier.padding(start=5.dp,top = 20.dp, bottom = 8.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.dp),
@@ -141,7 +148,7 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
 
             items(comments.reversed()) { comment ->
                 Divider()
-                CommentCard(comment = comment, post = post)
+                CommentCard(comment = comment, post = post, navController = navController)
 
             }
         }
