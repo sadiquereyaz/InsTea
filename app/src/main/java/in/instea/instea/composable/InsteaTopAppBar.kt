@@ -1,21 +1,32 @@
 package `in`.instea.instea.composable
 
 //import `in`.instea.instea.data.AuthViewModel
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.Percent
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
@@ -24,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import `in`.instea.instea.R
 import `in`.instea.instea.data.viewmodel.AuthViewModel
+import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 import `in`.instea.instea.screens.more.MoreDestination
 
@@ -35,11 +47,11 @@ fun InsteaTopAppBar(
     currentScreen: InsteaScreens,
     canNavigateBack: Boolean,
     navigateBack: () -> Unit,
-    moveToAttendanceSummary: (Int?)->Unit,
+    moveToAttendanceSummary: (Int?) -> Unit,
     moveToSelfProfile: () -> Unit,
     moveToOtherProfile: () -> Unit,
     navController: NavHostController,
-    onAddButtonClicked: () -> Unit
+    onAddButtonClicked: () -> Unit,
 ) {
     CenterAlignedTopAppBar(
         scrollBehavior = scrollBehavior,
@@ -62,6 +74,7 @@ fun InsteaTopAppBar(
                 }
             } else if (currentScreen == InsteaScreens.Feed) {
                 IconButton(onClick = {
+                    navController.navigate(InsteaScreens.Search.name)
                 }) {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -81,6 +94,7 @@ fun InsteaTopAppBar(
                         contentDescription = "Add"
                     )
                 }
+
             } else if (currentScreen == InsteaScreens.Schedule) {
                 IconButton(
                     onClick = { moveToAttendanceSummary(1) }
@@ -89,7 +103,7 @@ fun InsteaTopAppBar(
                 }
             } else if (currentScreen == InsteaScreens.SelfProfile) {
                 IconButton(onClick = {
-                     moveToAttendanceSummary(-1)
+                    moveToAttendanceSummary(-1)
                 }) {
                     Icon(
                         imageVector = ImageVector.vectorResource(id = R.drawable.more),
@@ -105,5 +119,8 @@ fun InsteaTopAppBar(
     )
 }
 
+@Composable
+fun Filteruser(feedViewModel: FeedViewModel,query:String){
+    val users = feedViewModel.userList.collectAsState().value
 
-
+}

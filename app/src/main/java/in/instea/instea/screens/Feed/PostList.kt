@@ -11,6 +11,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,15 +23,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import `in`.instea.instea.data.viewmodel.FeedViewModel
+import me.saket.swipe.SwipeAction
 
 @Composable
 fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit, navController : NavHostController) {
     val posts = feedViewModel.posts.collectAsState(initial = emptyList()).value.reversed()
     val userList by feedViewModel.userList.collectAsState()
+    var currentSwipeIndex by remember { mutableStateOf<Int?>(null) }
     if (feedViewModel.isLoading.value) {
         Column {
-            repeat(8) {
+            repeat(15) {
                 ShimmerEffect()
+
             }
         }
     } else {
@@ -37,11 +43,16 @@ fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit, 
             modifier = Modifier.padding(8.dp)
         ) {
             items(posts) { post ->
+                val index = posts.indexOf(post)
                 PostCard(
                     post = post,
 //                    navigateToProfile = { navigateToProfile(post.postedByUser ?: "") },
                     userList = userList,
-                    navController = navController
+                    navController = navController,
+                    index = index,
+                    isVisible = currentSwipeIndex == index,
+                    onSwiped = { currentSwipeIndex = index },
+                    onClose = { currentSwipeIndex = null }
                 )
             }
         }
@@ -80,7 +91,7 @@ fun ShimmerGridItem(brush: Brush, modifier: Modifier = Modifier) {
     Row(
         modifier
             .fillMaxWidth()
-            .padding(2.dp),
+            .padding(6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {

@@ -1,11 +1,16 @@
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -13,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,10 +36,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import `in`.instea.instea.R
 import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.Comments
@@ -41,25 +49,35 @@ import `in`.instea.instea.data.datamodel.PostData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
+fun CommentList(post: PostData, feedViewModel: FeedViewModel,navController: NavController) {
     var textstate by remember { mutableStateOf("") }
     var comments = remember{ mutableStateListOf<Comments>().apply { addAll(post.comments) }  }
 
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.SpaceBetween,
         modifier = if(post.comments.isEmpty()) Modifier
-            .height(100.dp)
+            .wrapContentSize()
+            .heightIn(max = 200.dp)
             .fillMaxWidth()
+
         else Modifier
+            .wrapContentHeight()
             .fillMaxWidth()
-            .height(500.dp)
+            .padding(0.dp)
+            .heightIn(max = 500.dp)
+            .border(1.dp, brush = Brush.linearGradient(listOf(
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.primaryContainer
+            )), RoundedCornerShape(15.dp)),
+
     ) {
         item {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(start=5.dp,top = 20.dp, bottom = 8.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.dp),
@@ -67,7 +85,7 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
                     modifier = Modifier
                         .padding(6.dp)
                         .clip(CircleShape)
-                        .size(30.dp)
+                        .size(40.dp)
                         .align(Alignment.CenterVertically)
                 )
 
@@ -76,10 +94,10 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
                         onValueChange = { textstate = it },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(6.dp),
+                            .padding(6.dp, end = 12.dp),
                         colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = Color.Transparent,
-                            unfocusedBorderColor = Color.Transparent
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            unfocusedBorderColor = MaterialTheme.colorScheme.primary
                         ),
                         shape = RoundedCornerShape(20.dp),
                         placeholder = { Text(text = "Add a comment...") },
@@ -107,12 +125,18 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
 
 
             }
+
         }
+
+
         if (comments.isEmpty()) {
+
             item {
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
                         text = "No Comments Yet...",
@@ -121,8 +145,11 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel) {
                 }
             }
         } else {
+
             items(comments.reversed()) { comment ->
-                CommentCard(comment = comment, post = post)
+                Divider()
+                CommentCard(comment = comment, post = post, navController = navController)
+
             }
         }
     }
