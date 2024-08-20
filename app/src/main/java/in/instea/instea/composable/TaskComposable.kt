@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -52,17 +53,22 @@ fun TaskComposable(
     val scope = rememberCoroutineScope()
     val bottomSheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
-    val roomTask = scheduleObj.task
-    var task by rememberSaveable { mutableStateOf(roomTask) }
-    var isReminderOn by rememberSaveable { mutableStateOf(/*scheduleObj.taskReminderBefore > 0*/false) }
-    var isSwitchVisible by rememberSaveable { mutableStateOf(!task.isNullOrBlank()) }
-    var remindBefore by rememberSaveable { mutableIntStateOf(18) }
-
-    LaunchedEffect(roomTask) {
-        task = roomTask
+    var task by remember { mutableStateOf(scheduleObj.task) }
+    var taskTemp by remember { mutableStateOf("") }
+    var isSwitchVisible by remember { mutableStateOf(false) }
+    var remindBefore by remember { mutableIntStateOf(scheduleObj.taskReminderBefore) }
+    var isReminderOn by remember { mutableStateOf(remindBefore > 0) }
+//    Log.d("task composable", "isReminderOn $isReminderOn")
+//    Log.d("task composable", "reminderBefore $scheduleObj.taskReminderBefore")
+/*
+    LaunchedEffect(scheduleObj.task) {
+        task = scheduleObj.task ?: ""
+    }*/
+    LaunchedEffect(task) {
+        isSwitchVisible = !task.isNullOrBlank()
     }
-    LaunchedEffect(scheduleObj.taskReminderBefore) {
-        remindBefore = scheduleObj.taskReminderBefore
+    LaunchedEffect(remindBefore) {
+        isReminderOn = remindBefore!=0
     }
     Row(
         modifier = modifier
@@ -74,21 +80,19 @@ fun TaskComposable(
             .padding(horizontal = 8.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
+        // task icon and text
         Icon(
             imageVector = Icons.Default.List,
             contentDescription = "task",
             modifier = Modifier.size(16.dp),
         )
-        (if (!task.isNullOrBlank()) task else "Add Task")?.let {
             Text(
-                text = it,
+                text = task ?: "Add Task",
                 fontSize = 12.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
                 modifier = Modifier.padding(start = 4.dp),
             )
-        }
     }
     //bottom sheet
     if (openBottomSheet) {
