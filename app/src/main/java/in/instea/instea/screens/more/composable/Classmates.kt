@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -13,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,15 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.Card
-import `in`.instea.instea.R
+import androidx.wear.compose.material.MaterialTheme.colors
 import `in`.instea.instea.data.viewmodel.classmate
 import `in`.instea.instea.screens.more.MoreUiState
-import `in`.instea.instea.screens.more.composable.DeveloperItem
-import `in`.instea.instea.screens.profile.OtherProfileScreen
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 
 
 @Composable
@@ -55,12 +54,19 @@ fun classmateList(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun classmate(navigatetoOtherProfile: (String) -> Unit, classmate: classmate) {
     Card(onClick = {
+
         navigatetoOtherProfile(classmate.userId)
-    }) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+    },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        ),
+    )
+     {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = classmate.profilepic),
                 contentDescription = null,
@@ -68,13 +74,13 @@ private fun classmate(navigatetoOtherProfile: (String) -> Unit, classmate: class
                     .clip(
                         CircleShape
                     )
-                    .size(100.dp)
+                    .size(70.dp)
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
                 modifier = Modifier.padding(top = 4.dp),
                 text = classmate.name,
-                fontSize = 20.sp,
+                fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
             )

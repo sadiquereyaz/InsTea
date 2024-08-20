@@ -102,8 +102,8 @@ class NetworkUserRepository(
 
             // Query the database for classmates with the same university, department, and semester
             val query = firebaseDatabase.reference.child("user")
-                .orderByChild("university")
-                .equalTo(university)
+                .orderByChild("university").equalTo(university)
+
 
             val classmatesSnapshot = query.get().await()
 
@@ -111,14 +111,12 @@ class NetworkUserRepository(
                 val classmateDept = snapshot.child("dept").getValue(String::class.java)
                 val classmateSem = snapshot.child("sem").getValue(String::class.java)
 
-                if (classmateDept == dept && classmateSem == sem) {
+                if (snapshot.key != userId && classmateDept==dept && classmateSem==sem) {
                     classmate(
                         userId = snapshot.key ?: "",
                         profilepic = R.drawable.dp,
-                        name = snapshot.child("name").getValue(String::class.java) ?: ""
-
+                        name = snapshot.child("username").getValue(String::class.java) ?: ""
                     )
-
                 } else {
                     null
                 }

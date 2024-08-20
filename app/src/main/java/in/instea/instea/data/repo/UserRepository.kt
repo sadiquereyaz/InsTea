@@ -67,7 +67,7 @@ class CombinedUserRepository(
     }
 
     override suspend fun getclassmates(): List<classmate>{
-        val userId=getCurrentUserId()
+        val userId="CHX3jKEfytfRUld933ueCnlI5CP2"
         return networkUserRepository.getClassmates(userId.toString())
     }
 }
