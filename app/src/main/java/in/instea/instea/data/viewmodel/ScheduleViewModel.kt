@@ -80,6 +80,7 @@ class ScheduleViewModel(
             ) ?: ""
             val timestamp = getTimestampForSelectedDay(selectedDateCalendar.time)
             val scheduleList = scheduleRepository.getScheduleAndTaskList(selectedDay, timestamp)
+//            Log.d("SCHEDULE_VM", scheduleList.toString())
             _uiState.update {
                 it.copy(
                     scheduleList = scheduleList,

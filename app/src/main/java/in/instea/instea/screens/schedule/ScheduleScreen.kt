@@ -101,13 +101,11 @@ fun ScheduleScreen(
                 }
             },
             onScheduleReminder = { scheduleModel: CombinedScheduleTaskModel, task: String?, hour: Int ->
-
-                    viewModel.scheduleReminder(
-                        task = task!!,
-                        remindBefore = hour,
-                        scheduleObj = scheduleModel
-                    )
-
+                viewModel.scheduleReminder(
+                    task = task?:"",
+                    remindBefore = hour,
+                    scheduleObj = scheduleModel
+                )
             },
         )
     }

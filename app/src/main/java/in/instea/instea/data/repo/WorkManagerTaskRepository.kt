@@ -24,7 +24,6 @@ interface TaskReminderRepository {
         taskKey: String,
         scheduleObj: CombinedScheduleTaskModel
     )
-
     fun cancelReminder(uniqueWorkName: String)
 }
 
@@ -39,6 +38,7 @@ It schedules a WorkRequest in a way that spreads out the load on system resource
         taskKey: String,
         scheduleObj: CombinedScheduleTaskModel
     ) {
+        if(scheduleObj.timestamp == null) Log.d("WORK_MANAGER", "timestamp is null")
         // duration calculation
         val dateInt: Int = scheduleObj.timestamp ?: 210101
         val year = (dateInt) / 10000 + 2000
@@ -47,16 +47,17 @@ It schedules a WorkRequest in a way that spreads out the load on system resource
         val time: LocalTime = scheduleObj.startTime
         val date = LocalDate.of(year, month, day)
         val dateTime = LocalDateTime.of(date, time)
+
         Log.d("WORK_MANAGER", dateTime.toString())
 
-
         val reminderTime = dateTime.minusHours(remindBefore)
+        Log.d("WORK_MANAGER", "reminderTime= $reminderTime")
         val currentTime = LocalDateTime.now()
         // Calculate the delay between the current time and the reminder time
         val delay = Duration.between(currentTime, reminderTime).toMillis()
 //        val delay = 2000L
         Log.d("WORK_MANAGER", "delay: $delay milli sec")
-        Log.d("WORK_MANAGER", "delay: ${delay / (3600*1000)} hour")
+        Log.d("WORK_MANAGER", "delay: ${delay / (3600*1000.0)} hour")
 
         // If the delay is negative, the reminder time is in the past, and you should not schedule it
         if (delay <= 0) {
@@ -67,16 +68,16 @@ It schedules a WorkRequest in a way that spreads out the load on system resource
         val data = Data.Builder()
         data.putString(TaskReminderWorker.TASK_KEY, task)
 
-        // constraint TODO: remove
-        val constraints = Constraints.Builder()
+        // constraint TODO: useful
+      /*  val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
+            .build()*/
 
         // WorkRequest
         val reminderBuilder = OneTimeWorkRequestBuilder<TaskReminderWorker>()
-        reminderBuilder.setInputData(data.build())
-        reminderBuilder.setConstraints(constraints)
         reminderBuilder.setInitialDelay(delay, TimeUnit.MILLISECONDS)
+        reminderBuilder.setInputData(data.build())
+//        reminderBuilder.setConstraints(constraints)       //TODO: useful
         Log.d("WORK_MANAGER", "WorkManager task scheduled")
         // Actually start the work
         workManager.enqueueUniqueWork(taskKey, ExistingWorkPolicy.REPLACE, reminderBuilder.build())

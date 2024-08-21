@@ -46,26 +46,28 @@ import kotlinx.coroutines.launch
 fun TaskComposable(
     modifier: Modifier = Modifier,
     scheduleObj: CombinedScheduleTaskModel,
-    upsertTask: (String?, Int) -> Unit
+    upsertTask: (String?, Int) -> Unit,
+    task: String? = null,
+    remindBefore: Int = 0
 ) {
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     val skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
     val bottomSheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
-    var task by remember { mutableStateOf(scheduleObj.task) }
+    var taskField by remember { mutableStateOf(task) }
     var taskTemp by remember { mutableStateOf("") }
     var isSwitchVisible by remember { mutableStateOf(false) }
     var remindBefore by remember { mutableIntStateOf(scheduleObj.taskReminderBefore) }
     var isReminderOn by remember { mutableStateOf(remindBefore > 0) }
 //    Log.d("task composable", "isReminderOn $isReminderOn")
 //    Log.d("task composable", "reminderBefore $scheduleObj.taskReminderBefore")
-/*
-    LaunchedEffect(scheduleObj.task) {
-        task = scheduleObj.task ?: ""
-    }*/
+
     LaunchedEffect(task) {
-        isSwitchVisible = !task.isNullOrBlank()
+        taskField = task ?: ""
+    }
+    LaunchedEffect(taskField) {
+        isSwitchVisible = !taskField.isNullOrBlank()
     }
     LaunchedEffect(remindBefore) {
         isReminderOn = remindBefore!=0
@@ -87,7 +89,7 @@ fun TaskComposable(
             modifier = Modifier.size(16.dp),
         )
             Text(
-                text = task ?: "Add Task",
+                text = if (taskField.isNullOrBlank()) "Add Task" else taskField!!,
                 fontSize = 12.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
@@ -154,9 +156,9 @@ fun TaskComposable(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
                     OutlinedTextField(
-                        value = task ?: "",
+                        value = taskField ?: "",
                         onValueChange = {
-                            task = it
+                            taskField = it
                             if (it.isBlank()) {
                                 isReminderOn = false
                                 remindBefore = 0
@@ -184,7 +186,7 @@ fun TaskComposable(
                         shape = RoundedCornerShape(8),
                         onClick = {
                             Log.d("SAVE_BTN", "upsert executed $remindBefore")
-                            upsertTask(task, remindBefore)
+                            upsertTask(taskField, remindBefore)
                             scope.launch { bottomSheetState.hide() }
                                 .invokeOnCompletion {
                                     if (!bottomSheetState.isVisible) {

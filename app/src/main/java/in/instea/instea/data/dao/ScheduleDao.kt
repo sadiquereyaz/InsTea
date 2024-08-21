@@ -57,8 +57,9 @@ interface ScheduleDao {
         """
     SELECT s.scheduleId, s.subjectId, s.startTime, s.endTime, s.day, s.dailyReminderBefore, s.subject, 
            t.timestamp, t.attendance, t.task, t.taskReminderBefore, t.classReminderBefore
-        FROM schedule s 
-        LEFT JOIN taskAttendance t ON s.scheduleId = t.scheduleId AND s.subjectId = t.subjectId AND (t.timestamp = :selectedDate OR t.timestamp IS NULL)
+        FROM schedule s       
+        LEFT JOIN taskAttendance t ON s.scheduleId = t.scheduleId AND s.subjectId = t.subjectId AND t.timestamp = :selectedDate
+/*     LEFT JOIN taskAttendance t ON s.scheduleId = t.scheduleId AND s.subjectId = t.subjectId AND (t.timestamp = :selectedDate OR t.timestamp IS NULL)*/
         WHERE s.day = :selectedDay ORDER BY s.startTime
     """
     )
