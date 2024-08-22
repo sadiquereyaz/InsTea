@@ -27,6 +27,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -123,22 +124,25 @@ fun AttendanceComp(
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         // Month selection
-                        PickerRow(
+                        PlusMinusBtn(
                             displayText = selectedDate.month.getDisplayName(
                                 TextStyle.SHORT,
                                 Locale.getDefault()
                             ),
+                            increase = { selectedDate = selectedDate.plusMonths(1) },
                             decrease = { selectedDate = selectedDate.minusMonths(1) },
-                            increase = { selectedDate = selectedDate.plusMonths(1) })
+                            isPlusEnabled = true
+                        )
 
                         // Year selection
-                        PickerRow(
+                        PlusMinusBtn(
                             displayText = selectedDate.year.toString(),
+                            increase = { selectedDate = selectedDate.plusYears(1) },
                             decrease = {
                                 selectedDate = selectedDate.minusYears(1)
                                 Log.d("click", selectedDate.year.toString())
                             },
-                            increase = { selectedDate = selectedDate.plusYears(1) }
+                            isPlusEnabled = true
                         )
                     }
                 }
@@ -174,13 +178,26 @@ fun AttendanceComp(
 }
 
 @Composable
-fun PickerRow(displayText: String, increase: () -> Unit, decrease: () -> Unit, isMinusEnabled:Boolean = true) {
+fun PlusMinusBtn(
+    displayText: String,
+    increase: () -> Unit,
+    decrease: () -> Unit,
+    isMinusEnabled: Boolean = true,
+    isPlusEnabled: Boolean = true
+) {
+    val iconBtnColor = IconButtonColors(
+        contentColor = MaterialTheme.colorScheme.onPrimary,
+        containerColor = MaterialTheme.colorScheme.primary,
+        disabledContainerColor = MaterialTheme.colorScheme.outlineVariant,
+        disabledContentColor = MaterialTheme.colorScheme.onPrimary
+    )
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         IconButton(
-            enabled  = isMinusEnabled,
+            colors = iconBtnColor,
+            enabled = isMinusEnabled,
             onClick = decrease,
             modifier = Modifier
                 .clip(shape = CircleShape)
@@ -189,11 +206,13 @@ fun PickerRow(displayText: String, increase: () -> Unit, decrease: () -> Unit, i
         ) {
             Icon(
                 imageVector = Icons.Default.Remove, contentDescription = "minus",
-                tint = MaterialTheme.colorScheme.onPrimary
+//                tint = MaterialTheme.colorScheme.onPrimary
             )
         }
         Text(displayText)
         IconButton(
+            colors = iconBtnColor,
+            enabled = isPlusEnabled,
             onClick = increase,
             modifier = Modifier
                 .clip(shape = CircleShape)
@@ -233,7 +252,14 @@ fun AttendanceItem(
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .width(4.dp)
-                    .clip(shape = RoundedCornerShape(topStartPercent = 100, topEndPercent = 0, bottomStartPercent = 100, bottomEndPercent = 0))
+                    .clip(
+                        shape = RoundedCornerShape(
+                            topStartPercent = 100,
+                            topEndPercent = 0,
+                            bottomStartPercent = 100,
+                            bottomEndPercent = 0
+                        )
+                    )
                     .background(color = color)
                     .height(h)
             )
@@ -328,6 +354,11 @@ fun AttendanceItemPreview() {
 @Preview
 fun AttendanceCompPreview() {
     AttendanceItem(
-        item = SubjectAttendanceSummaryModel(subject = "Maths", attendedClasses = 25, absentClasses = 5, totalClasses = 30)
+        item = SubjectAttendanceSummaryModel(
+            subject = "Maths",
+            attendedClasses = 25,
+            absentClasses = 5,
+            totalClasses = 30
+        )
     )
 }

@@ -116,7 +116,8 @@ fun EditScheduleScreen(
                         onTimeSelect = { localTime ->
                             viewModel.setStartTime(localTime)
                             viewModel.setEndTime(localTime.plusHours(1))
-                        }
+                        },
+                        isEnabled = true
                     )
                     // end time
                     TimePicker(
@@ -125,7 +126,8 @@ fun EditScheduleScreen(
                         label = "End Time",
                         onTimeSelect = { localTime ->
                             viewModel.setEndTime(localTime)
-                        }
+                        },
+                        isEnabled = true
                     )
                 }
             }

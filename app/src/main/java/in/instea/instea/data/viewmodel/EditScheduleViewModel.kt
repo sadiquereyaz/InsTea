@@ -1,11 +1,13 @@
 package `in`.instea.instea.data.viewmodel
 
+import NotificationConstant
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.SubjectModel
 import `in`.instea.instea.data.repo.ScheduleRepository
+import `in`.instea.instea.data.repo.TaskReminderRepository
 import `in`.instea.instea.screens.schedule.EditScheduleDestination
 import `in`.instea.instea.screens.schedule.EditScheduleUiState
 import `in`.instea.instea.screens.schedule.EditScreenType
@@ -18,6 +20,7 @@ import java.time.LocalTime
 class EditScheduleViewModel(
     savedStateHandle: SavedStateHandle,
     val scheduleRepository: ScheduleRepository,
+    private val workManagerTaskRepository: TaskReminderRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(EditScheduleUiState())
     val uiState: StateFlow<EditScheduleUiState> = _uiState
@@ -140,10 +143,18 @@ class EditScheduleViewModel(
         viewModelScope.launch {
             _uiState.value.isLoading = true
             scheduleRepository.deleteScheduleById(
-                uiState.value.scheduleId,
-                uiState.value.selectedDay
+                uiState.value.scheduleId
             )
+            cancelReminder()
         }
+    }
+
+    private fun cancelReminder(
+    ) {
+        val reminderKey = NotificationConstant.getDailyClassReminderKey(
+            scheduleId = uiState.value.scheduleId
+        )
+        workManagerTaskRepository.cancelScheduledWork(reminderKey)
     }
 
     private fun showSnackBar() {
@@ -167,9 +178,9 @@ class EditScheduleViewModel(
                             (sT in schedule.startTime..schedule.endTime) ||
                                     (eT in schedule.startTime..schedule.endTime) ||
                                     (sT <= schedule.startTime && endTime >= schedule.endTime)
-                    )
+                            )
         }
 //        return conflictingSchedule?.subject
-        return if(conflictingSchedule == null) null else "Time Conflict with ${conflictingSchedule.subject} on $day"
+        return if (conflictingSchedule == null) null else "Time Conflict with ${conflictingSchedule.subject} on $day"
     }
 }

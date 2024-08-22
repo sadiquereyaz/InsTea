@@ -1,10 +1,5 @@
 package `in`.instea.instea.composable
 
-import android.content.pm.PackageManager
-import android.os.Build
-import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,9 +37,10 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
-import `in`.instea.instea.screens.more.composable.PickerRow
+import `in`.instea.instea.screens.more.composable.PlusMinusBtn
+import `in`.instea.instea.utility.checkAndRequestNotificationPermission
+import `in`.instea.instea.utility.rememberNotificationPermissionLauncher
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,22 +63,16 @@ fun TaskComposable(
     var remindBeforeHour by remember { mutableIntStateOf(remindBefore) }
     var isReminderOn by remember { mutableStateOf(remindBeforeHour > 0) }
     val context = LocalContext.current
-    val requestNotificationPermissionLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission()
-        ) { isGranted: Boolean ->
-            if (isGranted) {
-                // Permission granted, schedule the reminder
-                isReminderOn = true
-            } else {
-                // Permission denied, handle accordingly
-                Toast.makeText(
-                    context,
-                    "Notification permission required. Go to Phone Setting > App > Instea > Allow Notification Permission",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
+    val notificationPermissionLauncher = rememberNotificationPermissionLauncher(
+        context = context,
+        onPermissionGranted = {
+            isReminderOn = true
+            remindBeforeHour = 18
+        },
+        onPermissionDenied = {
+            isReminderOn = false
         }
+    )
 
     LaunchedEffect(task) {
         taskValue = task ?: ""
@@ -136,25 +126,14 @@ fun TaskComposable(
                             checked = isReminderOn,
                             onCheckedChange = {
                                 if (it) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        if (ContextCompat.checkSelfPermission(
-                                                context,
-                                                android.Manifest.permission.POST_NOTIFICATIONS
-                                            ) == PackageManager.PERMISSION_GRANTED
-                                        ) {
-                                            // Permission granted, proceed to schedule reminder
+                                    checkAndRequestNotificationPermission(
+                                        context = context,
+                                        requestLauncher = notificationPermissionLauncher,
+                                        onPermissionGranted = {
                                             isReminderOn = true
                                             remindBeforeHour = 18
-
-                                        } else {
-                                            // Request notification permission
-                                            requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                                         }
-                                    } else {
-                                        // For older versions, no permission needed, proceed to schedule reminder
-                                        isReminderOn = true
-                                        remindBeforeHour = 18
-                                    }
+                                    )
                                 } else {
                                     remindBeforeHour = 0
                                 }
@@ -176,14 +155,15 @@ fun TaskComposable(
                             ) {
                                 Text("Remind before  ")
                                 remindBeforeHour.let {
-                                    PickerRow(
-                                        isMinusEnabled = remindBeforeHour > 0,
+                                    PlusMinusBtn(
                                         displayText = it.toString(),
                                         increase = { remindBeforeHour = (it + 1) },
                                         decrease = {
                                             remindBeforeHour = (it - 1)
                                             if (remindBeforeHour == 0) isReminderOn = false
-                                        }
+                                        },
+                                        isMinusEnabled = remindBeforeHour > 0,
+                                        isPlusEnabled = true
                                     )
                                 }
                                 Text("  hours")

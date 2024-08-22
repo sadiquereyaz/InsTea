@@ -16,14 +16,20 @@
 
 package `in`.instea.instea.worker
 
+const val DAILY_NOTIFICATION_TITLE = "Class Reminder"
+const val TASK_NOTIFICATION_TITLE = "Class Reminder"
+
 // Name of Notification Channel for verbose notifications of background work
-val TASK_NOTIFICATION_CHANNEL_NAME: CharSequence = "Task Reminder"
+const val TASK_NOTIFICATION_CHANNEL_NAME = "Task Reminder"
+const val DAILY_NOTIFICATION_CHANNEL_NAME = "Class Reminder"
 
 // Description of Notification Channel for verbose notifications of background work
-const val TASK_NOTIFICATION_CHANNEL_DESCRIPTION = "Shows notifications whenever a task reminder is due"
+const val TASK_NOTIFICATION_CHANNEL_DESCRIPTION =
+    "Shows notifications whenever a task reminder is due"
+const val DAILY_NOTIFICATION_CHANNEL_DESCRIPTION =
+    "Shows notifications whenever a class reminder is due"
 
 // Title of Notification for verbose notifications of background work
-val TASK_NOTIFICATION_TITLE: CharSequence = "Task Reminder"
 
 /*
 * User Control: Users can customize or mute channels individually. By categorizing notifications into channels using CHANNEL_ID,
@@ -31,7 +37,8 @@ val TASK_NOTIFICATION_TITLE: CharSequence = "Task Reminder"
 *Consistency: All notifications that belong to the same channel share the same behavior, ensuring a consistent user experience.
 * For example, all reminders for tasks could be grouped under a "Task Reminder" channel, making it easier for users to manage these notifications.
 * */
-const val TASK_REMINDER_CHANNEL_ID = "REMINDER_NOTIFICATION"
+const val TASK_NOTIFICATION_CHANNEL_ID = "TASK_NOTIFICATION_NOTIFICATION"
+const val DAILY_NOTIFICATION_CHANNEL_ID = "DAILY_NOTIFICATION_NOTIFICATION"
 
 /*Notification ID: This is the unique identifier for a specific notification. It's used to update or cancel the notification later on.
 Use: When you issue a notification, you assign it an ID so that if you need to update or remove the notification later,

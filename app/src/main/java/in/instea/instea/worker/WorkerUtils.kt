@@ -27,20 +27,25 @@ import androidx.core.app.NotificationManagerCompat
 import `in`.instea.instea.MainActivity
 import `in`.instea.instea.R
 
-fun makeTaskReminderNotification(
+fun makeReminderNotification(
     message: String,
-    context: Context
+    context: Context,
+    notificationId: Int,
+    channelId: String,
+    channelName: String,
+    channelDescription: String = "Shows notifications whenever a reminder is due",
+    title: String
 ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(
-            TASK_REMINDER_CHANNEL_ID,
-            TASK_NOTIFICATION_CHANNEL_NAME,
+            channelId,
+            channelName,
             importance
         )
-        channel.description = TASK_NOTIFICATION_CHANNEL_DESCRIPTION
+        channel.description = channelDescription
         channel.enableVibration(true)
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
@@ -49,16 +54,16 @@ fun makeTaskReminderNotification(
     }
 
     val pendingIntent: PendingIntent = createPendingIntent(context)
-    val builder = NotificationCompat.Builder(context, TASK_REMINDER_CHANNEL_ID)
+    val builder = NotificationCompat.Builder(context, channelId)
         .setSmallIcon(R.drawable.ic_launcher_foreground)        // todo change logo
-        .setContentTitle(TASK_NOTIFICATION_TITLE)
+        .setContentTitle(title)
         .setContentText(message)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setVibrate(longArrayOf(0))
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
 
-    NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, builder.build())
+    NotificationManagerCompat.from(context).notify(notificationId, builder.build())
 }
 
 fun createPendingIntent(appContext: Context): PendingIntent {

@@ -10,6 +10,7 @@ import `in`.instea.instea.data.datamodel.SubjectModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 import `in`.instea.instea.screens.more.composable.TaskModel
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalTime
 
 interface ScheduleRepository {
 
@@ -34,12 +35,13 @@ interface ScheduleRepository {
 
     //    suspend fun getAllSubjects(): List<String>
     suspend fun getAllScheduleByDay(day: String): List<ScheduleModel>       // for time conflict
-    suspend fun deleteScheduleById(id: Int, day: String)
+    suspend fun deleteScheduleById(id: Int)
     suspend fun getSubjectAttendanceSummary(timestamp: Int): List<SubjectAttendanceSummaryModel>
     suspend fun upsertSubject(sub: String): Long
     suspend fun getAllSubjectFlow(): Flow<List<SubjectModel>>
     suspend fun getAllTasks(): List<TaskModel>
     suspend fun deleteTaskById(scheduleId: Int, subjectId: Int, timeStamp: Int)
+    suspend fun saveDailyClassReminder(scheduleId: Int, time: LocalTime?)
 }
 
 class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRepository {
@@ -125,8 +127,8 @@ class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRe
     override suspend fun getAllScheduleByDay(day: String): List<ScheduleModel> =
         scheduleDao.getAllScheduleByDay(day)
 
-    override suspend fun deleteScheduleById(id: Int, day: String) =
-        scheduleDao.deleteScheduleById(id, day)
+    override suspend fun deleteScheduleById(id: Int) =
+        scheduleDao.deleteScheduleById(id)
 
     override suspend fun getSubjectAttendanceSummary(timestamp: Int): List<SubjectAttendanceSummaryModel> =
         scheduleDao.getSubjectAttendanceSummary(startOfTimestamp = timestamp)
@@ -138,6 +140,11 @@ class LocalScheduleRepository(private val scheduleDao: ScheduleDao) : ScheduleRe
     override suspend fun deleteTaskById(scheduleId: Int, subjectId: Int, timeStamp: Int) {
         scheduleDao.clearTask(scheduleId, subjectId, timeStamp)
         Log.d("repository", "repo delete task clicked  ")
+    }
+
+    override suspend fun saveDailyClassReminder(scheduleId: Int, time: LocalTime?) {
+        Log.d("SCHEDULE_REPO","time: $time")
+        scheduleDao.saveDailyClassReminder(scheduleId, time)
     }
 
 

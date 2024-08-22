@@ -30,6 +30,7 @@ import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.ScheduleViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalTime
 
 @Composable
 fun ScheduleScreen(
@@ -100,12 +101,19 @@ fun ScheduleScreen(
                     )
                 }
             },
-            onScheduleReminder = { scheduleModel: CombinedScheduleTaskModel, task: String?, hour: Int ->
-                viewModel.scheduleReminder(
-                    task = task?:"",
+            onScheduleTaskReminder = { scheduleModel: CombinedScheduleTaskModel, task: String?, hour: Int ->
+                viewModel.scheduleTaskReminder(
+                    task = task ?: "",
                     remindBefore = hour,
                     scheduleObj = scheduleModel
                 )
+            },
+            saveDailyClassReminder = { cancelReminder: Boolean, atTime: LocalTime, scheduleModel: CombinedScheduleTaskModel ->
+                coroutineScope.launch{
+                    viewModel.scheduleDailyClassReminder(
+                        scheduleObj = scheduleModel, cancelReminder = cancelReminder, time = atTime
+                    )
+                }
             },
         )
     }

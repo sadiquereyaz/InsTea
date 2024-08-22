@@ -1,8 +1,6 @@
 package `in`.instea.instea.screens.schedule
 
 import android.app.TimePickerDialog
-import android.content.Context
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTime
@@ -18,20 +16,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import `in`.instea.instea.data.viewmodel.EditScheduleViewModel
 import java.time.LocalTime
 
 @Composable
 fun TimePicker(
-    modifier : Modifier,
+    modifier: Modifier,
     value: String = "",
     label: String = "",
-    onTimeSelect: (LocalTime) -> Unit = {}
+    onTimeSelect: (LocalTime) -> Unit = {},
+    isEnabled: Boolean =true
 ) {
     var selectedTimeOnPicker by remember { mutableStateOf(LocalTime.now()) }    // state of time picker
 //            val startTime = selectedTimeOnPicker.format(DateTimeFormatter.ofPattern("HH:mm a"))
     val context = LocalContext.current
     OutlinedTextField(
+        enabled = isEnabled,
         modifier = modifier,
         value = value, // Initial value
         onValueChange = {},

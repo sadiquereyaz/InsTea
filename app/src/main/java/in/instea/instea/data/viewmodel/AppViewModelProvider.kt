@@ -64,6 +64,7 @@ object AppViewModelProvider {
             EditScheduleViewModel(
                 savedStateHandle = this.createSavedStateHandle(),
                 scheduleRepository = insteaApplication().container.scheduleRepository,
+                workManagerTaskRepository = insteaApplication().container.workManagerTaskRepository
             )
         }
         initializer {

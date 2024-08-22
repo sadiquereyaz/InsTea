@@ -39,7 +39,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Authenticate.name  /*"${MoreDestination.route}/${4}"*/,
+        startDestination = InsteaScreens.Schedule.name  /*"${MoreDestination.route}/${4}"*/,
         modifier = Modifier
             .padding(contentPadding)
     ) {
