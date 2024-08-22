@@ -1,6 +1,10 @@
 package `in`.instea.instea.composable
 
-import android.util.Log
+import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,10 +37,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.screens.more.composable.PickerRow
 import kotlinx.coroutines.launch
@@ -55,22 +61,38 @@ fun TaskComposable(
     val scope = rememberCoroutineScope()
     val bottomSheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
-    var taskField by remember { mutableStateOf(task) }
-    var taskTemp by remember { mutableStateOf("") }
+    var taskValue by remember { mutableStateOf(task) }
+    var taskTemp by remember { mutableStateOf(task) }
     var isSwitchVisible by remember { mutableStateOf(false) }
-    var remindBefore by remember { mutableIntStateOf(scheduleObj.taskReminderBefore) }
-    var isReminderOn by remember { mutableStateOf(remindBefore > 0) }
-//    Log.d("task composable", "isReminderOn $isReminderOn")
-//    Log.d("task composable", "reminderBefore $scheduleObj.taskReminderBefore")
+    var remindBeforeHour by remember { mutableIntStateOf(remindBefore) }
+    var isReminderOn by remember { mutableStateOf(remindBeforeHour > 0) }
+    val context = LocalContext.current
+    val requestNotificationPermissionLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted, schedule the reminder
+                isReminderOn = true
+            } else {
+                // Permission denied, handle accordingly
+                Toast.makeText(
+                    context,
+                    "Notification permission required. Go to Phone Setting > App > Instea > Allow Notification Permission",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
 
     LaunchedEffect(task) {
-        taskField = task ?: ""
+        taskValue = task ?: ""
     }
-    LaunchedEffect(taskField) {
-        isSwitchVisible = !taskField.isNullOrBlank()
+    LaunchedEffect(taskValue) {
+        taskTemp = taskValue
+        isSwitchVisible = !taskValue.isNullOrBlank()
     }
-    LaunchedEffect(remindBefore) {
-        isReminderOn = remindBefore!=0
+    LaunchedEffect(remindBeforeHour) {
+        isReminderOn = remindBeforeHour != 0
     }
     Row(
         modifier = modifier
@@ -88,13 +110,13 @@ fun TaskComposable(
             contentDescription = "task",
             modifier = Modifier.size(16.dp),
         )
-            Text(
-                text = if (taskField.isNullOrBlank()) "Add Task" else taskField!!,
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
-                modifier = Modifier.padding(start = 4.dp),
-            )
+        Text(
+            text = if (taskValue.isNullOrBlank()) "Add Task" else taskValue!!,
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
+            modifier = Modifier.padding(start = 4.dp),
+        )
     }
     //bottom sheet
     if (openBottomSheet) {
@@ -113,10 +135,29 @@ fun TaskComposable(
                                 .padding(start = 16.dp),
                             checked = isReminderOn,
                             onCheckedChange = {
-                                Log.d("SWITCH", it.toString())
-                                isReminderOn = it
-                                remindBefore = if (!it) 0 else 18;
-                                Log.d("SWITCH_HOUR", remindBefore.toString())
+                                if (it) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                        if (ContextCompat.checkSelfPermission(
+                                                context,
+                                                android.Manifest.permission.POST_NOTIFICATIONS
+                                            ) == PackageManager.PERMISSION_GRANTED
+                                        ) {
+                                            // Permission granted, proceed to schedule reminder
+                                            isReminderOn = true
+                                            remindBeforeHour = 18
+
+                                        } else {
+                                            // Request notification permission
+                                            requestNotificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                                        }
+                                    } else {
+                                        // For older versions, no permission needed, proceed to schedule reminder
+                                        isReminderOn = true
+                                        remindBeforeHour = 18
+                                    }
+                                } else {
+                                    remindBeforeHour = 0
+                                }
                             },
                             thumbContent = {
                                 Icon(
@@ -134,14 +175,14 @@ fun TaskComposable(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text("Remind before  ")
-                                remindBefore.let {
+                                remindBeforeHour.let {
                                     PickerRow(
-                                        isMinusEnabled = remindBefore > 0,
+                                        isMinusEnabled = remindBeforeHour > 0,
                                         displayText = it.toString(),
-                                        increase = { remindBefore = (it + 1) },
+                                        increase = { remindBeforeHour = (it + 1) },
                                         decrease = {
-                                            remindBefore = (it - 1)
-                                            if (remindBefore == 0) isReminderOn = false
+                                            remindBeforeHour = (it - 1)
+                                            if (remindBeforeHour == 0) isReminderOn = false
                                         }
                                     )
                                 }
@@ -156,12 +197,12 @@ fun TaskComposable(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
                     OutlinedTextField(
-                        value = taskField ?: "",
+                        value = taskTemp ?: "",
                         onValueChange = {
-                            taskField = it
+                            taskTemp = it
                             if (it.isBlank()) {
                                 isReminderOn = false
-                                remindBefore = 0
+                                remindBeforeHour = 0
                                 isSwitchVisible = false
                             } else {
                                 isSwitchVisible = true
@@ -185,15 +226,16 @@ fun TaskComposable(
                             .padding(start = 8.dp, end = 16.dp, top = 24.dp),
                         shape = RoundedCornerShape(8),
                         onClick = {
-                            Log.d("SAVE_BTN", "upsert executed $remindBefore")
-                            upsertTask(taskField, remindBefore)
+                            taskValue = taskTemp
+                            upsertTask(taskTemp, remindBeforeHour)
                             scope.launch { bottomSheetState.hide() }
                                 .invokeOnCompletion {
                                     if (!bottomSheetState.isVisible) {
                                         openBottomSheet = false
                                     }
                                 }
-                        }) {
+                        }
+                    ) {
                         Icon(
                             modifier = Modifier
                                 .size(height = 36.dp, width = 28.dp),

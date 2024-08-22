@@ -62,11 +62,11 @@ It schedules a WorkRequest in a way that spreads out the load on system resource
         // If the delay is negative, the reminder time is in the past, and you should not schedule it
         if (delay <= 0) {
             Log.d("WORK_MANAGER", "Delay is negative")
-            return
+            /*return*/
         }
 
         val data = Data.Builder()
-        data.putString(TaskReminderWorker.TASK_KEY, task)
+        data.putString(TaskReminderWorker.TASK_KEY, "$task due date: $day/$month/$year of ${scheduleObj.subject}")
 
         // constraint TODO: useful
       /*  val constraints = Constraints.Builder()
@@ -75,7 +75,7 @@ It schedules a WorkRequest in a way that spreads out the load on system resource
 
         // WorkRequest
         val reminderBuilder = OneTimeWorkRequestBuilder<TaskReminderWorker>()
-        reminderBuilder.setInitialDelay(delay, TimeUnit.MILLISECONDS)
+        reminderBuilder.setInitialDelay(/*delay*/3000, TimeUnit.MILLISECONDS)
         reminderBuilder.setInputData(data.build())
 //        reminderBuilder.setConstraints(constraints)       //TODO: useful
         Log.d("WORK_MANAGER", "WorkManager task scheduled")

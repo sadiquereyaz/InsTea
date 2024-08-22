@@ -16,28 +16,30 @@
 
 package `in`.instea.instea.worker
 
-// Notification Channel constants
-
 // Name of Notification Channel for verbose notifications of background work
-val VERBOSE_NOTIFICATION_CHANNEL_NAME: CharSequence = "Verbose WorkManager Notifications"
+val TASK_NOTIFICATION_CHANNEL_NAME: CharSequence = "Task Reminder"
 
 // Description of Notification Channel for verbose notifications of background work
-const val VERBOSE_NOTIFICATION_CHANNEL_DESCRIPTION = "Shows notifications whenever work starts"
+const val TASK_NOTIFICATION_CHANNEL_DESCRIPTION = "Shows notifications whenever a task reminder is due"
 
 // Title of Notification for verbose notifications of background work
-val NOTIFICATION_TITLE: CharSequence = "Task Reminder!"
+val TASK_NOTIFICATION_TITLE: CharSequence = "Task Reminder"
 
-// ID of Notification Channel for verbose notifications of background work
-const val CHANNEL_ID = "VERBOSE_NOTIFICATION"
+/*
+* User Control: Users can customize or mute channels individually. By categorizing notifications into channels using CHANNEL_ID,
+* users have more control over what types of notifications they want to receive.
+*Consistency: All notifications that belong to the same channel share the same behavior, ensuring a consistent user experience.
+* For example, all reminders for tasks could be grouped under a "Task Reminder" channel, making it easier for users to manage these notifications.
+* */
+const val TASK_REMINDER_CHANNEL_ID = "REMINDER_NOTIFICATION"
 
-// ID of Notification for verbose notifications of background work
+/*Notification ID: This is the unique identifier for a specific notification. It's used to update or cancel the notification later on.
+Use: When you issue a notification, you assign it an ID so that if you need to update or remove the notification later,
+you can refer to it by this ID. The ID should be unique for each notification or notification group.*/
 const val NOTIFICATION_ID = 1
 
-// Request code for pending intent
+/* Purpose: This is a unique code that identifies the PendingIntent associated with a notification action or other intent-based operation.
+Use: When you create a PendingIntent (for example, to open an activity when the user taps on the notification), you provide a request code.
+This code helps distinguish between different intents if needed. In this case, it's set to 0, but it could be any unique integer value.*/
 const val REQUEST_CODE = 0
 
-// Reminder schedule
-const val FIVE_SECONDS: Long = 5
-const val ONE_DAY: Long = 1
-const val SEVEN_DAYS: Long = 7
-const val THIRTY_DAYS: Long = 30

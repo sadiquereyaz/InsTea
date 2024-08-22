@@ -132,8 +132,8 @@ class ScheduleViewModel(
         unit: TimeUnit = TimeUnit.SECONDS,       //TODO: change to hour
         scheduleObj: CombinedScheduleTaskModel
     ) {
-        val reminderKey = "${scheduleObj.scheduleId}${scheduleObj.subjectId}${scheduleObj.timestamp}"
-        if (remindBefore !=0) {
+        val reminderKey = "task${scheduleObj.scheduleId}${scheduleObj.subjectId}${scheduleObj.timestamp}"
+        if (remindBefore != 0) {
             workManagerTaskRepository.scheduleTaskReminder(
                 task,
                 remindBefore.toLong(),
@@ -148,7 +148,7 @@ class ScheduleViewModel(
         }
     }
 
-    fun cancelReminder(
+    private fun cancelReminder(
         reminderKey: String
     ) {
         workManagerTaskRepository.cancelReminder(reminderKey)

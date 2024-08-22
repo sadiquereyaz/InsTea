@@ -31,17 +31,17 @@ fun makeTaskReminderNotification(
     message: String,
     context: Context
 ) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(
-            CHANNEL_ID,
-            VERBOSE_NOTIFICATION_CHANNEL_NAME,
+            TASK_REMINDER_CHANNEL_ID,
+            TASK_NOTIFICATION_CHANNEL_NAME,
             importance
         )
-        channel.description = VERBOSE_NOTIFICATION_CHANNEL_DESCRIPTION
-
+        channel.description = TASK_NOTIFICATION_CHANNEL_DESCRIPTION
+        channel.enableVibration(true)
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
 
@@ -49,13 +49,12 @@ fun makeTaskReminderNotification(
     }
 
     val pendingIntent: PendingIntent = createPendingIntent(context)
-
-    val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
-        .setContentTitle(NOTIFICATION_TITLE)
+    val builder = NotificationCompat.Builder(context, TASK_REMINDER_CHANNEL_ID)
+        .setSmallIcon(R.drawable.ic_launcher_foreground)        // todo change logo
+        .setContentTitle(TASK_NOTIFICATION_TITLE)
         .setContentText(message)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
-        .setVibrate(LongArray(0))
+        .setVibrate(longArrayOf(0))
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
 
