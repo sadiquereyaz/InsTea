@@ -29,9 +29,9 @@ class NetworkUserRepository(
                     // Handle the case where user data exists but cannot be mapped to UserModel
                     emit(
                         User(
-                            "id unmatched",
-                            "unmatchedModel",
-                            "user data exists but cannot be mapped to UserModel"
+                            userId = "id unmatched",
+                            email = "unmatchedModel",
+                            about = "user data exists but cannot be mapped to UserModel"
                         )
                     ) // Consider emitting an empty UserModel or error state here
                 }
@@ -39,9 +39,9 @@ class NetworkUserRepository(
                 // Handle the case where user data does not exist
                 emit(
                     User(
-                        "at firebase, id does not exist",
-                        "userIdNotAvailable",
-                        "given id is not present in firebase"
+                        email = "at firebase, id does not exist",
+                        userId = "userIdNotAvailable",
+                        about = "given id is not present in firebase"
                     )
                 ) // Consider emitting an empty UserModel or error state here
             }
@@ -161,8 +161,6 @@ class NetworkUserRepository(
         } catch (e: Exception) {
             Log.e(TAG, "error getting classmates list : ${e.message}", )
              emptyList()
-
-
         }
     }
 }

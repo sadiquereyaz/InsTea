@@ -41,6 +41,7 @@ class UserInfoViewModel(
             userRepository.getUserById(currentUserRef.uid).collect { user ->
                 _uiState.update { currState ->
                     currState.copy(
+                        dpId = user.dpId,
                         username = user.username ?: "",
                         selectedUniversity = user.university ?: "",
                         selectedDepartment = user.dept ?: "",
@@ -57,7 +58,7 @@ class UserInfoViewModel(
                         _uiState.update {
                             it.copy(
                                 departmentList = departmentResult.stringList,
-                            isLoading = false,
+                                isLoading = false,
                             )
                         }
 
@@ -140,7 +141,7 @@ class UserInfoViewModel(
         }
     }
 
-    fun save() {
+    fun save()   {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)
@@ -154,6 +155,7 @@ class UserInfoViewModel(
                 onSuccess = {
                     val userInsertResult: Result<String?> = userRepository.insertUser(
                         user = User(
+                            dpId = values.dpId,
                             userId = accountService.currentUserId,
                             username = values.username,
                             email = accountService.currentEmail,
@@ -170,7 +172,7 @@ class UserInfoViewModel(
                         onSuccess = {
                             accountService.updateDisplayName(values.username)
                             _uiState.update {
-                                it.copy(isSuccess = true, /*isLoading = false*/)
+                                it.copy(isSuccess = true, isLoading = true)
                             }
                         },
                         onFailure = { e ->
@@ -251,5 +253,9 @@ class UserInfoViewModel(
                 )
             }
         }
+    }
+
+    fun setDpId(id: Int) {
+        _uiState.update { it.copy(dpId = id) }
     }
 }
