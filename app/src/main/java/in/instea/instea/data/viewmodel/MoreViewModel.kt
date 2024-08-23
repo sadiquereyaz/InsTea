@@ -66,7 +66,6 @@ class MoreViewModel(
         return timestamp
     }
 
-
     fun getAllTask() {
         viewModelScope.launch {
             val tasks = scheduleRepository.getAllTasks()

@@ -38,7 +38,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
-import `in`.instea.instea.screens.more.composable.PlusMinusBtn
 import `in`.instea.instea.utility.checkAndRequestNotificationPermission
 import `in`.instea.instea.utility.rememberNotificationPermissionLauncher
 import kotlinx.coroutines.launch

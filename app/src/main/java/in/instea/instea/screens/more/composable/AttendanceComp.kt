@@ -18,16 +18,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -47,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import `in`.instea.instea.composable.PlusMinusBtn
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.SubjectAttendanceSummaryModel
 import `in`.instea.instea.screens.more.MoreUiState
@@ -57,7 +53,6 @@ import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AttendanceComp(
     modifier: Modifier = Modifier,
@@ -150,8 +145,9 @@ fun AttendanceComp(
         }
     }
     LazyColumn {
+        //total percentage
         item {
-            Divider()
+            HorizontalDivider()
             if (totalCommenced > 0) AttendanceItem(
                 item = SubjectAttendanceSummaryModel(
                     subject = "Overall",
@@ -171,58 +167,10 @@ fun AttendanceComp(
             }
         }
         itemsIndexed(attendanceList) { index, item ->
-            /* if (index != 0) */Divider()
-            AttendanceItem(item = item)
-        }
-    }
-}
-
-@Composable
-fun PlusMinusBtn(
-    displayText: String,
-    increase: () -> Unit,
-    decrease: () -> Unit,
-    isMinusEnabled: Boolean = true,
-    isPlusEnabled: Boolean = true
-) {
-    val iconBtnColor = IconButtonColors(
-        contentColor = MaterialTheme.colorScheme.onPrimary,
-        containerColor = MaterialTheme.colorScheme.primary,
-        disabledContainerColor = MaterialTheme.colorScheme.outlineVariant,
-        disabledContentColor = MaterialTheme.colorScheme.onPrimary
-    )
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        IconButton(
-            colors = iconBtnColor,
-            enabled = isMinusEnabled,
-            onClick = decrease,
-            modifier = Modifier
-                .clip(shape = CircleShape)
-                .background(MaterialTheme.colorScheme.primary)
-                .size(20.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Remove, contentDescription = "minus",
-//                tint = MaterialTheme.colorScheme.onPrimary
-            )
-        }
-        Text(displayText)
-        IconButton(
-            colors = iconBtnColor,
-            enabled = isPlusEnabled,
-            onClick = increase,
-            modifier = Modifier
-                .clip(shape = CircleShape)
-                .background(MaterialTheme.colorScheme.primary)
-                .size(20.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add, contentDescription = "add",
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
+            /* if (index != 0) */HorizontalDivider()
+            if (item.totalClasses != 0) {
+                AttendanceItem(item = item)
+            }
         }
     }
 }
@@ -242,6 +190,7 @@ fun AttendanceItem(
             val absentClasses = item.absentClasses
             val attendedClasses = item.attendedClasses
             val totalClasses = item.totalClasses
+
             val percentage: Float =
                 ((attendedClasses.toFloat() / totalClasses.toFloat()) * 1000).roundToInt()
                     .toFloat() / 10
@@ -275,7 +224,7 @@ fun AttendanceItem(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "$percentage%",
+                        text =  if (percentage % 1 == 0f) "${percentage.toInt()}%" else "$percentage%",
                         modifier = Modifier,
                         fontWeight = FontWeight.Bold,
                         color = color
