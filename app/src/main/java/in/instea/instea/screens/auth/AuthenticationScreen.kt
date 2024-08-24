@@ -1,6 +1,7 @@
 package `in`.instea.instea.screens.auth
 
 
+import NotificationScreen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,6 +39,9 @@ fun AuthenticationScreen(
     navigateToUserInfo: () -> Unit,
     snackBarHostState: SnackbarHostState
 ) {
+    NotificationScreen()
+
+
     val uiState by viewModel.uiState.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 

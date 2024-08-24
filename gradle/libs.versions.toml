@@ -9,6 +9,7 @@ datastorePreferences = "1.1.1"
 firebaseBom = "33.1.2"
 googleid = "1.1.1"
 googleidVersion = "1.1.1"
+jsoup = "1.15.3"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -67,6 +68,7 @@ firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 google-firebase-auth = { module = "com.google.firebase:firebase-auth" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 googleid-v111 = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleidVersion" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

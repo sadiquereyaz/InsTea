@@ -109,4 +109,5 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation (libs.android.lottie.compose)
     implementation(libs.androidx.work.runtime.ktx)  //workManager
+    implementation(libs.jsoup)
 }
