@@ -28,9 +28,9 @@ class NetwrokChatRepository(
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val messageList = mutableListOf<Message>()
                     for (message in snapshot.children) {
-                        val message = message.getValue(Message::class.java)
-                        if (message != null) {
-                            messageList.add(message)
+                        val m = message.getValue(Message::class.java)
+                        if (m != null) {
+                            messageList.add(m)
                         }
                     }
                     trySend(messageList).isSuccess
