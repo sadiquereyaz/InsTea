@@ -1,14 +1,10 @@
-import android.util.Log
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import `in`.instea.instea.data.repo.CombinedUserRepository
+import `in`.instea.instea.data.datamodel.Message
 import `in`.instea.instea.data.repo.NetworkUserRepository
-import `in`.instea.instea.data.repo.UserRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

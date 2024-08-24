@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -43,7 +41,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import `in`.instea.instea.data.datamodel.DateAndHour
+import `in`.instea.instea.data.datamodel.Message
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.FeedViewModel
 
@@ -172,7 +170,7 @@ fun InboxScreen(
 //                                textState = reduceMultipleSpaces(textState)
 //                                if(textState.isNotEmpty()){
 //                                chatViewModel.insertMessages(
-//                                    message = Message(
+//                                    message = `in`.instea.instea.data.datamodel.Message(
 //                                        message = textState,
 //                                        senderId = feedViewModel.currentuser!!,
 //                                    ),

@@ -1,11 +1,9 @@
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import `in`.instea.instea.data.datamodel.Message
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 fun reduceMultipleSpaces(input: String): String {
@@ -31,7 +29,7 @@ class ChatviewModel(
         }
     }
 
-    fun insertMessages(message: Message,receiverRoom: String, senderRoom: String) {
+    fun insertMessages(message: Message, receiverRoom: String, senderRoom: String) {
         viewModelScope.launch {
             netWorkChatRepository.insertMessage(message, receiverRoom, senderRoom)
             netWorkChatRepository.updateChatPartners(message.senderId,receiverRoom.removePrefix(message.senderId))
