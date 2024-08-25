@@ -39,7 +39,6 @@ fun AuthenticationScreen(
     navigateToUserInfo: () -> Unit,
     snackBarHostState: SnackbarHostState
 ) {
-    NotificationScreen()
 
 
     val uiState by viewModel.uiState.collectAsState()

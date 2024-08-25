@@ -1,6 +1,7 @@
 package `in`.instea.instea.data.viewmodel
 
 import ChatviewModel
+import NoticeViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -80,6 +81,9 @@ object AppViewModelProvider {
             ChatviewModel(
                 netWorkChatRepository = insteaApplication().container.netwrokChatRepository
             )
+        }
+        initializer {
+            NoticeViewModel()
         }
     }
 }

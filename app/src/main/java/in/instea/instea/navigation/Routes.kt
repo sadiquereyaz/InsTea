@@ -20,5 +20,6 @@ enum class InsteaScreens(
     More("More"),
     EditPost("Edit"),
     signup(":signup"),
-    Search("Wan'na Find Someone")
+    Search("Wan'na Find Someone"),
+    Notification("Notification")
 }
