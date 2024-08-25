@@ -5,5 +5,5 @@ data class NoticeUiState(
     val isSuccess: Boolean = false,
     val errorMessage: String? = null,
     val showSnackBar: Boolean = false,
-    val noticeList: List<String> = emptyList()
+    val scrollingNoticeList: List<Pair<String, String>> = emptyList()
 )

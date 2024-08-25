@@ -141,7 +141,7 @@ class UserInfoViewModel(
         }
     }
 
-    fun save()   {
+    fun save() {
         viewModelScope.launch {
             _uiState.update {
                 it.copy(isLoading = true)

@@ -16,32 +16,35 @@ class NoticeViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(NoticeUiState())
     val uiState: StateFlow<NoticeUiState> = _uiState.asStateFlow()
 
-    fun getNotice(url: String) {
+    init {
+        getNotice()
+    }
+
+    fun getNotice() {
         viewModelScope.launch {
             try {
-                val noticeList = fetchNotices(url)
-                Log.d("NoticeViewModel", "Notices: $noticeList")
-                _uiState.update { it.copy(noticeList = noticeList) }
+                val noticeList = fetchScrollingNotices()
+                _uiState.update { it.copy(scrollingNoticeList = noticeList) }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _uiState.value = NoticeUiState(noticeList = emptyList())
+                _uiState.value = NoticeUiState(scrollingNoticeList = emptyList())
             }
         }
     }
 
-    private suspend fun fetchNotices(url: String): List<String> {
+    private suspend fun fetchScrollingNotices(url: String = "https://jmicoe.in/"): List<Pair<String, String>> {
         Log.d("NoticeViewModel", "Fetching notices from URL: $url")
         return withContext(Dispatchers.IO) {
             try {
                 val document = Jsoup.connect(url).get()
-                val books: Elements = document.select(".product_pod")
-                val list = mutableListOf<String>()
-                var count = 0
-                for (book in books) {
-                    val title = book.select("h3 > a").text()
-                    val price = book.select(".price_color").text()
-                    list.add("Book ${count++}: $title price: $price")
-                    Log.d("NOTIFICATION_BOOK", "Book $count: $title price: $price")
+                Log.d("NOTICE_VM", document.html())
+                // Select all <a> tags within the <marquee> element
+                val notices: Elements = document.select("marquee a")
+                val list = mutableListOf<Pair<String, String>>()
+                for (notice in notices) {
+                    val noticeText = notice.text()
+                    val noticeLink = notice.attr("href")
+                    list.add(Pair(noticeText, noticeLink))
                 }
                 list
             } catch (e: Exception) {
