@@ -15,8 +15,10 @@ import `in`.instea.instea.data.repo.LocalPostRepository
 import `in`.instea.instea.data.repo.LocalScheduleRepository
 import `in`.instea.instea.data.repo.LocalUserRepository
 import `in`.instea.instea.data.repo.NetworkAcademicRepository
+import `in`.instea.instea.data.repo.NetworkNoticeRepository
 import `in`.instea.instea.data.repo.NetworkPostRepository
 import `in`.instea.instea.data.repo.NetworkUserRepository
+import `in`.instea.instea.data.repo.NoticeRepository
 import `in`.instea.instea.data.repo.PostRepository
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.data.repo.TaskReminderRepository
@@ -36,6 +38,7 @@ interface AppContainer {
     val academicRepository: AcademicRepository
     val accountService: AccountService
     val netwrokChatRepository: NetwrokChatRepository
+    val noticeRepository: NoticeRepository
 }
 
 private const val CURRENT_USER = "current_user"
@@ -89,6 +92,8 @@ class AppDataContainer(
         NetwrokChatRepository(
             userRepository = NetworkUserRepository(firebaseDatabase, firebaseAuth)
         )
-
+    }
+    override val noticeRepository: NoticeRepository by lazy {
+        NetworkNoticeRepository()
     }
 }

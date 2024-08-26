@@ -2,6 +2,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,51 +12,51 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.wear.compose.material.Text
 import `in`.instea.instea.composable.Loader
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
-import `in`.instea.instea.data.viewmodel.NoticeViewModel
 
 @Composable
 fun NoticeScreen(
-    modifier: Modifier = Modifier, navController: NavHostController,
-    viewModel: NoticeViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    viewModel: NoticeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
-    var notices by remember { mutableStateOf(uiState.scrollingNoticeList) }
-    val tabs = mutableListOf("Urgent", "Admission", "Admission 2", "Hostels","Examinations", "Academics" )
+    var selectedTabIndex by remember { mutableIntStateOf(1) }
     val mContext = LocalContext.current
+
+    LaunchedEffect(selectedTabIndex) {
+        viewModel.fetchNoticesForTab(selectedTabIndex)
+    }
 
     Column(
         modifier = modifier.background(MaterialTheme.colorScheme.background)
     ) {
         ScrollableTabRow(
             selectedTabIndex = selectedTabIndex,
-//            containerColor = Color.Red,
-//            contentColor = Color.Blue,
             edgePadding = 0.dp
         ) {
-            tabs.forEachIndexed { index, title ->
+            viewModel.tabConfigs.forEach { it ->
+                val index = it.key
                 Tab(
-                    modifier = Modifier,
                     text = {
                         Text(
-                            text = title,
-//                            textAlign = TextAlign.Center,
+                            text = it.value.tabName,
                             color = if (selectedTabIndex == index) {
                                 MaterialTheme.colorScheme.primary
                             } else {
@@ -64,41 +65,27 @@ fun NoticeScreen(
                         )
                     },
                     selected = selectedTabIndex == index,
-                    onClick = {
-                        selectedTabIndex = index
-                        when (index) {
-                            0 -> {
-//                                viewModel.getNotice()
-                                notices = uiState.scrollingNoticeList
-//                                Log.d("NOTICE_ SCREEN", "Notice: $notices")
-                            }
-
-                            1 -> {
-//                                viewModel.fetchAdmissionNotices()
-                                notices = uiState.admissionNoticeList
-                            }
-
-                            2 -> {
-//                                viewModel.fetchNewWebsiteNotices()
-                                notices = uiState.newWebsiteNoticeList
-                            }
-                        }
-                    }
+                    onClick = { selectedTabIndex = index }
                 )
             }
         }
 
-        if (!uiState.isLoading) {
+        if (uiState.isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Loader(
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        } else if (uiState.error != null) {
+            Text("Error: ${uiState.error}")
+        } else {
             LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
-                items(notices) { notice ->
+                items(uiState.notices) { notice ->
                     Text(
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
                             .clickable {
-                                val intent = Intent(
-                                    Intent.ACTION_VIEW,
-                                    Uri.parse(notice.second)
-                                )
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(notice.second))
                                 startActivity(mContext, intent, null)
                             },
                         text = notice.first
@@ -106,8 +93,6 @@ fun NoticeScreen(
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
                 }
             }
-        } else {
-            Loader(modifier = Modifier.fillMaxSize())
         }
     }
 }
