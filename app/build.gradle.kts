@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.Packaging
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -6,6 +8,21 @@ plugins {
 }
 
 android {
+    /*packaging {
+        resources {
+            excludes += listOf(
+                "/META-INF/{AL2.0,LGPL2.1}",
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/license.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt",
+                "META-INF/notice.txt",
+                "META-INF/ASL2.0"
+            )
+        }
+    }*/
     namespace = "in.instea.instea"
     compileSdk = 34
 
@@ -110,5 +127,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation (libs.android.lottie.compose)
     implementation(libs.androidx.work.runtime.ktx)  //workManager
-    implementation(libs.jsoup)
+//    implementation(libs.jsoup)      //web scraping
+    implementation("net.sourceforge.htmlunit:htmlunit-android:2.63.0")  // screen scraping
+//    implementation("xml-apis:xml-apis:1.4.01")
 }

@@ -4,10 +4,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import `in`.instea.instea.navigation.InsteaScreens
@@ -46,11 +48,18 @@ object BottomNavItemData{
             route = InsteaScreens.UserList.name
         ),
         BottomNavItem(
+            title = "Notices",
+            selectedIcon = Icons.Filled.NotificationsActive,
+            unselectedItem = Icons.Outlined.Notifications,
+            hasNotification = true,
+//            badgeCount = 45,
+            route = InsteaScreens.Notice.name
+        ),
+        BottomNavItem(
             title = "Profile",
             selectedIcon = Icons.Filled.Person,
             unselectedItem = Icons.Outlined.Person,
             hasNotification = false,
-            badgeCount = 45,
             route = InsteaScreens.SelfProfile.name
         )
     )

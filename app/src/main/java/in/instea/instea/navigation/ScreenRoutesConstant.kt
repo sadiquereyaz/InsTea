@@ -21,5 +21,5 @@ enum class InsteaScreens(
     EditPost("Edit"),
     signup(":signup"),
     Search("Wan'na Find Someone"),
-    Notification("Notification")
+    Notice("Notices"),
 }

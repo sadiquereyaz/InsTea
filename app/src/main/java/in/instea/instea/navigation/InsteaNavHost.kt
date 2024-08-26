@@ -40,7 +40,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Notification.name  /*"${MoreDestination.route}/${4}"*/,
+        startDestination = InsteaScreens.Notice.name  /*"${MoreDestination.route}/${4}"*/,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -173,7 +173,7 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Search.name){
             SearchScreen(navController = navController)
         }
-        composable(route = InsteaScreens.Notification.name){
+        composable(route = InsteaScreens.Notice.name){
             NotificationScreen(navController = navController)
         }
     }
