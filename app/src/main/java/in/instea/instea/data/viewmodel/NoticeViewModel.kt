@@ -3,6 +3,9 @@ package `in`.instea.instea.data.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gargoylesoftware.htmlunit.BrowserVersion
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController
+import com.gargoylesoftware.htmlunit.WaitingRefreshHandler
 import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor
 import com.gargoylesoftware.htmlunit.html.HtmlPage
@@ -20,30 +23,27 @@ class NoticeViewModel : ViewModel() {
     val uiState: StateFlow<NoticeUiState> = _uiState.asStateFlow()
 
     init {
-        getNotice()
+//        getNotice()
+        fetchNewWebsiteNotices()
     }
 
-    private fun getNotice() {
+    fun getNotice() {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
             try {
                 val sNotice = fetchScrollingNotices()   // loader is working properly by initialising here
-                _uiState.update {
-                    it.copy(
-                        scrollingNoticeList = sNotice,
-//                        admissionNoticeList = fetchAdmissionNotices(),
-//                        newWebsiteNoticeList = fetchNewWebsiteNotices()
-                    )
-                }
+//                Log.d("NOTICE_VM", "Scrolling Notices: $sNotice")
+                _uiState.update { it.copy(scrollingNoticeList = sNotice) }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _uiState.update {it.copy(isLoading = false)}
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
 
     //httpUnit-static data
-    suspend fun fetchScrollingNotices(url: String = "https://jmicoe.in/"): List<Pair<String, String>> {
-        Log.d("NOTICE_VM", "Fetching notices from URL: $url")
+    private suspend fun fetchScrollingNotices(url: String = "https://jmicoe.in/"): List<Pair<String, String>> {
+        Log.d("NOTICE_VM", "Fetching Scrolling URL: $url")
         return withContext(Dispatchers.IO) {
             val webClient = WebClient().apply {
                 options.isJavaScriptEnabled = false     // since this data is static, disabling JS
@@ -52,7 +52,7 @@ class NoticeViewModel : ViewModel() {
             try {
                 val page: HtmlPage = webClient.getPage(url)
                 // Wait for JS execution
-                //webClient.waitForBackgroundJavaScript(10_000) // since this data is static and js is not used, so no need to wait
+//                webClient.waitForBackgroundJavaScript(3_000) // since this data is static and js is not used, so no need to wait
 
                 // Select all <a> tags within the <marquee> element
 
@@ -65,23 +65,25 @@ class NoticeViewModel : ViewModel() {
                 for (notice in notices) {
                     val noticeText = notice.textContent.trim()
                     val noticeLink = notice.getAttribute("href").trim()
+//                    Log.d("NOTICE_VM", "LINK: $noticeText : $noticeLink")
                     list.add(Pair(noticeText, noticeLink))
                 }
-                _uiState.update {it.copy(isLoading = false)}
+                _uiState.update { it.copy(isLoading = false) }
                 list
             } catch (e: Exception) {
-                _uiState.update {it.copy(isLoading = false)}
+                Log.d("NOTICE_VM", "Exception Execution Completed")
                 e.printStackTrace()
                 emptyList()
             } finally {
-                _uiState.update {it.copy(isLoading = false)}
+                // always executing
+                Log.d("NOTICE_VM", "Finally Execution Completed")
                 webClient.close()
             }
         }
     }
 
     // admissionNotice-Dynamic data
-    suspend fun fetchAdmissionNotices(url: String = "https://jmicoe.in/"): List<Pair<String, String>> {
+    /*suspend fun fetchAdmissionNotices(url: String = "https://jmicoe.in/"): List<Pair<String, String>> {
         Log.d("`in`.instea.instea.data.viewmodel.NoticeViewModel", "Fetching notices from URL: $url")
         return withContext(Dispatchers.IO) {
             val webClient = WebClient().apply {
@@ -113,38 +115,102 @@ class NoticeViewModel : ViewModel() {
                 webClient.close()
             }
         }
+    }*/
+
+    fun fetchAdmissionNotices(url: String = "https://jmicoe.in/") {
+        Log.d("NOTICE_VM", "Fetching notices from URL: $url")
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+            withContext(Dispatchers.IO) {
+                val webClient = WebClient().apply {
+                    options.isJavaScriptEnabled = true  // Enable JavaScript
+                    options.isCssEnabled = false
+                }
+                try {
+                    val page: HtmlPage = webClient.getPage(url)
+                    Log.d("NOTICE_VM", page.titleText)
+                    webClient.waitForBackgroundJavaScript(1_000) // Wait for JS execution
+
+                    Log.d("NOTICE_VM", "Execution Completed")
+
+                    // Use XPath to select all <a> tags within the <span class="news-data"> elements
+                    val notices = page.getByXPath<HtmlAnchor>("//li//span[@class='news-data']//a")
+
+                    val list = mutableListOf<Pair<String, String>>()
+                    for (notice in notices) {
+                        val noticeText = notice.textContent.trim()
+                        val noticeLink = notice.getAttribute("href").trim()
+                        Log.d("NOTICE_VM", "LINK: $noticeText : $noticeLink")
+                        list.add(Pair(noticeText, noticeLink))
+                    }
+                    _uiState.update { it.copy(isLoading = false, admissionNoticeList = list) }
+                } catch (e: Exception) {
+                    Log.d("NOTICE_VM", "Exception Execution Completed")
+                    e.printStackTrace()
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            admissionNoticeList = emptyList()
+                        )
+                    }
+
+                } finally {
+                    Log.d("NOTICE_VM", "Finally Execution Completed")
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false
+                        )
+                    }
+                    webClient.close()
+                }
+
+            }
+        }
     }
 
-    suspend fun fetchNewWebsiteNotices(url: String = "https://www.youtube.com/watch?v=1z70h-v5Wz8/"): List<Pair<String, String>> {
-        Log.d("`in`.instea.instea.data.viewmodel.NoticeViewModel", "Fetching notices from URL: $url")
-        return withContext(Dispatchers.IO) {
-            val webClient = WebClient().apply {
-                options.isJavaScriptEnabled = true
-                options.isCssEnabled = false
-            }
-            try {
-                val page: HtmlPage = webClient.getPage(url)
-                webClient.waitForBackgroundJavaScript(10000) // Wait for JS execution
-                Log.d("NOTICE_VM", page.titleText)
+    fun fetchNewWebsiteNotices(url: String = "https://jmi.ac.in/BULLETIN-BOARD/Notices/Circulars/Latest/5") {
+        Log.d("NOTICE_vm", "Fetching notices from URL: $url")
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                _uiState.update { it.copy(isLoading = true) }
+                val webClient = WebClient(BrowserVersion.CHROME).apply {
+                    options.isJavaScriptEnabled = true
+                    options.isCssEnabled = false
+                    options.isThrowExceptionOnScriptError = false
+                    options.isThrowExceptionOnFailingStatusCode = false
+                    options.isPrintContentOnFailingStatusCode = false
+                    ajaxController = NicelyResynchronizingAjaxController()
+                    refreshHandler = WaitingRefreshHandler()
+                }
+                try {
+                    var page: HtmlPage = webClient.getPage(url)
+                    Log.d("NOTICE_VM", "Initial page title: ${page.titleText}")
 
-                // Use XPath to select all <a> tags within the <span class="news-data"> elements
-//                val notices = page.getByXPath<HtmlAnchor>("//span[@id='datatable1']//a")
+                    // Wait for JavaScript execution
+                    webClient.waitForBackgroundJavaScript(10000)
 
-                val list = mutableListOf<Pair<String, String>>()
-                /* for (notice in notices) {
-                     val noticeText = notice.textContent.trim()
-                     val noticeLink = notice.getAttribute("href").trim()
-                     list.add(Pair(noticeText, noticeLink))
-                 }*/
-                _uiState.update {it.copy(isLoading = false)}
-                list
-            } catch (e: Exception) {
-                e.printStackTrace()
-                _uiState.update {it.copy(isLoading = false)}
-                emptyList()
-            } finally {
-                _uiState.update {it.copy(isLoading = false)}
-                webClient.close()
+                    Log.d("NOTICE_VM", "Page title after JS: ${page.titleText}")
+
+                    // Use XPath to select all <a> tags within the <span id="datatable1"> element
+                    val notices = page.getByXPath<HtmlAnchor>("//span[@id='datatable1']//a")
+
+                    val list = mutableListOf<Pair<String, String>>()
+                    for (notice in notices) {
+                        val noticeText = notice.textContent.trim()
+                        val noticeLink = notice.hrefAttribute.trim()
+                        list.add(Pair(noticeText, noticeLink))
+                    }
+
+                    Log.d("NOTICE_VM", "Fetched ${list.size} notices")
+                    Log.d("NOTICE_VM", "Fetched $list")
+                    _uiState.update { it.copy(isLoading = false, newWebsiteNoticeList = list) }
+
+                } catch (e: Exception) {
+                    Log.e("NOTICE_VM", "Error fetching notices", e)
+                    _uiState.update { it.copy(isLoading = false) }
+                } finally {
+                    webClient.close()
+                }
             }
         }
     }

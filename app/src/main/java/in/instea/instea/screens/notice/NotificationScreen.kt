@@ -1,5 +1,6 @@
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,7 +37,7 @@ fun NotificationScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var selectedTabIndex by remember { mutableIntStateOf(0) }
-    var notices by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
+    var notices by remember { mutableStateOf(uiState.scrollingNoticeList) }
     val tabs = mutableListOf("Urgent Notice", "Admission Notice", "New Website Notice")
     val mContext = LocalContext.current
 
@@ -51,16 +53,30 @@ fun NotificationScreen(
                         )
                     },
                     selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index }
+                    onClick = {
+                        selectedTabIndex = index
+                        when (index) {
+                            0 -> {
+//                                viewModel.getNotice()
+                                notices = uiState.scrollingNoticeList
+//                                Log.d("NOTICE_ SCREEN", "Notice: $notices")
+                            }
+
+                            1 -> {
+//                                viewModel.fetchAdmissionNotices()
+                                notices = uiState.admissionNoticeList
+                            }
+
+                            2 -> {
+//                                viewModel.fetchNewWebsiteNotices()
+                                notices = uiState.newWebsiteNoticeList
+                            }
+                        }
+                    }
                 )
             }
         }
-        when (selectedTabIndex) {
-            0 -> notices = uiState.scrollingNoticeList
-            1 -> notices = uiState.admissionNoticeList
-            2 -> notices = uiState.newWebsiteNoticeList
-        }
-        if(!uiState.isLoading){
+        if (!uiState.isLoading) {
             LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
                 items(notices) { notice ->
                     Text(
@@ -78,7 +94,7 @@ fun NotificationScreen(
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
                 }
             }
-        }else{
+        } else {
             Loader(modifier = Modifier.fillMaxSize())
         }
     }
