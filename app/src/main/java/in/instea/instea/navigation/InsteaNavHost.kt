@@ -4,7 +4,7 @@ import EditPost
 import FEED
 import FeedContent
 import InboxScreen
-import NotificationScreen
+import NoticeScreen
 import `in`.instea.instea.screens.Feed.UserListScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -18,7 +18,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
 import `in`.instea.instea.screens.Feed.SearchScreen
-import `in`.instea.instea.screens.Feed.UserListScreen
 import `in`.instea.instea.screens.auth.AuthenticationScreen
 import `in`.instea.instea.screens.auth.UserInfoScreen
 import `in`.instea.instea.screens.auth.composable.signUp
@@ -174,7 +173,7 @@ fun InsteaNavHost(
             SearchScreen(navController = navController)
         }
         composable(route = InsteaScreens.Notice.name){
-            NotificationScreen(navController = navController)
+            NoticeScreen(navController = navController)
         }
     }
 }

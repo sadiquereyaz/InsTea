@@ -183,13 +183,10 @@ class NoticeViewModel : ViewModel() {
                     refreshHandler = WaitingRefreshHandler()
                 }
                 try {
-                    var page: HtmlPage = webClient.getPage(url)
-                    Log.d("NOTICE_VM", "Initial page title: ${page.titleText}")
+                    val page: HtmlPage = webClient.getPage(url)
 
                     // Wait for JavaScript execution
-                    webClient.waitForBackgroundJavaScript(10000)
-
-                    Log.d("NOTICE_VM", "Page title after JS: ${page.titleText}")
+                    webClient.waitForBackgroundJavaScript(3000)
 
                     // Use XPath to select all <a> tags within the <span id="datatable1"> element
                     val notices = page.getByXPath<HtmlAnchor>("//span[@id='datatable1']//a")
@@ -198,11 +195,12 @@ class NoticeViewModel : ViewModel() {
                     for (notice in notices) {
                         val noticeText = notice.textContent.trim()
                         val noticeLink = notice.hrefAttribute.trim()
-                        list.add(Pair(noticeText, noticeLink))
+                        val browsableLink = "https://jmi.ac.in$noticeLink"
+                        Log.d("NOTICE_VM", "NOTICE $noticeText\nLINK: $browsableLink \n\n ")
+                        list.add(Pair(noticeText, browsableLink))
                     }
 
                     Log.d("NOTICE_VM", "Fetched ${list.size} notices")
-                    Log.d("NOTICE_VM", "Fetched $list")
                     _uiState.update { it.copy(isLoading = false, newWebsiteNoticeList = list) }
 
                 } catch (e: Exception) {
