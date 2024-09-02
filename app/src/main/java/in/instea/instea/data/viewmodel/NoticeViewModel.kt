@@ -1,6 +1,8 @@
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import `in`.instea.instea.data.repo.NoticeRepository
+import `in`.instea.instea.data.repo.notice.CombinedNoticeRepository
+import `in`.instea.instea.data.repo.notice.NoticeRepository
 import `in`.instea.instea.screens.notice.NoticeUiState
 import `in`.instea.instea.screens.notice.TabConfig
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,27 +16,42 @@ class NoticeViewModel(private val noticeRepository: NoticeRepository) : ViewMode
     val uiState: StateFlow<NoticeUiState> = _uiState.asStateFlow()
 
     val tabConfigs = mapOf(
-        0 to TabConfig("Urgent", "https://jmicoe.in/", "//marquee//a"),
-        1 to TabConfig("Admission", "https://jmicoe.in/","//div[@id='leftPanel']/ul/li[(a) or (span/a)]//a"),
+        0 to TabConfig("Urgent", "https://jmicoe.in/", "//marquee//a", "Urgent"),
+        1 to TabConfig("Admission", "https://jmicoe.in/","//div[@id='leftPanel']/ul/li[(a) or (span/a)]//a", "Admission"),
         2 to TabConfig(
             "New Website Admission",
             "https://jmi.ac.in/BULLETIN-BOARD/Notices/Circulars/Latest/1",
-            "//span[@id='datatable1']//a"
+            "//span[@id='datatable1']//a", "New Website Admission"
         ),
         3 to TabConfig(
             "Boys Hostels",
             "https://jmi.ac.in/ACADEMICS/Hostels/Hall-Of-Residence-Boys",
-            "///*[@id=\"MainContent\"]/div/div/div/div/div/div/div/div/div/div/a"
+            "//*[@id='MainContent']/div/div/div/div/div/div/div/div/div/div/a", "Boys Hostels"
         ),
         4 to TabConfig(
-            "Examinations",
-            "https://jmi.ac.in/BULLETIN-BOARD/Notices/Circulars/Latest/6",
-            "//span[@id='datatable1']//a"
+            "Girls Hostels",
+            "https://jmi.ac.in/ACADEMICS/Hostels/Hall-Of-Residence-Girls",
+            "//*[@id=\"MainContent\"]/div/div/div/div/div/div/div/div/div/div/a", "Girls Hostels"
         ),
         5 to TabConfig(
+            "Examinations",
+            "https://jmi.ac.in/BULLETIN-BOARD/Notices/Circulars/Latest/6",
+            "//span[@id='datatable1']//a", "Examinations"
+        ),
+        6 to TabConfig(
             "Academics",
             "https://jmi.ac.in/BULLETIN-BOARD/Notices/Circulars/Latest/10",
-            "//span[@id='datatable1']//a"
+            "//span[@id='datatable1']//a", "Academics"
+        ),
+        7 to TabConfig(
+            "School Hostel",
+            "//*[@id=\"MainContent\"]/div/div/div/div/div/div/div/div/div/div/a",
+            "//span[@id='datatable1']//a", "School Hostel"
+        ),
+        8 to TabConfig(
+            "Entrance Results",
+            "https://jmi.ucanapply.com/univer/public/entrance-result-viewer?app_id=UElZMDAwMDAzNA==",
+            "", "Entrance Resulta"
         )
         // Add more tab configurations as needed
     )
@@ -44,12 +61,15 @@ class NoticeViewModel(private val noticeRepository: NoticeRepository) : ViewMode
             _uiState.update { it.copy(isLoading = true) }
             val config = tabConfigs[tabIndex] ?: return@launch
             try {
-                val notices = noticeRepository.fetchNotices(config.url, config.selector)
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        notices = notices
-                    )
+                Log.d("NOTICE_VM", "Fetching path: $config")
+                noticeRepository.getNoticesFlow(config.url, config.selector, config.noticeType).collect { noticeList ->
+                    Log.d("NOTICE_VM", "$noticeList")
+                    _uiState.update {
+                        it.copy(
+                            notices = noticeList,
+                            isLoading = false
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 _uiState.update {
@@ -59,6 +79,11 @@ class NoticeViewModel(private val noticeRepository: NoticeRepository) : ViewMode
                     )
                 }
             }
+        }
+    }
+    fun refreshNotices() {
+        viewModelScope.launch {
+            noticeRepository.refreshNotices()
         }
     }
 }
