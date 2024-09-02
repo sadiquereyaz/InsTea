@@ -1,5 +1,7 @@
 import android.content.Intent
 import android.net.Uri
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -14,6 +16,7 @@ import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -37,7 +41,7 @@ fun NoticeScreen(
     viewModel: NoticeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    var selectedTabIndex by remember { mutableIntStateOf(1) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
     val mContext = LocalContext.current
 
     LaunchedEffect(selectedTabIndex) {
@@ -51,7 +55,7 @@ fun NoticeScreen(
             selectedTabIndex = selectedTabIndex,
             edgePadding = 0.dp
         ) {
-            viewModel.tabConfigs.forEach { it ->
+            viewModel.tabConfigs.forEach {
                 val index = it.key
                 Tab(
                     text = {
@@ -78,17 +82,33 @@ fun NoticeScreen(
             }
         } else if (uiState.error != null) {
             Text("Error: ${uiState.error}")
-        } else {
+        } else if (selectedTabIndex==8){
+            // Use AndroidView to embed the WebView in Compose
+            val webView = remember { WebView(mContext) }
+
+            // Configure the WebView
+            DisposableEffect(webView) {
+                webView.webViewClient = WebViewClient()
+                webView.settings.javaScriptEnabled = true
+                webView.loadUrl(viewModel.tabConfigs[selectedTabIndex]?.url ?: "")
+
+                onDispose {
+                    webView.stopLoading()
+                }
+            }
+
+            AndroidView(factory = { webView }, modifier = Modifier.fillMaxSize())
+        }else {
             LazyColumn(modifier = Modifier.padding(top = 16.dp)) {
                 items(uiState.notices) { notice ->
                     Text(
                         modifier = Modifier
                             .padding(horizontal = 16.dp)
                             .clickable {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(notice.second))
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(notice.url))
                                 startActivity(mContext, intent, null)
                             },
-                        text = notice.first
+                        text = notice.title
                     )
                     HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
                 }

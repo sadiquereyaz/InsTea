@@ -5,20 +5,23 @@ import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import `in`.instea.data.repo.notice.WebScrapingService
 import `in`.instea.instea.data.dao.InsteaDatabase
 import `in`.instea.instea.data.repo.AcademicRepository
 import `in`.instea.instea.data.repo.AccountService
 import `in`.instea.instea.data.repo.AccountServiceImpl
+import `in`.instea.instea.data.repo.notice.CombinedNoticeRepository
 import `in`.instea.instea.data.repo.CombinedPostRepository
 import `in`.instea.instea.data.repo.CombinedUserRepository
+import `in`.instea.instea.data.repo.notice.LocalNoticeRepository
 import `in`.instea.instea.data.repo.LocalPostRepository
 import `in`.instea.instea.data.repo.LocalScheduleRepository
 import `in`.instea.instea.data.repo.LocalUserRepository
 import `in`.instea.instea.data.repo.NetworkAcademicRepository
-import `in`.instea.instea.data.repo.NetworkNoticeRepository
+import `in`.instea.instea.data.repo.notice.NetworkNoticeRepository
 import `in`.instea.instea.data.repo.NetworkPostRepository
 import `in`.instea.instea.data.repo.NetworkUserRepository
-import `in`.instea.instea.data.repo.NoticeRepository
+import `in`.instea.instea.data.repo.notice.NoticeRepository
 import `in`.instea.instea.data.repo.PostRepository
 import `in`.instea.instea.data.repo.ScheduleRepository
 import `in`.instea.instea.data.repo.TaskReminderRepository
@@ -37,6 +40,7 @@ interface AppContainer {
     val workManagerTaskRepository: TaskReminderRepository
     val academicRepository: AcademicRepository
     val accountService: AccountService
+//    val webScrapingService: WebScrapingService
     val netwrokChatRepository: NetwrokChatRepository
     val noticeRepository: NoticeRepository
 }
@@ -53,6 +57,7 @@ class AppDataContainer(
     private val firebaseAuth = FirebaseAuth.getInstance()
     private val firebaseDatabase = FirebaseDatabase.getInstance()
     private val roomDatabase = InsteaDatabase.getDatabase(context)
+    private val webScrapingService = WebScrapingService()
 
     override val postRepository: PostRepository by lazy {
         val localPostRepository = LocalPostRepository(roomDatabase.postDao())
@@ -94,6 +99,8 @@ class AppDataContainer(
         )
     }
     override val noticeRepository: NoticeRepository by lazy {
-        NetworkNoticeRepository()
+        val localNoticeRepository = LocalNoticeRepository(roomDatabase.noticeDao())
+        val networkNoticeRepository = NetworkNoticeRepository(webScrapingService)
+        CombinedNoticeRepository(localNoticeRepository, networkNoticeRepository)
     }
 }

@@ -1,4 +1,4 @@
-package `in`.instea.instea.data.repo
+package `in`.instea.data.repo.notice // Assuming "instea.instea" is a mistake
 
 import android.util.Log
 import com.gargoylesoftware.htmlunit.BrowserVersion
@@ -7,16 +7,15 @@ import com.gargoylesoftware.htmlunit.WaitingRefreshHandler
 import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor
 import com.gargoylesoftware.htmlunit.html.HtmlPage
+import `in`.instea.instea.data.datamodel.NoticeModal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-interface NoticeRepository{
-    suspend fun fetchNotices(url: String, selector: String): List<Pair<String, String>>
-}
 
-class NetworkNoticeRepository:NoticeRepository {
-    override suspend fun fetchNotices(url: String, selector: String): List<Pair<String, String>> {
-        return withContext(Dispatchers.IO) {
+class WebScrapingService {
+    suspend fun scrapNotices(url: String, selector: String, type: String): List<NoticeModal> =
+        withContext(Dispatchers.IO) {
+            Log.e("WebScrapingService", "URL1 $url")
             val webClient = WebClient(BrowserVersion.CHROME).apply {
                 options.isJavaScriptEnabled = true
                 options.isCssEnabled = false
@@ -26,24 +25,29 @@ class NetworkNoticeRepository:NoticeRepository {
                 ajaxController = NicelyResynchronizingAjaxController()
                 refreshHandler = WaitingRefreshHandler()
             }
+
             try {
+                Log.e("WebScrapingService", "URL $url")
                 val page: HtmlPage = webClient.getPage(url)
+                Log.e("WebScrapingService", "Page $page")
                 webClient.waitForBackgroundJavaScript(3000)
 
-                val notices = page.getByXPath<HtmlAnchor>(selector)
-                notices.map { notice ->
-                    Pair(
-                        notice.textContent.trim(),
-                        if (notice.hrefAttribute.startsWith("http")) notice.hrefAttribute.trim()
-                        else "https://jmi.ac.in${notice.hrefAttribute.trim()}"
+                val notices = page.getByXPath<HtmlAnchor>(selector).map { notice ->
+                    Log.e("WebScrapingService", "Notices: $notice")
+                    NoticeModal(
+                        title = notice.textContent.trim(),
+                        url = if (notice.hrefAttribute.startsWith("http")) notice.hrefAttribute.trim()
+                        else "https://jmi.ac.in${notice.hrefAttribute.trim()}",
+                        type = type,
+                        timestamp = System.currentTimeMillis()
                     )
                 }
+                notices
             } catch (e: Exception) {
-                Log.e("NoticeRepository", "Error fetching notices", e)
-                emptyList()
+                Log.e("NoticeRepository", "Error While fetching notices", e)
+                emptyList<NoticeModal>() // Returning empty list with logging
             } finally {
                 webClient.close()
             }
         }
-    }
 }
