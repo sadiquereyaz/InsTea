@@ -32,7 +32,7 @@ class ChatviewModel(
     fun insertMessages(message: Message, receiverRoom: String, senderRoom: String) {
         viewModelScope.launch {
             netWorkChatRepository.insertMessage(message, receiverRoom, senderRoom)
-            netWorkChatRepository.updateChatPartners(message.senderId,receiverRoom.removePrefix(message.senderId))
+            netWorkChatRepository.updateChatPartners(message.senderId,receiverRoom.removeSuffix(message.senderId))
 
         }
     }

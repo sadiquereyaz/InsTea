@@ -39,7 +39,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.Authenticate.name  /*"${MoreDestination.route}/${4}"*/,
+        startDestination = InsteaScreens.signup.name  /*"${MoreDestination.route}/${4}"*/,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -172,6 +172,9 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Search.name){
             SearchScreen(navController = navController)
         }
+//        composable(route = InsteaScreens.EditComment.name){
+//            navController.navigate(EditPost(postId = ))
+//        }
 
     }
 }

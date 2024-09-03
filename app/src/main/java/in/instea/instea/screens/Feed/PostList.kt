@@ -27,6 +27,7 @@ import `in`.instea.instea.data.viewmodel.FeedViewModel
 @Composable
 fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit, navController : NavHostController) {
     val posts = feedViewModel.posts.collectAsState(initial = emptyList()).value.reversed()
+
     val userList by feedViewModel.userList.collectAsState()
     var currentSwipeIndex by remember { mutableStateOf<Int?>(null) }
     if (feedViewModel.isLoading.value) {

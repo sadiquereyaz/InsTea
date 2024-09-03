@@ -33,7 +33,7 @@ data class PostData(
 }
 
 data class Comments(
-    val comment:String ="",
+    var comment:String ="",
     val commentByUser:String="",
     val userLikedComment : MutableList<String> = mutableListOf(),
     val userDislikeComment:MutableList<String> = mutableListOf(),

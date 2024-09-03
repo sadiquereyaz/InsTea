@@ -26,10 +26,9 @@ interface PostRepository {
     suspend fun updateUpAndDownVote(post: PostData)
     suspend fun updateComment(post: PostData)
     fun getPostsByUser(userId: String): Flow<List<PostData>>
-    suspend fun Delete(post:PostData)
-    suspend fun UpdateComment(post:PostData)
-    suspend fun search(query:String,onResult:(List<User>)->Unit)
-    suspend fun Filter(query:String,onResult: (List<PostData>) -> Unit)
+    suspend fun Delete(post: PostData)
+    suspend fun search(query: String, onResult: (List<User>) -> Unit)
+    suspend fun Filter(query: String, onResult: (List<PostData>) -> Unit)
 
 }
 
@@ -47,6 +46,7 @@ class CombinedPostRepository(
             networkPosts.forEach { localPostRepository.insertItem(it) }
         }
     }
+
     override fun getAllProfilePostsStream(): Flow<List<PostData>> = flow {
         // Then emit network data and update local database
         networkPostRepository.getAllSavedPostsStream().collect { networkPosts ->
@@ -72,9 +72,6 @@ class CombinedPostRepository(
         TODO("Not yet implemented")
     }
 
-    override suspend fun UpdateComment(post: PostData) {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun search(query: String, onResult: (List<User>) -> Unit) {
         TODO("Not yet implemented")
@@ -88,6 +85,7 @@ class CombinedPostRepository(
     override suspend fun Delete(post: PostData) {
         TODO("Not yet implemented")
     }
+
     override fun getPostsByUser(userId: String): Flow<List<PostData>> = flow {
         networkPostRepository.getProfilePosts(userId)
     }
@@ -97,7 +95,7 @@ class CombinedPostRepository(
 
 class LocalPostRepository(
     private val postDao: PostDao,
-): PostRepository {
+) : PostRepository {
 
     override fun getAllSavedPostsStream(): Flow<List<PostData>> = postDao.getAllSavedPosts()
     override fun getAllProfilePostsStream(): Flow<List<PostData>> {
@@ -111,16 +109,13 @@ class LocalPostRepository(
     }
 
     override suspend fun updateComment(post: PostData) {
-        TODO("Not yet implemented")
+
     }
 
     override fun getPostsByUser(userId: String): Flow<List<PostData>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun UpdateComment(post: PostData) {
-        TODO("Not yet implemented")
-    }
 
     override suspend fun search(query: String, onResult: (List<User>) -> Unit) {
         TODO("Not yet implemented")
@@ -196,17 +191,22 @@ class NetworkPostRepository(
     }
 
     override suspend fun updateComment(post: PostData) {
-        TODO("Not yet implemented")
+
+        val db = Firebase
+            .database
+            .reference
+
+        db.child("posts")
+            .child(post.postid)
+            .setValue(post)
+
+
     }
 
     override fun getPostsByUser(userId: String): Flow<List<PostData>> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun UpdateComment(post: PostData) {
-
-
-    }
 
     override suspend fun search(query: String, onResult: (List<User>) -> Unit) {
         val users = mutableListOf<User>()
@@ -221,8 +221,8 @@ class NetworkPostRepository(
             val sem = userSnapshot.child("sem").getValue(String::class.java) ?: ""
             if (username.contains(query, ignoreCase = true) ||
                 university.contains(query, ignoreCase = true) ||
-                department.contains(query, ignoreCase = true)||
-                        sem.contains(query, ignoreCase = true)
+                department.contains(query, ignoreCase = true) ||
+                sem.contains(query, ignoreCase = true)
             ) {
 
                 users.add(

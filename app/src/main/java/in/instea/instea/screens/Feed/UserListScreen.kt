@@ -52,20 +52,20 @@ import `in`.instea.instea.navigation.InsteaScreens
 fun UserListScreen(feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),navController: NavHostController) {
     val userList by feedViewModel.userList.collectAsState()
     val currentUser = userList.find { it.userId == feedViewModel.currentuser }
+    Log.d("UserList", "currentuser: $currentUser")
     val chatPartners = currentUser?.chatPartners ?: emptyList()
     Log.d("UserList", "chatPartners: $chatPartners")
+
     LazyColumn {
         if(chatPartners.isEmpty()){
             item{
-
-
             Text("No ChatPartners")}
         }
       else{
         items(chatPartners) { chatPartner ->
-
+//            val partner = chatPartner.removeSuffix(currentUser?.userId!!)
             val user = userList.find { it.userId == chatPartner }
-//            Log.d("UserList", "user: $user")
+            Log.d("UserList", "user: $user")
 
             if (user != null) {
                 UserListCard(user,navController)

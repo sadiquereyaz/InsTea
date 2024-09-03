@@ -26,6 +26,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -48,36 +50,41 @@ import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.PostData
 
 @OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun CommentList(post: PostData, feedViewModel: FeedViewModel,navController: NavController) {
-    var textstate by remember { mutableStateOf("") }
-    var comments = remember{ mutableStateListOf<Comments>().apply { addAll(post.comments) }  }
+fun CommentList(post: PostData, feedViewModel: FeedViewModel, navController: NavController) {
+    var textState by remember { mutableStateOf("") }
+    val commentsState = remember { mutableStateOf(post.comments) }
 
     LazyColumn(
-
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.SpaceBetween,
-        modifier = if(post.comments.isEmpty()) Modifier
-            .wrapContentSize()
-            .heightIn(max = 200.dp)
-            .fillMaxWidth()
-
-        else Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .padding(0.dp)
-            .heightIn(max = 500.dp)
-            .border(1.dp, brush = Brush.linearGradient(listOf(
-                MaterialTheme.colorScheme.primary,
-                MaterialTheme.colorScheme.primaryContainer
-            )), RoundedCornerShape(15.dp)),
-
+        modifier = if (commentsState.value.isEmpty()) {
+            Modifier
+                .wrapContentSize()
+                .heightIn(max = 200.dp)
+                .fillMaxWidth()
+        } else {
+            Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .padding(0.dp)
+                .heightIn(max = 500.dp)
+                .border(
+                    1.dp, brush = Brush.linearGradient(
+                        listOf(
+                            MaterialTheme.colorScheme.primary,
+                            MaterialTheme.colorScheme.primaryContainer
+                        )
+                    ), RoundedCornerShape(15.dp)
+                )
+        },
     ) {
         item {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.padding(start=5.dp,top = 20.dp, bottom = 8.dp)
+                modifier = Modifier.padding(start = 5.dp, top = 20.dp, bottom = 8.dp)
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.dp),
@@ -89,50 +96,43 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel,navController: NavC
                         .align(Alignment.CenterVertically)
                 )
 
-                    OutlinedTextField(
-                        value = textstate,
-                        onValueChange = { textstate = it },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(6.dp, end = 12.dp),
-                        colors = TextFieldDefaults.outlinedTextFieldColors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = MaterialTheme.colorScheme.primary
-                        ),
-                        shape = RoundedCornerShape(20.dp),
-                        placeholder = { Text(text = "Add a comment...") },
-                        trailingIcon = {
-                            if (textstate.isNotEmpty()) {
-                                Icon(
-                                    modifier = Modifier.clickable {
-                                        comments.add(
-                                            Comments(
-                                                comment = textstate,
-                                                commentByUser = feedViewModel.currentuser!!,
-                                            )
-                                        )
-                                        post.comments.add(comments.last())
-                                        feedViewModel.updateVotes(post)
+                OutlinedTextField(
+                    value = textState,
+                    onValueChange = { textState = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(6.dp, end = 12.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.primary
+                    ),
+                    shape = RoundedCornerShape(20.dp),
+                    placeholder = { Text(text = "Add a comment...") },
+                    trailingIcon = {
+                        if (textState.isNotEmpty()) {
+                            Icon(
+                                modifier = Modifier.clickable {
+                                    val newComment = Comments(
+                                        comment = textState,
+                                        commentByUser = feedViewModel.currentuser!!,
+                                    )
+                                    commentsState.value = (commentsState.value + newComment).toMutableList()
+                                    post.comments.add(newComment)
+                                    feedViewModel.updateVotes(post)
 
-                                        textstate = "" // Clear text field after sending comment
-                                    },
-                                    imageVector = Icons.Default.Send,
-                                    contentDescription = "comment send"
-                                )
-                            }
+                                    textState = "" // Clear text field after sending comment
+                                },
+                                imageVector = Icons.Default.Send,
+                                contentDescription = "comment send"
+                            )
                         }
-                    )
-
-
+                    }
+                )
             }
-
         }
 
-
-        if (comments.isEmpty()) {
-
+        if (commentsState.value.isEmpty()) {
             item {
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
@@ -145,10 +145,12 @@ fun CommentList(post: PostData, feedViewModel: FeedViewModel,navController: NavC
                 }
             }
         } else {
-
-            items(comments.reversed()) { comment ->
+            items(commentsState.value.reversed()) { comment ->
                 Divider()
-                CommentCard(comment = comment, post = post, navController = navController)
+                CommentCard(comment = comment, post = post, navController = navController, onDelete = {
+                    commentsState.value = post.comments.toMutableList()
+                })
+
 
             }
         }

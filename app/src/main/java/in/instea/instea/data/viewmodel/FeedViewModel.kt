@@ -12,6 +12,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
 import com.google.firebase.database.database
+import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.PostData
 
 import `in`.instea.instea.data.datamodel.User
@@ -128,7 +129,12 @@ class FeedViewModel(
     fun updateComment(post: PostData) {
         Log.d("balle", "updateComment: ${post.postid}")
         viewModelScope.launch {
-            postRepository.UpdateComment(post)
+            postRepository.updateComment(post)
+        }
+    }
+    fun deleteComment(comment: Comments){
+        viewModelScope.launch {
+
         }
     }
 

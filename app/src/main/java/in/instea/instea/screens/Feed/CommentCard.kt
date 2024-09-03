@@ -56,12 +56,14 @@ fun CommentCard(
     feedViewModel: FeedViewModel = viewModel(
         factory = AppViewModelProvider.Factory
     ),
+    onDelete: () -> Unit,
 ) {
     var isExpanded by remember {
         mutableStateOf(false)
     }
     var showReply by remember { mutableStateOf(false) }
-val user = feedViewModel.userList.collectAsState().value.find { it.userId == comment.commentByUser }
+    val user =
+        feedViewModel.userList.collectAsState().value.find { it.userId == comment.commentByUser }
     Box(
         modifier = Modifier
             .padding(start = 3.dp, end = 3.dp, bottom = 0.dp)
@@ -99,7 +101,7 @@ val user = feedViewModel.userList.collectAsState().value.find { it.userId == com
 
                     Column(modifier = Modifier.padding(start = 8.dp)) {
                         Text(
-                            text = if(user?.username != null) user.username else "custom",
+                            text = if (user?.username != null) user.username else "custom",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Light,
 
@@ -139,7 +141,12 @@ val user = feedViewModel.userList.collectAsState().value.find { it.userId == com
                         .padding(start = 30.dp)
                 ) {
 
-                    UpAndDownVoteButtonsForComment(comment, post, navController = navController)
+                    UpAndDownVoteButtonsForComment(
+                        comment,
+                        post,
+                        onDelete,
+                        navController = navController
+                    )
 
                 }
 
@@ -157,7 +164,7 @@ val user = feedViewModel.userList.collectAsState().value.find { it.userId == com
 fun UpAndDownVoteButtonsForComment(
     comment: Comments,
     post: PostData,
-
+    onDelete: () -> Unit,
     navController: NavController,
 ) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }
@@ -314,14 +321,19 @@ fun UpAndDownVoteButtonsForComment(
                         onDismissRequest = { expandDropdown = false }) {
                         moreList.forEach { type ->
                             if (
-                                feedViewModel.currentuser == post.postedByUser
+                                feedViewModel.currentuser == comment.commentByUser
                                 && type != "Report"
                             ) {
                                 DropdownMenuItem(
                                     text = { Text(type) },
                                     onClick = {
+
                                         if (type == "Delete") {
-                                            feedViewModel.DeletePost(post)
+                                            post.comments.remove(comment)
+
+                                            feedViewModel.updateComment(post)
+                                            onDelete()
+
                                         }
                                         if (type == "Edit") {
                                             navController.navigate(InsteaScreens.EditPost.name + "/${post.postid}")
