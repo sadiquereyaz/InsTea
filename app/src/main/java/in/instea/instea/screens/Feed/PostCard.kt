@@ -5,6 +5,7 @@ import android.text.util.Linkify
 import android.util.Log
 import android.util.Patterns
 import android.widget.TextView
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -116,7 +117,8 @@ fun PostCard(
     isVisible: Boolean,
     onClose: () -> Unit,
     onSwiped: () -> Unit,
-) {
+
+    ) {
     var isExpanded by remember { mutableStateOf(false) }
     var showComments by remember { mutableStateOf(false) } // State for showing/hiding CommentCard
     var expandDropdown by remember { mutableStateOf(false) }
@@ -172,8 +174,7 @@ fun PostCard(
                                     ),
                                     shape = CircleShape
                                 )
-                                .clip(CircleShape)
-                                ,
+                                .clip(CircleShape),
                             contentDescription = "Profile"
                         )
                         Spacer(modifier = Modifier.width(4.dp))
@@ -243,8 +244,25 @@ fun PostCard(
                                             text = { Text(type) },
                                             onClick = {
                                                 expandDropdown = false // Close the dropdown menu
+                                                if (!post.reports.reportByUser.contains(
+                                                        feedViewModel.currentuser
+                                                    )
+                                                ) {
+                                                    post.reports.hasReport = post.reports.hasReport + 1
+                                                    post.reports.reportByUser.add(feedViewModel.currentuser!!)
+                                                    feedViewModel.updateVotes(post)
+                                                }
+
                                             }
                                         )
+                                        if (post.reports.hasReport > 2) {
+                                            Toast.makeText(
+                                                LocalContext.current,
+                                                "We will check it",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+
+                                        }
                                     }
                                 }
                             }
@@ -413,26 +431,26 @@ fun UpAndDownVoteButtons(
         mutableStateOf(post.userLikedCurrentPost.contains(feedViewModel.currentuser))
     }
 
-        Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
-            Box(
-                contentAlignment = Alignment.BottomStart,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .zIndex(1f)
-            ) {
-                Icon(
-                    imageVector = if(!isOpen) Icons.Filled.Comment else Icons.Default.ArrowForward,
-                    contentDescription = "",
-                    modifier = Modifier.clickable { isOpen = !isOpen },
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            if(isOpen) {
-
-                CommentList(post = post, feedViewModel = feedViewModel, navController = navController)
-            }
+    Column(verticalArrangement = Arrangement.spacedBy(1.dp)) {
+        Box(
+            contentAlignment = Alignment.BottomStart,
+            modifier = Modifier
+                .padding(8.dp)
+                .zIndex(1f)
+        ) {
+            Icon(
+                imageVector = if (!isOpen) Icons.Filled.Comment else Icons.Default.ArrowForward,
+                contentDescription = "",
+                modifier = Modifier.clickable { isOpen = !isOpen },
+                tint = MaterialTheme.colorScheme.primary
+            )
         }
+
+        if (isOpen) {
+
+            CommentList(post = post, feedViewModel = feedViewModel, navController = navController)
+        }
+    }
 
 
 //    Box(contentAlignment = Alignment.BottomStart){

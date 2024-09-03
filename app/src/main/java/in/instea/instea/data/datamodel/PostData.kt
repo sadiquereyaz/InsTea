@@ -6,6 +6,7 @@ import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverter
 import androidx.room.TypeConverters
+import com.google.firebase.database.core.Repo
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -24,13 +25,16 @@ data class PostData(
     var timestamp: DateAndHour = DateAndHour(),
     var userLikedCurrentPost: MutableList<String?> = mutableListOf(""),
     var userDislikedCurrentPost: MutableList<String?> = mutableListOf(""),
-    var saved:Boolean = false,
-    var hasReports: Int = 0,
-    var isAnonymous : Boolean = false,
-    var edited : Boolean = false
+    var saved: Boolean = false,
+    @Ignore
+    var reports: Reports = Reports(),
+    var isAnonymous: Boolean = false,
+    var edited: Boolean = false
 ) {
-    constructor() : this("", null, "", mutableListOf(), null, "", DateAndHour(), mutableListOf(), mutableListOf(), false,0)
+    constructor() : this("", null, "", mutableListOf(), null, "", DateAndHour(), mutableListOf(), mutableListOf(), false, Reports())
 }
+
+data class Reports(var hasReport:Int=0, val reportByUser:MutableList<String> = mutableListOf())
 
 data class Comments(
     var comment:String ="",

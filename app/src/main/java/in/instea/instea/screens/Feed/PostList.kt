@@ -1,6 +1,7 @@
 package `in`.instea.instea.ui
 
 import PostCard
+import android.widget.Toast
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import `in`.instea.instea.data.viewmodel.FeedViewModel
@@ -44,6 +46,7 @@ fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit, 
         ) {
             items(posts) { post ->
                 val index = posts.indexOf(post)
+                if(post.reports.hasReport < 2){
                 PostCard(
                     post = post,
 //                    navigateToProfile = { navigateToProfile(post.postedByUser ?: "") },
@@ -54,7 +57,11 @@ fun PostList(feedViewModel: FeedViewModel, navigateToProfile: (String) -> Unit, 
                     onSwiped = { currentSwipeIndex = index },
                     onClose = { currentSwipeIndex = null }
                 )
+                }
+
+
             }
+
         }
     }
 }
