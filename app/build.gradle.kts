@@ -125,6 +125,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.datastore.preferences)    // data store
     implementation(libs.androidx.constraintlayout)
+    implementation("io.coil-kt:coil-compose:2.7.0")
     implementation (libs.android.lottie.compose)
     implementation(libs.androidx.work.runtime.ktx)  //workManager
 //    implementation(libs.jsoup)      //web scraping

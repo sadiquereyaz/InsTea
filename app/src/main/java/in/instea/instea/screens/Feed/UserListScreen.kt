@@ -87,7 +87,7 @@ fun UserListCard(user: User,navController: NavHostController) {
                 .fillMaxWidth()
                 .height(70.dp)
                 .clickable {
-                    navController.navigate(InsteaScreens.OtherProfile.name + "/${if (user.userId != null) user.userId else " "}")
+                    navController.navigate(InsteaScreens.Inbox.name + "/${user.userId}")
 
                 }
         ) {

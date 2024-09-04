@@ -1,6 +1,7 @@
 package `in`.`in`.instea.instea.screens.more.composable
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,9 @@ import `in`.instea.instea.data.viewmodel.classmate
 import `in`.instea.instea.screens.more.MoreUiState
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.ui.graphics.Brush
+import coil.compose.AsyncImage
+import `in`.instea.instea.R
 
 
 @Composable
@@ -58,7 +62,6 @@ fun classmateList(
 @Composable
 private fun classmate(navigatetoOtherProfile: (String) -> Unit, classmate: classmate) {
     Card(onClick = {
-
         navigatetoOtherProfile(classmate.userId)
     },
         colors = CardDefaults.cardColors(
@@ -67,15 +70,26 @@ private fun classmate(navigatetoOtherProfile: (String) -> Unit, classmate: class
     )
      {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Image(
-                painter = painterResource(id = classmate.profilepic),
-                contentDescription = null,
+            AsyncImage(
+                model = UserInfoUtil.getUserDpId(classmate.dpId),
                 modifier = Modifier
-                    .clip(
-                        CircleShape
+                    .padding(3.dp)
+                    .size(50.dp)
+                    .border(
+                        width = 1.dp, brush = Brush.linearGradient(
+                            listOf(
+                                MaterialTheme.colorScheme.primary,
+                                MaterialTheme.colorScheme.primaryContainer
+                            )
+                        ),
+                        shape = CircleShape
                     )
-                    .size(70.dp)
+                    .clip(CircleShape),
+                placeholder = painterResource(id= R.drawable.logo),
+                error = painterResource(id = R.drawable.dp),
+                contentDescription = "Profile"
             )
+            
             Spacer(modifier = Modifier.width(10.dp))
             Text(
                 modifier = Modifier.padding(top = 4.dp),

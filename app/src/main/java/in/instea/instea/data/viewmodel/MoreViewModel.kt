@@ -177,9 +177,8 @@ class MoreViewModel(
 
 data class classmate(
     val userId: String = "",
-    val profilepic: Int = R.drawable.dp,
+    val dpId: Int,
     val name: String = ""
-
 )
 
 

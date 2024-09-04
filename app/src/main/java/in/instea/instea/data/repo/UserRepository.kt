@@ -1,6 +1,9 @@
 package `in`.instea.instea.data.repo
 
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.classmate
 import kotlinx.coroutines.flow.Flow
@@ -25,9 +28,11 @@ class CombinedUserRepository(
     private val localUserRepository: LocalUserRepository,
     private val networkUserRepository: NetworkUserRepository,
 ) : UserRepository {
-    override fun getCurrentUserId(): Flow<String> = localUserRepository.getUserId()
+   override fun getCurrentUserId(): Flow<String> = localUserRepository.getUserId()
 
     // override fun getUserById(userId: String): Flow<User> = localUserRepository.getCurrentUser()
+
+
 
 
     override fun getUserById(userId: String): Flow<User> =
@@ -78,7 +83,7 @@ class CombinedUserRepository(
     }
 
     override suspend fun getclassmates(): List<classmate>{
-        val userId=getCurrentUserId()
+        val userId=Firebase.auth.currentUser?.uid ?: ""
         Log.d("current user", "getclassmates: $userId")
         return networkUserRepository.getClassmates(userId.toString())
     }

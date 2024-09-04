@@ -48,6 +48,10 @@ class NetworkUserRepository(
         }
 //        return flowOf(UserModel(userId, "Firebase User", "network repository"))
     }
+    fun getUserId(): Flow<String> {
+        val userId= firebaseAuth.currentUser!!.uid
+        return flow<String> { emit (userId) }
+    }
 
     suspend fun updateUser(user: User) {
         val userId = user.userId
@@ -118,9 +122,7 @@ class NetworkUserRepository(
 
     suspend fun getClassmates(userId: String): List<classmate> {
         return try {
-
             val userReference = firebaseDatabase.reference.child("user").child(userId)
-
             // Get the user's university, department, and semester directly
             val university =
                 userReference.child("university").get().await().getValue(String::class.java)
@@ -141,7 +143,7 @@ class NetworkUserRepository(
                 if (snapshot.key != userId && classmateDept==dept && classmateSem==sem) {
                     classmate(
                         userId = snapshot.key ?: "",
-                        profilepic = R.drawable.dp,
+                        dpId =  snapshot.child("dpId").getValue(Int::class.java) ?: 0,
                         name = snapshot.child("username").getValue(String::class.java) ?: ""
                     )
                 } else {

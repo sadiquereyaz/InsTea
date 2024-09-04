@@ -95,6 +95,7 @@ import androidx.navigation.NavController
 import androidx.navigation.navArgument
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
 import androidx.wear.compose.material.rememberSwipeableState
+import coil.compose.AsyncImage
 import `in`.instea.instea.R
 import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
@@ -158,10 +159,10 @@ fun PostCard(
 //                        navController.navigate(InsteaScreens.Inbox.name+"/${post.postedByUser}")
                         }
                 ) {
-                    (if (post.profileImage != null) post.profileImage
+                    (if (user.dpId != null && user.dpId != null) user.dpId
                     else R.drawable.ic_launcher_foreground)?.let {
-                        Image(
-                            painter = painterResource(id = it),
+                        AsyncImage(
+                            model = UserInfoUtil.getUserDpId(it),
                             modifier = Modifier
                                 .padding(3.dp)
                                 .size(50.dp)
@@ -175,6 +176,8 @@ fun PostCard(
                                     shape = CircleShape
                                 )
                                 .clip(CircleShape),
+                            placeholder = painterResource(id=R.drawable.logo),
+                            error = painterResource(id = R.drawable.dp),
                             contentDescription = "Profile"
                         )
                         Spacer(modifier = Modifier.width(4.dp))

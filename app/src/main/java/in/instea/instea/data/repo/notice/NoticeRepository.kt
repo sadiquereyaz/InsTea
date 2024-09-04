@@ -39,7 +39,7 @@ class CombinedNoticeRepository(
         emit(localNoticeRepository.fetchNotices(type = type))
         val networkNotices = networkNoticeRepository.fetchNotices(url, selector, type)
         localNoticeRepository.saveNotices(notices = networkNotices)
-        emit(networkNotices)
+//        emit(networkNotices)
     }
 }
 
