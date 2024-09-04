@@ -1,5 +1,6 @@
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.background
@@ -21,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -42,8 +44,14 @@ fun NoticeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var isLoading by remember { mutableStateOf(true) }
     val mContext = LocalContext.current
 
+    Log.d("NOTICE Screen", "Notice Screen: $isLoading")
+    LaunchedEffect(uiState.notices) {
+        Log.d("NOTICE Screen Launch", "Notice Screen: $isLoading")
+        isLoading = false
+    }
     LaunchedEffect(selectedTabIndex) {
         viewModel.fetchNoticesForTab(selectedTabIndex)
     }
@@ -69,12 +77,15 @@ fun NoticeScreen(
                         )
                     },
                     selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index }
+                    onClick = {
+                        selectedTabIndex = index
+                        isLoading  = true
+                    }
                 )
             }
         }
 
-        if (uiState.isLoading) {
+        if (isLoading) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Loader(
                     modifier = Modifier.fillMaxSize()

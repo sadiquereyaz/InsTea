@@ -58,7 +58,7 @@ class NoticeViewModel(private val noticeRepository: NoticeRepository) : ViewMode
 
     fun fetchNoticesForTab(tabIndex: Int) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(notices = emptyList()) }
             val config = tabConfigs[tabIndex] ?: return@launch
             try {
                 Log.d("NOTICE_VM", "Fetching path: $config")
@@ -67,7 +67,7 @@ class NoticeViewModel(private val noticeRepository: NoticeRepository) : ViewMode
                     _uiState.update {
                         it.copy(
                             notices = noticeList,
-                            isLoading = false
+//                            isLoading = false
                         )
                     }
                 }

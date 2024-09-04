@@ -84,6 +84,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+//import androidx.compose.ui.text.style.TextForegroundStyle.Unspecified.brush
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -94,6 +95,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.navArgument
 import androidx.wear.compose.material.ExperimentalWearMaterialApi
+import androidx.wear.compose.material.MaterialTheme.colors
 import androidx.wear.compose.material.rememberSwipeableState
 import coil.compose.AsyncImage
 import `in`.instea.instea.R
@@ -441,12 +443,32 @@ fun UpAndDownVoteButtons(
                 .padding(8.dp)
                 .zIndex(1f)
         ) {
+            Card(modifier = Modifier
+                .wrapContentWidth()
+                ,
+                 shape = RoundedCornerShape(50),
+                 elevation = CardDefaults.cardElevation(1.dp),
+                 border = BorderStroke(
+                     1.dp,
+                     brush = Brush.linearGradient(
+                         listOf(
+                             MaterialTheme.colorScheme.primary,
+                             MaterialTheme.colorScheme.primaryContainer
+                         )
+                     )
+                 ),
+                 colors = CardDefaults.cardColors(
+                     containerColor = MaterialTheme.colorScheme.background,
+
+
+                     )){
             Icon(
                 imageVector = if (!isOpen) Icons.Filled.Comment else Icons.Default.ArrowForward,
                 contentDescription = "",
-                modifier = Modifier.clickable { isOpen = !isOpen },
-                tint = MaterialTheme.colorScheme.primary
-            )
+                modifier = Modifier.clickable { isOpen = !isOpen }.padding(8.dp).height(24.dp),
+                tint = MaterialTheme.colorScheme.primary,
+
+            )}
         }
 
         if (isOpen) {
@@ -493,24 +515,43 @@ fun UpAndDownVoteButtons(
 //
 //    }
 
-    Box(contentAlignment = Alignment.BottomStart) {
-        Button(
-            onClick = {
-                feedViewModel.inserLocal(post)
-                post.saved = !post.saved
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                contentColor = Color.Unspecified
-            ),
-            modifier = Modifier.padding(0.dp)
-        ) {
-            Icon(
-                imageVector = if (post.saved) Icons.Filled.Bookmark else Icons.Outlined.Bookmark,
-                contentDescription = "",
-                modifier = Modifier.size(20.dp)
-            )
-        }
+    Box(contentAlignment = Alignment.BottomStart,
+       ) {
+
+          Card(modifier = Modifier
+              .wrapContentWidth()
+              .padding(8.dp),
+               shape = RoundedCornerShape(50),
+               elevation = CardDefaults.cardElevation(1.dp),
+               border = BorderStroke(
+                   1.dp,
+                   brush = Brush.linearGradient(
+                       listOf(
+                           MaterialTheme.colorScheme.primary,
+                           MaterialTheme.colorScheme.primaryContainer
+                       )
+                   )
+               ),
+               colors = CardDefaults.cardColors(
+                   containerColor = MaterialTheme.colorScheme.background,
+
+
+                   )){
+              Icon(
+                  imageVector = if (post.saved) Icons.Filled.Bookmark else Icons.Outlined.Bookmark,
+                  contentDescription = "",
+                  modifier = Modifier
+                      .size(36.dp)
+                      .clickable {
+                          feedViewModel.inserLocal(post)
+                          post.saved = !post.saved
+                      }
+                      .padding(8.dp)
+                  ,
+
+                  )
+          }
+
     }
     Box(
         contentAlignment = Alignment.BottomEnd,

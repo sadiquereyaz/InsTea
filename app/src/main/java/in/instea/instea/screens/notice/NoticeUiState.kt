@@ -3,7 +3,7 @@ package `in`.instea.instea.screens.notice
 import `in`.instea.instea.data.datamodel.NoticeModal
 
 data class NoticeUiState(
-    var isLoading: Boolean = false,
+    var isLoading: Boolean = true,
     val notices: List<NoticeModal> = emptyList(),
     val error: String? = null
 )
