@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 import `in`.instea.instea.screens.schedule.ScheduleUiState
+import java.time.LocalTime
 
 @Composable
 fun ScheduleList(
@@ -17,7 +18,8 @@ fun ScheduleList(
     uiState: ScheduleUiState,
     upsertAttendance: (Int, Int, AttendanceType) -> Unit,
     upsertTask: (Int, Int, String?, Int) -> Unit,
-    onScheduleReminder: (CombinedScheduleTaskModel, String?, Int) -> Unit,
+    onScheduleTaskReminder: (CombinedScheduleTaskModel, String?, Int) -> Unit,
+    saveDailyClassReminder: (Boolean, LocalTime, CombinedScheduleTaskModel) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -33,10 +35,6 @@ fun ScheduleList(
                 onAttendanceClick = { attendanceType ->
                     upsertAttendance(scheduleModel.scheduleId, scheduleModel.subjectId, attendanceType)
                 },
-                upsertTask = {task, remindBefore->
-                    upsertTask(scheduleModel.scheduleId, scheduleModel.subjectId, task, remindBefore)
-                    onScheduleReminder(scheduleModel.copy(timestamp = uiState.timestamp), task, remindBefore)
-                },
                 repeatReminderSwitchAction = { subName, repeat ->
 //                        viewModel.modifySubjectInRepeatReminderList(
 //                            subName,
@@ -44,7 +42,11 @@ fun ScheduleList(
 //                        )
 //                    onScheduleReminder()
                 },
-                reminderOn = true
+                upsertTask = {task, remindBefore->
+                    upsertTask(scheduleModel.scheduleId, scheduleModel.subjectId, task, remindBefore)
+                    onScheduleTaskReminder(scheduleModel.copy(timestamp = uiState.timestamp), task, remindBefore)
+                },
+                saveDailyClassReminder = saveDailyClassReminder
             )
         }
     }

@@ -1,5 +1,6 @@
 package `in`.instea.instea.data.viewmodel
 
+import NotificationConstant
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalTime
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -80,6 +82,7 @@ class ScheduleViewModel(
             ) ?: ""
             val timestamp = getTimestampForSelectedDay(selectedDateCalendar.time)
             val scheduleList = scheduleRepository.getScheduleAndTaskList(selectedDay, timestamp)
+//            Log.d("SCHEDULE_VM", scheduleList.toString())
             _uiState.update {
                 it.copy(
                     scheduleList = scheduleList,
@@ -125,14 +128,19 @@ class ScheduleViewModel(
             taskReminderBefore = taskReminderBefore
         )
     }
-    fun scheduleReminder(
+
+    fun scheduleTaskReminder(
         task: String = "This is dummy task",
         remindBefore: Int = 5,
         unit: TimeUnit = TimeUnit.SECONDS,       //TODO: change to hour
         scheduleObj: CombinedScheduleTaskModel
     ) {
-        val reminderKey = "${scheduleObj.scheduleId}${scheduleObj.subjectId}${scheduleObj.timestamp}"
-        if (remindBefore !=0) {
+        val reminderKey = NotificationConstant.getTaskReminderKey(
+            scheduleId = scheduleObj.scheduleId,
+            subjectId = scheduleObj.subjectId,
+            timeStamp = scheduleObj.timestamp ?: 0
+        )
+        if (remindBefore != 0) {
             workManagerTaskRepository.scheduleTaskReminder(
                 task,
                 remindBefore.toLong(),
@@ -140,16 +148,41 @@ class ScheduleViewModel(
                 taskKey = reminderKey,
                 scheduleObj
             )
-        }else{
+        } else {
             // cancel reminder
             Log.d("CANCEL_REMINDER", "cancel reminder")
             cancelReminder(reminderKey)
         }
     }
 
-    fun cancelReminder(
+   suspend fun scheduleDailyClassReminder(
+        time: LocalTime,
+        cancelReminder: Boolean,
+        scheduleObj: CombinedScheduleTaskModel
+    ) {
+        viewModelScope.launch {
+            val reminderKey = NotificationConstant.getDailyClassReminderKey(
+                scheduleId = scheduleObj.scheduleId
+            )
+            if (cancelReminder) {
+                // cancel reminder
+                cancelReminder(reminderKey)
+            } else {
+                workManagerTaskRepository.scheduleDailyClassReminder(
+                    scheduleObj = scheduleObj,
+                    time = time
+                )
+            }
+            scheduleRepository.saveDailyClassReminder(
+                scheduleId = scheduleObj.scheduleId,
+                time = if (cancelReminder) null else time
+            )
+        }
+    }
+
+    private fun cancelReminder(
         reminderKey: String
     ) {
-        workManagerTaskRepository.cancelReminder(reminderKey)
+        workManagerTaskRepository.cancelScheduledWork(reminderKey)
     }
 }

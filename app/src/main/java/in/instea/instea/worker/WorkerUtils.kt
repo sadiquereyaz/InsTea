@@ -27,21 +27,26 @@ import androidx.core.app.NotificationManagerCompat
 import `in`.instea.instea.MainActivity
 import `in`.instea.instea.R
 
-fun makeTaskReminderNotification(
+fun makeReminderNotification(
     message: String,
-    context: Context
+    context: Context,
+    notificationId: Int,
+    channelId: String,
+    channelName: String,
+    channelDescription: String = "Shows notifications whenever a reminder is due",
+    title: String
 ) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(
-            CHANNEL_ID,
-            VERBOSE_NOTIFICATION_CHANNEL_NAME,
+            channelId,
+            channelName,
             importance
         )
-        channel.description = VERBOSE_NOTIFICATION_CHANNEL_DESCRIPTION
-
+        channel.description = channelDescription
+        channel.enableVibration(true)
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
 
@@ -49,17 +54,16 @@ fun makeTaskReminderNotification(
     }
 
     val pendingIntent: PendingIntent = createPendingIntent(context)
-
-    val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-        .setSmallIcon(R.drawable.ic_launcher_foreground)
-        .setContentTitle(NOTIFICATION_TITLE)
+    val builder = NotificationCompat.Builder(context, channelId)
+        .setSmallIcon(R.drawable.ic_launcher_foreground)        // todo change logo
+        .setContentTitle(title)
         .setContentText(message)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
-        .setVibrate(LongArray(0))
+        .setVibrate(longArrayOf(0))
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
 
-    NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, builder.build())
+    NotificationManagerCompat.from(context).notify(notificationId, builder.build())
 }
 
 fun createPendingIntent(appContext: Context): PendingIntent {

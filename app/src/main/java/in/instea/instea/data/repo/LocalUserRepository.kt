@@ -19,6 +19,7 @@ class LocalUserRepository(
     // Define keys for storing user data
     private companion object {
         val USER_ID = stringPreferencesKey("user_id")
+        val USER_DP_ID = intPreferencesKey("user_dp_id")
         val USER_NAME = stringPreferencesKey("user_name")
         val USER_POINT = intPreferencesKey("user_point")
         val USER_ABOUT = stringPreferencesKey("user_about")
@@ -44,6 +45,7 @@ class LocalUserRepository(
             val bio = preferences[USER_ABOUT]
             User(
                 userId = preferences[USER_ID] ?: "",
+                dpId = preferences[USER_DP_ID] ?: 0,
                 username = preferences[USER_NAME] ?: "",
                 about = if(bio.isNullOrBlank()) null else bio,
                 email = preferences[USER_EMAIL] ?: "",
@@ -61,6 +63,7 @@ class LocalUserRepository(
 //        Log.d("datastore username saving", user.username!!)
         dataStore.edit { preferences ->
             preferences[USER_ID] = user.userId ?: ""
+            preferences[USER_DP_ID] = user.dpId
             preferences[USER_NAME] = user.username ?: ""
             preferences[USER_ABOUT] = user.about ?: ""
             preferences[USER_UNIVERSITY] = user.university ?: ""

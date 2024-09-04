@@ -1,6 +1,6 @@
 package `in`.instea.instea.screens.profile
 
-import android.util.Log
+import UserInfoUtil
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -359,7 +360,6 @@ fun UserTitle(
     userData: User?,
     modifier: Modifier,
     onSubUserNameClick: () -> Unit,
-    dpId: Int = R.drawable.dp,
     iconButtonData: Pair<ImageVector, String> = Pair(Icons.Default.Edit, "Edit Profile")
 ) {
     Row(
@@ -369,9 +369,10 @@ fun UserTitle(
         //avatar
         Image(
             modifier = Modifier
-                .size(60.dp)
+                .size(72.dp)
                 .clip(shape = RoundedCornerShape(50)),
-            painter = painterResource(id = dpId),
+            painter = painterResource(id = UserInfoUtil.getUserDpId(userData?.dpId ?: 100)),
+            contentScale = ContentScale.Crop,
             contentDescription = "profile avatar",
         )
         // username and sub bio

@@ -8,6 +8,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import `in`.instea.instea.data.datamodel.AttendanceTypeConverter
+import `in`.instea.instea.data.datamodel.NoticeModal
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.ScheduleModel
 import `in`.instea.instea.data.datamodel.SubjectModel
@@ -17,14 +18,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Database(
-    entities = [PostData::class, ScheduleModel::class, TaskAttendanceModel::class, SubjectModel::class],
-    version = 36, exportSchema = false
+    entities = [PostData::class, ScheduleModel::class, NoticeModal::class, TaskAttendanceModel::class, SubjectModel::class],
+    version =4, exportSchema = false
 )
 @TypeConverters(TimeConverters::class, AttendanceTypeConverter::class)
 abstract class InsteaDatabase : RoomDatabase() {
 
     abstract fun postDao(): PostDao
     abstract fun classDao(): ScheduleDao
+    abstract fun noticeDao(): NoticeDao
 
     companion object {
         @Volatile

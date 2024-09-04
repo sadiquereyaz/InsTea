@@ -59,7 +59,7 @@ data class ScheduleModel(
     var startTime: LocalTime,
     var endTime: LocalTime,
     var day: String = "",
-    val dailyReminderBefore: Int = 0
+    val dailyReminderTime: LocalTime? = null
 )
 
 @Entity(
@@ -73,7 +73,7 @@ data class TaskAttendanceModel(
     var attendance: AttendanceType? = null,  // Task or note for the class on the specific date
     var task: String? = null,  // Task or note for the class on the specific date
     val taskReminderBefore: Int = 0,
-    val classReminderBefore: Int = 0
+    val classReminderTime: LocalTime?=null,
 )
 
 @Entity(tableName = "subject_table")
@@ -93,8 +93,8 @@ data class CombinedScheduleTaskModel(
     val subject: String? = null,
     val attendance: AttendanceType? = AttendanceType.MarkAttendance,
     var task: String? = null,
-    val dailyReminderBefore: Int = 0,
-    val classReminderBefore: Int = 0,
+    val dailyReminderTime: LocalTime? = null,
+    val classReminderTime: LocalTime? = null,
     val taskReminderBefore: Int = 0
 )
 class TimeConverters {

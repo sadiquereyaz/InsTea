@@ -13,6 +13,7 @@ import `in`.instea.instea.data.datamodel.SubjectModel
 import `in`.instea.instea.data.datamodel.TaskAttendanceModel
 import `in`.instea.instea.screens.more.composable.TaskModel
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalTime
 
 @Dao
 interface ScheduleDao {
@@ -55,10 +56,11 @@ interface ScheduleDao {
 
     @Query(
         """
-    SELECT s.scheduleId, s.subjectId, s.startTime, s.endTime, s.day, s.dailyReminderBefore, s.subject, 
-           t.timestamp, t.attendance, t.task, t.taskReminderBefore, t.classReminderBefore
-        FROM schedule s 
-        LEFT JOIN taskAttendance t ON s.scheduleId = t.scheduleId AND s.subjectId = t.subjectId AND (t.timestamp = :selectedDate OR t.timestamp IS NULL)
+    SELECT s.scheduleId, s.subjectId, s.startTime, s.endTime, s.day, s.dailyReminderTime, s.subject, 
+           t.timestamp, t.attendance, t.task, t.taskReminderBefore, t.classReminderTime
+        FROM schedule s       
+        LEFT JOIN taskAttendance t ON s.scheduleId = t.scheduleId AND s.subjectId = t.subjectId AND t.timestamp = :selectedDate
+/*     LEFT JOIN taskAttendance t ON s.scheduleId = t.scheduleId AND s.subjectId = t.subjectId AND (t.timestamp = :selectedDate OR t.timestamp IS NULL)*/
         WHERE s.day = :selectedDay ORDER BY s.startTime
     """
     )
@@ -76,8 +78,8 @@ interface ScheduleDao {
     @Query("SELECT * FROM schedule WHERE scheduleId = :scheduleId")
     suspend fun getScheduleById(scheduleId: Int): ScheduleModel
 
-    @Query("DELETE FROM schedule WHERE scheduleId = :id AND day =:day")
-    suspend fun deleteScheduleById(id: Int, day: String)
+    @Query("DELETE FROM schedule WHERE scheduleId = :id")
+    suspend fun deleteScheduleById(id: kotlin.Int)
 
     @Query(
         """
@@ -108,6 +110,9 @@ interface ScheduleDao {
     @Query("SELECT * FROM subject_table")
     fun getAllSubjectFlow(): Flow<List<SubjectModel>>
 
-    /* @Query("SELECT DISTINCT subject FROM schedule")
-     suspend fun getAllSubject(): List<String>*/
+    @Query("UPDATE schedule SET dailyReminderTime = :time WHERE scheduleId = :scheduleId")
+    suspend fun saveDailyClassReminder(scheduleId: Int, time: LocalTime?)
+
+    @Query("SELECT COUNT(*) FROM schedule WHERE day = :day AND scheduleId = :scheduleId")
+    suspend fun isSchedulePresentForTomorrow(day: String, scheduleId: Int): Int
 }

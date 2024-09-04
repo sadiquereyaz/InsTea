@@ -1,6 +1,5 @@
 package `in`.instea.instea.composable
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,12 +32,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
-import `in`.instea.instea.screens.more.composable.PickerRow
+import `in`.instea.instea.utility.checkAndRequestNotificationPermission
+import `in`.instea.instea.utility.rememberNotificationPermissionLauncher
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,29 +47,41 @@ import kotlinx.coroutines.launch
 fun TaskComposable(
     modifier: Modifier = Modifier,
     scheduleObj: CombinedScheduleTaskModel,
-    upsertTask: (String?, Int) -> Unit
+    upsertTask: (String?, Int) -> Unit,
+    task: String? = null,
+    remindBefore: Int = 0
 ) {
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     val skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
     val bottomSheetState =
         rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
-    var task by remember { mutableStateOf(scheduleObj.task) }
-    var taskTemp by remember { mutableStateOf("") }
+    var taskValue by remember { mutableStateOf(task) }
+    var taskTemp by remember { mutableStateOf(task) }
     var isSwitchVisible by remember { mutableStateOf(false) }
-    var remindBefore by remember { mutableIntStateOf(scheduleObj.taskReminderBefore) }
-    var isReminderOn by remember { mutableStateOf(remindBefore > 0) }
-//    Log.d("task composable", "isReminderOn $isReminderOn")
-//    Log.d("task composable", "reminderBefore $scheduleObj.taskReminderBefore")
-/*
-    LaunchedEffect(scheduleObj.task) {
-        task = scheduleObj.task ?: ""
-    }*/
+    var remindBeforeHour by remember { mutableIntStateOf(remindBefore) }
+    var isReminderOn by remember { mutableStateOf(remindBeforeHour > 0) }
+    val context = LocalContext.current
+    val notificationPermissionLauncher = rememberNotificationPermissionLauncher(
+        context = context,
+        onPermissionGranted = {
+            isReminderOn = true
+            remindBeforeHour = 18
+        },
+        onPermissionDenied = {
+            isReminderOn = false
+        }
+    )
+
     LaunchedEffect(task) {
-        isSwitchVisible = !task.isNullOrBlank()
+        taskValue = task ?: ""
     }
-    LaunchedEffect(remindBefore) {
-        isReminderOn = remindBefore!=0
+    LaunchedEffect(taskValue) {
+        taskTemp = taskValue
+        isSwitchVisible = !taskValue.isNullOrBlank()
+    }
+    LaunchedEffect(remindBeforeHour) {
+        isReminderOn = remindBeforeHour != 0
     }
     Row(
         modifier = modifier
@@ -86,13 +99,13 @@ fun TaskComposable(
             contentDescription = "task",
             modifier = Modifier.size(16.dp),
         )
-            Text(
-                text = task ?: "Add Task",
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
-                modifier = Modifier.padding(start = 4.dp),
-            )
+        Text(
+            text = if (taskValue.isNullOrBlank()) "Add Task" else taskValue!!,
+            fontSize = 12.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis, // Truncate text with ellipsis
+            modifier = Modifier.padding(start = 4.dp),
+        )
     }
     //bottom sheet
     if (openBottomSheet) {
@@ -111,10 +124,18 @@ fun TaskComposable(
                                 .padding(start = 16.dp),
                             checked = isReminderOn,
                             onCheckedChange = {
-                                Log.d("SWITCH", it.toString())
-                                isReminderOn = it
-                                remindBefore = if (!it) 0 else 18;
-                                Log.d("SWITCH_HOUR", remindBefore.toString())
+                                if (it) {
+                                    checkAndRequestNotificationPermission(
+                                        context = context,
+                                        requestLauncher = notificationPermissionLauncher,
+                                        onPermissionGranted = {
+                                            isReminderOn = true
+                                            remindBeforeHour = 18
+                                        }
+                                    )
+                                } else {
+                                    remindBeforeHour = 0
+                                }
                             },
                             thumbContent = {
                                 Icon(
@@ -132,15 +153,16 @@ fun TaskComposable(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text("Remind before  ")
-                                remindBefore.let {
-                                    PickerRow(
-                                        isMinusEnabled = remindBefore > 0,
+                                remindBeforeHour.let {
+                                    PlusMinusBtn(
                                         displayText = it.toString(),
-                                        increase = { remindBefore = (it + 1) },
+                                        increase = { remindBeforeHour = (it + 1) },
                                         decrease = {
-                                            remindBefore = (it - 1)
-                                            if (remindBefore == 0) isReminderOn = false
-                                        }
+                                            remindBeforeHour = (it - 1)
+                                            if (remindBeforeHour == 0) isReminderOn = false
+                                        },
+                                        isMinusEnabled = remindBeforeHour > 0,
+                                        isPlusEnabled = true
                                     )
                                 }
                                 Text("  hours")
@@ -154,12 +176,12 @@ fun TaskComposable(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
                     OutlinedTextField(
-                        value = task ?: "",
+                        value = taskTemp ?: "",
                         onValueChange = {
-                            task = it
+                            taskTemp = it
                             if (it.isBlank()) {
                                 isReminderOn = false
-                                remindBefore = 0
+                                remindBeforeHour = 0
                                 isSwitchVisible = false
                             } else {
                                 isSwitchVisible = true
@@ -183,15 +205,16 @@ fun TaskComposable(
                             .padding(start = 8.dp, end = 16.dp, top = 24.dp),
                         shape = RoundedCornerShape(8),
                         onClick = {
-                            Log.d("SAVE_BTN", "upsert executed $remindBefore")
-                            upsertTask(task, remindBefore)
+                            taskValue = taskTemp
+                            upsertTask(taskTemp, remindBeforeHour)
                             scope.launch { bottomSheetState.hide() }
                                 .invokeOnCompletion {
                                     if (!bottomSheetState.isVisible) {
                                         openBottomSheet = false
                                     }
                                 }
-                        }) {
+                        }
+                    ) {
                         Icon(
                             modifier = Modifier
                                 .size(height = 36.dp, width = 28.dp),

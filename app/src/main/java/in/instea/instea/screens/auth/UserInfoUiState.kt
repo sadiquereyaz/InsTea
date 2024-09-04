@@ -4,6 +4,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 data class UserInfoUiState(
+    var dpId: Int = (0..15).random(),
     var username: String = Firebase.auth.currentUser!!.displayName ?: "",
 //    var username: String = "",
     var usernameErrorMessage: String? = null,

@@ -4,6 +4,7 @@ import EditPost
 import FEED
 import FeedContent
 import InboxScreen
+import NoticeScreen
 import `in`.instea.instea.screens.Feed.UserListScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -39,7 +40,7 @@ fun InsteaNavHost(
 ) {
     NavHost(
         navController = navController,
-        startDestination = InsteaScreens.signup.name  /*"${MoreDestination.route}/${4}"*/,
+        startDestination = InsteaScreens.Authenticate.name  /*"${MoreDestination.route}/${4}"*/,
         modifier = Modifier
             .padding(contentPadding)
     ) {
@@ -172,10 +173,9 @@ fun InsteaNavHost(
         composable(route = InsteaScreens.Search.name){
             SearchScreen(navController = navController)
         }
-//        composable(route = InsteaScreens.EditComment.name){
-//            navController.navigate(EditPost(postId = ))
-//        }
-
+        composable(route = InsteaScreens.Notice.name){
+            NoticeScreen(navController = navController)
+        }
     }
 }
 

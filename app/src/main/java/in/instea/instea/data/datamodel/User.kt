@@ -1,6 +1,7 @@
 package `in`.instea.instea.data.datamodel
 
 data class User(
+    val dpId:Int=0,
     val userId: String? = null,
     val email: String? = null,
     val username: String? = null,

@@ -13,17 +13,11 @@ import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
 
 @Composable
 fun TaskAttendance(
-    openBottomSheet: Boolean,
     scheduleObj: CombinedScheduleTaskModel,
     onAttendanceClick: (AttendanceType) -> Unit,
     upsertTask: (String?, Int) -> Unit,
 
     ) {
-   // Log.d("TASK_EACH", scheduleObj.task.toString())   //correct
-    /*var attendance by rememberSaveable { mutableStateOf(scheduleObj.attendance) }
-    Log.d("ATTENDANCE_OBJ", scheduleObj.attendance.toString())
-    Log.d("ATTENDANCE_Muta", attendance.toString())*/
-    var openBottomSheet1 = openBottomSheet
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -35,7 +29,9 @@ fun TaskAttendance(
         TaskComposable(
             modifier = Modifier.weight(1f),
             scheduleObj = scheduleObj,
-            upsertTask = upsertTask
+            upsertTask = upsertTask,
+            task = scheduleObj.task,
+            remindBefore = scheduleObj.taskReminderBefore
         )
         //attendance
         AttendanceComposable(onAttendanceClick, scheduleObj)

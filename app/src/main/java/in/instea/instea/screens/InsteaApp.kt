@@ -45,6 +45,7 @@ fun InsteaApp(
         InsteaScreens.Feed,
         InsteaScreens.Schedule,
         InsteaScreens.UserList, //inbox
+        InsteaScreens.Notice, //inbox
         InsteaScreens.SelfProfile
     )
     val snackBarHostState = remember { SnackbarHostState() }

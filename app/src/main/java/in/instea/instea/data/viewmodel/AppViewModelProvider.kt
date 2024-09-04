@@ -1,6 +1,7 @@
 package `in`.instea.instea.data.viewmodel
 
 import ChatviewModel
+import NoticeViewModel
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -19,13 +20,6 @@ object AppViewModelProvider {
                     context  = insteaApplication()
                 )
         }
-        /*initializer {
-                EditProfileViewModel(
-                    savedStateHandle = this.createSavedStateHandle(),
-                    userRepository =insteaApplication().container.userRepository,
-                    academicRepository = insteaApplication().container.academicRepository
-                )
-        }*/
         initializer {
                 OtherProfileViewModel(
                     postRepository = insteaApplication().container.postRepository,
@@ -64,6 +58,7 @@ object AppViewModelProvider {
             EditScheduleViewModel(
                 savedStateHandle = this.createSavedStateHandle(),
                 scheduleRepository = insteaApplication().container.scheduleRepository,
+                workManagerTaskRepository = insteaApplication().container.workManagerTaskRepository
             )
         }
         initializer {
@@ -79,6 +74,9 @@ object AppViewModelProvider {
             ChatviewModel(
                 netWorkChatRepository = insteaApplication().container.netwrokChatRepository
             )
+        }
+        initializer {
+            NoticeViewModel(noticeRepository = insteaApplication().container.noticeRepository)
         }
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,20 +15,18 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,8 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import `in`.instea.instea.data.datamodel.AttendanceType
 import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
-import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import `in`.instea.instea.screens.schedule.TimePicker
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
@@ -62,15 +60,27 @@ fun ScheduleItem(
     onEditClick: () -> Unit,
     onAttendanceClick: (AttendanceType) -> Unit,
     repeatReminderSwitchAction: (subject: String, repeat: Boolean) -> Unit,
-    reminderOn: Boolean,
-    upsertTask: (String?, Int)->Unit
+    upsertTask: (String?, Int) -> Unit,
+    saveDailyClassReminder: (Boolean, LocalTime, CombinedScheduleTaskModel) -> Unit
 ) {
-    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
-    var skipPartiallyExpanded by rememberSaveable { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
-    val bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
     var showReminderDialog by rememberSaveable { mutableStateOf(false) }
-//    Log.d("TASK_EACH", scheduleModel.task.toString())     //correct
+    var remindBeforeHour by remember { mutableStateOf(scheduleObj.dailyReminderTime) }
+    var isScheduleReminder by remember { mutableStateOf(scheduleObj.dailyReminderTime != null || scheduleObj.classReminderTime != null) }
+
+    LaunchedEffect(scheduleObj.dailyReminderTime, scheduleObj.classReminderTime) {
+        isScheduleReminder = scheduleObj.dailyReminderTime != null || scheduleObj.classReminderTime != null
+    }
+/*
+    Log.d(
+        "SCHEDULE_ITEM",
+        "dailyReminderObj = ${scheduleObj.subject}: ${scheduleObj.dailyReminderTime}"
+    )
+    Log.d(
+        "SCHEDULE_ITEM",
+        "classReminder = ${scheduleObj.subject}: ${scheduleObj.classReminderTime}"
+    )
+    Log.d("SCHEDULE_ITEM", "isSheduleReminder = ${isScheduleReminder}")*/
 
     var obj by remember { mutableStateOf(scheduleObj) }
 //    Log.d("ATTENDANCE_OBJ", "ScheduleObj Attendance: ${scheduleObj.attendance} date: ${(scheduleObj.timestamp)?.rem(100)}")
@@ -90,8 +100,14 @@ fun ScheduleItem(
             horizontalAlignment = Alignment.End
         ) {
             //time
-            Text(text = scheduleObj.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 14.sp)
-            Text(text = scheduleObj.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")), fontSize = 10.sp)
+            Text(
+                text = scheduleObj.startTime.format(DateTimeFormatter.ofPattern("hh:mm a")),
+                fontSize = 14.sp
+            )
+            Text(
+                text = scheduleObj.endTime.format(DateTimeFormatter.ofPattern("hh:mm a")),
+                fontSize = 10.sp
+            )
         }
         //bubble and vertical line
         Box(
@@ -154,8 +170,8 @@ fun ScheduleItem(
                     showReminderDialog = true
                 }) {
                     Icon(
-                        imageVector = Icons.Default.Notifications,
-                        tint = if (reminderOn) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                        imageVector = if (isScheduleReminder) Icons.Default.Notifications else Icons.Outlined.Notifications,
+                        tint = if (isScheduleReminder) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
                         contentDescription = "reminder",
                         modifier = Modifier.size(20.dp)
                     )
@@ -179,23 +195,28 @@ fun ScheduleItem(
             }
 
             //task and attendance
-            TaskAttendance(openBottomSheet, scheduleObj, onAttendanceClick, upsertTask = upsertTask)
+            TaskAttendance(scheduleObj, onAttendanceClick, upsertTask = upsertTask)
         }
     }
     // Reminder Dialog
     if (showReminderDialog) {
+        var repeatSwitchOn by rememberSaveable {
+            mutableStateOf(isScheduleReminder)
+        }
+        var reminderTime by remember { mutableStateOf(scheduleObj.dailyReminderTime?: LocalTime.now()) }
         AlertDialog(
             onDismissRequest = { showReminderDialog = false },
-            title = { Text("Set Reminder") },
+            title = { Text("Class Reminder") },
             text = {
-                Column {
-                    var remindBefore12Hours by rememberSaveable { mutableStateOf(false) }
-                    var remindBefore24Hours by rememberSaveable { mutableStateOf(false) }
-                    var repeatSwitchOn by rememberSaveable {
-                        mutableStateOf(reminderOn)
-                    }
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(20.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    var isDaily by rememberSaveable { mutableStateOf(true) }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
                         Switch(
                             checked = repeatSwitchOn,
                             onCheckedChange = {
@@ -203,128 +224,61 @@ fun ScheduleItem(
 //                                repeatReminderSwitchAction( it)
                             }
                         )
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            RadioButton(
+                                selected = isDaily,
+                                onClick = { isDaily = true },
+                                enabled = repeatSwitchOn
+                            )
+                            Text("Daily")
+                        }
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            RadioButton(
+                                selected = !isDaily,
+                                onClick = { isDaily = false },
+                                enabled = /*repeatSwitchOn*/false
+
+                            )
+                            Text("Once", color = MaterialTheme.colorScheme.outline)
+                        }
+
                     }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(
-                            checked = remindBefore12Hours,
-                            onCheckedChange = { remindBefore12Hours = it }
+//                    Spacer(modifier = Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier,
+//                            horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TimePicker(
+                            modifier = Modifier.weight(1f),
+                            value = reminderTime.format(DateTimeFormatter.ofPattern("hh:mm a")),
+                            label = "A day before, at:",
+                            onTimeSelect = { localTime ->
+                                reminderTime = localTime
+                            },
+                            isEnabled = repeatSwitchOn
                         )
-                        Text("Remind before 12 hours")
-                    }
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(
-                            checked = remindBefore24Hours,
-                            onCheckedChange = { remindBefore24Hours = it }
-                        )
-                        Text("Remind before 24 hours")
                     }
                 }
             },
             confirmButton = {
-                Button(onClick = { showReminderDialog = false }) {
-                    Text("OK")
+                Button(
+                    enabled = true,
+                    onClick = {
+                        showReminderDialog = false
+                        isScheduleReminder = repeatSwitchOn
+                        saveDailyClassReminder(!repeatSwitchOn, reminderTime, scheduleObj)
+                    }) {
+                    Text("Save")
                 }
             }
         )
     }
 
-    //bottom sheet
-    /*if (openBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { openBottomSheet = false },
-            sheetState = bottomSheetState,
-        ) {
-            var isReminderOn by rememberSaveable { mutableStateOf(false) }
-            var remindBefore12Hours by rememberSaveable { mutableStateOf(true) }
-            var remindBefore24Hours by rememberSaveable { mutableStateOf(false) }
 
-            var task by remember { mutableStateOf(false) }
-
-            // Reminder Switch
-            Column {
-                if (task != null){
-                    Switch(
-                        modifier = Modifier
-                            .align(Alignment.Start)
-                            .padding(start = 16.dp),
-                        checked = isReminderOn,
-                        onCheckedChange = { isReminderOn = it },
-                        thumbContent = {
-                            Icon(
-                                imageVector = Icons.Default.Notifications,
-                                contentDescription = null,
-                                modifier = Modifier.size(12.dp)
-                            )
-                        }
-                    )
-                }
-
-                // Checkboxes (visible only if reminder is on)
-                if (isReminderOn) {
-                    Column(
-                        modifier = Modifier
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Checkbox(
-                                checked = remindBefore12Hours,
-                                onCheckedChange = { remindBefore12Hours = it }
-                            )
-                            Text(
-                                "Remind before 12 hours",
-                            )
-                        }
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Checkbox(
-                                checked = remindBefore24Hours,
-                                onCheckedChange = { remindBefore24Hours = it }
-                            )
-                            Text(
-                                "Remind before 24 hours",
-                            )
-                        }
-                    }
-                }
-                Row(
-                    verticalAlignment = Alignment.Top,
-                    modifier = Modifier.padding(bottom = 32.dp)
-                ) {
-
-//                    OutlinedTextField(
-//                        value = task,
-//                        onValueChange = {
-//                            task = it
-//                            task = it
-//                        },
-//                        modifier = Modifier
-//                            .weight(1f)
-//                            .padding(
-//                                top = 16.dp,
-//                                start = 16.dp,
-//                                bottom = 16.dp
-//                    )
-                    Button(
-                        modifier = Modifier
-                            .padding(start = 8.dp, end = 16.dp, top = 24.dp),
-                        shape = RoundedCornerShape(8),
-                        onClick = {
-                            coroutineScope.launch { bottomSheetState.hide() }
-                                .invokeOnCompletion {
-                                    if (!bottomSheetState.isVisible) {
-                                        openBottomSheet = false
-                                    }
-                                }
-                        }) {
-                        Icon(
-                            modifier = Modifier
-                                .size(height = 36.dp, width = 28.dp),
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "check",
-                        )
-                    }
-                }
-            }
-        }
-    }*/
 }
 
 @Preview(showBackground = true)
