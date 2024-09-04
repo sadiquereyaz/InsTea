@@ -74,7 +74,7 @@ fun NoticeScreen(
             }
         }
 
-        if (uiState.isLoading) {
+        if (uiState.notices.isEmpty()) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Loader(
                     modifier = Modifier.fillMaxSize()
