@@ -22,3 +22,217 @@
   </tr>
 </table>
 
+## Project Structure
+```
+Directory structure:
+└── sadiquereyaz-instea/
+    ├── README.md
+    ├── build.gradle.kts
+    ├── gradle.properties
+    ├── gradlew
+    ├── gradlew.bat
+    ├── settings.gradle.kts
+    ├── app/
+    │   ├── build.gradle.kts
+    │   ├── google-services.json
+    │   ├── proguard-rules.pro
+    │   ├── .gitignore
+    │   └── src/
+    │       ├── androidTest/
+    │       │   └── java/
+    │       │       └── in/
+    │       │           └── instea/
+    │       │               └── instea/
+    │       │                   └── ExampleInstrumentedTest.kt
+    │       ├── main/
+    │       │   ├── AndroidManifest.xml
+    │       │   ├── java/
+    │       │   │   └── in/
+    │       │   │       └── instea/
+    │       │   │           └── instea/
+    │       │   │               ├── InsteaApplication.kt
+    │       │   │               ├── MainActivity.kt
+    │       │   │               ├── composable/
+    │       │   │               │   ├── AcademicsComposable.kt
+    │       │   │               │   ├── AddAcademicPopup.kt
+    │       │   │               │   ├── AttendanceComposable.kt
+    │       │   │               │   ├── AuthenticationButton.kt
+    │       │   │               │   ├── BottomNavigationBar.kt
+    │       │   │               │   ├── BottomSheet.kt
+    │       │   │               │   ├── CalendarComposable.kt
+    │       │   │               │   ├── DayDateLayout.kt
+    │       │   │               │   ├── Dropdown.kt
+    │       │   │               │   ├── DropdownButtonComposable.kt
+    │       │   │               │   ├── DropdownComposable.kt
+    │       │   │               │   ├── ExposedDropDown.kt
+    │       │   │               │   ├── InsteaTopAppBar.kt
+    │       │   │               │   ├── Loader.kt
+    │       │   │               │   ├── MonthYearPicker.kt
+    │       │   │               │   ├── PlusMinusBtn.kt
+    │       │   │               │   ├── ScheduleItem.kt
+    │       │   │               │   ├── ScheduleList.kt
+    │       │   │               │   ├── TaskAttendance.kt
+    │       │   │               │   └── TaskComposable.kt
+    │       │   │               ├── data/
+    │       │   │               │   ├── AppContainer.kt
+    │       │   │               │   ├── BottomNavItem.kt
+    │       │   │               │   ├── FeedViewModel.kt
+    │       │   │               │   ├── dao/
+    │       │   │               │   │   ├── InsteaDatabase.kt
+    │       │   │               │   │   ├── NoticeDao.kt
+    │       │   │               │   │   ├── PostDao.kt
+    │       │   │               │   │   └── ScheduleDao.kt
+    │       │   │               │   ├── datamodel/
+    │       │   │               │   │   ├── Message.kt
+    │       │   │               │   │   ├── NoticeModal.kt
+    │       │   │               │   │   ├── PostData.kt
+    │       │   │               │   │   ├── ReminderModal.kt
+    │       │   │               │   │   ├── RoomPostModal.kt
+    │       │   │               │   │   ├── ScheduleModel.kt
+    │       │   │               │   │   ├── StringListResult.kt
+    │       │   │               │   │   └── User.kt
+    │       │   │               │   ├── repo/
+    │       │   │               │   │   ├── AcademicRepository.kt
+    │       │   │               │   │   ├── AccountService.kt
+    │       │   │               │   │   ├── ChatRepository.kt
+    │       │   │               │   │   ├── FeedRepository.kt
+    │       │   │               │   │   ├── LocalUserRepository.kt
+    │       │   │               │   │   ├── NetworkUserRepository.kt
+    │       │   │               │   │   ├── PostRepository.kt
+    │       │   │               │   │   ├── ScheduleRepository.kt
+    │       │   │               │   │   ├── UserRepository.kt
+    │       │   │               │   │   ├── WorkManagerTaskRepository.kt
+    │       │   │               │   │   └── notice/
+    │       │   │               │   │       ├── LocalNoticeRepository.kt
+    │       │   │               │   │       ├── NetworkNoticeRepository.kt
+    │       │   │               │   │       ├── NoticeRepository.kt
+    │       │   │               │   │       └── WebSrapingService.kt
+    │       │   │               │   └── viewmodel/
+    │       │   │               │       ├── AppViewModelProvider.kt
+    │       │   │               │       ├── AuthViewModel.kt
+    │       │   │               │       ├── AuthenticationViewModel.kt
+    │       │   │               │       ├── ChatviewModel.kt
+    │       │   │               │       ├── EditScheduleViewModel.kt
+    │       │   │               │       ├── FeedViewModel.kt
+    │       │   │               │       ├── MoreViewModel.kt
+    │       │   │               │       ├── NetworkUtils.kt
+    │       │   │               │       ├── NoticeViewModel.kt
+    │       │   │               │       ├── OtherProfileViewModel.kt
+    │       │   │               │       ├── ProfileViewModel.kt
+    │       │   │               │       ├── ScheduleViewModel.kt
+    │       │   │               │       └── UserInfoViewModel.kt
+    │       │   │               ├── navigation/
+    │       │   │               │   ├── InsteaNavHost.kt
+    │       │   │               │   └── ScreenRoutesConstant.kt
+    │       │   │               ├── screens/
+    │       │   │               │   ├── AttendanceScreen.kt
+    │       │   │               │   ├── DialogBox.kt
+    │       │   │               │   ├── InboxScreen.kt
+    │       │   │               │   ├── InsteaApp.kt
+    │       │   │               │   ├── Feed/
+    │       │   │               │   │   ├── CommentCard.kt
+    │       │   │               │   │   ├── CommentList.kt
+    │       │   │               │   │   ├── EditComment.kt
+    │       │   │               │   │   ├── EditPost.kt
+    │       │   │               │   │   ├── Feed.kt
+    │       │   │               │   │   ├── GetUserData.kt
+    │       │   │               │   │   ├── GetpostData.kt
+    │       │   │               │   │   ├── InboxScreen.kt
+    │       │   │               │   │   ├── PostCard.kt
+    │       │   │               │   │   ├── PostList.kt
+    │       │   │               │   │   ├── ReplyCard.kt
+    │       │   │               │   │   ├── ReplyList.kt
+    │       │   │               │   │   ├── SearchScreen.kt
+    │       │   │               │   │   └── UserListScreen.kt
+    │       │   │               │   ├── auth/
+    │       │   │               │   │   ├── AuthUiState.kt
+    │       │   │               │   │   ├── AuthenticationScreen.kt
+    │       │   │               │   │   ├── SignInScreen.kt
+    │       │   │               │   │   ├── UserInfoScreen.kt
+    │       │   │               │   │   ├── UserInfoUiState.kt
+    │       │   │               │   │   └── composable/
+    │       │   │               │   │       ├── ButtonComp.kt
+    │       │   │               │   │       ├── CheckboxComp.kt
+    │       │   │               │   │       ├── CustomTextField.kt
+    │       │   │               │   │       ├── DividerTextComp.kt
+    │       │   │               │   │       ├── HeadingText.kt
+    │       │   │               │   │       ├── PasswordTextField.kt
+    │       │   │               │   │       ├── PasswordVisibilityToggleIcon.kt
+    │       │   │               │   │       ├── ScreenChangeText.kt
+    │       │   │               │   │       ├── UnderlinedTextComp.kt
+    │       │   │               │   │       ├── WelcomeText.kt
+    │       │   │               │   │       └── signupSignin.kt
+    │       │   │               │   ├── more/
+    │       │   │               │   │   ├── MoreScreen.kt
+    │       │   │               │   │   ├── MoreUiState.kt
+    │       │   │               │   │   └── composable/
+    │       │   │               │   │       ├── AccountComp.kt
+    │       │   │               │   │       ├── AllTask.kt
+    │       │   │               │   │       ├── AttendanceComp.kt
+    │       │   │               │   │       ├── Classmates.kt
+    │       │   │               │   │       ├── Developers.kt
+    │       │   │               │   │       └── report.kt
+    │       │   │               │   ├── notice/
+    │       │   │               │   │   ├── NoticeScreen.kt
+    │       │   │               │   │   └── NoticeUiState.kt
+    │       │   │               │   ├── profile/
+    │       │   │               │   │   ├── ProfileScreen.kt
+    │       │   │               │   │   └── ProfileUiState.kt
+    │       │   │               │   └── schedule/
+    │       │   │               │       ├── AddSubjectPopup.kt
+    │       │   │               │       ├── EditScheduleScreen.kt
+    │       │   │               │       ├── EditScheduleUiState.kt
+    │       │   │               │       ├── ScheduleScreen.kt
+    │       │   │               │       ├── ScheduleUiState.kt
+    │       │   │               │       └── TimePicker.kt
+    │       │   │               ├── ui/
+    │       │   │               │   └── theme/
+    │       │   │               │       ├── Color.kt
+    │       │   │               │       ├── Theme.kt
+    │       │   │               │       └── Type.kt
+    │       │   │               ├── utility/
+    │       │   │               │   ├── NetworkUtils.kt
+    │       │   │               │   ├── NotificationConstant.kt
+    │       │   │               │   ├── NotificationPermissionUtils.kt
+    │       │   │               │   ├── UserInfoUtil.kt
+    │       │   │               │   └── Validator.kt
+    │       │   │               └── worker/
+    │       │   │                   ├── Constants.kt
+    │       │   │                   ├── DailyClassReminderWorker.kt
+    │       │   │                   ├── TaskReminderWorker.kt
+    │       │   │                   └── WorkerUtils.kt
+    │       │   └── res/
+    │       │       ├── drawable/
+    │       │       │   ├── custom_ripple.xml
+    │       │       │   ├── dp.JPG
+    │       │       │   ├── google.xml
+    │       │       │   ├── ic_launcher_foreground.xml
+    │       │       │   ├── insta.xml
+    │       │       │   ├── linked.xml
+    │       │       │   └── more.xml
+    │       │       ├── drawable-nodpi/
+    │       │       ├── raw/
+    │       │       │   ├── hand_loader.json
+    │       │       │   ├── paperplane_loader.json
+    │       │       │   └── paperplane_loader2.json
+    │       │       ├── values/
+    │       │       │   ├── colors.xml
+    │       │       │   ├── ic_launcher_background.xml
+    │       │       │   ├── strings.xml
+    │       │       │   └── themes.xml
+    │       │       └── xml/
+    │       │           ├── backup_rules.xml
+    │       │           └── data_extraction_rules.xml
+    │       └── test/
+    │           └── java/
+    │               └── in/
+    │                   └── instea/
+    │                       └── instea/
+    │                           └── ExampleUnitTest.kt
+    └── gradle/
+        ├── libs.versions.toml
+        └── wrapper/
+            └── gradle-wrapper.properties
+
+```
+
