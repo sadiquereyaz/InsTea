@@ -1,6 +1,6 @@
-package `in`.`in`.instea.instea.screens.more.composable
+package `in`.instea.instea.screens.more.composable
 
-import androidx.compose.foundation.Image
+import `in`.instea.instea.utility.UserInfoUtil
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,26 +13,24 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.wear.compose.material.Card
-import androidx.wear.compose.material.MaterialTheme.colors
-import `in`.instea.instea.data.viewmodel.classmate
-import `in`.instea.instea.screens.more.MoreUiState
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.ui.graphics.Brush
 import coil.compose.AsyncImage
 import `in`.instea.instea.R
+import `in`.instea.instea.presentation.more.MoreUiState
+import `in`.instea.instea.presentation.more.classmate
 
 
 @Composable

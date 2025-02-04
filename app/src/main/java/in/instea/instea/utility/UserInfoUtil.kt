@@ -1,3 +1,5 @@
+package `in`.instea.instea.utility
+
 import `in`.instea.instea.R
 
 object UserInfoUtil{

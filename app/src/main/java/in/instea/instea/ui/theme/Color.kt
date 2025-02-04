@@ -3,7 +3,6 @@ package `in`.instea.instea.ui.theme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
-import androidx.core.graphics.toColorInt
 
 val primaryLight = Color(0xFF336940)
 val onPrimaryLight = Color(0xFFFFFFFF)

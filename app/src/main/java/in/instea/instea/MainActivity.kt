@@ -1,9 +1,9 @@
 package `in`.instea.instea
 
-import InsteaApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import `in`.instea.instea.presentation.InsteaApp
 import `in`.instea.instea.ui.theme.InsTeaTheme
 
 

@@ -1,3 +1,5 @@
+package `in`.instea.instea.utility
+
 object NotificationConstant{
     fun getTaskReminderKey(scheduleId: Int, subjectId:Int, timeStamp:Int): String = "task$scheduleId$subjectId$timeStamp"
     fun getDailyClassReminderKey(scheduleId: Int): String = "dailyClass$scheduleId"

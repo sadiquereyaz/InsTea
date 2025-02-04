@@ -7,24 +7,13 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.auth.userProfileChangeRequest
-import `in`.instea.instea.data.datamodel.User
+import `in`.instea.instea.domain.datamodel.User
+import `in`.instea.instea.domain.repo.AccountService
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
-interface AccountService {
-    val currentUser: Flow<User?>
-    val currentUserId: String
-    val currentEmail: String
-    fun hasUser(): Boolean
-    fun getUserProfile(): User
-    suspend fun isUserProfileComplete(): Boolean
-    suspend fun updateDisplayName(newDisplayName: String)
-    suspend fun signInWithGoogle(idToken: String)
-    suspend fun signOut(): Result<String?>
-    suspend fun deleteAccount(): Result<String?>
-}
 
 class AccountServiceImpl() : AccountService {
 

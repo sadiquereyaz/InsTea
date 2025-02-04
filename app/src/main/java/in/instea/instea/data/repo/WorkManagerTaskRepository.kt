@@ -1,6 +1,5 @@
 package `in`.instea.instea.data.repo
 
-import NotificationConstant
 import android.content.Context
 import android.util.Log
 import androidx.work.Data
@@ -9,9 +8,11 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import `in`.instea.instea.data.datamodel.CombinedScheduleTaskModel
-import `in`.instea.instea.worker.DailyClassReminderWorker
-import `in`.instea.instea.worker.TaskReminderWorker
+import `in`.instea.instea.data.worker.DailyClassReminderWorker
+import `in`.instea.instea.data.worker.TaskReminderWorker
+import `in`.instea.instea.domain.datamodel.CombinedScheduleTaskModel
+import `in`.instea.instea.domain.repo.TaskReminderRepository
+import `in`.instea.instea.utility.NotificationConstant
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate
@@ -19,21 +20,6 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
-interface TaskReminderRepository {
-    fun scheduleDailyClassReminder(
-        scheduleObj: CombinedScheduleTaskModel, time: LocalTime
-    )
-
-    fun scheduleTaskReminder(
-        task: String,
-        remindBefore: Long,
-        unit: TimeUnit,
-        taskKey: String,
-        scheduleObj: CombinedScheduleTaskModel
-    )
-
-    fun cancelScheduledWork(uniqueWorkName: String)
-}
 
 class WorkManagerTaskRepository(context: Context) : TaskReminderRepository {
     /*WorkManager: This class actually schedules your WorkRequest and makes it run.

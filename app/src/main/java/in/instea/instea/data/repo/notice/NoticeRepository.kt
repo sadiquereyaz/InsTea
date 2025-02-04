@@ -1,15 +1,9 @@
 package `in`.instea.instea.data.repo.notice
 
-import `in`.instea.data.repo.notice.WebScrapingService
-import `in`.instea.instea.data.datamodel.NoticeModal
+import `in`.instea.instea.data.local.entity.NoticeModal
+import `in`.instea.instea.domain.repo.NoticeRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-
-interface NoticeRepository {
-    suspend fun fetchNotices(url: String="", selector: String = "", type: String="Admission"): List<NoticeModal>
-    suspend fun refreshNotices(url: String="", selector: String = "", type: String="Admission")
-    fun getNoticesFlow(url: String, selector: String, type: String): Flow<List<NoticeModal>>
-}
 
 class CombinedNoticeRepository(
     private val localNoticeRepository: LocalNoticeRepository,

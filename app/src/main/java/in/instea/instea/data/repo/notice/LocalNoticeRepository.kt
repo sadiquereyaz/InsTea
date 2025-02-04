@@ -1,7 +1,8 @@
 package `in`.instea.instea.data.repo.notice
 
-import `in`.instea.instea.data.dao.NoticeDao
-import `in`.instea.instea.data.datamodel.NoticeModal
+import `in`.instea.instea.data.local.dao.NoticeDao
+import `in`.instea.instea.data.local.entity.NoticeModal
+import `in`.instea.instea.domain.repo.NoticeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext

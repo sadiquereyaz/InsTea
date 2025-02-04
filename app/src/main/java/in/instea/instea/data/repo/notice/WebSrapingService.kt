@@ -1,4 +1,4 @@
-package `in`.instea.data.repo.notice // Assuming "instea.instea" is a mistake
+package `in`.instea.instea.data.repo.notice
 
 import android.util.Log
 import com.gargoylesoftware.htmlunit.BrowserVersion
@@ -7,7 +7,7 @@ import com.gargoylesoftware.htmlunit.WaitingRefreshHandler
 import com.gargoylesoftware.htmlunit.WebClient
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor
 import com.gargoylesoftware.htmlunit.html.HtmlPage
-import `in`.instea.instea.data.datamodel.NoticeModal
+import `in`.instea.instea.data.local.entity.NoticeModal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

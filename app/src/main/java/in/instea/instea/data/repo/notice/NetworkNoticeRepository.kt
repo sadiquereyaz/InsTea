@@ -1,7 +1,7 @@
 package `in`.instea.instea.data.repo.notice
 
-import `in`.instea.data.repo.notice.WebScrapingService
-import `in`.instea.instea.data.datamodel.NoticeModal
+import `in`.instea.instea.data.local.entity.NoticeModal
+import `in`.instea.instea.domain.repo.NoticeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
