@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.0"
+agp = "8.4.2"
 androidxLifecycleViewmodelCompose = "2.6.1"
 constraintlayout = "2.2.0-alpha13"
 credentials = "1.2.2"
