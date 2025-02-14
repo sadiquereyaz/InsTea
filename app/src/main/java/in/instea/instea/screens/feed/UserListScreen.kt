@@ -1,7 +1,6 @@
-package `in`.instea.instea.screens.Feed
+package `in`.instea.instea.screens.feed
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,11 +16,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreHoriz
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,10 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,7 +43,10 @@ import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.navigation.InsteaScreens
 
 @Composable
-fun UserListScreen(feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),navController: NavHostController) {
+fun UserListScreen(
+    feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    navController: NavHostController
+) {
     val userList by feedViewModel.userList.collectAsState()
     val currentUser = userList.find { it.userId == feedViewModel.currentuser }
     Log.d("UserList", "currentuser: $currentUser")
@@ -57,25 +54,26 @@ fun UserListScreen(feedViewModel: FeedViewModel = viewModel(factory = AppViewMod
     Log.d("UserList", "chatPartners: $chatPartners")
 
     LazyColumn {
-        if(chatPartners.isEmpty()){
-            item{
-            Text("No ChatPartners")}
-        }
-      else{
-        items(chatPartners) { chatPartner ->
-//            val partner = chatPartner.removeSuffix(currentUser?.userId!!)
-            val user = userList.find { it.userId == chatPartner }
-            Log.d("UserList", "user: $user")
-
-            if (user != null) {
-                UserListCard(user,navController)
+        if (chatPartners.isEmpty()) {
+            item {
+                Text("No ChatPartners")
             }
-        }}
+        } else {
+            items(chatPartners) { chatPartner ->
+//            val partner = chatPartner.removeSuffix(currentUser?.userId!!)
+                val user = userList.find { it.userId == chatPartner }
+                Log.d("UserList", "user: $user")
+
+                if (user != null) {
+                    UserListCard(user, navController)
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun UserListCard(user: User,navController: NavHostController) {
+fun UserListCard(user: User, navController: NavHostController) {
 //    Log.d("UserList", "`in`.instea.instea.screens.Feed.UserListCard: ${user}")
 
     Box(modifier = Modifier.fillMaxWidth()) {

@@ -1,3 +1,6 @@
+package `in`.instea.instea.screens.feed
+
+import ChatviewModel
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.data.datamodel.Message
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.FeedViewModel
+import reduceMultipleSpaces
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

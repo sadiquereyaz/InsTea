@@ -1,3 +1,6 @@
+package `in`.instea.instea.screens.feed
+
+
 //import androidx.compose.runtime.Composable
 //import `in`.instea.instea.data.datamodel.PostData
 //

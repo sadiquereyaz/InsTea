@@ -1,4 +1,4 @@
-package `in`.instea.instea.screens.Feed
+package `in`.instea.instea.screens.feed
 
 import android.util.Log
 import androidx.compose.runtime.Composable
@@ -18,7 +18,7 @@ import kotlinx.coroutines.tasks.await
 
 
 @Composable
-fun GetUserData():MutableList<User> {
+fun GetUserData(): MutableList<User> {
     val mAuth = Firebase.auth
     val db = Firebase.database.reference
     val coroutineScope = rememberCoroutineScope()
@@ -40,7 +40,7 @@ fun GetUserData():MutableList<User> {
     val userlist = mutableListOf(User())
     try {
 
-        for (i in userData!!.children){
+        for (i in userData!!.children) {
             val user = i.getValue(User::class.java)
             userlist.add(user!!)
 
@@ -48,7 +48,7 @@ fun GetUserData():MutableList<User> {
         Log.d("userData", "GetUserData: ${userlist}")
     } catch (e: Exception) {
 
-        Log.e("TAG", "GetUserData: ${e}", )
+        Log.e("TAG", "GetUserData: ${e}")
     }
 
     return userlist

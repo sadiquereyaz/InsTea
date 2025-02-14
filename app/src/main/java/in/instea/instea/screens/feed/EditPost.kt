@@ -1,4 +1,5 @@
-import android.widget.Toast
+package `in`.instea.instea.screens.feed
+
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
@@ -21,17 +22,14 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,51 +37,38 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import `in`.instea.instea.R
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
 import `in`.instea.instea.data.viewmodel.FeedViewModel
-import `in`.instea.instea.ui.PostList
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
-//import `in`.instea.instea.data.UserViewModel
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FEED(
-    navigateToProfile: (String)->Unit,
-    navController: NavHostController,
-    feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
-) {
-    val user by feedViewModel.user.collectAsState()
+fun EditPost(postId: String) {
 
-  PostList(feedViewModel, navigateToProfile, navController = navController)
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun FeedContent(feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
-    var textState by remember { mutableStateOf("") }
-    val user by feedViewModel.user.collectAsState()
     val postTypeOptions = listOf("Public", "Anonymous")
     var selectedPostType by remember { mutableStateOf(postTypeOptions[0]) } // Initial selection
     var expanded by remember { mutableStateOf(false) } // State for DropdownMenu
     val coroutine = rememberCoroutineScope()
-    val currentTime = System.currentTimeMillis()
-    val dateFormat = SimpleDateFormat("MM/dd/yyyy hh a", Locale.getDefault())
-    val formattedTime = dateFormat.format(Date(currentTime))
+    val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    var post by remember {
+        mutableStateOf(PostData())
+    }
+    var textState by remember { mutableStateOf("") }
+    LaunchedEffect(postId) {
+        feedViewModel.posts.collect { posts ->
+            posts.find { it.postid == postId }?.let {
+                post = it
+                textState = it.postDescription.orEmpty()
+            }
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -155,8 +140,8 @@ fun FeedContent(feedViewModel: FeedViewModel = viewModel(factory = AppViewModelP
                             DropdownMenuItem(
                                 text = { Text(type) },
                                 onClick = {
-                                    selectedPostType = type // Update the selected post type
-                                    expanded = false // Close the dropdown menu
+                                    selectedPostType = type
+                                    expanded = false
                                 }
                             )
                         }
@@ -183,56 +168,31 @@ fun FeedContent(feedViewModel: FeedViewModel = viewModel(factory = AppViewModelP
                 textStyle = TextStyle(fontSize = 16.sp),
                 maxLines = 5,
                 trailingIcon = {
-                    if (textState.isNotEmpty() || textState.length <= 200) {
+                    if (textState.isNotEmpty()) {
                         Icon(imageVector = Icons.Filled.Send,
                             contentDescription = "send",
                             modifier = Modifier.clickable {
-                                var isAnonyous = false
-                                if(selectedPostType == "Anonymous")
-                                    isAnonyous = true
+                                if (textState != post.postDescription)
+                                    post.edited = true
+                                textState.replace(" +".toRegex(), " ")
                                 coroutine.launch {
-                                    feedViewModel.insertPostsInDatabase(
-                                        post = PostData(
-                                            postid = "",
-                                            postDescription = textState,
-                                            postedByUser = feedViewModel.currentuser,
-                                            isAnonymous = isAnonyous
-
-                                        )
+                                    post.postDescription = textState
+                                    feedViewModel.updateVotes(
+                                        post
                                     )
-
                                     textState = ""
+
                                 }
+
 
                             }
                         )
-
-                    }
-                    else if(textState.length >= 200){
-                        Toast.makeText(LocalContext.current, "message must not exceed 200 letters", Toast.LENGTH_SHORT).show()
                     }
 
                 }
             )
 
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier.fillMaxWidth()
-            ) {
-                TextButton(onClick = {
-                    selectedPostType = if (selectedPostType == "visible") "Anonymous" else "visible"
-                }) {
-                    Icon(
-                        imageVector = Icons.Outlined.Create,
-                        contentDescription = "Post logo",
-                        modifier = Modifier
-                            .size(20.dp)
-                            .padding(2.dp)
-                    )
-                    Text(
-                        text = selectedPostType, fontWeight = FontWeight.Bold, fontSize = 16.sp
-                    )
-                }
-            }
+
         }
     }
 }

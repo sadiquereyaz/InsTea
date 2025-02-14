@@ -1,3 +1,6 @@
+package `in`.instea.instea.screens.feed
+
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,11 +35,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
-import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.Replies
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.data.viewmodel.FeedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,7 +54,13 @@ fun ReplyList(
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.End,
-        modifier = if (comment.replies.isEmpty()) Modifier.height(150.dp).fillMaxWidth().padding(start = 35.dp) else Modifier.fillMaxWidth().height(500.dp).padding(start = 35.dp)
+        modifier = if (comment.replies.isEmpty()) Modifier
+            .height(150.dp)
+            .fillMaxWidth()
+            .padding(start = 35.dp) else Modifier
+            .fillMaxWidth()
+            .height(500.dp)
+            .padding(start = 35.dp)
     ) {
         item {
             Row(
@@ -129,7 +138,7 @@ fun ReplyList(
             }
         } else {
             items(comment.replies) { reply ->
-                ReplyCard(reply, comment,post)
+                ReplyCard(reply, comment, post)
             }
         }
     }
