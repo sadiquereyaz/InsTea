@@ -3,7 +3,7 @@
     "project_number": "677962216839",
     "firebase_url": "https://insteacompose-default-rtdb.firebaseio.com",
     "project_id": "insteacompose",
-    "storage_bucket": "insteacompose.appspot.com"
+    "storage_bucket": "insteacompose.firebasestorage.app"
   },
   "client": [
     {
@@ -14,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "677962216839-5em3qlh5qnvvh38u3gti85idstgn246v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.instea.instea",
+            "certificate_hash": "4d7f2230ee5a09ca7bb11bcd1885574c3128b387"
+          }
+        },
         {
           "client_id": "677962216839-9n4e2ehkes3fqckq4u59ed5faqtlens3.apps.googleusercontent.com",
           "client_type": 1,

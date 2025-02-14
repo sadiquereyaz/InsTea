@@ -1,11 +1,6 @@
 package `in`.instea.instea.navigation
 
-import EditPost
-import FEED
-import FeedContent
-import InboxScreen
 import NoticeScreen
-import `in`.instea.instea.screens.Feed.UserListScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.SnackbarHostState
@@ -17,11 +12,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import `in`.instea.instea.screens.AttendanceScreen
-import `in`.instea.instea.screens.Feed.SearchScreen
-import `in`.instea.instea.screens.Feed.UserListScreen
 import `in`.instea.instea.screens.auth.AuthenticationScreen
 import `in`.instea.instea.screens.auth.UserInfoScreen
 import `in`.instea.instea.screens.auth.composable.signUp
+import `in`.instea.instea.screens.feed.EditPost
+import `in`.instea.instea.screens.feed.FEED
+import `in`.instea.instea.screens.feed.FeedContent
+import `in`.instea.instea.screens.feed.InboxScreen
+import `in`.instea.instea.screens.feed.SearchScreen
+import `in`.instea.instea.screens.feed.UserListScreen
 import `in`.instea.instea.screens.more.MoreDestination
 import `in`.instea.instea.screens.more.MoreScreen
 import `in`.instea.instea.screens.profile.ProfileDestination
@@ -126,7 +125,7 @@ fun InsteaNavHost(
         ) {
 //            OtherProfileScreen()
             ProfileScreen(
-                onSubUsernameClick = {uid-> navController.navigate(InsteaScreens.Inbox.name+"/$uid") },
+                onSubUsernameClick = { uid -> navController.navigate(InsteaScreens.Inbox.name + "/$uid") },
                 navigateToDevelopers = {
                     navController.navigate("${MoreDestination.route}/${0}")
                 },
@@ -159,21 +158,21 @@ fun InsteaNavHost(
                 snackBarHostState = snackBarHostState
             )
         }
-        composable(route = InsteaScreens.EditPost.name+"/{postId}"){ backstackEntry->
+        composable(route = InsteaScreens.EditPost.name + "/{postId}") { backstackEntry ->
             val post = backstackEntry.arguments?.getString("postId")
             EditPost(post!!)
         }
         composable(route = InsteaScreens.UserList.name) {
-          UserListScreen(navController = navController)
+            UserListScreen(navController = navController)
         }
 
-        composable(route = InsteaScreens.signup.name){
+        composable(route = InsteaScreens.signup.name) {
             signUp(navController = navController)
         }
-        composable(route = InsteaScreens.Search.name){
+        composable(route = InsteaScreens.Search.name) {
             SearchScreen(navController = navController)
         }
-        composable(route = InsteaScreens.Notice.name){
+        composable(route = InsteaScreens.Notice.name) {
             NoticeScreen(navController = navController)
         }
     }

@@ -1,52 +1,37 @@
+package `in`.instea.instea.screens.feed
+
+
 import android.content.Intent
 import android.net.Uri
-import android.text.method.LinkMovementMethod
-import android.text.util.Linkify
-import android.util.Log
 import android.util.Patterns
-import android.widget.TextView
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.indication
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowLeft
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.outlined.Bookmark
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -57,13 +42,10 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,7 +59,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -86,25 +67,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.zIndex
 import androidx.core.content.ContextCompat.startActivity
-import androidx.core.text.util.LinkifyCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.navArgument
-import androidx.wear.compose.material.ExperimentalWearMaterialApi
-import androidx.wear.compose.material.rememberSwipeableState
 import `in`.instea.instea.R
-import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.User
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.navigation.InsteaScreens
-import `in`.instea.instea.ui.theme.backgroundDark
-import `in`.instea.instea.ui.theme.onSurfaceDark
-//import `in`.instea.instea.screens.Feed.CommentList
-
 import kotlinx.coroutines.launch
 
 @Composable
@@ -126,6 +98,8 @@ fun PostCard(
     val moreList = listOf("Report", "Delete", "Edit")
     var user: User = User()
     val mContext = LocalContext.current
+    val profileImageRes = post.profileImage ?: R.drawable.ic_launcher_foreground
+
 //    val mCustomLinkifyText = remember { TextView(mContext) }
 
 
@@ -158,10 +132,10 @@ fun PostCard(
 //                        navController.navigate(InsteaScreens.Inbox.name+"/${post.postedByUser}")
                         }
                 ) {
-                    (if (post.profileImage != null) post.profileImage
-                    else R.drawable.ic_launcher_foreground)?.let {
+//                    (if (post.profileImage != null) post.profileImage
+//                    else R.drawable.ic_launcher_foreground)?.let {
                         Image(
-                            painter = painterResource(id = it),
+                            painter = painterResource(id = profileImageRes),
                             modifier = Modifier
                                 .padding(3.dp)
                                 .size(50.dp)
@@ -248,7 +222,8 @@ fun PostCard(
                                                         feedViewModel.currentuser
                                                     )
                                                 ) {
-                                                    post.reports.hasReport = post.reports.hasReport + 1
+                                                    post.reports.hasReport =
+                                                        post.reports.hasReport + 1
                                                     post.reports.reportByUser.add(feedViewModel.currentuser!!)
                                                     feedViewModel.updateVotes(post)
                                                 }
@@ -266,7 +241,7 @@ fun PostCard(
                                     }
                                 }
                             }
-                        }
+//                        }
                     }
                 }
 

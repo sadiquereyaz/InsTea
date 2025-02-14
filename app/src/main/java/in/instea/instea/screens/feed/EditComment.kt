@@ -1,3 +1,5 @@
+package `in`.instea.instea.screens.feed
+
 //import androidx.compose.foundation.border
 //import androidx.compose.foundation.clickable
 //import androidx.compose.foundation.gestures.Orientation

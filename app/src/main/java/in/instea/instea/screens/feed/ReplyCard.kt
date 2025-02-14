@@ -1,3 +1,6 @@
+package `in`.instea.instea.screens.feed
+
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,18 +34,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import `in`.instea.instea.R
-import `in`.instea.instea.data.viewmodel.FeedViewModel
 import `in`.instea.instea.data.datamodel.Comments
 import `in`.instea.instea.data.datamodel.PostData
 import `in`.instea.instea.data.datamodel.Replies
 import `in`.instea.instea.data.viewmodel.AppViewModelProvider
+import `in`.instea.instea.data.viewmodel.FeedViewModel
 import kotlinx.coroutines.launch
+
 @Composable
-fun ReplyCard(reply: Replies, comment: Comments,post: PostData) {
+fun ReplyCard(reply: Replies, comment: Comments, post: PostData) {
     var isExpanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.fillMaxWidth(0.8f)
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
             .padding(start = 30.dp, end = 2.dp)
             .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.CenterEnd
@@ -93,7 +98,7 @@ fun ReplyCard(reply: Replies, comment: Comments,post: PostData) {
 //                horizontalArrangement = Arrangement.SpaceBetween,
 //                modifier = Modifier.fillMaxWidth()
 //            ) {
-                UpAndDownVoteButtonsForReply(comment, reply,post)
+            UpAndDownVoteButtonsForReply(comment, reply, post)
 //            }
         }
     }
@@ -101,7 +106,7 @@ fun ReplyCard(reply: Replies, comment: Comments,post: PostData) {
 
 
 @Composable
-fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies,post:PostData) {
+fun UpAndDownVoteButtonsForReply(comment: Comments, reply: Replies, post: PostData) {
     val isUpVoted = rememberSaveable { mutableStateOf(false) }
     val isDownVoted = rememberSaveable { mutableStateOf(false) }
     val feedViewModel: FeedViewModel = viewModel(factory = AppViewModelProvider.Factory)
@@ -116,7 +121,9 @@ fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies,post:PostData) 
 
     Box(
         contentAlignment = Alignment.BottomEnd,
-        modifier = Modifier.fillMaxSize(0.7f).padding(3.dp)
+        modifier = Modifier
+            .fillMaxSize(0.7f)
+            .padding(3.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -128,10 +135,12 @@ fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies,post:PostData) 
                 modifier = Modifier.padding(end = 8.dp)
             ) {
                 Icon(imageVector = Icons.Default.MoreHoriz, contentDescription = "report")
-                val list = listOf("Report","Edit Comment")
+                val list = listOf("Report", "Edit Comment")
 
             }
-            Spacer(modifier = Modifier.width(20.dp).height(10.dp))
+            Spacer(modifier = Modifier
+                .width(20.dp)
+                .height(10.dp))
 
 
             Row(
@@ -162,8 +171,8 @@ fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies,post:PostData) 
 
                                 val replyIndex = comment.replies.indexOf(reply)
                                 val commmentIndex = post.comments.indexOf(comment)
-                                comment.replies[replyIndex]= reply
-                               post.comments[commmentIndex] = comment
+                                comment.replies[replyIndex] = reply
+                                post.comments[commmentIndex] = comment
                                 feedViewModel.updateVotes(post)
 
                                 // Update the local state to reflect changes
@@ -176,7 +185,11 @@ fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies,post:PostData) 
                     tint = (if (userDislikeCurrentPost) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSecondaryContainer)
 
                 )
-                Text(text = reply.userDislikeReply.size.toString(), fontSize = 10.sp, modifier = Modifier.padding(0.dp))
+                Text(
+                    text = reply.userDislikeReply.size.toString(),
+                    fontSize = 10.sp,
+                    modifier = Modifier.padding(0.dp)
+                )
 
             }
 
@@ -186,7 +199,11 @@ fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies,post:PostData) 
                 horizontalArrangement = Arrangement.spacedBy(4.dp) // Custom spacing between button and text
             ) {
 
-                Text(text =reply.userLikedReply.size.toString(), fontSize = 10.sp, modifier = Modifier.padding(0.dp))
+                Text(
+                    text = reply.userLikedReply.size.toString(),
+                    fontSize = 10.sp,
+                    modifier = Modifier.padding(0.dp)
+                )
                 Icon(
                     painter = painterResource(id = if (userlikeCurrentPost) R.drawable.uparrowfilled else R.drawable.arrowupoutlined),
                     contentDescription = "Upvote",
@@ -211,7 +228,7 @@ fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies,post:PostData) 
 
                                 val replyIndex = comment.replies.indexOf(reply)
                                 val commmentIndex = post.comments.indexOf(comment)
-                                comment.replies[replyIndex]= reply
+                                comment.replies[replyIndex] = reply
                                 post.comments[commmentIndex] = comment
                                 feedViewModel.updateVotes(post)
                                 // Update the local state to reflect changes
@@ -229,7 +246,6 @@ fun UpAndDownVoteButtonsForReply(comment: Comments,reply:Replies,post:PostData) 
             }
         }
     }
-
 
 
 }
